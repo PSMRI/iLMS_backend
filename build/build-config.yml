@@ -346,46 +346,46 @@ config:
         image-name: "egov-user-chatbot"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/digit-dev/core-services/mailbot"
+  - name: "builds/wtt-digit/core-services/mailbot"
     build:
       - work-dir: "core-services/mailbot"
         image-name: "mailbot"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/digit-dev/core-services/libraries/enc-client"
+  - name: "builds/wtt-digit/core-services/libraries/enc-client"
     build:
       - work-dir: "core-services/libraries/enc-client"
         image-name: "enc-client"
 
-  - name: "builds/digit-dev/core-services/libraries/services-common"
+  - name: "builds/wtt-digit/core-services/libraries/services-common"
     build:
       - work-dir: "core-services/libraries/services-common"
         image-name: "services-common"
         
-  - name: "builds/digit-dev/core-services/libraries/digit-models"
+  - name: "builds/wtt-digit/core-services/libraries/digit-models"
     build:
       - work-dir: "core-services/libraries/digit-models"
         image-name: "digit-models"
         
-  - name: "builds/digit-dev/core-services/libraries/tracer"
+  - name: "builds/wtt-digit/core-services/libraries/tracer"
     build:
       - work-dir: "core-services/libraries/tracer"
         image-name: "tracer"
 
-  - name: "builds/digit-dev/core-services/nlp-engine"
+  - name: "builds/wtt-digit/core-services/nlp-engine"
     build:
       - work-dir: "core-services/nlp-engine"
         image-name: "nlp-engine"
         dockerfile: "nlp-engine/Dockerfile"
 
-  - name: "builds/digit-dev/core-services/xstate-chatbot"
+  - name: "builds/wtt-digit/core-services/xstate-chatbot"
     build:
       - work-dir: "core-services/xstate-chatbot/nodejs"
         image-name: "xstate-chatbot"
       - work-dir: "core-services/xstate-chatbot/nodejs/db"
         image-name: "xstate-chatbot-db"
 
-  - name: "builds/digit-dev/core-services/xstate-webchat"
+  - name: "builds/wtt-digit/core-services/xstate-webchat"
     build:
       - work-dir: "core-services/xstate-webchat/nodejs"
         image-name: "xstate-webchat"
@@ -395,7 +395,7 @@ config:
         
 #Municipal Services
 
-  - name: "builds/digit-dev/municipal-services/egov-user-event"
+  - name: "builds/wtt-digit/municipal-services/egov-user-event"
     build:
       - work-dir: "municipal-services/egov-user-event"
         image-name: "egov-user-event"
@@ -403,7 +403,7 @@ config:
       - work-dir: "municipal-services/egov-user-event/src/main/resources/db"
         image-name: "egov-user-event-db"
 
-  - name: "builds/digit-dev/municipal-services/pt-calculator-v2"
+  - name: "builds/wtt-digit/municipal-services/pt-calculator-v2"
     build:
       - work-dir: "municipal-services/pt-calculator-v2"
         image-name: "pt-calculator-v2"
@@ -411,7 +411,7 @@ config:
       - work-dir: "municipal-services/pt-calculator-v2/src/main/resources/db"
         image-name: "pt-calculator-v2-db"
 
-  - name: "builds/digit-dev/municipal-services/pt-services-v2"
+  - name: "builds/wtt-digit/municipal-services/pt-services-v2"
     build:
       - work-dir: "municipal-services/pt-services-v2"
         image-name: "pt-services-v2"
@@ -419,7 +419,7 @@ config:
       - work-dir: "municipal-services/pt-services-v2/src/main/resources/db"
         image-name: "pt-services-v2-db"
 
-  - name: "builds/digit-dev/municipal-services/rainmaker-pgr"
+  - name: "builds/wtt-digit/municipal-services/rainmaker-pgr"
     build:
       - work-dir: "municipal-services/rainmaker-pgr"
         image-name: "rainmaker-pgr"
@@ -427,7 +427,7 @@ config:
       - work-dir: "municipal-services/rainmaker-pgr/src/main/resources/db"
         image-name: "rainmaker-pgr-db"
 
-  - name: "builds/digit-dev/municipal-services/pgr-services"
+  - name: "builds/wtt-digit/municipal-services/pgr-services"
     build:
       - work-dir: "municipal-services/pgr-services"
         image-name: "pgr-services"
@@ -435,7 +435,7 @@ config:
       - work-dir: "municipal-services/pgr-services/src/main/resources/db"
         image-name: "pgr-services-db"
 
-  - name: "builds/digit-dev/municipal-services/tl-calculator"
+  - name: "builds/wtt-digit/municipal-services/tl-calculator"
     build:
       - work-dir: "municipal-services/tl-calculator"
         image-name: "tl-calculator"
@@ -443,7 +443,7 @@ config:
       - work-dir: "municipal-services/tl-calculator/src/main/resources/db"
         image-name: "tl-calculator-db"
         
-  - name: "builds/digit-dev/municipal-services/tl-services"
+  - name: "builds/wtt-digit/municipal-services/tl-services"
     build:
       - work-dir: "municipal-services/tl-services"
         image-name: "tl-services"
@@ -451,21 +451,21 @@ config:
       - work-dir: "municipal-services/tl-services/src/main/resources/db"
         image-name: "tl-services-db"
 
-  - name: "builds/digit-dev/municipal-services/firenoc-services"
+  - name: "builds/wtt-digit/municipal-services/firenoc-services"
     build:
       - work-dir: "municipal-services/firenoc-services"
         image-name: "firenoc-services"
       - work-dir: "municipal-services/firenoc-services/migration"
         image-name: "firenoc-services-db"
 
-  - name: "builds/digit-dev/municipal-services/firenoc-calculator"
+  - name: "builds/wtt-digit/municipal-services/firenoc-calculator"
     build:
       - work-dir: "municipal-services/firenoc-calculator"
         image-name: "firenoc-calculator"
       - work-dir: "municipal-services/firenoc-calculator/migration"
         image-name: "firenoc-calculator-db"
 
-  - name: "builds/digit-dev/municipal-services/ws-services"
+  - name: "builds/wtt-digit/municipal-services/ws-services"
     build:
       - work-dir: "municipal-services/ws-services"
         image-name: "ws-services"
@@ -473,7 +473,7 @@ config:
       - work-dir: "municipal-services/ws-services/src/main/resources/db"
         image-name: "ws-services-db"
         
-  - name: "builds/digit-dev/municipal-services/property-services"
+  - name: "builds/wtt-digit/municipal-services/property-services"
     build:
       - work-dir: "municipal-services/property-services"
         image-name: "property-services"
@@ -481,7 +481,7 @@ config:
       - work-dir: "municipal-services/property-services/src/main/resources/db"
         image-name: "property-services-db"
 
-  - name: "builds/digit-dev/municipal-services/ws-calculator"
+  - name: "builds/wtt-digit/municipal-services/ws-calculator"
     build:
       - work-dir: "municipal-services/ws-calculator"
         image-name: "ws-calculator"
@@ -489,7 +489,7 @@ config:
       - work-dir: "municipal-services/ws-calculator/src/main/resources/db"
         image-name: "ws-calculator-db"
 
-  - name: "builds/digit-dev/municipal-services/sw-services"
+  - name: "builds/wtt-digit/municipal-services/sw-services"
     build:
       - work-dir: "municipal-services/sw-services"
         image-name: "sw-services"
@@ -497,7 +497,7 @@ config:
       - work-dir: "municipal-services/sw-services/src/main/resources/db"
         image-name: "sw-services-db"
 
-  - name: "builds/digit-dev/municipal-services/sw-calculator"
+  - name: "builds/wtt-digit/municipal-services/sw-calculator"
     build:
       - work-dir: "municipal-services/sw-calculator"
         image-name: "sw-calculator"
@@ -505,7 +505,7 @@ config:
       - work-dir: "municipal-services/sw-calculator/src/main/resources/db"
         image-name: "sw-calculator-db"     
 
-  - name: "builds/digit-dev/municipal-services/bpa-services"
+  - name: "builds/wtt-digit/municipal-services/bpa-services"
     build:
       - work-dir: "municipal-services/bpa-services"
         image-name: "bpa-services"
@@ -513,13 +513,13 @@ config:
       - work-dir: "municipal-services/bpa-services/src/main/resources/db"
         image-name: "bpa-services-db"         
 
-  - name: "builds/digit-dev/municipal-services/bpa-calculator"
+  - name: "builds/wtt-digit/municipal-services/bpa-calculator"
     build:
       - work-dir: "municipal-services/bpa-calculator"
         image-name: "bpa-calculator"
         dockerfile: "build/maven/Dockerfile"     
 
-  - name: "builds/digit-dev/municipal-services/land-services"
+  - name: "builds/wtt-digit/municipal-services/land-services"
     build:
       - work-dir: "municipal-services/land-services"
         image-name: "land-services"
@@ -527,7 +527,7 @@ config:
       - work-dir: "municipal-services/land-services/src/main/resources/db"
         image-name: "land-services-db"
 
-  - name: "builds/digit-dev/municipal-services/noc-services"
+  - name: "builds/wtt-digit/municipal-services/noc-services"
     build:
       - work-dir: "municipal-services/noc-services"
         image-name: "noc-services"
@@ -535,7 +535,7 @@ config:
       - work-dir: "municipal-services/noc-services/src/main/resources/db"
         image-name: "noc-services-db"
 
-  - name: "builds/digit-dev/municipal-services/echallan-services"
+  - name: "builds/wtt-digit/municipal-services/echallan-services"
     build:
       - work-dir: "municipal-services/echallan-services"
         image-name: "echallan-services"
@@ -543,13 +543,13 @@ config:
       - work-dir: "municipal-services/echallan-services/src/main/resources/db"
         image-name: "echallan-services-db"         
 
-  - name: "builds/digit-dev/municipal-services/echallan-calculator"
+  - name: "builds/wtt-digit/municipal-services/echallan-calculator"
     build:
       - work-dir: "municipal-services/echallan-calculator"
         image-name: "echallan-calculator"
         dockerfile: "build/maven/Dockerfile"  
         
-  - name: "builds/digit-dev/municipal-services/fsm"
+  - name: "builds/wtt-digit/municipal-services/fsm"
     build:
       - work-dir: "municipal-services/fsm"
         image-name: "fsm"
@@ -558,7 +558,7 @@ config:
         image-name: "fsm-db"
 
 
-  - name: "builds/digit-dev/municipal-services/vehicle"
+  - name: "builds/wtt-digit/municipal-services/vehicle"
     build:
       - work-dir: "municipal-services/vehicle"
         image-name: "vehicle"
@@ -566,7 +566,7 @@ config:
       - work-dir: "municipal-services/vehicle/src/main/resources/db"
         image-name: "vehicle-db"
 
-  - name: "builds/digit-dev/municipal-services/vendor"
+  - name: "builds/wtt-digit/municipal-services/vendor"
     build:
       - work-dir: "municipal-services/vendor"
         image-name: "vendor"
@@ -574,7 +574,7 @@ config:
       - work-dir: "municipal-services/vendor/src/main/resources/db"
         image-name: "vendor-db"
 
-  - name: "builds/digit-dev/municipal-services/fsm-calculator"
+  - name: "builds/wtt-digit/municipal-services/fsm-calculator"
     build:
       - work-dir: "municipal-services/fsm-calculator"
         image-name: "fsm-calculator"
@@ -582,19 +582,19 @@ config:
       - work-dir: "municipal-services/fsm-calculator/src/main/resources/db"
         image-name: "fsm-calculator-db"
         
-  - name: "builds/digit-dev/municipal-services/turn-io-adapter"
+  - name: "builds/wtt-digit/municipal-services/turn-io-adapter"
     build:
       - work-dir: "municipal-services/turn-io-adapter"
         image-name: "turn-io-adapter"
         dockerfile: "build/maven/Dockerfile"
         
-  - name: "builds/digit-dev/municipal-services/inbox"
+  - name: "builds/wtt-digit/municipal-services/inbox"
     build:
       - work-dir: "municipal-services/inbox"
         image-name: "inbox"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/digit-dev/municipal-services/birth-death-services"
+  - name: "builds/wtt-digit/municipal-services/birth-death-services"
     build:
       - work-dir: "municipal-services/birth-death-services"
         image-name: "birth-death-services"
@@ -604,40 +604,40 @@ config:
  
  # Utilities
  
-  - name: "builds/digit-dev/utilities/egov-weekly-impact-notifier"
+  - name: "builds/wtt-digit/utilities/egov-weekly-impact-notifier"
     build:
       - work-dir: "utilities/egov-weekly-impact-notifier"
         image-name: "egov-weekly-impact-notifier"
         dockerfile: "build/maven/Dockerfile"
         
-  - name: "builds/digit-dev/utilities/zuul-kubernetes-discovery"
+  - name: "builds/wtt-digit/utilities/zuul-kubernetes-discovery"
     build:
       - work-dir: "utilities/zuul-kubernetes-discovery"
         image-name: "zuul-kubernetes-discovery"  
 
-  - name: "builds/digit-dev/utilities/egov-api-cron-job"
+  - name: "builds/wtt-digit/utilities/egov-api-cron-job"
     build:
       - work-dir: "utilities/egov-api-cron-job"
         image-name: "egov-api-cron-job"
         dockerfile: "build/python/Dockerfile"
 
-  - name: "builds/digit-dev/utilities/kuberhealthy-checks"
+  - name: "builds/wtt-digit/utilities/kuberhealthy-checks"
     build:
       - work-dir: "utilities/kuberhealthy-checks"
         image-name: "kuberhealthy-checks"
 
-  - name: "builds/digit-dev/utilities/egov-pdf"
+  - name: "builds/wtt-digit/utilities/egov-pdf"
     build:
       - work-dir: "utilities/egov-pdf"
         image-name: "egov-pdf"  
 
-  - name: "builds/digit-dev/utilities/epass-chatbot"
+  - name: "builds/wtt-digit/utilities/epass-chatbot"
     build:
       - work-dir: "utilities/epass-chatbot"
         image-name: "epass-chatbot"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/digit-dev/utilities/case-management"
+  - name: "builds/wtt-digit/utilities/case-management"
     build:
       - work-dir: "utilities/case-management"
         image-name: "case-management"
@@ -645,24 +645,24 @@ config:
       - work-dir: "utilities/case-management/src/main/resources/db"
         image-name: "case-management-db"
 
-  - name: "builds/digit-dev/utilities/data-upload"
+  - name: "builds/wtt-digit/utilities/data-upload"
     build:
       - work-dir: "utilities/data-upload"
         image-name: "data-upload"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/digit-dev/utilities/egov-custom-consumer"
+  - name: "builds/wtt-digit/utilities/egov-custom-consumer"
     build:
       - work-dir: "utilities/egov-custom-consumer"
         image-name: "egov-custom-consumer"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/digit-dev/utilities/certificate_signer"
+  - name: "builds/wtt-digit/utilities/certificate_signer"
     build:
       - work-dir: "utilities/certificate_signer"
         image-name: "certificate_signer"
 
-  - name: "builds/digit-dev/utilities/certificate-verification"
+  - name: "builds/wtt-digit/utilities/certificate-verification"
     build:
       - work-dir: "utilities/certificate-verification"
         image-name: "certificate-verification"
@@ -674,54 +674,54 @@ config:
 
   # Frontend
 
-  - name: builds/digit-dev/frontend/mono-ui/citizen
+  - name: builds/wtt-digit/frontend/mono-ui/citizen
     build:
       - work-dir: frontend/mono-ui/web/rainmaker/
         dockerfile: frontend/mono-ui/web/rainmaker/docker/citizen/Dockerfile
         image-name: citizen
 
-  - name: builds/digit-dev/frontend/mono-ui/employee
+  - name: builds/wtt-digit/frontend/mono-ui/employee
     build:
       - work-dir: frontend/mono-ui/web/rainmaker/
         dockerfile: frontend/mono-ui/web/rainmaker/docker/employee/Dockerfile
         image-name: employee
 
-  - name: builds/digit-dev/frontend/mono-ui/employee-mcs
+  - name: builds/wtt-digit/frontend/mono-ui/employee-mcs
     build:
       - work-dir: frontend/mono-ui/web/rainmaker/
         dockerfile: frontend/mono-ui/web/rainmaker/docker/employee-mcs/Dockerfile
         image-name: employee-mcs
 
-  - name: builds/digit-dev/frontend/mono-ui/localization
+  - name: builds/wtt-digit/frontend/mono-ui/localization
     build:
       - work-dir: frontend/mono-ui/web/rainmaker/
         dockerfile: frontend/mono-ui/web/rainmaker/docker/localization/Dockerfile
         image-name: ui-localisation
 
-  - name: builds/digit-dev/frontend/mono-ui/ui-uploader
+  - name: builds/wtt-digit/frontend/mono-ui/ui-uploader
     build:
       - work-dir: frontend/mono-ui/web/ui-uploader/
         image-name: ui-uploader
 
-  - name: builds/digit-dev/frontend/mono-ui/dss-dashboard
+  - name: builds/wtt-digit/frontend/mono-ui/dss-dashboard
     build:
       - work-dir: frontend/mono-ui/web/dss-dashboard/
         dockerfile: frontend/mono-ui/web/dss-dashboard/docker/Dockerfile
         image-name: dss-dashboard
       
-  - name: builds/digit-dev/frontend/mono-ui/common-screen
+  - name: builds/wtt-digit/frontend/mono-ui/common-screen
     build:
       - work-dir: frontend/mono-ui/web/egov-common-screen/
         dockerfile: frontend/mono-ui/web/egov-common-screen/docker/Dockerfile
         image-name: common-screen
 
-  - name: builds/digit-dev/frontend/micro-ui/digit-ui
+  - name: builds/wtt-digit/frontend/micro-ui/digit-ui
     build:
       - work-dir: frontend/micro-ui/
         dockerfile: frontend/micro-ui/web/docker/Dockerfile
         image-name: digit-ui
 
-  - name: builds/digit-dev/frontend/micro-ui/storybook
+  - name: builds/wtt-digit/frontend/micro-ui/storybook
     build:
     - work-dir: .
       dockerfile: frontend/micro-ui/web/micro-ui-internals/packages/react-components/docker/Dockerfile
@@ -730,13 +730,13 @@ config:
   
   #EDCR
   
-  - name: builds/digit-dev/edcr/dcr-client/egov-dcr
+  - name: builds/wtt-digit/edcr/dcr-client/egov-dcr
     build:
       - work-dir: edcr/client/egov
         dockerfile: edcr/client/Dockerfile
         image-name: egov-edcr
         
-  - name: builds/digit-dev/edcr/dcr-service/egov-dcr
+  - name: builds/wtt-digit/edcr/dcr-service/egov-dcr
     build:
       - work-dir: edcr/service/egov
         dockerfile: edcr/service/Dockerfile
@@ -744,7 +744,7 @@ config:
               
   #Finance
    
-  - name: builds/digit-dev/finance/egov-finance
+  - name: builds/wtt-digit/finance/egov-finance
     build:
       - work-dir: finance/egov
         image-name: egov-finance
