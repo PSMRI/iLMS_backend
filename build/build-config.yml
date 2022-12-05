@@ -402,6 +402,14 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/egov-user-event/src/main/resources/db"
         image-name: "egov-user-event-db"
+        
+  - name: "builds/wtt-digit/municipal-services/ilms"
+    build:
+      - work-dir: "municipal-services/ilms"
+        image-name: "ilms-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/ilms/src/main/resources/db"
+        image-name: "ilms-services-db"
 
   - name: "builds/wtt-digit/municipal-services/pt-calculator-v2"
     build:
