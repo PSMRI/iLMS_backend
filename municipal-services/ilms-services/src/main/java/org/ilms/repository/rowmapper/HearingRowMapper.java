@@ -1,0 +1,135 @@
+package org.ilms.repository.rowmapper;
+
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import org.egov.tracer.model.CustomException;
+import org.ilms.web.model.AuditDetails;
+import org.ilms.web.model.Court;
+import org.ilms.web.model.Hearing;
+import org.ilms.web.model.ILMSParty;
+import org.ilms.web.model.enums.Status;
+import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.stereotype.Repository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Repository
+public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
+    private ILMSParty petitioner = new ILMSParty();
+    private ILMSParty respondent = new ILMSParty();
+    @Autowired
+    private ObjectMapper mapper;
+    private int fullCount = 0;
+
+    public int getFullCount() {
+        return fullCount;
+    }
+
+    public void setFullCount(int full_count) {
+        this.fullCount = full_count;
+    }
+
+    @Override
+    public List<Hearing> extractData(ResultSet rs) throws SQLException, DataAccessException {
+
+        Map<String, Hearing> ilmsHearingMap =  new LinkedHashMap<String, Hearing>();
+        this.setFullCount(0);
+        while (rs.next()) {
+            System.out.println(rs);
+            String duplicacyCheck = "";
+            Hearing currentHearing = new Hearing();
+
+            AuditDetails auditDetails = AuditDetails.builder()
+                    .createdTime(rs.getLong("hearing_createdtime")).createdBy(rs.getString("hearing_createdby"))
+                    .lastModifiedBy(rs.getString("hearing_lastmodifiedby")).lastModifiedTime(rs.getLong("hearing_lastmodifiedtime"))
+                    .build();
+
+            // TODO fill the ILMSCase object with data in the result set record
+            if (!duplicacyCheck.equals(rs.getString("hearing_id")) && Status.valueOf(rs.getString("hearing_status"))==Status.ACTIVE) {
+                String id = rs.getString("hearing_id");
+                duplicacyCheck = id;
+                String hearingNumber = rs.getString("hearing_number");
+                currentHearing = ilmsHearingMap.get(id);
+                String caseId = rs.getString("hearing_case_id");
+                currentHearing = ilmsHearingMap.get(id);
+                String courtId = rs.getString("hearing_courtId");
+                String judgeName = rs.getString("hearing_judge_name");
+                Long hearingDate = rs.getLong("hearing_date");
+                Long businessDate = rs.getLong("hearing_business_date");
+                String hearingPurpose = rs.getString("hearing_purpose");
+                String requiredOfficer = rs.getString("hearing_required_officer");
+                Long affidavitFilingDate = rs.getLong("affidavit_filing_date");
+                Long affidavitFilingDueDate = rs.getLong("affidavit_filing_due_date");
+                String cnrNumber= rs.getString("hearing_cnr_number");
+                String oathNumber= rs.getString("hearing_oath_number");
+                Long firstHearingDate = rs.getLong("first_hearing_date");
+                Long previousHearingDate = rs.getLong("previous_hearing_date");
+                Long nextHearingDate = rs.getLong("next_hearing_date");
+                Boolean isPresenceRequired = rs.getBoolean("hearing_is_presence_required");
+                String hearingType = rs.getString("hearing_type");
+                String departmentOfficer = rs.getString("hearing_department_officer");
+                String remarks = rs.getString("hearing_remarks");
+                String status = rs.getString("hearing_status");
+                Object additionalDetails = getAdditionalDetail("hearing_additionalDetails", rs);
+                this.setFullCount((rs.getInt("full_count")));
+                if (currentHearing == null) {
+                    currentHearing = Hearing.builder().id(id).hearingNumber(hearingNumber).additionalDetails(additionalDetails)
+                            .caseId(caseId).judgeName(judgeName).hearingDate(hearingDate).courtId(courtId).firstHearingDate(firstHearingDate)
+                            .previousHearingDate(previousHearingDate).nextHearingDate(nextHearingDate).isPresenceRequired(isPresenceRequired)
+                            .hearingType(hearingType).departmentOfficer(departmentOfficer).remarks(remarks).status(Status.valueOf(status))
+                            .businessDate(businessDate).hearingPurpose(hearingPurpose).requiredOfficer(requiredOfficer).auditDetails(auditDetails)
+                            .affidavitFilingDate(affidavitFilingDate).affidavitFilingDueDate(affidavitFilingDueDate).cnrNumber(cnrNumber).oathNumber(oathNumber)
+                            .build();
+
+                    ilmsHearingMap.put(id, currentHearing);
+                }
+            }
+            addChildrenToHearingDetails(rs, currentHearing);
+        }
+        return new ArrayList<>(ilmsHearingMap.values());
+    }
+
+    @SuppressWarnings("unused")
+    private void addChildrenToHearingDetails(ResultSet rs, Hearing hearing) throws SQLException {
+        // TODO add all the child data petitioner, respondant, court, advocate
+
+        if(Status.valueOf(rs.getString("court_status"))==Status.ACTIVE){
+            AuditDetails auditDetails = AuditDetails.builder()
+                    .createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
+                    .lastModifiedBy(rs.getString("court_lastmodifiedby")).lastModifiedTime(rs.getLong("court_lastmodifiedtime"))
+                    .build();
+
+            Court court = Court.builder().id(rs.getString("court_id")).courtNumber(rs.getString("court_number")).courtName(rs.getString("court_name"))
+                    .district(rs.getString("court_district")).state(rs.getString("court_state")).bench(rs.getString("court_bench")).division(rs.getString("court_division"))
+                    .hearingId(rs.getString("court_hearingId")).status(Status.valueOf(rs.getString("court_status"))).auditDetails(auditDetails).build();
+            hearing.setCourt(court);
+        }
+    }
+
+    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
+
+        JsonNode additionalDetail = null;
+        try {
+            PGobject pgObj = (PGobject) rs.getObject(columnName);
+            if (pgObj != null) {
+                additionalDetail = mapper.readTree(pgObj.getValue());
+            }
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+            throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
+        }
+        return additionalDetail;
+    }
+
+
+}
+
