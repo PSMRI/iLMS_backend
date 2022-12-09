@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -126,10 +127,12 @@ public class EnrichmentService {
         ilmsCase.getPetitioner().getAdvocate().setId(padvocateItr.next());
         ilmsCase.getPetitioner().setId(petitionerItr.next());
         ilmsCase.getRespondent().setId(respondentItr.next());
-        ilmsCase.getDocuments().forEach((doc -> {
-            List<String> docId = getIdList(requestInfo, tenantId, config.getDocumentIdGenName(), config.getDocumentIdGenFormat(), 1);
-            doc.setId(docId.get(0));
-        }));
+        if (Objects.nonNull(ilmsCase.getDocuments())) {
+            ilmsCase.getDocuments().forEach((doc -> {
+                List<String> docId = getIdList(requestInfo, tenantId, config.getDocumentIdGenName(), config.getDocumentIdGenFormat(), 1);
+                doc.setId(docId.get(0));
+            }));
+        }
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {

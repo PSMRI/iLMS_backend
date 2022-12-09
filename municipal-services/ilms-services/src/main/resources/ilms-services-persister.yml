@@ -220,7 +220,7 @@ serviceMaps:
       fromTopic: save-hearing-details-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ilms_hearing(id, hearing_number, court_id, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, cnr_number, oath_number, first_hearing_date, previous_hearing_date, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ilms_hearing(id, hearing_number, court_id, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, first_hearing_date, previous_hearing_date, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearingDetails
           jsonMaps:
             - jsonPath: $.hearingDetails.id
@@ -245,7 +245,7 @@ serviceMaps:
 
             - jsonPath: $.hearingDetails.affidavitFilingDueDate
 
-            - jsonPath: $.hearingDetails.cnrNumber
+            - jsonPath: $.hearingDetails.caseNumber
 
             - jsonPath: $.hearingDetails.oathNumber
 
@@ -619,7 +619,7 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.hearingDetails.id
 
-        - query: UPDATE ilms_hearing SET hearing_number=?, court_id=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, cnr_number=?, oath_number=?, first_hearing_date=?, previous_hearing_date=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE ilms_hearing SET hearing_number=?, court_id=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, first_hearing_date=?, previous_hearing_date=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: hearingDetails
           jsonMaps:
 
@@ -641,7 +641,7 @@ serviceMaps:
 
             - jsonPath: $.hearingDetails.affidavitFilingDueDate
 
-            - jsonPath: $.hearingDetails.cnrNumber
+            - jsonPath: $.hearingDetails.caseNumber
 
             - jsonPath: $.hearingDetails.oathNumber
 

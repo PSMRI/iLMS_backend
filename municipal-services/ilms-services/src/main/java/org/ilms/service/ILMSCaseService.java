@@ -157,6 +157,7 @@ public class ILMSCaseService {
                         ilmsCaseRequest);
                 ILMSCase ilmsCase = ilmsCaseResponse.getIlmsCases().get(0);
                 ilmsCaseValidator.validateUpdate(ilmsCase, ilmsCaseRequest);
+                if (Objects.nonNull(ilmsCaseRequest.getIlmsCase().getCaseHierarchy())){
                 if (ilmsCaseRequest.getIlmsCase().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
                     updatedIlmsCaseRequest.getIlmsCase().setParentCaseId(null);
                     if (Objects.nonNull(ilmsCaseRequest.getIlmsCase().getParentCaseId())) {
@@ -175,6 +176,7 @@ public class ILMSCaseService {
                     if (response.getIlmsCases().size() != 1) {
                         throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
                     }
+                }
                 }
                 producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedIlmsCaseRequest);
             } else {

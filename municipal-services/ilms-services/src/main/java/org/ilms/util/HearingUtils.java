@@ -46,8 +46,8 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate())) {
             oldHearingRequest.setAffidavitFilingDueDate(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate());
         }
-        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCnrNumber())) {
-            oldHearingRequest.setCnrNumber(hearingDetailsRequest.getHearing().getCnrNumber());
+        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseNumber())) {
+            oldHearingRequest.setCaseNumber(hearingDetailsRequest.getHearing().getCaseNumber());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getOathNumber())) {
             oldHearingRequest.setOathNumber(hearingDetailsRequest.getHearing().getOathNumber());

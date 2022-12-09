@@ -51,8 +51,8 @@ public class Hearing {
     @JsonProperty ("affidavitFilingDueDate")
     private Long affidavitFilingDueDate;
 
-    @JsonProperty ("cnrNumber")
-    private String cnrNumber ;
+    @JsonProperty ("caseNumber")
+    private String caseNumber ;
 
     @JsonProperty ("oathNumber")
     private String oathNumber ;
