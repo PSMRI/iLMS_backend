@@ -2,10 +2,14 @@ package org.ilms.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import com.itextpdf.text.*;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -35,15 +39,6 @@ import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -1010,36 +1005,63 @@ public class ILMSCaseService {
                 }
             });
             ilmsCaseList.forEach(ilmsCase -> {
-                Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
+                Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font .BOLD, BaseColor.BLACK);
                 Chunk chunk1 = new Chunk("\nDOCUMENT : ", font1);
                 Paragraph Detail = new Paragraph(chunk1);
                 Detail.setAlignment(Element.ALIGN_MIDDLE);
                 PdfPTable table1 = new PdfPTable(1);
-                table1.setWidthPercentage(100.0f);
+                table1.setWidthPercentage(10.0f);
                 table1.setSpacingBefore(4f);
-
                 Phrase phrase = new Phrase("");
-                Phrase phrase1 = new Phrase("");
-
-                Font anchorFont = new Font(Font.FontFamily.UNDEFINED, 11);
-                anchorFont.setColor(BaseColor.BLUE);
-                anchorFont.setStyle(Font.FontStyle.UNDERLINE.getValue());
-
-                Anchor anchor = new Anchor("Adhar", anchorFont);
-                anchor.setReference("www.google.com");
+                Font anchorFont = new Font(Font.FontFamily.HELVETICA, 11,Font.BOLD,BaseColor.RED);
+                Anchor anchor = new Anchor(new Chunk("Aadhaar", anchorFont));
+                anchor.setReference("http://14.97.12.97/digit-ui/citizen/select-language");
                 phrase.add(anchor);
-                phrase.add(phrase1);
-                table1.addCell(phrase);
                 try {
                     pdfDoc.add(Detail);
-                    pdfDoc.add(table1);
+                    Image image = Image.getInstance("C:\\Users\\WalkingTree\\Desktop\\Files\\Image\\pdf.png");
+                    image.setAlignment(Image.ALIGN_LEFT);
+                    image.setPaddingTop(-80);
+                    image.setAbsolutePosition(10f, 290f);
+                    image.scalePercent(40, 45);
+                    Chunk chunk = new Chunk(image, 0, -20);
+                    pdfDoc.add(image);
+                    pdfDoc.add(phrase);
                 } catch (DocumentException e) {
+                    throw new RuntimeException(e);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            ilmsCaseList.forEach(ilmsCase -> {
+                Phrase phrase1 = new Phrase("");
+                Font anchorFont1 = new Font(Font.FontFamily.HELVETICA, 11,Font.BOLD,BaseColor.RED);
+                Anchor anchor1 = new Anchor(new Chunk("\n\n\n\n\n\n\nPAN", anchorFont1));
+                anchor1.setReference("http://14.97.12.97/digit-ui/citizen/select-language");
+                phrase1.add(anchor1);
+
+                try {
+                    Image image1 = Image.getInstance("C:\\Users\\WalkingTree\\Desktop\\Files\\Image\\pdf.png");
+                    image1.setAlignment(Image.ALIGN_LEFT);
+                    image1.setPaddingTop(-80);
+                    image1.setAbsolutePosition(10f, 180f);
+                    image1.scalePercent(40, 45);
+                    pdfDoc.add(phrase1);
+                    pdfDoc.add(image1);
+                } catch (DocumentException e) {
+                    throw new RuntimeException(e);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             });
             hearingList.forEach(hearing -> {
                 Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
-                Chunk chunk1 = new Chunk("\nHEARING DETAILS : ", font1);
+                Chunk chunk1 = new Chunk("\n\n\n\nHEARING DETAILS : ", font1);
                 Paragraph detail = new Paragraph(chunk1);
                 detail.setAlignment(Element.ALIGN_MIDDLE);
 
