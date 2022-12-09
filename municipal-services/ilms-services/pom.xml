@@ -19,7 +19,6 @@
         <version>2.7.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
