@@ -69,7 +69,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 String requiredOfficer = rs.getString("hearing_required_officer");
                 Long affidavitFilingDate = rs.getLong("affidavit_filing_date");
                 Long affidavitFilingDueDate = rs.getLong("affidavit_filing_due_date");
-                String cnrNumber= rs.getString("hearing_cnr_number");
+                String caseNumber= rs.getString("hearing_case_number");
                 String oathNumber= rs.getString("hearing_oath_number");
                 Long firstHearingDate = rs.getLong("first_hearing_date");
                 Long previousHearingDate = rs.getLong("previous_hearing_date");
@@ -87,7 +87,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .previousHearingDate(previousHearingDate).nextHearingDate(nextHearingDate).isPresenceRequired(isPresenceRequired)
                             .hearingType(hearingType).departmentOfficer(departmentOfficer).remarks(remarks).status(Status.valueOf(status))
                             .businessDate(businessDate).hearingPurpose(hearingPurpose).requiredOfficer(requiredOfficer).auditDetails(auditDetails)
-                            .affidavitFilingDate(affidavitFilingDate).affidavitFilingDueDate(affidavitFilingDueDate).cnrNumber(cnrNumber).oathNumber(oathNumber)
+                            .affidavitFilingDate(affidavitFilingDate).affidavitFilingDueDate(affidavitFilingDueDate).caseNumber(caseNumber).oathNumber(oathNumber)
                             .build();
 
                     ilmsHearingMap.put(id, currentHearing);

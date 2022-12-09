@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS  ilms_hearing(
 	required_officer character varying(32) NOT NULL,
 	affidavit_filing_date bigint,
 	affidavit_filing_due_date bigint,
-	cnr_number character varying(32) NOT NULL,
+	case_number character varying(32) NOT NULL,
 	oath_number character varying(32) NOT NULL,
 	first_hearing_date bigint,
 	previous_hearing_date bigint,
@@ -393,7 +393,7 @@ CREATE INDEX  IF NOT EXISTS  index_id_ilms_judgement_auditlog  ON ilms_judgement
 CREATE TABLE IF NOT EXISTS  ilms_document(
 	id character varying(32) NOT NULL,
 	case_id character varying(32) NOT NULL,
-	document_type character varying(32) NOT NULL,
+	document_type character varying(64) NOT NULL,
 	file_store_id character varying(64) NOT NULL,
     status character varying(32) NOT NULL,
     createdby character varying(64),

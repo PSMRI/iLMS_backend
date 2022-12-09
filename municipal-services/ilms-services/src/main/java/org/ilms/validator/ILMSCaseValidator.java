@@ -64,17 +64,17 @@ public class ILMSCaseValidator {
         if (ilmsCase.getDepartmentName() != null && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_NAME).contains(ilmsCase.getDepartmentName())) {
             errorMap.put("Invalid DepartmentName", "The DepartmentName '" + ilmsCase.getDepartmentName() + "' does not exists");
         }
-        if (ilmsCase.getRespondent().getDepartmentName() != null && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_NAME)
-                                                                          .contains(ilmsCase.getRespondent().getDepartmentName())) {
-            errorMap.put("Invalid DepartmentName", "The DepartmentName '" + ilmsCase.getRespondent().getDepartmentName() + "' does not exists");
-        }
         if (ilmsCase.getRecommendOIC() != null && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC).contains(ilmsCase.getRecommendOIC())) {
             errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + ilmsCase.getRecommendOIC() + "' does not exists");
         }
-        if (ilmsCase.getDocuments().get(0).getDocumentType() != null && !codes.get(ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY)
-                                                                              .contains(ilmsCase.getDocuments().get(0).getDocumentType())) {
-            errorMap.put("Invalid DocumentCategory",
-                    "The DocumentCategory '" + ilmsCase.getDocuments().get(0).getDocumentType() + "' does not exists");
+        if (Objects.nonNull(ilmsCase.getDocuments())){
+            ilmsCase.getDocuments().forEach(document->{
+                if (document.getDocumentType() != null && !codes.get(ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY)
+                                                                                      .contains(document.getDocumentType())) {
+                    errorMap.put("Invalid DocumentCategory",
+                            "The DocumentCategory '" + document.getDocumentType() + "' does not exists");
+                }
+            });
         }
 
         return errorMap;
@@ -161,7 +161,7 @@ public class ILMSCaseValidator {
         }
         if (!StringUtils.isNotBlank(ilmsCaseRequest.getIlmsCase().getDepartmentName())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "DepartmentName is mandatory [ " + ilmsCaseRequest.getIlmsCase().getCaseStage() + " ]");
+                    "DepartmentName is mandatory [ " + ilmsCaseRequest.getIlmsCase().getDepartmentName() + " ]");
         }
         if (!StringUtils.isNotBlank(ilmsCaseRequest.getIlmsCase().getRecommendOIC())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
@@ -282,20 +282,6 @@ public class ILMSCaseValidator {
         } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "act Details are mandatory [ " + ilmsCaseRequest.getIlmsCase().getAct() + " ]");
-        }
-        //setting documents details
-        if (Objects.nonNull(ilmsCaseRequest.getIlmsCase().getDocuments().toString())) {
-            List<Document> documentList = ilmsCaseRequest.getIlmsCase().getDocuments();
-            for (Document document : documentList) {
-                if (!StringUtils.isNotBlank(document.getDocumentType())) {
-                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                            "documentType for documents is mandatory [ " + document.getDocumentType() + " ]");
-                }
-                if (!StringUtils.isNotBlank(document.getFileStoreId())) {
-                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                            "fileStoredId for documents is mandatory [ " + document.getFileStoreId() + " ]");
-                }
-            }
         }
         Map<String, String> errorMap = new HashMap<>();
         if (!errorMap.isEmpty()) {

@@ -3,6 +3,7 @@ package org.ilms.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
@@ -57,36 +58,41 @@ public class HearingService {
         ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(Collections.singletonList(hearingRequest.getHearing().getCaseId()))
                                                                 .build();
         ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
-        if (!ilmsCaseResponse.getIlmsCases().isEmpty()) {
-            hearingRequest.getHearing().setStatus(Status.ACTIVE);
-            hearingRequest.getHearing().getCourt().setStatus(Status.ACTIVE);
-            hearingRequest.getHearing().getPetitioner().setStatus(Status.ACTIVE);
-            hearingRequest.getHearing().getRespondent().setStatus(Status.ACTIVE);
-            hearingRequest.getHearing().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
-            hearingRequest.getHearing().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
-            hearingRequest.getHearing().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
-            hearingRequest.getHearing().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
-            hearingRequest.getHearing().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
-            hearingRequest.getHearing().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
-            hearingRequest.getHearing().getPetitioner().setCaseId(hearingRequest.getHearing().getCaseId());
-            hearingRequest.getHearing().getRespondent().setCaseId(hearingRequest.getHearing().getCaseId());
-            hearingRequest.getHearing().setHearingNumber(hearingDetailsRepository.getMaxValueOfHearing(hearingRequest.getHearing().getCaseId()));
-            List<ILMSParty> partyList = hearingDetailsRepository.getGetFromPartyQuery(hearingRequest.getHearing().getCaseId());
-            for (ILMSParty party : partyList) {
-                if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                    respondentId = party.getId();
-                } else {
-                    petitionerId = party.getId();
+        if (Objects.nonNull(ilmsCaseResponse.getIlmsCases())) {
+            if (ilmsCaseResponse.getIlmsCases().get(0).getCaseNumber().equals(hearingRequest.getHearing().getCaseNumber())) {
+                hearingRequest.getHearing().setStatus(Status.ACTIVE);
+                hearingRequest.getHearing().getCourt().setStatus(Status.ACTIVE);
+                hearingRequest.getHearing().getPetitioner().setStatus(Status.ACTIVE);
+                hearingRequest.getHearing().getRespondent().setStatus(Status.ACTIVE);
+                hearingRequest.getHearing().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
+                hearingRequest.getHearing().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
+                hearingRequest.getHearing().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
+                hearingRequest.getHearing().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
+                hearingRequest.getHearing().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
+                hearingRequest.getHearing().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
+                hearingRequest.getHearing().getPetitioner().setCaseId(hearingRequest.getHearing().getCaseId());
+                hearingRequest.getHearing().getRespondent().setCaseId(hearingRequest.getHearing().getCaseId());
+                hearingRequest.getHearing().setHearingNumber(hearingDetailsRepository.getMaxValueOfHearing(hearingRequest.getHearing().getCaseId()));
+                List<ILMSParty> partyList = hearingDetailsRepository.getGetFromPartyQuery(hearingRequest.getHearing().getCaseId());
+                for (ILMSParty party : partyList) {
+                    if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
+                        respondentId = party.getId();
+                    } else {
+                        petitionerId = party.getId();
+                    }
                 }
+                hearingRequest.getHearing().getPetitioner().getAdvocate().setPartyId(petitionerId);
+                hearingRequest.getHearing().getRespondent().getAdvocate().setPartyId(respondentId);
+                hearingDetailsValidator.createValidator(hearingRequest);
+                hearingEnrichmentService.enrichHearingCreateRequest(hearingRequest);
+                producer.push(ilmsConfiguration.getCreateHearingDetailsTopic(), hearingRequest);
+            }else {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "CaseNumber Invalid");
             }
-            hearingRequest.getHearing().getPetitioner().getAdvocate().setPartyId(petitionerId);
-            hearingRequest.getHearing().getRespondent().getAdvocate().setPartyId(respondentId);
-            hearingDetailsValidator.createValidator(hearingRequest);
-            hearingEnrichmentService.enrichHearingCreateRequest(hearingRequest);
-            producer.push(ilmsConfiguration.getCreateHearingDetailsTopic(), hearingRequest);
-        } else {
-            throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available for this Hearing");
-        }
+        }else {
+                throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available for this Hearing");
+            }
+
         return hearingRequest.getHearing();
     }
 
