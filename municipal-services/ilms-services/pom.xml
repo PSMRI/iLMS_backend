@@ -2,20 +2,24 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+	<groupId>org.egov</groupId>
+    <artifactId>ilms-services</artifactId>
+	<packaging>jar</packaging>
+    <name>ilms-services</name>
+	<version>0.0.1-SNAPSHOT</version>
+	<properties>
+        <log4j2.version>2.17.1</log4j2.version>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+    </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.ilms</groupId>
-    <artifactId>ilms</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>ilms</name>
-    <description>ilms-services</description>
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
