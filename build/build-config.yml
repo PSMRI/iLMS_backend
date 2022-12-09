@@ -403,12 +403,12 @@ config:
       - work-dir: "municipal-services/egov-user-event/src/main/resources/db"
         image-name: "egov-user-event-db"
         
-  - name: "builds/wtt-digit/municipal-services/ilms"
+  - name: "builds/wtt-digit/municipal-services/ilms-services"
     build:
-      - work-dir: "municipal-services/ilms"
+      - work-dir: "municipal-services/ilms-services"
         image-name: "ilms-services"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "municipal-services/ilms/src/main/resources/db"
+      - work-dir: "municipal-services/ilms-services/src/main/resources/db"
         image-name: "ilms-services-db"
 
   - name: "builds/wtt-digit/municipal-services/pt-calculator-v2"
