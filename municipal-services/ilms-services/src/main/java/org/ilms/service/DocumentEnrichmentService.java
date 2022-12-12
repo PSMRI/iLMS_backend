@@ -41,23 +41,25 @@ public class DocumentEnrichmentService {
 
     public void enrichmentDocumentCreateRequest(IlmsDocumentRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        Document document = request.getDocument();
+        request.getDocument().forEach(document -> {
         setIdgenIds(request);
         AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUserName(), true);
-        request.getDocument().setAuditDetails(auditDetails);
+       document.setAuditDetails(auditDetails);
         document.setAuditDetails(auditDetails);
-        if (request.getDocument() != null) {
-            request.getDocument().setAuditDetails(auditDetails);
             document.setAuditDetails(auditDetails);
-        }
+        });
     }
 
     public void setIdgenIds(IlmsDocumentRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(Collections.singletonList(request.getDocument().getCaseId())).build();
+        request.getDocument().forEach(document -> {
+        ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(Collections.singletonList(document.getCaseId())).build();
         ILMSCaseResponse ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
+            if (ilmsCaseResponse.getIlmsCases().size() <= 0){
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                        "caseDetails Not Found [ " + ilmsCaseResponse.getIlmsCases()+ " ]");
+            }
         String tenantId = ilmsCaseResponse.getIlmsCases().get(0).getTenantId();
-        Document document = request.getDocument();
         List<String> caseId = getIdList(requestInfo, tenantId, config.getDocumentIdGenName(), config.getDocumentIdGenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();
         Map<String, String> errorMap = new HashMap<>();
@@ -65,6 +67,7 @@ public class DocumentEnrichmentService {
             throw new CustomException(errorMap);
         }
         document.setId(caseItr.next());
+        });
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {

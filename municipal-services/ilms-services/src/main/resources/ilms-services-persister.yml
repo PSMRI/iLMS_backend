@@ -803,21 +803,21 @@ serviceMaps:
       isTransaction: true
       queryMaps:
         - query: INSERT INTO ilms_document(id, case_id, document_type, file_store_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
-          basePath: document
+          basePath: document.*
           jsonMaps:
-            - jsonPath: $.document.id
+            - jsonPath: $.document.*.id
 
-            - jsonPath: $.document.caseId
+            - jsonPath: $.document.*.caseId
 
-            - jsonPath: $.document.documentType
+            - jsonPath: $.document.*.documentType
 
-            - jsonPath: $.document.fileStoreId
+            - jsonPath: $.document.*.fileStoreId
 
-            - jsonPath: $.document.status
+            - jsonPath: $.document.*.status
 
-            - jsonPath: $.document.auditDetails.createdBy
+            - jsonPath: $.document.*.auditDetails.createdBy
 
-            - jsonPath: $.document.auditDetails.createdTime
+            - jsonPath: $.document.*.auditDetails.createdTime
 
     - version: 1.0
       description: create child case in ilms_case table
