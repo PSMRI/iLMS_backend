@@ -129,6 +129,66 @@ public class ILMSConfiguration {
     @Value ("${egov.mdms.search.endpoint}")
     private String mdmsEndpoint;
 
+    //NOTIFICATION TOPICS
+    @Value ("${kafka.topics.notification.sms}")
+    private String smsNotifTopic;
+
+    @Value ("${kafka.topics.notification.email}")
+    private String emailNotifTopic;
+
+    @Value ("${kafka.topics.receipt.create}")
+    private String receiptTopic;
+
+    @Value ("${kafka.topics.notification.pg.save.txns}")
+    private String pgTopic;
+
+    @Value ("${egov.localization.statelevel}")
+    private Boolean isStateLevel;
+
+    @Value ("${notif.sms.enabled}")
+    private Boolean isSMSNotificationEnabled;
+
+    @Value ("${notif.email.enabled}")
+    private Boolean isEmailNotificationEnabled;
+
+    //localization
+
+    @Value ("${egov.localization.statelevel}")
+    private Boolean isLocalizationStateLevel;
+
+    @Value ("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value ("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value ("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    // url shortner
+
+    @Value ("${egov.url.shortner.host}")
+    private String urlShortnerHost;
+
+    @Value ("${egov.url.shortner.endpoint}")
+    private String urlShortnerEndpoint;
+
+    @Value ("${state.level.tenant.id}")
+    private String stateLevelTenantId;
+
+    //USER EVENTS
+    @Value ("${egov.ui.app.host}")
+    private String uiAppHost;
+
+    @Value ("${egov.usr.events.create.topic}")
+    private String saveUserEventsTopic;
+
+    @Value ("${egov.user.event.notification.enabled}")
+    private Boolean isUserEventsNotificationEnabled;
+
+    @Value ("${egov.notif.view.property}")
+    private String viewPropertyLink;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
