@@ -46,10 +46,8 @@ public class DocumentController {
     @PostMapping (value = "/_create")
     public ResponseEntity<DocumentResponse> createDocumet(@Valid @RequestBody IlmsDocumentRequest request,
             @Valid @ModelAttribute ILMSCaseSearchCriteria criteria) {
-        Document document = documentService.createDocument(request, criteria);
-        List<Document> documents = new ArrayList<>();
-        documents.add(document);
-        DocumentResponse response = DocumentResponse.builder().documents(documents).build();
+        List<Document> document = documentService.createDocument(request, criteria);
+        DocumentResponse response = DocumentResponse.builder().documents(document).build();
         log.info("DocumentController :: search() : END With Response [ " + response + " ]");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

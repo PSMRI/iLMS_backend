@@ -50,26 +50,28 @@ public class DocumentService {
         return documentResponse;
     }
 
-    public Document createDocument(IlmsDocumentRequest request, ILMSCaseSearchCriteria criteria) {
+    public List<Document> createDocument(IlmsDocumentRequest request, ILMSCaseSearchCriteria criteria) {
         documentValidator.createDocumentValidator(request);
+        request.getDocument().forEach(document -> {
         List<String> ids = new ArrayList<>();
-        ids.add(request.getDocument().getCaseId());
+        ids.add(document.getCaseId());
         ILMSCaseSearchCriteria criteria1 = ILMSCaseSearchCriteria.builder().id(ids).build();
         ILMSCaseResponse caseResponse = ilmsCaseRepository.getILMSCaseData(criteria1);
         if (!caseResponse.getIlmsCases().isEmpty()) {
             caseResponse.getIlmsCases().forEach(ilmsCase -> {
-                if (!request.getDocument().getCaseId().equalsIgnoreCase(ilmsCase.getId())) {
+                if (!document.getCaseId().equalsIgnoreCase(ilmsCase.getId())) {
                     throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
-                            "Case Not Found For The CaseId  [ " + request.getDocument().getCaseId() + " ]");
+                            "Case Not Found For The CaseId  [ " + document.getCaseId() + " ]");
                 }
-                request.getDocument().setStatus(Status.ACTIVE);
+                document.setStatus(Status.ACTIVE);
                 documentEnrichmentService.enrichmentDocumentCreateRequest(request);
-                producer.push(ilmsConfiguration.getCreateDocumentTopic(), request);
             });
         } else {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
                     "CaseList Not Found In The System [ " + caseResponse.getIlmsCases() + " ]");
         }
+        });
+        producer.push(ilmsConfiguration.getCreateDocumentTopic(), request);
         return request.getDocument();
     }
 }

@@ -51,17 +51,19 @@ public class DocumentValidator {
     }
 
     public void createDocumentValidator(IlmsDocumentRequest request) {
-        if (!StringUtils.isNotBlank(request.getDocument().getCaseId())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "caseId is mandatory [ " + request.getDocument().getCaseId() + " ]");
+        request.getDocument().forEach(document -> {
+        if (!StringUtils.isNotBlank(document.getCaseId())) {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "caseId is mandatory [ " + document.getCaseId() + " ]");
         }
-        if (!StringUtils.isNotBlank(request.getDocument().getDocumentType())) {
+        if (!StringUtils.isNotBlank(document.getDocumentType())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "documentType is mandatory [ " + request.getDocument().getDocumentType() + " ]");
+                    "documentType is mandatory [ " + document.getDocumentType() + " ]");
         }
-        if (!StringUtils.isNotBlank(request.getDocument().getFileStoreId())) {
+        if (!StringUtils.isNotBlank(document.getFileStoreId())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "fileStoreId is mandatory [ " + request.getDocument().getFileStoreId() + " ]");
+                    "fileStoreId is mandatory [ " + document.getFileStoreId() + " ]");
         }
+        });
 
         // todo mdms validation for document create
         Map<String, String> errorMap = new HashMap<>();
@@ -72,33 +74,31 @@ public class DocumentValidator {
     }
 
     private void validateMasterData(IlmsDocumentRequest request, Map<String, String> errorMap) {
-
-        Document document = request.getDocument();
-        ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(Collections.singletonList(request.getDocument().getCaseId())).build();
-        ILMSCaseResponse ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
+        request.getDocument().forEach(document -> {
+        ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(Collections.singletonList(document.getCaseId())).build();
+            ILMSCaseResponse ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
+        if (ilmsCaseResponse.getIlmsCases().size() <= 0){
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                    "caseDetails Not Found [ " + ilmsCaseResponse.getIlmsCases()+ " ]");
+        }
         String tenantId = ilmsCaseResponse.getIlmsCases().get(0).getTenantId();
-
         List<String> masterNames = new ArrayList<>(Collections.singletonList(ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY
-
         ));
-
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",
                 ILMSConstants.JSONPATH_CODES, request.getRequestInfo());
-
         if (null != codes) {
             validateMDMSData(masterNames, codes);
             validateCodes(document, codes, errorMap);
         } else {
             errorMap.put("MASTER_FETCH_FAILED", "Couldn't fetch master data for validation");
         }
-
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
+        });
     }
 
     private void validateMDMSData(List<String> masterNames, Map<String, List<String>> codes) {
-
         Map<String, String> errorMap = new HashMap<>();
         for (String masterName : masterNames) {
             if (CollectionUtils.isEmpty(codes.get(masterName))) {
