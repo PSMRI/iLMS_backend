@@ -73,6 +73,7 @@ public class HearingService {
                 hearingRequest.getHearing().getPetitioner().setCaseId(hearingRequest.getHearing().getCaseId());
                 hearingRequest.getHearing().getRespondent().setCaseId(hearingRequest.getHearing().getCaseId());
                 hearingRequest.getHearing().setHearingNumber(hearingDetailsRepository.getMaxValueOfHearing(hearingRequest.getHearing().getCaseId()));
+                hearingRequest.getHearing().getPayment().setStatus(Status.ACTIVE);
                 List<ILMSParty> partyList = hearingDetailsRepository.getGetFromPartyQuery(hearingRequest.getHearing().getCaseId());
                 for (ILMSParty party : partyList) {
                     if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
@@ -86,12 +87,12 @@ public class HearingService {
                 hearingDetailsValidator.createValidator(hearingRequest);
                 hearingEnrichmentService.enrichHearingCreateRequest(hearingRequest);
                 producer.push(ilmsConfiguration.getCreateHearingDetailsTopic(), hearingRequest);
-            }else {
+            } else {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "CaseNumber Invalid");
             }
-        }else {
-                throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available for this Hearing");
-            }
+        } else {
+            throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available for this Hearing");
+        }
 
         return hearingRequest.getHearing();
     }

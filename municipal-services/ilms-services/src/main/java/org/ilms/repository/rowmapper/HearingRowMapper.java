@@ -7,27 +7,30 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.databind.JsonNode;
 import org.egov.tracer.model.CustomException;
 import org.ilms.web.model.AuditDetails;
 import org.ilms.web.model.Court;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.ILMSParty;
+import org.ilms.web.model.Payment;
 import org.ilms.web.model.enums.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Repository
 public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
-    private ILMSParty petitioner = new ILMSParty();
-    private ILMSParty respondent = new ILMSParty();
+    private final ILMSParty petitioner = new ILMSParty();
+
+    private final ILMSParty respondent = new ILMSParty();
+
     @Autowired
     private ObjectMapper mapper;
+
     private int fullCount = 0;
 
     public int getFullCount() {
@@ -41,20 +44,20 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
     @Override
     public List<Hearing> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-        Map<String, Hearing> ilmsHearingMap =  new LinkedHashMap<String, Hearing>();
+        Map<String, Hearing> ilmsHearingMap = new LinkedHashMap<String, Hearing>();
         this.setFullCount(0);
         while (rs.next()) {
             System.out.println(rs);
             String duplicacyCheck = "";
             Hearing currentHearing = new Hearing();
 
-            AuditDetails auditDetails = AuditDetails.builder()
-                    .createdTime(rs.getLong("hearing_createdtime")).createdBy(rs.getString("hearing_createdby"))
-                    .lastModifiedBy(rs.getString("hearing_lastmodifiedby")).lastModifiedTime(rs.getLong("hearing_lastmodifiedtime"))
-                    .build();
+            AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("hearing_createdtime"))
+                                                    .createdBy(rs.getString("hearing_createdby"))
+                                                    .lastModifiedBy(rs.getString("hearing_lastmodifiedby"))
+                                                    .lastModifiedTime(rs.getLong("hearing_lastmodifiedtime")).build();
 
             // TODO fill the ILMSCase object with data in the result set record
-            if (!duplicacyCheck.equals(rs.getString("hearing_id")) && Status.valueOf(rs.getString("hearing_status"))==Status.ACTIVE) {
+            if (!duplicacyCheck.equals(rs.getString("hearing_id")) && Status.valueOf(rs.getString("hearing_status")) == Status.ACTIVE) {
                 String id = rs.getString("hearing_id");
                 duplicacyCheck = id;
                 String hearingNumber = rs.getString("hearing_number");
@@ -69,8 +72,8 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 String requiredOfficer = rs.getString("hearing_required_officer");
                 Long affidavitFilingDate = rs.getLong("affidavit_filing_date");
                 Long affidavitFilingDueDate = rs.getLong("affidavit_filing_due_date");
-                String caseNumber= rs.getString("hearing_case_number");
-                String oathNumber= rs.getString("hearing_oath_number");
+                String caseNumber = rs.getString("hearing_case_number");
+                String oathNumber = rs.getString("hearing_oath_number");
                 Long firstHearingDate = rs.getLong("first_hearing_date");
                 Long previousHearingDate = rs.getLong("previous_hearing_date");
                 Long nextHearingDate = rs.getLong("next_hearing_date");
@@ -82,13 +85,13 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 Object additionalDetails = getAdditionalDetail("hearing_additionalDetails", rs);
                 this.setFullCount((rs.getInt("full_count")));
                 if (currentHearing == null) {
-                    currentHearing = Hearing.builder().id(id).hearingNumber(hearingNumber).additionalDetails(additionalDetails)
-                            .caseId(caseId).judgeName(judgeName).hearingDate(hearingDate).courtId(courtId).firstHearingDate(firstHearingDate)
-                            .previousHearingDate(previousHearingDate).nextHearingDate(nextHearingDate).isPresenceRequired(isPresenceRequired)
-                            .hearingType(hearingType).departmentOfficer(departmentOfficer).remarks(remarks).status(Status.valueOf(status))
-                            .businessDate(businessDate).hearingPurpose(hearingPurpose).requiredOfficer(requiredOfficer).auditDetails(auditDetails)
-                            .affidavitFilingDate(affidavitFilingDate).affidavitFilingDueDate(affidavitFilingDueDate).caseNumber(caseNumber).oathNumber(oathNumber)
-                            .build();
+                    currentHearing = Hearing.builder().id(id).hearingNumber(hearingNumber).additionalDetails(additionalDetails).caseId(caseId)
+                                            .judgeName(judgeName).hearingDate(hearingDate).courtId(courtId).firstHearingDate(firstHearingDate)
+                                            .previousHearingDate(previousHearingDate).nextHearingDate(nextHearingDate)
+                                            .isPresenceRequired(isPresenceRequired).hearingType(hearingType).departmentOfficer(departmentOfficer)
+                                            .remarks(remarks).status(Status.valueOf(status)).businessDate(businessDate).hearingPurpose(hearingPurpose)
+                                            .requiredOfficer(requiredOfficer).auditDetails(auditDetails).affidavitFilingDate(affidavitFilingDate)
+                                            .affidavitFilingDueDate(affidavitFilingDueDate).caseNumber(caseNumber).oathNumber(oathNumber).build();
 
                     ilmsHearingMap.put(id, currentHearing);
                 }
@@ -98,20 +101,32 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
         return new ArrayList<>(ilmsHearingMap.values());
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings ("unused")
     private void addChildrenToHearingDetails(ResultSet rs, Hearing hearing) throws SQLException {
         // TODO add all the child data petitioner, respondant, court, advocate
 
-        if(Status.valueOf(rs.getString("court_status"))==Status.ACTIVE){
-            AuditDetails auditDetails = AuditDetails.builder()
-                    .createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
-                    .lastModifiedBy(rs.getString("court_lastmodifiedby")).lastModifiedTime(rs.getLong("court_lastmodifiedtime"))
-                    .build();
+        if (Status.valueOf(rs.getString("court_status")) == Status.ACTIVE) {
+            AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
+                                                    .lastModifiedBy(rs.getString("court_lastmodifiedby"))
+                                                    .lastModifiedTime(rs.getLong("court_lastmodifiedtime")).build();
 
             Court court = Court.builder().id(rs.getString("court_id")).courtNumber(rs.getString("court_number")).courtName(rs.getString("court_name"))
-                    .district(rs.getString("court_district")).state(rs.getString("court_state")).bench(rs.getString("court_bench")).division(rs.getString("court_division"))
-                    .hearingId(rs.getString("court_hearingId")).status(Status.valueOf(rs.getString("court_status"))).auditDetails(auditDetails).build();
+                               .district(rs.getString("court_district")).state(rs.getString("court_state")).bench(rs.getString("court_bench"))
+                               .division(rs.getString("court_division")).hearingId(rs.getString("court_hearingId"))
+                               .status(Status.valueOf(rs.getString("court_status"))).auditDetails(auditDetails).build();
             hearing.setCourt(court);
+        }
+        if (Status.valueOf(rs.getString("payment_status")) == Status.ACTIVE) {
+            AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("payment_createdtime"))
+                                                    .createdBy(rs.getString("payment_createdby"))
+                                                    .lastModifiedBy(rs.getString("payment_lastmodifiedby"))
+                                                    .lastModifiedTime(rs.getLong("payment_lastmodifiedtime")).build();
+
+            Payment payment = Payment.builder().id(rs.getString("payment_id")).caseId(rs.getString("payment_case_id"))
+                                     .hearingId(rs.getString("payment_hearing_id")).fineImposedDate(rs.getLong("payment_fine_imposed_date"))
+                                     .fineDueDate(rs.getLong("payment_fine_due_date")).fineAmount(rs.getString("payment_fine_amount"))
+                                     .status(Status.valueOf(rs.getString("payment_status"))).auditDetails(auditDetails).build();
+            hearing.setPayment(payment);
         }
     }
 
@@ -129,7 +144,6 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
         }
         return additionalDetail;
     }
-
 
 }
 

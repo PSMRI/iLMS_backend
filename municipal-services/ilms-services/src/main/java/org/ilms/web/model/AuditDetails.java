@@ -1,6 +1,5 @@
 package org.ilms.web.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,17 +12,16 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuditDetails   {
+public class AuditDetails {
     @JsonProperty ("createdBy")
-    private String createdBy ;
+    private String createdBy;
 
-    @JsonProperty("lastModifiedBy")
+    @JsonProperty ("lastModifiedBy")
     private String lastModifiedBy;
 
-    @JsonProperty("createdTime")
+    @JsonProperty ("createdTime")
     private Long createdTime;
 
-    @JsonProperty("lastModifiedTime")
+    @JsonProperty ("lastModifiedTime")
     private Long lastModifiedTime;
-
 }

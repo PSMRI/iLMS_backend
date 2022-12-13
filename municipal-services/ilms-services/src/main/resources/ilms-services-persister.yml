@@ -345,6 +345,27 @@ serviceMaps:
 
             - jsonPath: $.hearingDetails.petitioner.advocate.auditDetails.createdTime
 
+        - query: INSERT INTO ilms_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: hearingDetails.payment
+          jsonMaps:
+            - jsonPath: $.hearingDetails.payment.id
+
+            - jsonPath: $.hearingDetails.caseId
+
+            - jsonPath: $.hearingDetails.id
+
+            - jsonPath: $.hearingDetails.payment.fineImposedDate
+
+            - jsonPath: $.hearingDetails.payment.fineDueDate
+
+            - jsonPath: $.hearingDetails.payment.fineAmount
+
+            - jsonPath: $.hearingDetails.payment.status
+
+            - jsonPath: $.hearingDetails.payment.auditDetails.createdBy
+
+            - jsonPath: $.hearingDetails.payment.auditDetails.createdTime
+
     - version: 1.0
       description: Add cases in ilms_case table
       fromTopic: save-judgement-case-application
@@ -746,6 +767,29 @@ serviceMaps:
 
             - jsonPath: $.hearingDetails.petitioner.advocate.id
 
+        - query: INSERT INTO ilms_payment_auditlog SELECT * FROM ilms_payment WHERE id = ?;
+
+          basePath: hearingDetails.payment
+          jsonMaps:
+            - jsonPath: $.hearingDetails.payment.id
+
+        - query: UPDATE ilms_payment SET fine_imposed_date=?, fine_due_date=?, fine_amount=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+          basePath: hearingDetails.payment
+          jsonMaps:
+
+            - jsonPath: $.hearingDetails.payment.fineImposedDate
+
+            - jsonPath: $.hearingDetails.payment.fineDueDate
+
+            - jsonPath: $.hearingDetails.payment.fineAmount
+
+            - jsonPath: $.hearingDetails.payment.status
+
+            - jsonPath: $.hearingDetails.payment.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hearingDetails.payment.auditDetails.lastModifiedTime
+
+            - jsonPath: $.hearingDetails.payment.id
 
 
     - version: 1.0

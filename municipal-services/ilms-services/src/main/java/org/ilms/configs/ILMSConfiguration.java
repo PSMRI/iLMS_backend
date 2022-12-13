@@ -100,6 +100,12 @@ public class ILMSConfiguration {
     @Value ("${egov.ilms.idgen.respondent.advocate.name}")
     private String respondentAdvocateIdgenName;
 
+    @Value ("${egov.ilms.idgen.hearing.payment.id.name}")
+    private String paymentIdgenName;
+
+    @Value ("${egov.ilms.idgen.hearing.payment.id.format}")
+    private String paymentIdgenFormat;
+
     @Value ("${egov.ilms.idgen.respondent.advocate.format}")
     private String respondentAdvocateIdgenFormat;
 
