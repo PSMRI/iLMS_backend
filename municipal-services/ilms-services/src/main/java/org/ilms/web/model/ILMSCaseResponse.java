@@ -26,9 +26,6 @@ public class ILMSCaseResponse {
     @JsonProperty("caseList")
     private List<ILMSCase> ilmsCases = null;
 
-    @JsonProperty("workflow")
-    private Workflow workflow = null;
-
     public ILMSCaseResponse responseInfo(ResponseInfo responseInfo) {
         this.responseInfo = responseInfo;
         return this;
@@ -69,24 +66,7 @@ public class ILMSCaseResponse {
         this.ilmsCases = ilms;
     }
 
-    public ILMSCaseResponse workflow(Workflow workflow) {
-        this.workflow = workflow;
-        return this;
-    }
 
-    /**
-     * Get workflow
-     * @return workflow
-     **/
-
-    @Valid
-    public Workflow getWorkflow() {
-        return workflow;
-    }
-
-    public void setWorkflow(Workflow workflow) {
-        this.workflow = workflow;
-    }
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -98,13 +78,7 @@ public class ILMSCaseResponse {
         }
         ILMSCaseResponse ilmsCaseResponse = (ILMSCaseResponse) o;
         return Objects.equals(this.responseInfo, ilmsCaseResponse.responseInfo) &&
-                Objects.equals(this.ilmsCases, ilmsCaseResponse.ilmsCases) &&
-                Objects.equals(this.workflow, ilmsCaseResponse.workflow);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(responseInfo, ilmsCases, workflow);
+                Objects.equals(this.ilmsCases, ilmsCaseResponse.ilmsCases);
     }
 
     @Override
@@ -114,7 +88,6 @@ public class ILMSCaseResponse {
 
         sb.append("    responseInfo: ").append(toIndentedString(responseInfo)).append("\n");
         sb.append("    ilmsCases: ").append(toIndentedString(ilmsCases)).append("\n");
-        sb.append("    workflow: ").append(toIndentedString(workflow)).append("\n");
         sb.append("}");
         return sb.toString();
     }
