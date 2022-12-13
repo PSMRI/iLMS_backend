@@ -23,7 +23,4 @@ public class ILMSCaseRequest {
     @JsonProperty("ilmsCase")
     private ILMSCase ilmsCase ;
 
-    @JsonProperty("workflow")
-    private Workflow workflow ;
-
 }

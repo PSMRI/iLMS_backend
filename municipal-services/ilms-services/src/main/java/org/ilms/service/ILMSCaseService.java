@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
+import org.ilms.web.model.enums.CreationReason;
 import com.itextpdf.text.*;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -68,6 +68,9 @@ public class ILMSCaseService {
 
     @Autowired
     private CaseUtils caseUtils;
+
+    @Autowired
+    private WorkflowService workflowService;
 
     public ILMSCaseService() {
     }
@@ -130,12 +133,17 @@ public class ILMSCaseService {
         ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
         ilmsCaseRequest.getIlmsCase().getPetitioner().setStatus(Status.ACTIVE);
         ilmsCaseRequest.getIlmsCase().getRespondent().setStatus(Status.ACTIVE);
-        ilmsCaseRequest.getIlmsCase().setStatus(Status.ACTIVE);
         ilmsCaseRequest.getIlmsCase().getAct().setStatus(Status.ACTIVE);
+        ilmsCaseRequest.getIlmsCase().setStatus(Status.ACTIVE);
         ilmsCaseValidator.validateCreate(ilmsCaseRequest);
         ilmsCaseValidator.cnrDuplicacyCheck(ilmsCaseRequest);
         ilmsCaseValidator.caseNumberDuplicacyCheck(ilmsCaseRequest);
         enrichmentService.enrichCaseCreateRequest(ilmsCaseRequest);
+        if (ilmsConfiguration.getIsWorkflowEnabled()
+                && !ilmsCaseRequest.getIlmsCase().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
+            workflowService.updateWorkflow(ilmsCaseRequest, ilmsCaseRequest.getIlmsCase().getCreationReason());
+
+        }
         producer.push(ilmsConfiguration.getCreateCaseTopic(), ilmsCaseRequest);
         return ilmsCaseRequest.getIlmsCase();
     }

@@ -1,6 +1,11 @@
 package org.ilms.util;
 
+import java.util.Arrays;
 import java.util.List;
+import org.ilms.web.model.enums.CreationReason;
+import org.ilms.web.model.workflow.ProcessInstance;
+import org.ilms.web.model.workflow.ProcessInstanceRequest;
+import org.ilms.configs.ILMSConfiguration;
 import org.ilms.service.EnrichmentService;
 import org.ilms.web.model.AuditDetails;
 import org.ilms.web.model.Document;
@@ -14,6 +19,10 @@ import org.springframework.util.StringUtils;
 public class CaseUtils {
     @Autowired
     private EnrichmentService enrichmentService;
+
+    @Autowired
+    private ILMSConfiguration configs;
+
 
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
@@ -272,5 +281,22 @@ public class CaseUtils {
         request.setIlmsCase(oldData);
         enrichmentService.enrichCaseUpdateRequest(request);
         return request;
+    }
+
+    public ProcessInstanceRequest getWfForCaseCreate(ILMSCaseRequest request, CreationReason creationReasonForWorkflow) {
+
+        ILMSCase ilmsCase = request.getIlmsCase();
+        ProcessInstance wf = null != ilmsCase.getWorkflow() ? ilmsCase.getWorkflow() : new ProcessInstance();
+
+        wf.setBusinessId(ilmsCase.getId());
+        wf.setTenantId(ilmsCase.getTenantId());
+        wf.setBusinessService(configs.getCreatePTWfName());
+        wf.setModuleName(configs.getPropertyModuleName());
+        wf.setAction("Create");
+        ilmsCase.setWorkflow(wf);
+        return ProcessInstanceRequest.builder()
+                .processInstances(Arrays.asList(wf))
+                .requestInfo(request.getRequestInfo())
+                .build();
     }
 }

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
@@ -17,8 +19,12 @@ import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import org.ilms.web.model.idGen.IdGenerationRequest;
+import org.ilms.web.model.idGen.IdGenerationResponse;
+import org.ilms.web.model.idGen.IdRequest;
+import org.ilms.web.model.idGen.IdResponse;
+import org.springframework.util.CollectionUtils;
 
 @Component
 public class CommonUtils {
@@ -79,4 +85,23 @@ public class CommonUtils {
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
         return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
     }
+    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {
+
+        List<IdRequest> reqList = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
+        }
+
+        IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
+        StringBuilder uri = new StringBuilder(configs.getIdGenHost()).append(configs.getIdGenPath());
+        IdGenerationResponse response = mapper.convertValue(restRepo.fetchResult(uri, request).get(), IdGenerationResponse.class);
+
+        List<IdResponse> idResponses = response.getIdResponses();
+
+        if (CollectionUtils.isEmpty(idResponses))
+            throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+
+        return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+    }
+
 }
