@@ -172,6 +172,27 @@ public class HearingValidator {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "division for court is mandatory");
             }
         }
+        //checking payment request
+        if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
+            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate().toString())) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "FineImposedDate is mandatory");
+            } else {
+                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate()))
+                    ;
+            }
+            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPayment().getFineDueDate().toString())) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fineDueDate is mandatory");
+            } else {
+                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate()))
+                    ;
+            }
+            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fineAmount is mandatory");
+            }
+        } else {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Payment is mandatory");
+        }
+
         Map<String, String> errorMap = new HashMap<>();
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);

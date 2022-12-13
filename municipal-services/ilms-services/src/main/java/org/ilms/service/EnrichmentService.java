@@ -97,6 +97,10 @@ public class EnrichmentService {
             request.getHearing().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
             ilmsCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
         }
+        if (request.getHearing().getPayment() != null) {
+            request.getHearing().getPayment().setAuditDetails(auditDetails);
+            ilmsCase.getPayment().setAuditDetails(auditDetails);
+        }
     }
 
     private void setIdgenIds(ILMSCaseRequest request) {

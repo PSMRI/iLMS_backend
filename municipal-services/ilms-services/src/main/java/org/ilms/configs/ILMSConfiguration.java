@@ -1,6 +1,7 @@
 package org.ilms.configs;
 
 import java.util.TimeZone;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,50 @@ import lombok.NoArgsConstructor;
 public class ILMSConfiguration {
     @Value ("${app.timezone}")
     private String timeZone;
+
+    //    MDMS Config
+
+    @Value("${ilms.business.codes}")
+    private List<String> businessServiceList;
+
+    @Value("${workflow.host}")
+    private String wfHost;
+
+    @Value("${workflow.transition.path}")
+    private String wfTransitionPath;
+
+    @Value("${workflow.businessservice.search.path}")
+    private String wfBusinessServiceSearchPath;
+
+    @Value("${workflow.processinstance.search.path}")
+    private String wfProcessInstanceSearchPath;
+
+    @Value("${is.workflow.enabled}")
+    private Boolean isWorkflowEnabled;
+
+    @Value("${ilms.create.workflow.name}")
+    private String createPTWfName;
+
+    @Value("${ilms.legacy.entry.workflow.name}")
+    private String LegacyPTWfName;
+
+    @Value("${ilms.update.workflow.name}")
+    private String updatePTWfName;
+
+    @Value("${is.mutation.workflow.enabled}")
+    private Boolean isMutationWorkflowEnabled;
+
+    @Value("${mutation.workflow.name}")
+    private String mutationWfName;
+
+    @Value("${mutation.workflow.open.state}")
+    private String mutationOpenState;
+
+    @Value("${workflow.status.active}")
+    private String wfStatusActive;
+
+    @Value("${ilms.module.name}")
+    private String propertyModuleName;
 
     // Idgen Config
     @Value ("${egov.idgen.host}")
@@ -54,6 +99,12 @@ public class ILMSConfiguration {
 
     @Value ("${egov.ilms.idgen.respondent.advocate.name}")
     private String respondentAdvocateIdgenName;
+
+    @Value ("${egov.ilms.idgen.hearing.payment.id.name}")
+    private String paymentIdgenName;
+
+    @Value ("${egov.ilms.idgen.hearing.payment.id.format}")
+    private String paymentIdgenFormat;
 
     @Value ("${egov.ilms.idgen.respondent.advocate.format}")
     private String respondentAdvocateIdgenFormat;

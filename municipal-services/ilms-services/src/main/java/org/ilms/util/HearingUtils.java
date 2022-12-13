@@ -1,9 +1,9 @@
 package org.ilms.util;
 
+import java.util.Objects;
 import org.ilms.service.EnrichmentService;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingRequest;
-import org.ilms.web.model.HearingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -13,7 +13,7 @@ public class HearingUtils {
     @Autowired
     private EnrichmentService enrichmentService;
 
-    public HearingRequest prepareHearingDetailsModalForUpdate(HearingRequest hearingDetailsRequest,Hearing oldHearingRequest ) {
+    public HearingRequest prepareHearingDetailsModalForUpdate(HearingRequest hearingDetailsRequest, Hearing oldHearingRequest) {
         HearingRequest updatedRequest = new HearingRequest();
         updatedRequest.setRequestInfo(hearingDetailsRequest.getRequestInfo());
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseId())) {
@@ -226,6 +226,17 @@ public class HearingUtils {
             }
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAdditionalDetails())) {
                 oldHearingRequest.setAdditionalDetails(hearingDetailsRequest.getHearing().getAdditionalDetails());
+            }
+        }
+        if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
+            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate())) {
+                oldHearingRequest.getPayment().setFineImposedDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate());
+            }
+            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineDueDate())) {
+                oldHearingRequest.getPayment().setFineDueDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate());
+            }
+            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
+                oldHearingRequest.getPayment().setFineAmount(hearingDetailsRequest.getHearing().getPayment().getFineAmount());
             }
         }
         updatedRequest.setHearing(oldHearingRequest);

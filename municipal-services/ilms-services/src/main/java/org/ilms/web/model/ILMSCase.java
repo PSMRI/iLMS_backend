@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ilms.web.model.enums.CaseHierarchy;
 import org.ilms.web.model.enums.Status;
+import org.ilms.web.model.enums.CreationReason;
+import org.ilms.web.model.workflow.ProcessInstance;
+import org.javers.core.metamodel.annotation.DiffIgnore;
+import javax.validation.constraints.NotNull;
 
 @Builder
 @AllArgsConstructor
@@ -121,5 +125,13 @@ public class ILMSCase {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+
+    @JsonProperty("creationReason")
+    @NotNull(message="The value provided is either Invald or null")
+    private CreationReason creationReason;
+
+    @JsonProperty("workflow")
+    @DiffIgnore
+    private ProcessInstance workflow;
 
 }
