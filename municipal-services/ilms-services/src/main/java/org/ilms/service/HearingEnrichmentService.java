@@ -9,15 +9,15 @@ import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
-import org.ilms.repository.ILMSCaseRepository;
+import org.ilms.repository.CaseRepository;
 import org.ilms.repository.IdGenRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.web.model.AuditDetails;
+import org.ilms.web.model.CaseResponse;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingRequest;
-import org.ilms.web.model.ILMSCaseResponse;
-import org.ilms.web.model.ILMSCaseSearchCriteria;
 import org.ilms.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HearingEnrichmentService {
     @Autowired
-    private ILMSConfiguration config;
+    private ILMSConfiguration ilmsConfiguration;
 
     @Autowired
     private CaseUtils caseUtils;
@@ -37,7 +37,7 @@ public class HearingEnrichmentService {
     private IdGenRepository idGenRepository;
 
     @Autowired
-    private ILMSCaseRepository ilmsCaseRepository;
+    private CaseRepository caseRepository;
 
     public void enrichHearingCreateRequest(HearingRequest hearingRequest) {
 
@@ -76,22 +76,24 @@ public class HearingEnrichmentService {
 
     private void setIdgenIds(HearingRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(Collections.singletonList(request.getHearing().getCaseId())).build();
-        ILMSCaseResponse ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
-        String tenantId = ilmsCaseResponse.getIlmsCases().get(0).getTenantId();
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(request.getHearing().getCaseId())).build();
+        CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+        String tenantId = caseResponse.getCases().get(0).getTenantId();
         Hearing hearing = request.getHearing();
-        List<String> applicationNumbers = getIdList(requestInfo, tenantId, config.getHearingIdgenName(), config.getHearingIdgenFormat(), 1);
+        List<String> applicationNumbers = getIdList(requestInfo, tenantId, ilmsConfiguration.getHearingIdgenName(),
+                ilmsConfiguration.getHearingIdgenFormat(), 1);
         ListIterator<String> itr = applicationNumbers.listIterator();
-        List<String> courtId = getIdList(requestInfo, tenantId, config.getCourtIdGenName(), config.getCourtIdGenFormat(), 1);
+        List<String> courtId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCourtIdgenName(), ilmsConfiguration.getCourtIdgenFormat(), 1);
         ListIterator<String> courtItr = courtId.listIterator();
-        List<String> padvocateId = getIdList(requestInfo, tenantId, config.getPetitionerAdvocateIdgenName(),
-                config.getPetitionerAdvocateIdgenFormat(), 1);
+        List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
+                ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
         ListIterator<String> padvocateItr = padvocateId.listIterator();
 
-        List<String> radvocateId = getIdList(requestInfo, tenantId, config.getRespondentAdvocateIdgenName(),
-                config.getRespondentAdvocateIdgenFormat(), 1);
+        List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
+                ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
         ListIterator<String> radvocateItr = radvocateId.listIterator();
-        List<String> paymentIds = getIdList(requestInfo, tenantId, config.getPaymentIdgenName(), config.getPaymentIdgenFormat(), 1);
+        List<String> paymentIds = getIdList(requestInfo, tenantId, ilmsConfiguration.getPaymentIdgenName(), ilmsConfiguration.getPaymentIdgenFormat(),
+                1);
         ListIterator<String> paymentItr = paymentIds.listIterator();
 
         Map<String, String> errorMap = new HashMap<>();

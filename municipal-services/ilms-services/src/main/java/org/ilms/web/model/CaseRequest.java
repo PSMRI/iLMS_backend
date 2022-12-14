@@ -1,6 +1,5 @@
 package org.ilms.web.model;
 
-import java.util.List;
 import org.egov.common.contract.request.RequestInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -14,11 +13,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class IlmsDocumentRequest {
+public class CaseRequest {
     @JsonProperty ("RequestInfo")
     private RequestInfo RequestInfo;
 
-    @JsonProperty ("document")
-    private List<Document> document;
+    @JsonProperty ("case")
+    private Case cases;
 
 }

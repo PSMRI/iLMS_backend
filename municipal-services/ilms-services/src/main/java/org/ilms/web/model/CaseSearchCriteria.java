@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ILMSCaseSearchCriteria {
+public class CaseSearchCriteria {
     @JsonProperty ("offset")
     private Integer offset;
 

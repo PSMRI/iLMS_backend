@@ -14,8 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
-public class ServiceRequestRepository {
-
+public class ServiceRepository {
     @Autowired
     private RestTemplate restTemplate;
 
@@ -29,9 +28,9 @@ public class ServiceRequestRepository {
 
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Object response = null;
-        log.info("URI: "+uri.toString());
+        log.info("URI: " + uri.toString());
         try {
-            log.info("Request: "+mapper.writeValueAsString(request));
+            log.info("Request: " + mapper.writeValueAsString(request));
             response = restTemplate.postForObject(uri.toString(), request, Map.class);
         } catch (HttpClientErrorException e) {
 
@@ -40,10 +39,9 @@ public class ServiceRequestRepository {
         } catch (Exception e) {
 
             log.error("Exception while fetching from external service: ", e);
-            throw new CustomException("REST_CALL_EXCEPTION : "+uri.toString(),e.getMessage());
+            throw new CustomException("REST_CALL_EXCEPTION : " + uri, e.getMessage());
         }
         return Optional.ofNullable(response);
     }
-
 
 }

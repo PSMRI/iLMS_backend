@@ -2,13 +2,13 @@ package org.ilms.repository.querybuilder;
 
 import java.util.List;
 import org.ilms.configs.ILMSConfiguration;
-import org.ilms.web.model.ILMSCaseSearchCriteria;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
-public class ILMSCaseQueryBuilder {
+public class CaseQueryBuilder {
     private static final String docQuery = "select count(*) OVER() AS document_full_count,* from ilms_document where case_id = ?";
 
     private static final String partyQuery = "Select *, " + "ilms_advocate.id as advocate_id, ilms_advocate.first_name as advocate_firstName, ilms_advocate.last_name as advocate_lastName, ilms_advocate.contact_number as advocate_contactNumber," + "ilms_advocate.party_id as advocate_partyId, ilms_advocate.hearing_id as advocate_hearingId, ilms_advocate.party_type as advocate_partyType, ilms_advocate.status as advocate_status, " + "ilms_advocate.createdby as advocate_createdBy, ilms_advocate.createdtime as advocate_createdTime, ilms_advocate.lastmodifiedby as advocate_lastModifiedBy, ilms_advocate.lastmodifiedtime as advocate_lastModifiedTime " + "from ilms_case_party " + "INNER JOIN ilms_advocate on ilms_advocate.party_id = ilms_case_party.id " + "where case_id = ?";
@@ -18,9 +18,9 @@ public class ILMSCaseQueryBuilder {
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
     @Autowired
-    private ILMSConfiguration config;
+    private ILMSConfiguration ilmsConfiguration;
 
-    public String getILMSCaseSearchQuery(ILMSCaseSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getILMSCaseSearchQuery(CaseSearchCriteria criteria, List<Object> preparedStmtList) {
 
         StringBuilder builder = new StringBuilder(Query);
         if (criteria.getCnrNumber() != null) {
@@ -45,7 +45,6 @@ public class ILMSCaseQueryBuilder {
         } catch (NullPointerException e) {
             preparedStmtList.add("");
         }
-
         List<String> caseId = criteria.getId();
         try {
             if (!CollectionUtils.isEmpty(caseId)) {
@@ -75,28 +74,23 @@ public class ILMSCaseQueryBuilder {
      * @param criteria ilms case search criteria
      * @return the query by replacing the placeholders with preparedStmtList
      */
-    private String addPaginationWrapper(String query, List<Object> preparedStmtList, ILMSCaseSearchCriteria criteria) {
+    private String addPaginationWrapper(String query, List<Object> preparedStmtList, CaseSearchCriteria criteria) {
 
-        int limit = config.getDefaultLimit();
-        int offset = config.getDefaultOffset();
+        int limit = ilmsConfiguration.getDefaultLimit();
+        int offset = ilmsConfiguration.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
-
-        if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit()) {
+        if (criteria.getLimit() != null && criteria.getLimit() <= ilmsConfiguration.getMaxSearchLimit()) {
             limit = criteria.getLimit();
         }
-
-        if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit()) {
-            limit = config.getMaxSearchLimit();
+        if (criteria.getLimit() != null && criteria.getLimit() > ilmsConfiguration.getMaxSearchLimit()) {
+            limit = ilmsConfiguration.getMaxSearchLimit();
         }
-
         if (criteria.getOffset() != null) {
             offset = criteria.getOffset();
         }
-
         StringBuilder orderQuery = new StringBuilder();
         addOrderByClause(orderQuery, criteria);
         finalQuery = finalQuery.replace("{orderBy}", orderQuery.toString());
-
         if (limit == -1) {
             finalQuery = finalQuery.replace("{pagination}", "");
         } else {
@@ -136,16 +130,15 @@ public class ILMSCaseQueryBuilder {
     /**
      *
      */
-    private void addOrderByClause(StringBuilder builder, ILMSCaseSearchCriteria criteria) {
-        if (criteria.getSortBy() == ILMSCaseSearchCriteria.SortBy.caseNumber) {
+    private void addOrderByClause(StringBuilder builder, CaseSearchCriteria criteria) {
+        if (criteria.getSortBy() == CaseSearchCriteria.SortBy.caseNumber) {
             builder.append(" ORDER BY ilms_case.case_number ");
-        } else if (criteria.getSortBy() == ILMSCaseSearchCriteria.SortBy.cnrNumber) {
+        } else if (criteria.getSortBy() == CaseSearchCriteria.SortBy.cnrNumber) {
             builder.append(" ORDER BY ilms_case.cnr_number ");
         }
-
-        if (criteria.getSortOrder() == ILMSCaseSearchCriteria.SortOrder.ASC) {
+        if (criteria.getSortOrder() == CaseSearchCriteria.SortOrder.ASC) {
             builder.append("ASC");
-        } else if (criteria.getSortOrder() == ILMSCaseSearchCriteria.SortOrder.DESC) {
+        } else if (criteria.getSortOrder() == CaseSearchCriteria.SortOrder.DESC) {
             builder.append("DESC");
         }
     }

@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
 
 @Builder
@@ -14,44 +13,43 @@ import org.ilms.web.model.enums.Status;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ILMSParty {
-
+public class Party {
     @JsonProperty ("id")
-    private String id ;
+    private String id;
 
     @JsonProperty ("caseId")
-    private String  caseId  ;
+    private String caseId;
 
     @JsonProperty ("firstName")
-    private String firstName ;
+    private String firstName;
 
     @JsonProperty ("lastName")
-    private String lastName ;
+    private String lastName;
 
     @JsonProperty ("gender")
-    private String gender ;
+    private String gender;
 
     @JsonProperty ("petitionerType")
-    private String petitionerType ;
+    private String petitionerType;
 
     @JsonProperty ("address")
-    private String address ;
+    private String address;
 
     @JsonProperty ("departmentName")
-    private String departmentName ;
+    private String departmentName;
 
     @JsonProperty ("contactNumber")
-    private String contactNumber ;
+    private String contactNumber;
 
     @JsonProperty ("partyType")
-    private String partyType ;
+    private String partyType;
 
     @JsonProperty ("advocate")
-    private Advocate advocate ;
+    private Advocate advocate;
 
     @JsonProperty ("status")
-    private Status status ;
+    private Status status;
 
     @JsonProperty ("auditDetails")
-    private AuditDetails auditDetails ;
+    private AuditDetails auditDetails;
 }

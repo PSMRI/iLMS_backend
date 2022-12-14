@@ -2,37 +2,35 @@ package org.ilms.web.model;
 
 import java.util.List;
 import java.util.Objects;
-
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.egov.common.contract.response.ResponseInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ILMSCaseResponse {
-
-    @JsonProperty("responseInfo")
+public class CaseResponse {
+    @JsonProperty ("responseInfo")
     private ResponseInfo responseInfo = null;
 
     @JsonProperty ("totalCount")
-    private Integer totalCount =null;
+    private Integer totalCount = null;
 
-    @JsonProperty("caseList")
-    private List<ILMSCase> ilmsCases = null;
+    @JsonProperty ("caseList")
+    private List<Case> Cases = null;
 
-    public ILMSCaseResponse responseInfo(ResponseInfo responseInfo) {
+    public CaseResponse responseInfo(ResponseInfo responseInfo) {
         this.responseInfo = responseInfo;
         return this;
     }
 
     /**
      * Get responseInfo
+     *
      * @return responseInfo
      **/
     @NotNull
@@ -46,27 +44,26 @@ public class ILMSCaseResponse {
         this.responseInfo = responseInfo;
     }
 
-    public ILMSCaseResponse ilms(List<ILMSCase> ilms){
-        this.ilmsCases = ilms;
+    public CaseResponse ilms(List<Case> ilms) {
+        this.Cases = ilms;
         return this;
     }
 
     /**
      * Get ilms cases
+     *
      * @return ilms cases
      **/
     @NotNull
 
     @Valid
-    public List<ILMSCase> getIlmsCases() {
-        return ilmsCases;
+    public List<Case> getCases() {
+        return Cases;
     }
 
-    public void setIlmsCases(List<ILMSCase> ilms) {
-        this.ilmsCases = ilms;
+    public void setCases(List<Case> ilms) {
+        this.Cases = ilms;
     }
-
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -76,9 +73,8 @@ public class ILMSCaseResponse {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ILMSCaseResponse ilmsCaseResponse = (ILMSCaseResponse) o;
-        return Objects.equals(this.responseInfo, ilmsCaseResponse.responseInfo) &&
-                Objects.equals(this.ilmsCases, ilmsCaseResponse.ilmsCases);
+        CaseResponse caseResponse = (CaseResponse) o;
+        return Objects.equals(this.responseInfo, caseResponse.responseInfo) && Objects.equals(this.Cases, caseResponse.Cases);
     }
 
     @Override
@@ -87,7 +83,7 @@ public class ILMSCaseResponse {
         sb.append("class ILMSCaseResponse {\n");
 
         sb.append("    responseInfo: ").append(toIndentedString(responseInfo)).append("\n");
-        sb.append("    ilmsCases: ").append(toIndentedString(ilmsCases)).append("\n");
+        sb.append("    ilmsCases: ").append(toIndentedString(Cases)).append("\n");
         sb.append("}");
         return sb.toString();
     }

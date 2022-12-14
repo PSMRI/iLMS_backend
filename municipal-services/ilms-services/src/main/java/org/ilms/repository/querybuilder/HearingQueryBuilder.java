@@ -16,7 +16,7 @@ public class HearingQueryBuilder {
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
     @Autowired
-    private ILMSConfiguration config;
+    private ILMSConfiguration ilmsConfiguration;
 
     public String getHearingSearchQuery(HearingSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(Query);
@@ -47,26 +47,21 @@ public class HearingQueryBuilder {
 
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, HearingSearchCriteria criteria) {
 
-        int limit = config.getDefaultLimit();
-        int offset = config.getDefaultOffset();
+        int limit = ilmsConfiguration.getDefaultLimit();
+        int offset = ilmsConfiguration.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
-
-        if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit()) {
+        if (criteria.getLimit() != null && criteria.getLimit() <= ilmsConfiguration.getMaxSearchLimit()) {
             limit = criteria.getLimit();
         }
-
-        if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit()) {
-            limit = config.getMaxSearchLimit();
+        if (criteria.getLimit() != null && criteria.getLimit() > ilmsConfiguration.getMaxSearchLimit()) {
+            limit = ilmsConfiguration.getMaxSearchLimit();
         }
-
         if (criteria.getOffset() != null) {
             offset = criteria.getOffset();
         }
-
         StringBuilder orderQuery = new StringBuilder();
         addOrderByClause(orderQuery, criteria);
         finalQuery = finalQuery.replace("{orderBy}", orderQuery.toString());
-
         if (limit == -1) {
             finalQuery = finalQuery.replace("{pagination}", "");
         } else {
@@ -74,7 +69,6 @@ public class HearingQueryBuilder {
             preparedStmtList.add(offset);
             preparedStmtList.add(limit);
         }
-
         return finalQuery;
     }
 
@@ -110,7 +104,6 @@ public class HearingQueryBuilder {
         } else if (criteria.getSortBy() == HearingSearchCriteria.SortBy.caseId) {
             builder.append(" ORDER BY ilms_hearing.case_id ");
         }
-
         if (criteria.getSortOrder() == HearingSearchCriteria.SortOrder.ASC) {
             builder.append("ASC");
         } else if (criteria.getSortOrder() == HearingSearchCriteria.SortOrder.DESC) {
@@ -121,5 +114,4 @@ public class HearingQueryBuilder {
     public String getMaxHearingQuery() {
         return maxValueQuery;
     }
-
 }

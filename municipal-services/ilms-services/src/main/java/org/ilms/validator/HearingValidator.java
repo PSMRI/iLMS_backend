@@ -9,14 +9,14 @@ import java.util.Map;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
-import org.ilms.repository.ILMSCaseRepository;
+import org.ilms.repository.CaseRepository;
 import org.ilms.util.CommonUtils;
 import org.ilms.util.ILMSConstants;
 import org.ilms.util.ILMSErrorConstants;
+import org.ilms.web.model.CaseResponse;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingRequest;
-import org.ilms.web.model.ILMSCaseResponse;
-import org.ilms.web.model.ILMSCaseSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -29,7 +29,7 @@ public class HearingValidator {
     CommonUtils commonUtils;
 
     @Autowired
-    private ILMSCaseRepository ilmsCaseRepository;
+    private CaseRepository caseRepository;
 
     private static Map<String, String> validateCodes(Hearing hearing, Map<String, List<String>> codes, Map<String, String> errorMap) {
 
@@ -211,9 +211,9 @@ public class HearingValidator {
     private void validateMasterData(Hearing hearing, HearingRequest request, Map<String, String> errorMap) {
 
         String caseId = hearing.getCaseId();
-        ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
-        ILMSCaseResponse ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
-        String tenantId = ilmsCaseResponse.getIlmsCases().get(0).getTenantId();
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
+        CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+        String tenantId = caseResponse.getCases().get(0).getTenantId();
 
         List<String> masterNames = new ArrayList<>(
                 Arrays.asList(ILMSConstants.MDMS_ILMS_COURT_NAME, ILMSConstants.MDMS_ILMS_DISTRICT, ILMSConstants.MDMS_ILMS_STATE,

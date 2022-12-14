@@ -1,7 +1,7 @@
 package org.ilms.util;
 
 import java.util.Objects;
-import org.ilms.service.EnrichmentService;
+import org.ilms.service.CaseEnrichmentService;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class HearingUtils {
     @Autowired
-    private EnrichmentService enrichmentService;
+    private CaseEnrichmentService caseEnrichmentService;
 
     public HearingRequest prepareHearingDetailsModalForUpdate(HearingRequest hearingDetailsRequest, Hearing oldHearingRequest) {
         HearingRequest updatedRequest = new HearingRequest();
@@ -240,7 +240,7 @@ public class HearingUtils {
             }
         }
         updatedRequest.setHearing(oldHearingRequest);
-        enrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
+        caseEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
         return updatedRequest;
     }
 }
