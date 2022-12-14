@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
-import org.ilms.repository.ILMSCaseRepository;
+import org.ilms.repository.CaseRepository;
 import org.ilms.util.CommonUtils;
 import org.ilms.util.ILMSConstants;
 import org.ilms.util.ILMSErrorConstants;
-import org.ilms.web.model.ILMSCaseResponse;
-import org.ilms.web.model.ILMSCaseSearchCriteria;
+import org.ilms.web.model.CaseResponse;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.Judgement;
 import org.ilms.web.model.JudgementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class JudgementValidator {
     CommonUtils commonUtils;
 
     @Autowired
-    private ILMSCaseRepository ilmsCaseRepository;
+    private CaseRepository caseRepository;
 
     private static Map<String, String> validateCodes(Judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
 
@@ -101,9 +101,9 @@ public class JudgementValidator {
     private void validateMasterData(Judgement judgement, JudgementRequest request, Map<String, String> errorMap) {
 
         String caseId = judgement.getCaseId();
-        ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
-        ILMSCaseResponse ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
-        String tenantId = ilmsCaseResponse.getIlmsCases().get(0).getTenantId();
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
+        CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+        String tenantId = caseResponse.getCases().get(0).getTenantId();
         List<String> masterNames = new ArrayList<>(Arrays.asList(ILMSConstants.MDMS_ILMS_STATUS_OF_COMPLIANCE, ILMSConstants.MDMS_ILMS_ORDER_TYPE));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",

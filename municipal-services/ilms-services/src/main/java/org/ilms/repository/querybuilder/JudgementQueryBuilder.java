@@ -1,25 +1,28 @@
 package org.ilms.repository.querybuilder;
 
+import java.util.List;
 import org.ilms.configs.ILMSConfiguration;
-import org.ilms.web.model.ILMSCaseSearchCriteria;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.JudgementSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class JudgementQueryBuilder {
-
-    @Autowired
-    private ILMSConfiguration config;
-
-
-    private static final String Query = "SELECT id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, case_id, revised_complaince_reason, compliance_status,"
-            + "remarks, additional_details, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime"
-            + " FROM ilms_judgement";
+    private static final String Query = "SELECT count(*) OVER() AS full_count, id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, case_id, revised_complaince_reason, compliance_status," + "remarks, additional_details, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime" + " FROM ilms_judgement";
 
     private final String paginationWrapper = "{} {orderBy} {pagination}";
+
+    @Autowired
+    private ILMSConfiguration ilmsConfiguration;
+
+    private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
+        if (values.isEmpty()) {
+            queryString.append(" WHERE ");
+        } else {
+            queryString.append(" AND ");
+        }
+    }
 
     public String getFSMSearchQuery(JudgementSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(Query);
@@ -37,31 +40,28 @@ public class JudgementQueryBuilder {
     }
 
     /**
-     * @param query            prepared Query
+     * @param query prepared Query
      * @param preparedStmtList values to be replased on the query
-     * @param criteria         judgement search criteria
+     * @param criteria judgement search criteria
      * @return the query by replacing the placeholders with preparedStmtList
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, JudgementSearchCriteria criteria) {
 
-        int limit = config.getDefaultLimit();
-        int offset = config.getDefaultOffset();
+        int limit = ilmsConfiguration.getDefaultLimit();
+        int offset = ilmsConfiguration.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
-
-        if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit())
+        if (criteria.getLimit() != null && criteria.getLimit() <= ilmsConfiguration.getMaxSearchLimit()) {
             limit = criteria.getLimit();
-
-        if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit()) {
-            limit = config.getMaxSearchLimit();
         }
-
-        if (criteria.getOffset() != null)
+        if (criteria.getLimit() != null && criteria.getLimit() > ilmsConfiguration.getMaxSearchLimit()) {
+            limit = ilmsConfiguration.getMaxSearchLimit();
+        }
+        if (criteria.getOffset() != null) {
             offset = criteria.getOffset();
-
+        }
         StringBuilder orderQuery = new StringBuilder();
         addOrderByClause(orderQuery, criteria);
         finalQuery = finalQuery.replace("{orderBy}", orderQuery.toString());
-
         if (limit == -1) {
             finalQuery = finalQuery.replace("{pagination}", "");
         } else {
@@ -69,7 +69,6 @@ public class JudgementQueryBuilder {
             preparedStmtList.add(offset);
             preparedStmtList.add(limit);
         }
-
         return finalQuery;
     }
 
@@ -79,28 +78,19 @@ public class JudgementQueryBuilder {
         });
     }
 
-    private static void addClauseIfRequired(List<Object> values,StringBuilder queryString) {
-        if (values.isEmpty())
-            queryString.append(" WHERE ");
-        else {
-            queryString.append(" AND ");
-        }
-    }
-
     /**
-     * @param builder
-     * @param criteria
+     *
      */
     private void addOrderByClause(StringBuilder builder, JudgementSearchCriteria criteria) {
-        if (criteria.getSortBy() == ILMSCaseSearchCriteria.SortBy.caseNumber)
+        if (criteria.getSortBy() == CaseSearchCriteria.SortBy.caseNumber) {
             builder.append(" ORDER BY ilms_judgement.id ");
-
-        else if (criteria.getSortBy() == ILMSCaseSearchCriteria.SortBy.cnrNumber)
+        } else if (criteria.getSortBy() == CaseSearchCriteria.SortBy.cnrNumber) {
             builder.append(" ORDER BY ilms_judgement.case_id ");
-
-        if (criteria.getSortOrder() == ILMSCaseSearchCriteria.SortOrder.ASC)
+        }
+        if (criteria.getSortOrder() == CaseSearchCriteria.SortOrder.ASC) {
             builder.append("ASC");
-        else if (criteria.getSortOrder() == ILMSCaseSearchCriteria.SortOrder.DESC)
+        } else if (criteria.getSortOrder() == CaseSearchCriteria.SortOrder.DESC) {
             builder.append("DESC");
+        }
     }
 }

@@ -14,7 +14,7 @@ public class DocumentQueryBuilder {
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
     @Autowired
-    private ILMSConfiguration config;
+    private ILMSConfiguration ilmsConfiguration;
 
     public String getDocumentSearchQuery(DocumentSearchCriteria criteria, List<Object> preparedStmtList) {
 
@@ -30,7 +30,6 @@ public class DocumentQueryBuilder {
                 preparedStmtList.add('%' + criteria.getDocumentType() + '%');
             }
         }
-
         List<String> caseId = criteria.getCaseId();
         try {
             if (!CollectionUtils.isEmpty(caseId)) {
@@ -41,7 +40,6 @@ public class DocumentQueryBuilder {
         } catch (NullPointerException e) {
             preparedStmtList.add("");
         }
-
         List<String> fileStoreId = criteria.getFileStoreId();
         try {
             if (!CollectionUtils.isEmpty(fileStoreId)) {
@@ -62,7 +60,6 @@ public class DocumentQueryBuilder {
         } catch (NullPointerException e) {
             preparedStmtList.add("");
         }
-
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
     }
 
@@ -73,22 +70,18 @@ public class DocumentQueryBuilder {
      * @return the query by replacing the placeholders with preparedStmtList
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, DocumentSearchCriteria criteria) {
-
-        int limit = config.getDefaultLimit();
-        int offset = config.getDefaultOffset();
+        int limit = ilmsConfiguration.getDefaultLimit();
+        int offset = ilmsConfiguration.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
-        if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit()) {
+        if (criteria.getLimit() != null && criteria.getLimit() <= ilmsConfiguration.getMaxSearchLimit()) {
             limit = criteria.getLimit();
         }
-
-        if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit()) {
-            limit = config.getMaxSearchLimit();
+        if (criteria.getLimit() != null && criteria.getLimit() > ilmsConfiguration.getMaxSearchLimit()) {
+            limit = ilmsConfiguration.getMaxSearchLimit();
         }
-
         if (criteria.getOffset() != null) {
             offset = criteria.getOffset();
         }
-
         StringBuilder orderQuery = new StringBuilder();
         addOrderByClause(orderQuery, criteria);
         finalQuery = finalQuery.replace("{orderBy}", orderQuery.toString());
@@ -137,7 +130,6 @@ public class DocumentQueryBuilder {
         } else if (criteria.getSortBy() == DocumentSearchCriteria.SortBy.documentType) {
             builder.append(" ORDER BY ilms_case.document_type ");
         }
-
         if (criteria.getSortOrder() == DocumentSearchCriteria.SortOrder.ASC) {
             builder.append("ASC");
         } else if (criteria.getSortOrder() == DocumentSearchCriteria.SortOrder.DESC) {

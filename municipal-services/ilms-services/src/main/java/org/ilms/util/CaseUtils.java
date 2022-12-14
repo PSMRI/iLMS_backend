@@ -2,15 +2,15 @@ package org.ilms.util;
 
 import java.util.Arrays;
 import java.util.List;
+import org.ilms.configs.ILMSConfiguration;
+import org.ilms.service.CaseEnrichmentService;
+import org.ilms.web.model.AuditDetails;
+import org.ilms.web.model.Case;
+import org.ilms.web.model.CaseRequest;
+import org.ilms.web.model.Document;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.workflow.ProcessInstance;
 import org.ilms.web.model.workflow.ProcessInstanceRequest;
-import org.ilms.configs.ILMSConfiguration;
-import org.ilms.service.EnrichmentService;
-import org.ilms.web.model.AuditDetails;
-import org.ilms.web.model.Document;
-import org.ilms.web.model.ILMSCase;
-import org.ilms.web.model.ILMSCaseRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -18,11 +18,10 @@ import org.springframework.util.StringUtils;
 @Component
 public class CaseUtils {
     @Autowired
-    private EnrichmentService enrichmentService;
+    private CaseEnrichmentService caseEnrichmentService;
 
     @Autowired
-    private ILMSConfiguration configs;
-
+    private ILMSConfiguration ilmsConfiguration;
 
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
@@ -33,231 +32,229 @@ public class CaseUtils {
         }
     }
 
-    public ILMSCaseRequest prepareObjectMapperForUpdate(ILMSCase oldData, ILMSCaseRequest ilmsCaseRequest) {
-        final ILMSCaseRequest request = new ILMSCaseRequest();
+    public CaseRequest prepareObjectMapperForUpdate(Case oldData, CaseRequest caseRequest) {
+        final CaseRequest request = new CaseRequest();
 
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getTenantId())) {
-            oldData.setTenantId(ilmsCaseRequest.getIlmsCase().getTenantId());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getTenantId())) {
+            oldData.setTenantId(caseRequest.getCases().getTenantId());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseNumber())) {
-            oldData.setCaseNumber(ilmsCaseRequest.getIlmsCase().getCaseNumber());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseNumber())) {
+            oldData.setCaseNumber(caseRequest.getCases().getCaseNumber());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCnrNumber())) {
-            oldData.setCnrNumber(ilmsCaseRequest.getIlmsCase().getCnrNumber());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCnrNumber())) {
+            oldData.setCnrNumber(caseRequest.getCases().getCnrNumber());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getParentCaseId())) {
-            oldData.setParentCaseId(ilmsCaseRequest.getIlmsCase().getParentCaseId());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getParentCaseId())) {
+            oldData.setParentCaseId(caseRequest.getCases().getParentCaseId());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseHierarchy())) {
-            oldData.setCaseHierarchy(ilmsCaseRequest.getIlmsCase().getCaseHierarchy());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseHierarchy())) {
+            oldData.setCaseHierarchy(caseRequest.getCases().getCaseHierarchy());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseType())) {
-            oldData.setCaseType(ilmsCaseRequest.getIlmsCase().getCaseType());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseType())) {
+            oldData.setCaseType(caseRequest.getCases().getCaseType());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseCategory())) {
-            oldData.setCaseCategory(ilmsCaseRequest.getIlmsCase().getCaseCategory());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseCategory())) {
+            oldData.setCaseCategory(caseRequest.getCases().getCaseCategory());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseYear())) {
-            oldData.setCaseYear(ilmsCaseRequest.getIlmsCase().getCaseYear());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseYear())) {
+            oldData.setCaseYear(caseRequest.getCases().getCaseYear());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getFilingNumber())) {
-            oldData.setFilingNumber(ilmsCaseRequest.getIlmsCase().getFilingNumber());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getFilingNumber())) {
+            oldData.setFilingNumber(caseRequest.getCases().getFilingNumber());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getFilingDate())) {
-            oldData.setFilingDate(ilmsCaseRequest.getIlmsCase().getFilingDate());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getFilingDate())) {
+            oldData.setFilingDate(caseRequest.getCases().getFilingDate());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRegistrationDate())) {
-            oldData.setRegistrationDate(ilmsCaseRequest.getIlmsCase().getRegistrationDate());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getRegistrationDate())) {
+            oldData.setRegistrationDate(caseRequest.getCases().getRegistrationDate());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseSummary())) {
-            oldData.setCaseSummary(ilmsCaseRequest.getIlmsCase().getCaseSummary());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseSummary())) {
+            oldData.setCaseSummary(caseRequest.getCases().getCaseSummary());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getArisingDetails())) {
-            oldData.setArisingDetails(ilmsCaseRequest.getIlmsCase().getArisingDetails());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getArisingDetails())) {
+            oldData.setArisingDetails(caseRequest.getCases().getArisingDetails());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPolicyOrNonPolicyMatter())) {
-            oldData.setPolicyOrNonPolicyMatter(ilmsCaseRequest.getIlmsCase().getPolicyOrNonPolicyMatter());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getPolicyOrNonPolicyMatter())) {
+            oldData.setPolicyOrNonPolicyMatter(caseRequest.getCases().getPolicyOrNonPolicyMatter());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getApplicationNumber())) {
-            oldData.setApplicationNumber(ilmsCaseRequest.getIlmsCase().getApplicationNumber());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getApplicationNumber())) {
+            oldData.setApplicationNumber(caseRequest.getCases().getApplicationNumber());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getIsCaseNumberCorrect())) {
-            oldData.setIsCaseNumberCorrect(ilmsCaseRequest.getIlmsCase().getIsCaseNumberCorrect());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getIsCaseNumberCorrect())) {
+            oldData.setIsCaseNumberCorrect(caseRequest.getCases().getIsCaseNumberCorrect());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseStatus())) {
-            oldData.setCaseStatus(ilmsCaseRequest.getIlmsCase().getCaseStatus());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseStatus())) {
+            oldData.setCaseStatus(caseRequest.getCases().getCaseStatus());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getFirstHearingDate())) {
-            oldData.setFirstHearingDate(ilmsCaseRequest.getIlmsCase().getFirstHearingDate());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getFirstHearingDate())) {
+            oldData.setFirstHearingDate(caseRequest.getCases().getFirstHearingDate());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPreviousHearingDate())) {
-            oldData.setPreviousHearingDate(ilmsCaseRequest.getIlmsCase().getPreviousHearingDate());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getPreviousHearingDate())) {
+            oldData.setPreviousHearingDate(caseRequest.getCases().getPreviousHearingDate());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getNextHearingDate())) {
-            oldData.setNextHearingDate(ilmsCaseRequest.getIlmsCase().getPreviousHearingDate());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getNextHearingDate())) {
+            oldData.setNextHearingDate(caseRequest.getCases().getPreviousHearingDate());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseStage())) {
-            oldData.setCaseStage(ilmsCaseRequest.getIlmsCase().getCaseStage());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseStage())) {
+            oldData.setCaseStage(caseRequest.getCases().getCaseStage());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseSubStage())) {
-            oldData.setCaseStage(ilmsCaseRequest.getIlmsCase().getCaseSubStage());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseSubStage())) {
+            oldData.setCaseStage(caseRequest.getCases().getCaseSubStage());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getCaseFlag())) {
-            oldData.setCaseStage(ilmsCaseRequest.getIlmsCase().getCaseFlag());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseFlag())) {
+            oldData.setCaseStage(caseRequest.getCases().getCaseFlag());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getDepartmentName())) {
-            oldData.setDepartmentName(ilmsCaseRequest.getIlmsCase().getDepartmentName());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getDepartmentName())) {
+            oldData.setDepartmentName(caseRequest.getCases().getDepartmentName());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRecommendOIC())) {
-            oldData.setRecommendOIC(ilmsCaseRequest.getIlmsCase().getRecommendOIC());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getRecommendOIC())) {
+            oldData.setRecommendOIC(caseRequest.getCases().getRecommendOIC());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRemarks())) {
-            oldData.setRemarks(ilmsCaseRequest.getIlmsCase().getRemarks());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getRemarks())) {
+            oldData.setRemarks(caseRequest.getCases().getRemarks());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getAssignedOfficerId())) {
-            oldData.setAssignedOfficerId(ilmsCaseRequest.getIlmsCase().getAssignedOfficerId());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getAssignedOfficerId())) {
+            oldData.setAssignedOfficerId(caseRequest.getCases().getAssignedOfficerId());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getAdditionalDetails())) {
-            oldData.setAdditionalDetails(ilmsCaseRequest.getIlmsCase().getAdditionalDetails());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getAdditionalDetails())) {
+            oldData.setAdditionalDetails(caseRequest.getCases().getAdditionalDetails());
         }
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getStatus())) {
-            oldData.setStatus(ilmsCaseRequest.getIlmsCase().getStatus());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getStatus())) {
+            oldData.setStatus(caseRequest.getCases().getStatus());
         }
         //        Setting Petitioner Details
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner())) {
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getCaseId())) {
-                oldData.getPetitioner().setCaseId(ilmsCaseRequest.getIlmsCase().getPetitioner().getCaseId());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner())) {
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getCaseId())) {
+                oldData.getPetitioner().setCaseId(caseRequest.getCases().getPetitioner().getCaseId());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getFirstName())) {
-                oldData.getPetitioner().setFirstName(ilmsCaseRequest.getIlmsCase().getPetitioner().getFirstName());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getFirstName())) {
+                oldData.getPetitioner().setFirstName(caseRequest.getCases().getPetitioner().getFirstName());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getLastName())) {
-                oldData.getPetitioner().setLastName(ilmsCaseRequest.getIlmsCase().getPetitioner().getLastName());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getLastName())) {
+                oldData.getPetitioner().setLastName(caseRequest.getCases().getPetitioner().getLastName());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getGender())) {
-                oldData.getPetitioner().setGender(ilmsCaseRequest.getIlmsCase().getPetitioner().getGender());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getGender())) {
+                oldData.getPetitioner().setGender(caseRequest.getCases().getPetitioner().getGender());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getPetitionerType())) {
-                oldData.getPetitioner().setPetitionerType(ilmsCaseRequest.getIlmsCase().getPetitioner().getPetitionerType());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getPetitionerType())) {
+                oldData.getPetitioner().setPetitionerType(caseRequest.getCases().getPetitioner().getPetitionerType());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAddress())) {
-                oldData.getPetitioner().setAddress(ilmsCaseRequest.getIlmsCase().getPetitioner().getAddress());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAddress())) {
+                oldData.getPetitioner().setAddress(caseRequest.getCases().getPetitioner().getAddress());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getDepartmentName())) {
-                oldData.getPetitioner().setDepartmentName(ilmsCaseRequest.getIlmsCase().getPetitioner().getDepartmentName());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getDepartmentName())) {
+                oldData.getPetitioner().setDepartmentName(caseRequest.getCases().getPetitioner().getDepartmentName());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getContactNumber())) {
-                oldData.getPetitioner().setContactNumber(ilmsCaseRequest.getIlmsCase().getPetitioner().getContactNumber());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getContactNumber())) {
+                oldData.getPetitioner().setContactNumber(caseRequest.getCases().getPetitioner().getContactNumber());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getPartyType())) {
-                oldData.getPetitioner().setPartyType(ilmsCaseRequest.getIlmsCase().getPetitioner().getPartyType());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getPartyType())) {
+                oldData.getPetitioner().setPartyType(caseRequest.getCases().getPetitioner().getPartyType());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getStatus())) {
-                oldData.getPetitioner().setStatus(ilmsCaseRequest.getIlmsCase().getPetitioner().getStatus());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getStatus())) {
+                oldData.getPetitioner().setStatus(caseRequest.getCases().getPetitioner().getStatus());
             }
             //Setting Data For Petitioner Advocate
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate())) {
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getPartyId())) {
-                    oldData.getPetitioner().getAdvocate().setPartyId(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getPartyId());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAdvocate())) {
+                if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAdvocate().getPartyId())) {
+                    oldData.getPetitioner().getAdvocate().setPartyId(caseRequest.getCases().getPetitioner().getAdvocate().getPartyId());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getHearingId())) {
-                    oldData.getPetitioner().getAdvocate().setHearingId(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getHearingId());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAdvocate().getHearingId())) {
+                    oldData.getPetitioner().getAdvocate().setHearingId(caseRequest.getCases().getPetitioner().getAdvocate().getHearingId());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getFirstName())) {
-                    oldData.getPetitioner().getAdvocate().setFirstName(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getFirstName());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAdvocate().getFirstName())) {
+                    oldData.getPetitioner().getAdvocate().setFirstName(caseRequest.getCases().getPetitioner().getAdvocate().getFirstName());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getLastName())) {
-                    oldData.getPetitioner().getAdvocate().setLastName(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getLastName());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAdvocate().getLastName())) {
+                    oldData.getPetitioner().getAdvocate().setLastName(caseRequest.getCases().getPetitioner().getAdvocate().getLastName());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getContactNumber())) {
-                    oldData.getPetitioner().getAdvocate()
-                           .setContactNumber(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getContactNumber());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAdvocate().getContactNumber())) {
+                    oldData.getPetitioner().getAdvocate().setContactNumber(caseRequest.getCases().getPetitioner().getAdvocate().getContactNumber());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getPartyType())) {
-                    oldData.getPetitioner().getAdvocate().setPartyType(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getPartyType());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAdvocate().getPartyType())) {
+                    oldData.getPetitioner().getAdvocate().setPartyType(caseRequest.getCases().getPetitioner().getAdvocate().getPartyType());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getStatus())) {
-                    oldData.getPetitioner().getAdvocate().setStatus(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getStatus());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAdvocate().getStatus())) {
+                    oldData.getPetitioner().getAdvocate().setStatus(caseRequest.getCases().getPetitioner().getAdvocate().getStatus());
                 }
             }
         }
         //       Setting Respondent details
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent())) {
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getCaseId())) {
-                oldData.getRespondent().setCaseId(ilmsCaseRequest.getIlmsCase().getRespondent().getCaseId());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent())) {
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getCaseId())) {
+                oldData.getRespondent().setCaseId(caseRequest.getCases().getRespondent().getCaseId());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getFirstName())) {
-                oldData.getRespondent().setFirstName(ilmsCaseRequest.getIlmsCase().getRespondent().getFirstName());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getFirstName())) {
+                oldData.getRespondent().setFirstName(caseRequest.getCases().getRespondent().getFirstName());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getLastName())) {
-                oldData.getRespondent().setLastName(ilmsCaseRequest.getIlmsCase().getRespondent().getLastName());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getLastName())) {
+                oldData.getRespondent().setLastName(caseRequest.getCases().getRespondent().getLastName());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getGender())) {
-                oldData.getRespondent().setGender(ilmsCaseRequest.getIlmsCase().getRespondent().getGender());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getGender())) {
+                oldData.getRespondent().setGender(caseRequest.getCases().getRespondent().getGender());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getPetitionerType())) {
-                oldData.getRespondent().setPetitionerType(ilmsCaseRequest.getIlmsCase().getRespondent().getPetitionerType());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getPetitionerType())) {
+                oldData.getRespondent().setPetitionerType(caseRequest.getCases().getRespondent().getPetitionerType());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getAddress())) {
-                oldData.getRespondent().setAddress(ilmsCaseRequest.getIlmsCase().getRespondent().getAddress());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getAddress())) {
+                oldData.getRespondent().setAddress(caseRequest.getCases().getRespondent().getAddress());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getDepartmentName())) {
-                oldData.getRespondent().setDepartmentName(ilmsCaseRequest.getIlmsCase().getRespondent().getDepartmentName());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getDepartmentName())) {
+                oldData.getRespondent().setDepartmentName(caseRequest.getCases().getRespondent().getDepartmentName());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getContactNumber())) {
-                oldData.getRespondent().setContactNumber(ilmsCaseRequest.getIlmsCase().getRespondent().getContactNumber());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getContactNumber())) {
+                oldData.getRespondent().setContactNumber(caseRequest.getCases().getRespondent().getContactNumber());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getPartyType())) {
-                oldData.getRespondent().setPartyType(ilmsCaseRequest.getIlmsCase().getRespondent().getPartyType());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getPartyType())) {
+                oldData.getRespondent().setPartyType(caseRequest.getCases().getRespondent().getPartyType());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getStatus())) {
-                oldData.getRespondent().setStatus(ilmsCaseRequest.getIlmsCase().getRespondent().getStatus());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getStatus())) {
+                oldData.getRespondent().setStatus(caseRequest.getCases().getRespondent().getStatus());
             }
             //Setting Data For Respondent Advocate
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate())) {
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().getPartyId())) {
-                    oldData.getRespondent().getAdvocate().setPartyId(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getPartyId());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getAdvocate())) {
+                if (!StringUtils.isEmpty(caseRequest.getCases().getPetitioner().getAdvocate().getPartyId())) {
+                    oldData.getRespondent().getAdvocate().setPartyId(caseRequest.getCases().getRespondent().getAdvocate().getPartyId());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getHearingId())) {
-                    oldData.getRespondent().getAdvocate().setHearingId(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getHearingId());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getAdvocate().getHearingId())) {
+                    oldData.getRespondent().getAdvocate().setHearingId(caseRequest.getCases().getRespondent().getAdvocate().getHearingId());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getFirstName())) {
-                    oldData.getRespondent().getAdvocate().setFirstName(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getFirstName());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getAdvocate().getFirstName())) {
+                    oldData.getRespondent().getAdvocate().setFirstName(caseRequest.getCases().getRespondent().getAdvocate().getFirstName());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getLastName())) {
-                    oldData.getRespondent().getAdvocate().setLastName(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getLastName());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getAdvocate().getLastName())) {
+                    oldData.getRespondent().getAdvocate().setLastName(caseRequest.getCases().getRespondent().getAdvocate().getLastName());
                 }
 
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getContactNumber())) {
-                    oldData.getRespondent().getAdvocate()
-                           .setContactNumber(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getContactNumber());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getAdvocate().getContactNumber())) {
+                    oldData.getRespondent().getAdvocate().setContactNumber(caseRequest.getCases().getRespondent().getAdvocate().getContactNumber());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getPartyType())) {
-                    oldData.getRespondent().getAdvocate().setPartyType(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getPartyType());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getAdvocate().getPartyType())) {
+                    oldData.getRespondent().getAdvocate().setPartyType(caseRequest.getCases().getRespondent().getAdvocate().getPartyType());
                 }
-                if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getStatus())) {
-                    oldData.getRespondent().getAdvocate().setStatus(ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().getStatus());
+                if (!StringUtils.isEmpty(caseRequest.getCases().getRespondent().getAdvocate().getStatus())) {
+                    oldData.getRespondent().getAdvocate().setStatus(caseRequest.getCases().getRespondent().getAdvocate().getStatus());
                 }
             }
         }
         //setting act details
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getAct())) {
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getAct().getCaseId())) {
-                oldData.getAct().setCaseId(ilmsCaseRequest.getIlmsCase().getAct().getCaseId());
+        if (!StringUtils.isEmpty(caseRequest.getCases().getAct())) {
+            if (!StringUtils.isEmpty(caseRequest.getCases().getAct().getCaseId())) {
+                oldData.getAct().setCaseId(caseRequest.getCases().getAct().getCaseId());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getAct().getActName())) {
-                oldData.getAct().setActName(ilmsCaseRequest.getIlmsCase().getAct().getActName());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getAct().getActName())) {
+                oldData.getAct().setActName(caseRequest.getCases().getAct().getActName());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getAct().getSectionNumber())) {
-                oldData.getAct().setSectionNumber(ilmsCaseRequest.getIlmsCase().getAct().getSectionNumber());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getAct().getSectionNumber())) {
+                oldData.getAct().setSectionNumber(caseRequest.getCases().getAct().getSectionNumber());
             }
-            if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getAct().getStatus())) {
-                oldData.getAct().setStatus(ilmsCaseRequest.getIlmsCase().getAct().getStatus());
+            if (!StringUtils.isEmpty(caseRequest.getCases().getAct().getStatus())) {
+                oldData.getAct().setStatus(caseRequest.getCases().getAct().getStatus());
             }
         }
         //setting documents details
-        if (!StringUtils.isEmpty(ilmsCaseRequest.getIlmsCase().getDocuments())) {
-            List<Document> documentList = ilmsCaseRequest.getIlmsCase().getDocuments();
+        if (!StringUtils.isEmpty(caseRequest.getCases().getDocuments())) {
+            List<Document> documentList = caseRequest.getCases().getDocuments();
             for (Document document : documentList) {
                 for (Document oldDocData : oldData.getDocuments()) {
                     //                    oldData.getDocuments().forEach(oldDocData -> {
@@ -278,25 +275,22 @@ public class CaseUtils {
                 }
             }
         }
-        request.setIlmsCase(oldData);
-        enrichmentService.enrichCaseUpdateRequest(request);
+        request.setCases(oldData);
+        caseEnrichmentService.enrichCaseUpdateRequest(request);
         return request;
     }
 
-    public ProcessInstanceRequest getWfForCaseCreate(ILMSCaseRequest request, CreationReason creationReasonForWorkflow) {
+    public ProcessInstanceRequest getWfForCaseCreate(CaseRequest request, CreationReason creationReasonForWorkflow) {
 
-        ILMSCase ilmsCase = request.getIlmsCase();
-        ProcessInstance wf = null != ilmsCase.getWorkflow() ? ilmsCase.getWorkflow() : new ProcessInstance();
+        Case aCase = request.getCases();
+        ProcessInstance wf = null != aCase.getWorkflow() ? aCase.getWorkflow() : new ProcessInstance();
 
-        wf.setBusinessId(ilmsCase.getId());
-        wf.setTenantId(ilmsCase.getTenantId());
-        wf.setBusinessService(configs.getCreatePTWfName());
-        wf.setModuleName(configs.getPropertyModuleName());
+        wf.setBusinessId(aCase.getId());
+        wf.setTenantId(aCase.getTenantId());
+        wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());
+        wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
         wf.setAction("Create");
-        ilmsCase.setWorkflow(wf);
-        return ProcessInstanceRequest.builder()
-                .processInstances(Arrays.asList(wf))
-                .requestInfo(request.getRequestInfo())
-                .build();
+        aCase.setWorkflow(wf);
+        return ProcessInstanceRequest.builder().processInstances(Arrays.asList(wf)).requestInfo(request.getRequestInfo()).build();
     }
 }

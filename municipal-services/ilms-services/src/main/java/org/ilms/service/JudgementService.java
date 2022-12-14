@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JudgementService {
     @Autowired
-    JudgementEnrichmentService enrichmentService;
+    JudgementEnrichmentService judgementEnrichmentService;
 
     @Autowired
     Producer producer;
@@ -36,10 +36,10 @@ public class JudgementService {
     JudgementRepository judgementRepository;
 
     @Autowired
-    private JudgementValidator judgementValidator;
+    JudgementValidator judgementValidator;
 
     @Autowired
-    private HearingRepository hearingRepository;
+    HearingRepository hearingRepository;
 
     public Judgement create(JudgementRequest judgementRequest) {
         HearingResponse hearingResponse = null;
@@ -49,7 +49,7 @@ public class JudgementService {
         if (!hearingResponse.getHearingDetails().isEmpty()) {
             judgementRequest.getJudgement().setStatus(Status.ACTIVE);
             judgementValidator.createValidator(judgementRequest);
-            enrichmentService.enrichJudgementCreateRequest(judgementRequest);
+            judgementEnrichmentService.enrichJudgementCreateRequest(judgementRequest);
             producer.push(ilmsConfiguration.getCreateJudgementTopic(), judgementRequest);
         } else {
             throw new CustomException(ILMSErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement");
@@ -63,7 +63,7 @@ public class JudgementService {
         judgementResponse = judgementRepository.getJudgementData(criteria);
         judgements = judgementResponse.getJudgements();
         if (!judgements.isEmpty()) {
-            enrichmentService.enrichJudgementSearch();
+            judgementEnrichmentService.enrichJudgementSearch();
         } else {
             throw new CustomException(ILMSErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
         }
@@ -80,7 +80,7 @@ public class JudgementService {
                 Judgement oldJudgement = judgements.get(0);
                 JudgementRequest finalRequest = judgementRepository.getMappedData(judgementRequest, oldJudgement);
                 judgementValidator.updateValidator(finalRequest.getJudgement(), judgementRequest);
-                producer.push(ilmsConfiguration.getUpdateJudgement(), finalRequest);
+                producer.push(ilmsConfiguration.getUpdateJudgementTopic(), finalRequest);
             } else {
                 throw new CustomException(ILMSErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
             }

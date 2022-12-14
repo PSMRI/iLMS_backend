@@ -6,16 +6,16 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.producer.Producer;
+import org.ilms.repository.CaseRepository;
 import org.ilms.repository.DocumentRepository;
-import org.ilms.repository.ILMSCaseRepository;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.validator.DocumentValidator;
+import org.ilms.web.model.CaseResponse;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.Document;
+import org.ilms.web.model.DocumentRequest;
 import org.ilms.web.model.DocumentResponse;
 import org.ilms.web.model.DocumentSearchCriteria;
-import org.ilms.web.model.ILMSCaseResponse;
-import org.ilms.web.model.ILMSCaseSearchCriteria;
-import org.ilms.web.model.IlmsDocumentRequest;
 import org.ilms.web.model.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class DocumentService {
     private DocumentValidator documentValidator;
 
     @Autowired
-    private ILMSCaseRepository ilmsCaseRepository;
+    private CaseRepository caseRepository;
 
     @Autowired
     private DocumentEnrichmentService documentEnrichmentService;
@@ -50,26 +50,26 @@ public class DocumentService {
         return documentResponse;
     }
 
-    public List<Document> createDocument(IlmsDocumentRequest request, ILMSCaseSearchCriteria criteria) {
+    public List<Document> createDocument(DocumentRequest request, CaseSearchCriteria criteria) {
         documentValidator.createDocumentValidator(request);
         request.getDocument().forEach(document -> {
-        List<String> ids = new ArrayList<>();
-        ids.add(document.getCaseId());
-        ILMSCaseSearchCriteria criteria1 = ILMSCaseSearchCriteria.builder().id(ids).build();
-        ILMSCaseResponse caseResponse = ilmsCaseRepository.getILMSCaseData(criteria1);
-        if (!caseResponse.getIlmsCases().isEmpty()) {
-            caseResponse.getIlmsCases().forEach(ilmsCase -> {
-                if (!document.getCaseId().equalsIgnoreCase(ilmsCase.getId())) {
-                    throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
-                            "Case Not Found For The CaseId  [ " + document.getCaseId() + " ]");
-                }
-                document.setStatus(Status.ACTIVE);
-                documentEnrichmentService.enrichmentDocumentCreateRequest(request);
-            });
-        } else {
-            throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
-                    "CaseList Not Found In The System [ " + caseResponse.getIlmsCases() + " ]");
-        }
+            List<String> ids = new ArrayList<>();
+            ids.add(document.getCaseId());
+            CaseSearchCriteria criteria1 = CaseSearchCriteria.builder().id(ids).build();
+            CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria1);
+            if (!caseResponse.getCases().isEmpty()) {
+                caseResponse.getCases().forEach(ilmsCase -> {
+                    if (!document.getCaseId().equalsIgnoreCase(ilmsCase.getId())) {
+                        throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
+                                "Case Not Found For The CaseId  [ " + document.getCaseId() + " ]");
+                    }
+                    document.setStatus(Status.ACTIVE);
+                    documentEnrichmentService.enrichmentDocumentCreateRequest(request);
+                });
+            } else {
+                throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
+                        "CaseList Not Found In The System [ " + caseResponse.getCases() + " ]");
+            }
         });
         producer.push(ilmsConfiguration.getCreateDocumentTopic(), request);
         return request.getDocument();

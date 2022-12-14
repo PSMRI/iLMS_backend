@@ -19,118 +19,117 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ILMSCase {
-
+public class Case {
     @JsonProperty ("id")
-    private String id ;
+    private String id;
 
-    @JsonProperty("tenantId")
+    @JsonProperty ("tenantId")
     private String tenantId;
 
     @JsonProperty ("caseNumber")
-    private String caseNumber ;
+    private String caseNumber;
 
     @JsonProperty ("cnrNumber")
     private String cnrNumber;
 
     @JsonProperty ("parentCaseId")
-    private String parentCaseId ;
+    private String parentCaseId;
 
     @JsonProperty ("caseHierarchy")
-    private CaseHierarchy caseHierarchy ;
+    private CaseHierarchy caseHierarchy;
 
     @JsonProperty ("caseType")
-    private String caseType ;
+    private String caseType;
 
     @JsonProperty ("caseCategory")
-    private String caseCategory ;
+    private String caseCategory;
 
     @JsonProperty ("caseYear")
-    private Long caseYear ;
+    private Long caseYear;
 
     @JsonProperty ("filingNumber")
-    private String filingNumber ;
+    private String filingNumber;
 
     @JsonProperty ("filingDate")
-    private Long filingDate ;
+    private Long filingDate;
 
     @JsonProperty ("registrationDate")
-    private Long registrationDate ;
+    private Long registrationDate;
 
     @JsonProperty ("caseSummary")
-    private String caseSummary ;
+    private String caseSummary;
 
     @JsonProperty ("arisingDetails")
-    private String arisingDetails ;
+    private String arisingDetails;
 
     @JsonProperty ("policyOrNonPolicyMatter")
-    private String policyOrNonPolicyMatter ;
+    private String policyOrNonPolicyMatter;
 
     @JsonProperty ("applicationNo")
-    private String applicationNumber ;
+    private String applicationNumber;
 
     @JsonProperty ("isCaseNumberCorrect")
-    private Boolean isCaseNumberCorrect ;
+    private Boolean isCaseNumberCorrect;
 
     @JsonProperty ("caseStatus")
-    private String caseStatus ;
+    private String caseStatus;
 
     @JsonProperty ("firstHearingDate")
-    private Long firstHearingDate ;
+    private Long firstHearingDate;
 
     @JsonProperty ("previousHearingDate")
-    private Long previousHearingDate ;
+    private Long previousHearingDate;
 
     @JsonProperty ("nextHearingDate")
-    private Long nextHearingDate ;
+    private Long nextHearingDate;
 
     @JsonProperty ("caseStage")
-    private String caseStage ;
+    private String caseStage;
 
     @JsonProperty ("caseSubStage")
-    private String caseSubStage ;
+    private String caseSubStage;
 
     @JsonProperty ("caseFlag")
-    private String caseFlag ;
+    private String caseFlag;
 
     @JsonProperty ("departmentName")
-    private String departmentName ;
+    private String departmentName;
 
     @JsonProperty ("recommendOic")
-    private String recommendOIC ;
+    private String recommendOIC;
 
     @JsonProperty ("remarks")
-    private String remarks ;
+    private String remarks;
 
     @JsonProperty ("assignedOfficerId")
-    private String assignedOfficerId ;
+    private String assignedOfficerId;
 
     @JsonProperty ("additionalDetails")
-    private Object additionalDetails ;
+    private Object additionalDetails;
 
     @JsonProperty ("status")
-    private Status status ;
+    private Status status;
 
-    @JsonProperty("petitioner")
-    private ILMSParty petitioner;
+    @JsonProperty ("petitioner")
+    private Party petitioner;
 
-    @JsonProperty("respondent")
-    private ILMSParty respondent;
+    @JsonProperty ("respondent")
+    private Party respondent;
 
-    @JsonProperty("act")
+    @JsonProperty ("act")
     private Act act;
 
-    @JsonProperty("documents")
-    private List <Document> documents;
+    @JsonProperty ("documents")
+    private List<Document> documents;
 
-    @JsonProperty("auditDetails")
+    @JsonProperty ("auditDetails")
     private AuditDetails auditDetails;
 
-    @JsonProperty("creationReason")
-    @NotNull(message="The value provided is either Invald or null")
+    @JsonProperty ("creationReason")
+    @NotNull (message = "The value provided is either Invald or null")
     private CreationReason creationReason;
 
-    @JsonProperty("workflow")
+    @JsonProperty ("workflow")
     @DiffIgnore
     private ProcessInstance workflow;
 

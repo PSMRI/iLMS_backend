@@ -81,10 +81,10 @@ public class Hearing {
     private Status status;
 
     @JsonProperty ("petitioner")
-    private ILMSParty petitioner;
+    private Party petitioner;
 
     @JsonProperty ("respondent")
-    private ILMSParty respondent;
+    private Party respondent;
 
     @JsonProperty ("payment")
     private Payment payment;

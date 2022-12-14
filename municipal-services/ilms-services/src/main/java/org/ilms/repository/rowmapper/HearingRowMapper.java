@@ -11,7 +11,7 @@ import org.egov.tracer.model.CustomException;
 import org.ilms.web.model.AuditDetails;
 import org.ilms.web.model.Court;
 import org.ilms.web.model.Hearing;
-import org.ilms.web.model.ILMSParty;
+import org.ilms.web.model.Party;
 import org.ilms.web.model.Payment;
 import org.ilms.web.model.enums.Status;
 import org.postgresql.util.PGobject;
@@ -24,9 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Repository
 public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
-    private final ILMSParty petitioner = new ILMSParty();
+    private final Party petitioner = new Party();
 
-    private final ILMSParty respondent = new ILMSParty();
+    private final Party respondent = new Party();
 
     @Autowired
     private ObjectMapper mapper;

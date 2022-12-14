@@ -8,45 +8,54 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.ilms.web.model.enums.CreationReason;
-import com.itextpdf.text.*;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.producer.Producer;
+import org.ilms.repository.CaseRepository;
 import org.ilms.repository.HearingRepository;
-import org.ilms.repository.ILMSCaseRepository;
 import org.ilms.repository.JudgementRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
-import org.ilms.validator.ILMSCaseValidator;
+import org.ilms.validator.CaseValidator;
+import org.ilms.web.model.Case;
 import org.ilms.web.model.CaseDetailsResponse;
+import org.ilms.web.model.CaseRequest;
+import org.ilms.web.model.CaseResponse;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.ChildCase;
 import org.ilms.web.model.ChildCaseRequest;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingResponse;
 import org.ilms.web.model.HearingSearchCriteria;
-import org.ilms.web.model.ILMSCase;
-import org.ilms.web.model.ILMSCaseRequest;
-import org.ilms.web.model.ILMSCaseResponse;
-import org.ilms.web.model.ILMSCaseSearchCriteria;
 import org.ilms.web.model.Judgement;
 import org.ilms.web.model.JudgementResponse;
 import org.ilms.web.model.JudgementSearchCriteria;
 import org.ilms.web.model.enums.CaseHierarchy;
+import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.itextpdf.text.Anchor;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 @Service
-public class ILMSCaseService {
+public class CaseService {
     @Autowired
-    private ILMSCaseRepository ilmsCaseRepository;
+    private CaseRepository caseRepository;
 
     @Autowired
     private HearingRepository hearingRepository;
@@ -55,13 +64,13 @@ public class ILMSCaseService {
     private JudgementRepository judgementRepository;
 
     @Autowired
-    private ILMSCaseValidator ilmsCaseValidator;
+    private CaseValidator caseValidator;
 
     @Autowired
     private Producer producer;
 
     @Autowired
-    private EnrichmentService enrichmentService;
+    private CaseEnrichmentService caseEnrichmentService;
 
     @Autowired
     private ILMSConfiguration ilmsConfiguration;
@@ -72,145 +81,146 @@ public class ILMSCaseService {
     @Autowired
     private WorkflowService workflowService;
 
-    public ILMSCaseService() {
+    public CaseService() {
     }
 
-    public ILMSCaseResponse ilmsCaseSearch(ILMSCaseSearchCriteria criteria, RequestInfo requestInfo) {
-        List<ILMSCase> ilmsCaseList = new ArrayList<>();
-        ILMSCaseResponse ilmsCaseResponse = null;
-        ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
-        if (!ilmsCaseResponse.getIlmsCases().isEmpty()) {
-            ilmsCaseList = ilmsCaseResponse.getIlmsCases();
+    public CaseResponse ilmsCaseSearch(CaseSearchCriteria criteria, RequestInfo requestInfo) {
+        List<Case> caseList = new ArrayList<>();
+        CaseResponse caseResponse = null;
+        caseResponse = caseRepository.getILMSCaseData(criteria);
+        if (!caseResponse.getCases().isEmpty()) {
+            caseList = caseResponse.getCases();
         } else {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
         }
-        return ilmsCaseResponse;
+        return caseResponse;
     }
 
-    public CaseDetailsResponse caseDetailsSearch(ILMSCaseSearchCriteria criteria, RequestInfo requestInfo) {
-        List<ILMSCase> ilmsCaseList = new ArrayList<>();
+    public CaseDetailsResponse caseDetailsSearch(CaseSearchCriteria criteria, RequestInfo requestInfo) {
+        List<Case> caseList = new ArrayList<>();
         CaseDetailsResponse downloadResponse = new CaseDetailsResponse();
-        ILMSCaseResponse ilmsCaseResponse = null;
+        CaseResponse caseResponse = null;
         HearingResponse hearingResponse = null;
         JudgementResponse judgementResponse = null;
-        ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
-        HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(
-                ilmsCaseResponse.getIlmsCases().get(0).getId())).build();
+        caseResponse = caseRepository.getILMSCaseData(criteria);
+        HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
+                                                                     .caseId(Collections.singletonList(caseResponse.getCases().get(0).getId()))
+                                                                     .build();
         hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
         JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
-                ilmsCaseResponse.getIlmsCases().get(0).getId())).build();
+                caseResponse.getCases().get(0).getId())).build();
         judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
-        ilmsCaseList = ilmsCaseResponse.getIlmsCases();
-        downloadResponse.setCaseList(ilmsCaseResponse.getIlmsCases());
+        caseList = caseResponse.getCases();
+        downloadResponse.setCaseList(caseResponse.getCases());
         downloadResponse.setHearingList(hearingResponse.getHearingDetails());
         downloadResponse.setJudgementList(judgementResponse.getJudgements());
         return downloadResponse;
     }
 
-    public ILMSCase create(ILMSCaseRequest ilmsCaseRequest) {
-        if (ilmsCaseRequest.getIlmsCase().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
-            if (!ilmsCaseRequest.getIlmsCase().getParentCaseId().isEmpty()) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Independent Case does not exist Parent Case");
+    public Case create(CaseRequest caseRequest) {
+        if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
+            if (StringUtils.isNotBlank(caseRequest.getCases().getParentCaseId())) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                        "ParentCaseId must be null to create " + CaseHierarchy.INDEPENDENT + " Case");
             }
-        } else if (ilmsCaseRequest.getIlmsCase().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
-            if (!ilmsCaseRequest.getIlmsCase().getParentCaseId().isEmpty()) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Parent Case does not exist Parent Case");
+        } else if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
+            if (StringUtils.isNotBlank(caseRequest.getCases().getParentCaseId())) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                        "ParentCaseId must be null to create " + CaseHierarchy.PARENT + " Case");
             }
-        } else if (ilmsCaseRequest.getIlmsCase().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
+        } else if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
+            if (StringUtils.isBlank(caseRequest.getCases().getParentCaseId())) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                        "ParentCaseId is mandatory to create " + CaseHierarchy.CHILD + " Case");
+            }
             List<String> caseIds = new ArrayList<>();
-            caseIds.add(ilmsCaseRequest.getIlmsCase().getParentCaseId());
-            ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(caseIds).build();
-            ILMSCaseResponse response = ilmsCaseRepository.getILMSCaseData(criteria);
-            if (response.getIlmsCases().size() != 1) {
+            caseIds.add(caseRequest.getCases().getParentCaseId());
+            CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(caseIds).build();
+            CaseResponse response = caseRepository.getILMSCaseData(criteria);
+            if (response.getCases().size() != 1) {
                 throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
             }
         }
-        ilmsCaseRequest.getIlmsCase().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
-        ilmsCaseRequest.getIlmsCase().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
-        ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
-        ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
-        ilmsCaseRequest.getIlmsCase().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
-        ilmsCaseRequest.getIlmsCase().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
-        ilmsCaseRequest.getIlmsCase().getPetitioner().setStatus(Status.ACTIVE);
-        ilmsCaseRequest.getIlmsCase().getRespondent().setStatus(Status.ACTIVE);
-        ilmsCaseRequest.getIlmsCase().getAct().setStatus(Status.ACTIVE);
-        ilmsCaseRequest.getIlmsCase().setStatus(Status.ACTIVE);
-        ilmsCaseValidator.validateCreate(ilmsCaseRequest);
-        ilmsCaseValidator.cnrDuplicacyCheck(ilmsCaseRequest);
-        ilmsCaseValidator.caseNumberDuplicacyCheck(ilmsCaseRequest);
-        enrichmentService.enrichCaseCreateRequest(ilmsCaseRequest);
-        if (ilmsConfiguration.getIsWorkflowEnabled()
-                && !ilmsCaseRequest.getIlmsCase().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
-            workflowService.updateWorkflow(ilmsCaseRequest, ilmsCaseRequest.getIlmsCase().getCreationReason());
+        caseRequest.getCases().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
+        caseRequest.getCases().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
+        caseRequest.getCases().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
+        caseRequest.getCases().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
+        caseRequest.getCases().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
+        caseRequest.getCases().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
+        caseRequest.getCases().getPetitioner().setStatus(Status.ACTIVE);
+        caseRequest.getCases().getRespondent().setStatus(Status.ACTIVE);
+        caseRequest.getCases().getAct().setStatus(Status.ACTIVE);
+        caseRequest.getCases().setStatus(Status.ACTIVE);
+        caseValidator.validateCreate(caseRequest);
+        caseValidator.cnrDuplicacyCheck(caseRequest);
+        caseValidator.caseNumberDuplicacyCheck(caseRequest);
+        caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
+        if (ilmsConfiguration.getIsWorkflowEnabled() && !caseRequest.getCases().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
+            workflowService.updateWorkflow(caseRequest, caseRequest.getCases().getCreationReason());
 
         }
-        producer.push(ilmsConfiguration.getCreateCaseTopic(), ilmsCaseRequest);
-        return ilmsCaseRequest.getIlmsCase();
+        producer.push(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
+        return caseRequest.getCases();
     }
 
     /**
      * Updates the ilms_case
      *
-     * @param ilmsCaseRequest The update Request
+     * @param caseRequest The update Request
      * @return Updated ilmsCase
      */
-    public ILMSCase update(ILMSCaseRequest ilmsCaseRequest) {
-        if (ilmsCaseRequest.getIlmsCase().getId() != null) {
-            ILMSCaseSearchCriteria criteria = ILMSCaseSearchCriteria.builder().id(Collections.singletonList(ilmsCaseRequest.getIlmsCase().getId()))
-                                                                    .build();
-            ILMSCaseResponse ilmsCaseResponse = ilmsCaseRepository.getILMSCaseData(criteria);
-            if (!ilmsCaseResponse.getIlmsCases().isEmpty()) {
-
-                ILMSCaseRequest updatedIlmsCaseRequest = caseUtils.prepareObjectMapperForUpdate(ilmsCaseResponse.getIlmsCases().get(0),
-                        ilmsCaseRequest);
-                ILMSCase ilmsCase = ilmsCaseResponse.getIlmsCases().get(0);
-                ilmsCaseValidator.validateUpdate(ilmsCase, ilmsCaseRequest);
-                if (Objects.nonNull(ilmsCaseRequest.getIlmsCase().getCaseHierarchy())){
-                if (ilmsCaseRequest.getIlmsCase().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
-                    updatedIlmsCaseRequest.getIlmsCase().setParentCaseId(null);
-                    if (Objects.nonNull(ilmsCaseRequest.getIlmsCase().getParentCaseId())) {
-                        throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Independent Case does not exist Parent Case");
-                    }
-                } else if (ilmsCaseRequest.getIlmsCase().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
-                    updatedIlmsCaseRequest.getIlmsCase().setParentCaseId(null);
-                    if (Objects.nonNull(ilmsCaseRequest.getIlmsCase().getParentCaseId())) {
-                        throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Parent Case does not exist Parent Case");
-                    }
-                } else if (ilmsCaseRequest.getIlmsCase().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
-                    List<String> caseIds = new ArrayList<>();
-                    caseIds.add(ilmsCaseRequest.getIlmsCase().getParentCaseId());
-                    ILMSCaseSearchCriteria criteria1 = ILMSCaseSearchCriteria.builder().id(caseIds).build();
-                    ILMSCaseResponse response = ilmsCaseRepository.getILMSCaseData(criteria1);
-                    if (response.getIlmsCases().size() != 1) {
-                        throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
+    public Case update(CaseRequest caseRequest) {
+        if (caseRequest.getCases().getId() != null) {
+            CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseRequest.getCases().getId())).build();
+            CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+            if (!caseResponse.getCases().isEmpty()) {
+                CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCases().get(0), caseRequest);
+                Case aCase = caseResponse.getCases().get(0);
+                caseValidator.validateUpdate(aCase, caseRequest);
+                if (Objects.nonNull(caseRequest.getCases().getCaseHierarchy())) {
+                    if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
+                        updatedCaseRequest.getCases().setParentCaseId(null);
+                        if (Objects.nonNull(caseRequest.getCases().getParentCaseId())) {
+                            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Independent Case does not exist Parent Case");
+                        }
+                    } else if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
+                        updatedCaseRequest.getCases().setParentCaseId(null);
+                        if (Objects.nonNull(caseRequest.getCases().getParentCaseId())) {
+                            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Parent Case does not exist Parent Case");
+                        }
+                    } else if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
+                        List<String> caseIds = new ArrayList<>();
+                        caseIds.add(caseRequest.getCases().getParentCaseId());
+                        CaseSearchCriteria criteria1 = CaseSearchCriteria.builder().id(caseIds).build();
+                        CaseResponse response = caseRepository.getILMSCaseData(criteria1);
+                        if (response.getCases().size() != 1) {
+                            throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
+                        }
                     }
                 }
-                }
-                producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedIlmsCaseRequest);
+                producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
             }
         } else {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "id is mandatory");
         }
-        return ilmsCaseRequest.getIlmsCase();
+        return caseRequest.getCases();
     }
 
-    public ByteArrayInputStream generatePDF(final ILMSCaseSearchCriteria criteria) {
+    public ByteArrayInputStream generatePDF(final CaseSearchCriteria criteria) {
         RequestInfo requestInfo = null;
-        CaseDetailsResponse caseDetailsResponse = caseDetailsSearch(criteria, requestInfo);
-        List<ILMSCase> ilmsCaseList = caseDetailsResponse.getCaseList();
-        List<Hearing> hearingList = caseDetailsResponse.getHearingList();
-        List<Judgement> judgementList = caseDetailsResponse.getJudgementList();
-
+        CaseDetailsResponse caseResponse = caseDetailsSearch(criteria, requestInfo);
+        List<Case> caseList = caseResponse.getCaseList();
+        List<Hearing> hearingList = caseResponse.getHearingList();
+        List<Judgement> judgementList = caseResponse.getJudgementList();
         com.itextpdf.text.Document pdfDoc = new com.itextpdf.text.Document(PageSize.A4);
-
         ByteArrayInputStream bis = null;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             PdfWriter.getInstance(pdfDoc, out);
             pdfDoc.open();
-            ilmsCaseList.forEach(ilmsCase -> {
+            caseList.forEach(ilmsCase -> {
                 Font font = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
                 Chunk chunk = new Chunk("CASES DETAILS : ", font);
                 Paragraph borrowerDetails = new Paragraph(chunk);
@@ -218,7 +228,6 @@ public class ILMSCaseService {
 
                 PdfPTable table = new PdfPTable(2);
                 table.setWidthPercentage(100.0f);
-
                 table.setSpacingBefore(4f);
 
                 PdfPCell cell3 = new PdfPCell();
@@ -607,15 +616,13 @@ public class ILMSCaseService {
                 table.addCell(cell42);
                 try {
                     pdfDoc.add(borrowerDetails);
-
                     pdfDoc.add(table);
-
                 } catch (DocumentException e) {
                     throw new RuntimeException(e);
                 }
             });
 
-            ilmsCaseList.forEach(ilmsCase -> {
+            caseList.forEach(ilmsCase -> {
                 Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
                 Chunk chunk1 = new Chunk("\nPETITIONER DETAILS : ", font1);
                 Paragraph borrowerDetail = new Paragraph(chunk1);
@@ -623,7 +630,6 @@ public class ILMSCaseService {
 
                 PdfPTable table1 = new PdfPTable(2);
                 table1.setWidthPercentage(100.0f);
-
                 table1.setSpacingBefore(4f);
 
                 PdfPCell cell1 = new PdfPCell();
@@ -724,7 +730,7 @@ public class ILMSCaseService {
                 }
             });
 
-            ilmsCaseList.forEach(ilmsCase -> {
+            caseList.forEach(ilmsCase -> {
                 Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
                 Chunk chunk1 = new Chunk("\nPETITIONER ADVOCATE DETAILS : ", font1);
                 Paragraph borrowerDetail = new Paragraph(chunk1);
@@ -732,7 +738,6 @@ public class ILMSCaseService {
 
                 PdfPTable table1 = new PdfPTable(2);
                 table1.setWidthPercentage(100.0f);
-
                 table1.setSpacingBefore(4f);
 
                 PdfPCell cell1 = new PdfPCell();
@@ -779,7 +784,7 @@ public class ILMSCaseService {
                 }
             });
 
-            ilmsCaseList.forEach(ilmsCase -> {
+            caseList.forEach(ilmsCase -> {
                 Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
                 Chunk chunk1 = new Chunk("\n\nRESPONDENT DETAILS : ", font1);
                 Paragraph borrowerDetail = new Paragraph(chunk1);
@@ -787,7 +792,6 @@ public class ILMSCaseService {
 
                 PdfPTable table1 = new PdfPTable(2);
                 table1.setWidthPercentage(100.0f);
-
                 table1.setSpacingBefore(4f);
 
                 PdfPCell cell1 = new PdfPCell();
@@ -888,7 +892,7 @@ public class ILMSCaseService {
                 }
             });
 
-            ilmsCaseList.forEach(ilmsCase -> {
+            caseList.forEach(ilmsCase -> {
                 Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
                 Chunk chunk1 = new Chunk("\nRESPONDENT ADVOCATE DETAILS : ", font1);
                 Paragraph borrowerDetail = new Paragraph(chunk1);
@@ -896,7 +900,6 @@ public class ILMSCaseService {
 
                 PdfPTable table1 = new PdfPTable(2);
                 table1.setWidthPercentage(100.0f);
-
                 table1.setSpacingBefore(4f);
 
                 PdfPCell cell1 = new PdfPCell();
@@ -961,7 +964,7 @@ public class ILMSCaseService {
                 }
             });
 
-            ilmsCaseList.forEach(ilmsCase -> {
+            caseList.forEach(ilmsCase -> {
                 Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
                 Chunk chunk1 = new Chunk("\nACT : ", font1);
                 Paragraph borrowerDetail = new Paragraph(chunk1);
@@ -969,7 +972,6 @@ public class ILMSCaseService {
 
                 PdfPTable table1 = new PdfPTable(2);
                 table1.setWidthPercentage(100.0f);
-
                 table1.setSpacingBefore(4f);
 
                 PdfPCell cell1 = new PdfPCell();
@@ -1014,8 +1016,8 @@ public class ILMSCaseService {
                     throw new RuntimeException(e);
                 }
             });
-            ilmsCaseList.forEach(ilmsCase -> {
-                Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font .BOLD, BaseColor.BLACK);
+            caseList.forEach(ilmsCase -> {
+                Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
                 Chunk chunk1 = new Chunk("\nDOCUMENT : ", font1);
                 Paragraph Detail = new Paragraph(chunk1);
                 Detail.setAlignment(Element.ALIGN_MIDDLE);
@@ -1023,13 +1025,14 @@ public class ILMSCaseService {
                 table1.setWidthPercentage(10.0f);
                 table1.setSpacingBefore(4f);
                 Phrase phrase = new Phrase("");
-                Font anchorFont = new Font(Font.FontFamily.HELVETICA, 11,Font.BOLD,BaseColor.RED);
+                Font anchorFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, BaseColor.RED);
                 Anchor anchor = new Anchor(new Chunk("Aadhaar", anchorFont));
                 anchor.setReference("http://14.97.12.97/digit-ui/citizen/select-language");
                 phrase.add(anchor);
                 try {
                     pdfDoc.add(Detail);
-                    Image image = Image.getInstance("C:\\Users\\WalkingTree\\Desktop\\Files\\Image\\pdf.png");
+                    Image image = Image.getInstance(
+                            "https://www.adobe.com/express/create/media_127a4cd0c28c2753638768caf8967503d38d01e4c.jpeg?width=400&format=jpeg&optimize=medium");
                     image.setAlignment(Image.ALIGN_LEFT);
                     image.setPaddingTop(-80);
                     image.setAbsolutePosition(10f, 290f);
@@ -1046,15 +1049,16 @@ public class ILMSCaseService {
                 }
             });
 
-            ilmsCaseList.forEach(ilmsCase -> {
+            caseList.forEach(ilmsCase -> {
                 Phrase phrase1 = new Phrase("");
-                Font anchorFont1 = new Font(Font.FontFamily.HELVETICA, 11,Font.BOLD,BaseColor.RED);
+                Font anchorFont1 = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, BaseColor.RED);
                 Anchor anchor1 = new Anchor(new Chunk("\n\n\n\n\n\n\nPAN", anchorFont1));
                 anchor1.setReference("http://14.97.12.97/digit-ui/citizen/select-language");
                 phrase1.add(anchor1);
 
                 try {
-                    Image image1 = Image.getInstance("C:\\Users\\WalkingTree\\Desktop\\Files\\Image\\pdf.png");
+                    Image image1 = Image.getInstance(
+                            "https://www.adobe.com/express/create/media_127a4cd0c28c2753638768caf8967503d38d01e4c.jpeg?width=400&format=jpeg&optimize=medium");
                     image1.setAlignment(Image.ALIGN_LEFT);
                     image1.setPaddingTop(-80);
                     image1.setAbsolutePosition(10f, 180f);
@@ -1077,7 +1081,6 @@ public class ILMSCaseService {
 
                 PdfPTable table1 = new PdfPTable(2);
                 table1.setWidthPercentage(100.0f);
-
                 table1.setSpacingBefore(4f);
 
                 PdfPCell cell1 = new PdfPCell();
@@ -1278,7 +1281,6 @@ public class ILMSCaseService {
 
                 PdfPTable table1 = new PdfPTable(2);
                 table1.setWidthPercentage(100.0f);
-
                 table1.setSpacingBefore(4f);
 
                 PdfPCell cell1 = new PdfPCell();
