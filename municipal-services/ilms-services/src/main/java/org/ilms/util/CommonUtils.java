@@ -43,11 +43,30 @@ public class CommonUtils {
         LocalDate inputDate = null;
         if (String.valueOf(milliseconds).length() == 13) {
             inputDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-            if (!inputDate.isBefore(todayDate)) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Date should be before then today's date [ " + todayDate + " ]");
-            }
         } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Date should be in proper timestamp format [ " + milliseconds + " ] ");
+        }
+        return true;
+    }
+
+    public boolean isBeforeDate(long milliseconds) {
+        final LocalDate todayDate = LocalDate.now();
+        final Instant instant = Instant.ofEpochMilli(milliseconds);
+        LocalDate inputDate = null;
+        inputDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        if (!inputDate.isBefore(todayDate)) {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Date should be before then today's date [ " + todayDate + " ]");
+        }
+        return true;
+    }
+
+    public boolean isPreviousDate(long milliseconds) {
+        final LocalDate todayDate = LocalDate.now();
+        final Instant instant = Instant.ofEpochMilli(milliseconds);
+        LocalDate inputDate = null;
+        inputDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        if (!inputDate.isAfter(todayDate)) {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Date should be after then today's date [ " + todayDate + " ]");
         }
         return true;
     }
