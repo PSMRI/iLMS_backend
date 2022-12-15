@@ -1,19 +1,5 @@
 package org.ilms.repository.rowmapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.tracer.model.CustomException;
-import org.ilms.web.model.Act;
-import org.ilms.web.model.AuditDetails;
-import org.ilms.web.model.ILMSCase;
-import org.ilms.web.model.enums.CaseHierarchy;
-import org.ilms.web.model.enums.Status;
-import org.postgresql.util.PGobject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.stereotype.Repository;
-
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,12 +7,25 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.egov.tracer.model.CustomException;
+import org.ilms.web.model.Act;
+import org.ilms.web.model.AuditDetails;
+import org.ilms.web.model.Case;
+import org.ilms.web.model.enums.CaseHierarchy;
+import org.ilms.web.model.enums.Status;
+import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.stereotype.Repository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Repository
-public class ILMSCaseRowMapper implements ResultSetExtractor<List<ILMSCase>> {
-
+public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
     @Autowired
     private ObjectMapper mapper;
+
     private int fullCount = 0;
 
     public int getFullCount() {
@@ -38,20 +37,20 @@ public class ILMSCaseRowMapper implements ResultSetExtractor<List<ILMSCase>> {
     }
 
     @Override
-    public List<ILMSCase> extractData(ResultSet rs) throws SQLException, DataAccessException {
+    public List<Case> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-        Map<String, ILMSCase> ilmsCaseMap = new LinkedHashMap<String, ILMSCase>();
+        Map<String, Case> ilmsCaseMap = new LinkedHashMap<String, Case>();
         this.setFullCount(0);
         while (rs.next()) {
             System.out.println(rs);
             String duplicacyCheck = "";
-            ILMSCase currentIlmsCase = new ILMSCase();
+            Case currentCase = new Case();
             // TODO fill the ILMSCase object with data in the result set record
-            if (!duplicacyCheck.equals(rs.getString("ilmsCase_id")) && Status.valueOf(rs.getString("ilms_status"))==Status.ACTIVE) {
+            if (!duplicacyCheck.equals(rs.getString("ilmsCase_id")) && Status.valueOf(rs.getString("ilms_status")) == Status.ACTIVE) {
                 String id = rs.getString("ilmsCase_id");
                 duplicacyCheck = id;
                 String cnrNumber = rs.getString("ilms_cnrNumber");
-                currentIlmsCase = ilmsCaseMap.get(id);
+                currentCase = ilmsCaseMap.get(id);
                 String tenantId = rs.getString("ilms_tenandId");
                 String parentCaseId = rs.getString("ilms_parentCaseId");
                 String caseHierarchy = rs.getString("ilms_caseHierarchy");
@@ -82,41 +81,42 @@ public class ILMSCaseRowMapper implements ResultSetExtractor<List<ILMSCase>> {
                 Object additionalDetails = getAdditionalDetail("ilms_additionalDetails", rs);
                 String status = rs.getString("ilms_status");
 
-                AuditDetails auditDetails = AuditDetails.builder()
-                        .createdTime(rs.getLong("ilms_createdTime")).createdBy(rs.getString("ilms_createdBy"))
-                        .lastModifiedTime(rs.getLong("ilms_lastModifiedTime")).lastModifiedBy(rs.getString("ilms_lastModifiedBy"))
-                        .build();
+                AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("ilms_createdTime"))
+                                                        .createdBy(rs.getString("ilms_createdBy"))
+                                                        .lastModifiedTime(rs.getLong("ilms_lastModifiedTime"))
+                                                        .lastModifiedBy(rs.getString("ilms_lastModifiedBy")).build();
 
-                if (currentIlmsCase == null) {
-                    currentIlmsCase = ILMSCase.builder().id(id).cnrNumber(cnrNumber).tenantId(tenantId).additionalDetails(additionalDetails)
-                                              .caseHierarchy(CaseHierarchy.valueOf(caseHierarchy)).caseType(caseType).caseCategory(caseCategory).parentCaseId(parentCaseId)
-                                              .caseNumber(caseNumber).caseYear(caseYear).filingNumber(filingNumber).remarks(remarks).assignedOfficerId(assignedOfficerId)
-                                              .filingDate(filingDate).registrationDate(registrationDate).caseSummary(caseSummary).status(Status.valueOf(status))
-                                              .arisingDetails(arisingDetails).policyOrNonPolicyMatter(matter).applicationNumber(uniqueId)
-                                              .isCaseNumberCorrect(isCaseNumberCorrect).caseStatus(caseStatus).firstHearingDate(firstHearingDate)
-                                              .previousHearingDate(previousHearingDate).nextHearingDate(nextHearingDate).caseStage(caseStage)
-                                              .caseSubStage(caseSubStage).caseFlag(caseFlag).departmentName(departmentName).recommendOIC(recommendOic).auditDetails(auditDetails)
-                                              .build();
+                if (currentCase == null) {
+                    currentCase = Case.builder().id(id).cnrNumber(cnrNumber).tenantId(tenantId).additionalDetails(additionalDetails)
+                                      .caseHierarchy(CaseHierarchy.valueOf(caseHierarchy)).caseType(caseType).caseCategory(caseCategory)
+                                      .parentCaseId(parentCaseId).caseNumber(caseNumber).caseYear(caseYear).filingNumber(filingNumber)
+                                      .remarks(remarks).assignedOfficerId(assignedOfficerId).filingDate(filingDate).registrationDate(registrationDate)
+                                      .caseSummary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
+                                      .policyOrNonPolicyMatter(matter).applicationNumber(uniqueId).isCaseNumberCorrect(isCaseNumberCorrect)
+                                      .caseStatus(caseStatus).firstHearingDate(firstHearingDate).previousHearingDate(previousHearingDate)
+                                      .nextHearingDate(nextHearingDate).caseStage(caseStage).caseSubStage(caseSubStage).caseFlag(caseFlag)
+                                      .departmentName(departmentName).recommendOIC(recommendOic).auditDetails(auditDetails).build();
 
-                    ilmsCaseMap.put(id, currentIlmsCase);
+                    ilmsCaseMap.put(id, currentCase);
                 }
             }
-            addChildrenToProperty(rs, currentIlmsCase);
+            addChildrenToProperty(rs, currentCase);
         }
         return new ArrayList<>(ilmsCaseMap.values());
     }
 
-    @SuppressWarnings("unused")
-    private void addChildrenToProperty(ResultSet rs, ILMSCase ilmsCase) throws SQLException {
+    @SuppressWarnings ("unused")
+    private void addChildrenToProperty(ResultSet rs, Case aCase) throws SQLException {
         // TODO add all the child data petitioner, respondant, act, advocate
-       if(Status.valueOf(rs.getString("actStatus"))==Status.ACTIVE){
-           AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("act_createdBy")).createdTime(rs.getLong("act_createdTime"))
-                   .lastModifiedBy(rs.getString("act_lastModifiedBy")).lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
+        if (Status.valueOf(rs.getString("actStatus")) == Status.ACTIVE) {
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("act_createdBy")).createdTime(rs.getLong("act_createdTime"))
+                                                    .lastModifiedBy(rs.getString("act_lastModifiedBy"))
+                                                    .lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
 
-           Act act = Act.builder().id(rs.getString("actId")).actName(rs.getString("actName")).status(Status.valueOf(rs.getString("actStatus")))
-                   .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
-           ilmsCase.setAct(act);
-       }
+            Act act = Act.builder().id(rs.getString("actId")).actName(rs.getString("actName")).status(Status.valueOf(rs.getString("actStatus")))
+                         .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
+            aCase.setAct(act);
+        }
     }
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {

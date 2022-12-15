@@ -11,21 +11,12 @@ import org.springframework.util.CollectionUtils;
 public class HearingQueryBuilder {
     private static final String maxValueQuery = "select MAX(hearing_number) from ilms_hearing where case_id = ?";
 
-    private static final String Query = "select count(*) OVER() AS full_count,ilms_hearing.id as hearing_id, ilms_hearing.hearing_number as hearing_number, ilms_hearing.court_id as hearing_courtId,"
-            + " ilms_hearing.case_id as hearing_case_id, ilms_hearing.judge_name as hearing_judge_name, ilms_hearing.hearing_date as hearing_date,"
-            + " ilms_hearing.business_date as hearing_business_date, ilms_hearing.hearing_purpose as hearing_purpose, ilms_hearing.required_officer as hearing_required_officer, ilms_hearing.affidavit_filing_date as affidavit_filing_date, ilms_hearing.affidavit_filing_due_date as affidavit_filing_due_date,"
-            + " ilms_hearing.case_number as hearing_case_number, ilms_hearing.oath_number as hearing_oath_number, ilms_hearing.first_hearing_date as first_hearing_date, ilms_hearing.additional_details as hearing_additionalDetails, "
-            + " ilms_hearing.previous_hearing_date as previous_hearing_date, ilms_hearing.next_hearing_date as next_hearing_date, ilms_hearing.is_presence_required as hearing_is_presence_required, ilms_hearing.hearing_type as hearing_type, ilms_hearing.department_officer as hearing_department_officer,"
-            + " ilms_hearing.remarks as hearing_remarks,ilms_hearing.status as hearing_status,ilms_hearing.createdby as hearing_createdby,ilms_hearing.createdtime as hearing_createdtime,ilms_hearing.lastmodifiedby as hearing_lastmodifiedby,ilms_hearing.lastmodifiedtime as hearing_lastmodifiedtime,"
-            + " ilms_court.id as court_id, ilms_court.hearing_id as court_hearingId, ilms_court.court_number as court_number, ilms_court.court_name as court_name, ilms_court.district as court_district, ilms_court.state as court_state, ilms_court.bench as court_bench, ilms_court.division as court_division,ilms_court.status as court_status,"
-            + " ilms_court.createdby as court_createdby,ilms_court.createdtime as court_createdtime,ilms_court.lastmodifiedby as court_lastmodifiedby,ilms_court.lastmodifiedtime as court_lastmodifiedtime"
-            + " FROM ilms_hearing"
-            + " LEFT OUTER JOIN ilms_court on ilms_court.hearing_id = ilms_hearing.id";
+    private static final String Query = "select count(*) OVER() AS full_count,ilms_hearing.id as hearing_id, ilms_hearing.hearing_number as hearing_number," + " ilms_hearing.court_id as hearing_courtId, ilms_hearing.case_id as hearing_case_id, " + " ilms_hearing.judge_name as hearing_judge_name, ilms_hearing.hearing_date as hearing_date," + " ilms_hearing.business_date as hearing_business_date, ilms_hearing.hearing_purpose as hearing_purpose, " + " ilms_hearing.required_officer as hearing_required_officer, ilms_hearing.affidavit_filing_date as affidavit_filing_date, " + " ilms_hearing.affidavit_filing_due_date as affidavit_filing_due_date, ilms_hearing.case_number as hearing_case_number, " + " ilms_hearing.oath_number as hearing_oath_number, ilms_hearing.first_hearing_date as first_hearing_date, " + " ilms_hearing.additional_details as hearing_additionalDetails,  ilms_hearing.previous_hearing_date as previous_hearing_date," + " ilms_hearing.next_hearing_date as next_hearing_date, ilms_hearing.is_presence_required as hearing_is_presence_required, " + " ilms_hearing.hearing_type as hearing_type, ilms_hearing.department_officer as hearing_department_officer," + " ilms_hearing.remarks as hearing_remarks,ilms_hearing.status as hearing_status,ilms_hearing.createdby as hearing_createdby," + " ilms_hearing.createdtime as hearing_createdtime,ilms_hearing.lastmodifiedby as hearing_lastmodifiedby," + " ilms_hearing.lastmodifiedtime as hearing_lastmodifiedtime, ilms_court.id as court_id, ilms_court.hearing_id as court_hearingId, " + " ilms_court.court_number as court_number, ilms_court.court_name as court_name, ilms_court.district as court_district, " + " ilms_court.state as court_state, ilms_court.bench as court_bench, ilms_court.division as court_division," + " ilms_court.status as court_status, ilms_court.createdby as court_createdby,ilms_court.createdtime as court_createdtime," + " ilms_court.lastmodifiedby as court_lastmodifiedby,ilms_court.lastmodifiedtime as court_lastmodifiedtime, " + " ilms_payment.id as payment_id, ilms_payment.case_id as payment_case_id, ilms_payment.hearing_id as payment_hearing_id, " + " ilms_payment.fine_imposed_date as payment_fine_imposed_date, ilms_payment.fine_due_date as payment_fine_due_date," + " ilms_payment.fine_amount as payment_fine_amount,  ilms_payment.status as payment_status ," + " ilms_payment.createdby as payment_createdby,ilms_payment.createdtime as payment_createdtime," + " ilms_payment.lastmodifiedby as payment_lastmodifiedby,ilms_payment.lastmodifiedtime as payment_lastmodifiedtime " + " FROM ilms_hearing " + " LEFT OUTER JOIN ilms_court on ilms_court.hearing_id = ilms_hearing.id " + " LEFT OUTER JOIN ilms_payment on ilms_payment.hearing_id = ilms_hearing.id";
 
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
     @Autowired
-    private ILMSConfiguration config;
+    private ILMSConfiguration ilmsConfiguration;
 
     public String getHearingSearchQuery(HearingSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(Query);
@@ -56,26 +47,21 @@ public class HearingQueryBuilder {
 
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, HearingSearchCriteria criteria) {
 
-        int limit = config.getDefaultLimit();
-        int offset = config.getDefaultOffset();
+        int limit = ilmsConfiguration.getDefaultLimit();
+        int offset = ilmsConfiguration.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
-
-        if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit()) {
+        if (criteria.getLimit() != null && criteria.getLimit() <= ilmsConfiguration.getMaxSearchLimit()) {
             limit = criteria.getLimit();
         }
-
-        if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit()) {
-            limit = config.getMaxSearchLimit();
+        if (criteria.getLimit() != null && criteria.getLimit() > ilmsConfiguration.getMaxSearchLimit()) {
+            limit = ilmsConfiguration.getMaxSearchLimit();
         }
-
         if (criteria.getOffset() != null) {
             offset = criteria.getOffset();
         }
-
         StringBuilder orderQuery = new StringBuilder();
         addOrderByClause(orderQuery, criteria);
         finalQuery = finalQuery.replace("{orderBy}", orderQuery.toString());
-
         if (limit == -1) {
             finalQuery = finalQuery.replace("{pagination}", "");
         } else {
@@ -83,7 +69,6 @@ public class HearingQueryBuilder {
             preparedStmtList.add(offset);
             preparedStmtList.add(limit);
         }
-
         return finalQuery;
     }
 
@@ -119,7 +104,6 @@ public class HearingQueryBuilder {
         } else if (criteria.getSortBy() == HearingSearchCriteria.SortBy.caseId) {
             builder.append(" ORDER BY ilms_hearing.case_id ");
         }
-
         if (criteria.getSortOrder() == HearingSearchCriteria.SortOrder.ASC) {
             builder.append("ASC");
         } else if (criteria.getSortOrder() == HearingSearchCriteria.SortOrder.DESC) {
@@ -130,5 +114,4 @@ public class HearingQueryBuilder {
     public String getMaxHearingQuery() {
         return maxValueQuery;
     }
-
 }

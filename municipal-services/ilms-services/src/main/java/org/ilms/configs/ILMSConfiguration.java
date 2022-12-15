@@ -1,7 +1,7 @@
 package org.ilms.configs;
 
-import java.util.TimeZone;
 import java.util.List;
+import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,46 +24,46 @@ public class ILMSConfiguration {
 
     //    MDMS Config
 
-    @Value("${ilms.business.codes}")
+    @Value ("${ilms.business.codes}")
     private List<String> businessServiceList;
 
-    @Value("${workflow.host}")
+    @Value ("${workflow.host}")
     private String wfHost;
 
-    @Value("${workflow.transition.path}")
+    @Value ("${workflow.transition.path}")
     private String wfTransitionPath;
 
-    @Value("${workflow.businessservice.search.path}")
+    @Value ("${workflow.businessservice.search.path}")
     private String wfBusinessServiceSearchPath;
 
-    @Value("${workflow.processinstance.search.path}")
+    @Value ("${workflow.processinstance.search.path}")
     private String wfProcessInstanceSearchPath;
 
-    @Value("${is.workflow.enabled}")
+    @Value ("${is.workflow.enabled}")
     private Boolean isWorkflowEnabled;
 
-    @Value("${ilms.create.workflow.name}")
+    @Value ("${ilms.create.workflow.name}")
     private String createPTWfName;
 
-    @Value("${ilms.legacy.entry.workflow.name}")
-    private String LegacyPTWfName;
+    @Value ("${ilms.legacy.entry.workflow.name}")
+    private String legacyIlmsWfName;
 
-    @Value("${ilms.update.workflow.name}")
-    private String updatePTWfName;
+    @Value ("${ilms.update.workflow.name}")
+    private String updateIlmsWfName;
 
-    @Value("${is.mutation.workflow.enabled}")
+    @Value ("${is.mutation.workflow.enabled}")
     private Boolean isMutationWorkflowEnabled;
 
-    @Value("${mutation.workflow.name}")
+    @Value ("${mutation.workflow.name}")
     private String mutationWfName;
 
-    @Value("${mutation.workflow.open.state}")
+    @Value ("${mutation.workflow.open.state}")
     private String mutationOpenState;
 
-    @Value("${workflow.status.active}")
+    @Value ("${workflow.status.active}")
     private String wfStatusActive;
 
-    @Value("${ilms.module.name}")
+    @Value ("${ilms.module.name}")
     private String propertyModuleName;
 
     // Idgen Config
@@ -100,6 +100,12 @@ public class ILMSConfiguration {
     @Value ("${egov.ilms.idgen.respondent.advocate.name}")
     private String respondentAdvocateIdgenName;
 
+    @Value ("${egov.ilms.idgen.hearing.payment.id.name}")
+    private String paymentIdgenName;
+
+    @Value ("${egov.ilms.idgen.hearing.payment.id.format}")
+    private String paymentIdgenFormat;
+
     @Value ("${egov.ilms.idgen.respondent.advocate.format}")
     private String respondentAdvocateIdgenFormat;
 
@@ -116,10 +122,10 @@ public class ILMSConfiguration {
     private String hearingIdgenFormat;
 
     @Value ("${egov.ilms.idgen.hearing.court.id.name}")
-    private String courtIdGenName;
+    private String courtIdgenName;
 
     @Value ("${egov.ilms.idgen.hearing.court.id.format}")
-    private String courtIdGenFormat;
+    private String courtIdgenFormat;
 
     @Value ("${persister.save.ilms.case.topic}")
     private String createCaseTopic;
@@ -131,31 +137,31 @@ public class ILMSConfiguration {
     private String updateChildCaseTopic;
 
     @Value ("${persister.save.hearing.details.topic}")
-    private String createHearingDetailsTopic;
+    private String createHearingTopic;
 
     @Value ("${persister.update.hearing.details.topic}")
-    private String UpdateHearingDetailsTopic;
+    private String updateHearingTopic;
 
     @Value ("${egov.ilms.idgen.judgement.id.name}")
-    private String judgeIdGenName;
+    private String judgementIdgenName;
 
     @Value ("${egov.ilms.idgen.judgement.id.format}")
-    private String judgeIdGenFormat;
+    private String judgementIdgenFormat;
 
     @Value ("${egov.ilms.idgen.document.id.name}")
-    private String documentIdGenName;
+    private String documentIdgenName;
 
     @Value ("${egov.ilms.idgen.document.id.format}")
-    private String documentIdGenFormat;
+    private String documentIdgenFormat;
 
     @Value ("${persister.save.judgement.details.topic}")
-    private String CreateJudgementTopic;
+    private String createJudgementTopic;
 
     @Value ("${persister.save.document.topic}")
     private String createDocumentTopic;
 
     @Value ("${egov.ilms.idgen.judgement.update}")
-    private String UpdateJudgement;
+    private String updateJudgementTopic;
 
     @Value ("${egov.ilms.default.limit}")
     private Integer defaultLimit;

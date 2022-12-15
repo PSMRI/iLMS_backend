@@ -1,6 +1,5 @@
 package org.ilms.web.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import org.ilms.service.DocumentService;
@@ -8,8 +7,8 @@ import org.ilms.util.ResponseInfoFactory;
 import org.ilms.web.model.Document;
 import org.ilms.web.model.DocumentResponse;
 import org.ilms.web.model.DocumentSearchCriteria;
-import org.ilms.web.model.ILMSCaseSearchCriteria;
-import org.ilms.web.model.IlmsDocumentRequest;
+import org.ilms.web.model.CaseSearchCriteria;
+import org.ilms.web.model.DocumentRequest;
 import org.ilms.web.model.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,8 +43,8 @@ public class DocumentController {
     }
 
     @PostMapping (value = "/_create")
-    public ResponseEntity<DocumentResponse> createDocumet(@Valid @RequestBody IlmsDocumentRequest request,
-            @Valid @ModelAttribute ILMSCaseSearchCriteria criteria) {
+    public ResponseEntity<DocumentResponse> createDocumet(@Valid @RequestBody DocumentRequest request,
+            @Valid @ModelAttribute CaseSearchCriteria criteria) {
         List<Document> document = documentService.createDocument(request, criteria);
         DocumentResponse response = DocumentResponse.builder().documents(document).build();
         log.info("DocumentController :: search() : END With Response [ " + response + " ]");

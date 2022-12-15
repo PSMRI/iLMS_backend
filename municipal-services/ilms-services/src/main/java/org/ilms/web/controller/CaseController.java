@@ -5,15 +5,15 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
-import org.ilms.service.ILMSCaseService;
+import org.ilms.service.CaseService;
 import org.ilms.util.ResponseInfoFactory;
+import org.ilms.web.model.Case;
 import org.ilms.web.model.CaseDetailsResponse;
+import org.ilms.web.model.CaseRequest;
+import org.ilms.web.model.CaseResponse;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.ChildCase;
 import org.ilms.web.model.ChildCaseRequest;
-import org.ilms.web.model.ILMSCase;
-import org.ilms.web.model.ILMSCaseRequest;
-import org.ilms.web.model.ILMSCaseResponse;
-import org.ilms.web.model.ILMSCaseSearchCriteria;
 import org.ilms.web.model.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -35,57 +35,58 @@ import lombok.extern.log4j.Log4j2;
 @RequestMapping ("/case")
 @Log4j2
 @CrossOrigin (origins = "*", allowedHeaders = "*")
-public class ILMSCaseController {
+public class CaseController {
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    private ILMSCaseService ilmsCaseService;
+    private CaseService caseService;
 
     @PostMapping (value = "/_search")
-    public ResponseEntity<ILMSCaseResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-            @Valid @ModelAttribute ILMSCaseSearchCriteria criteria) {
+    public ResponseEntity<CaseResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+            @Valid @ModelAttribute CaseSearchCriteria criteria) {
         log.info("ILMSCaseController :: search() : START ");
-        ILMSCaseResponse response = ilmsCaseService.ilmsCaseSearch(criteria, requestInfoWrapper.getRequestInfo());
+        CaseResponse response = caseService.ilmsCaseSearch(criteria, requestInfoWrapper.getRequestInfo());
         response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
         log.info("ILMSCaseController :: search() : END With Response [ " + response + " ]");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping (value = "/_create")
-    public ResponseEntity<ILMSCaseResponse> create(@Valid @RequestBody ILMSCaseRequest ilmsCaseRequest) {
-        ILMSCase ilmsCase = ilmsCaseService.create(ilmsCaseRequest);
-        List<ILMSCase> ilmsCaseList = new ArrayList<ILMSCase>();
-        ilmsCaseList.add(ilmsCase);
-        ILMSCaseResponse response = ILMSCaseResponse.builder().ilmsCases(ilmsCaseList).responseInfo(
-                responseInfoFactory.createResponseInfoFromRequestInfo(ilmsCaseRequest.getRequestInfo(), true)).build();
+    public ResponseEntity<CaseResponse> create(@Valid @RequestBody CaseRequest caseRequest) {
+        Case aCase = caseService.create(caseRequest);
+        List<Case> caseList = new ArrayList<Case>();
+        caseList.add(aCase);
+        CaseResponse response = CaseResponse.builder().Cases(caseList)
+                                            .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true))
+                                            .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping (value = "/_update")
-    public ResponseEntity<ILMSCaseResponse> update(@Valid @RequestBody ILMSCaseRequest ilmsCaseRequest) {
-        ILMSCaseResponse response = new ILMSCaseResponse();
-        ILMSCase ilmsCase = ilmsCaseService.update(ilmsCaseRequest);
-        List<ILMSCase> ilmsCaseList = new ArrayList<>();
-        ilmsCaseList.add(ilmsCase);
-        response.setIlmsCases(ilmsCaseList);
+    public ResponseEntity<CaseResponse> update(@Valid @RequestBody CaseRequest caseRequest) {
+        CaseResponse response = new CaseResponse();
+        Case aCase = caseService.update(caseRequest);
+        List<Case> caseList = new ArrayList<>();
+        caseList.add(aCase);
+        response.setCases(caseList);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping (value = "/_caseDetails")
     public ResponseEntity<CaseDetailsResponse> CaseDetailsResponse(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-            @Valid @ModelAttribute ILMSCaseSearchCriteria criteria) {
+            @Valid @ModelAttribute CaseSearchCriteria criteria) {
         log.info("ILMSCaseController :: search() : START ");
-        CaseDetailsResponse downloadResponse = ilmsCaseService.caseDetailsSearch(criteria, requestInfoWrapper.getRequestInfo());
+        CaseDetailsResponse downloadResponse = caseService.caseDetailsSearch(criteria, requestInfoWrapper.getRequestInfo());
         downloadResponse.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
         log.info("ILMSCaseController :: search() : END With Response [ " + downloadResponse + " ]");
         return new ResponseEntity<>(downloadResponse, HttpStatus.OK);
     }
 
     @RequestMapping (value = "/_generatePDF", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<Resource> generatePDF(@ModelAttribute final ILMSCaseSearchCriteria criteria) throws FileNotFoundException {
+    public ResponseEntity<Resource> generatePDF(@ModelAttribute final CaseSearchCriteria criteria) throws FileNotFoundException {
         log.info("Genreate PDF : START : " + criteria);
-        ByteArrayInputStream bis = ilmsCaseService.generatePDF(criteria);
+        ByteArrayInputStream bis = caseService.generatePDF(criteria);
         String pdfName = criteria.getId() + ".pdf";
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + pdfName).contentType(MediaType.APPLICATION_PDF)
                              .body(new InputStreamResource(bis));
@@ -94,7 +95,7 @@ public class ILMSCaseController {
 
     @PostMapping (value = "/_addChildCases")
     public ChildCase addChildCases(@Valid @RequestBody ChildCaseRequest ilmschildCaseRequest) {
-        ChildCase ilmsCaseIds = ilmsCaseService.addChildCases(ilmschildCaseRequest);
+        ChildCase ilmsCaseIds = caseService.addChildCases(ilmschildCaseRequest);
         return ilmsCaseIds;
     }
 }

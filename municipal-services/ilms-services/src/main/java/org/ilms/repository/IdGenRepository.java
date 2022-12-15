@@ -18,14 +18,14 @@ import org.springframework.web.client.RestTemplate;
 
 @Repository
 public class IdGenRepository {
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    private ILMSConfiguration config;
+    private final ILMSConfiguration ilmsConfiguration;
 
     @Autowired
-    public IdGenRepository(RestTemplate restTemplate, ILMSConfiguration config) {
+    public IdGenRepository(RestTemplate restTemplate, ILMSConfiguration ilmsConfiguration) {
         this.restTemplate = restTemplate;
-        this.config = config;
+        this.ilmsConfiguration = ilmsConfiguration;
     }
 
     public IdGenerationResponse getId(RequestInfo requestInfo, String tenantId, String name, String format, int count) {
@@ -35,7 +35,7 @@ public class IdGenRepository {
         IdGenerationRequest req = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
         IdGenerationResponse response = null;
         try {
-            response = restTemplate.postForObject(config.getIdGenHost() + config.getIdGenPath(), req,
+            response = restTemplate.postForObject(ilmsConfiguration.getIdGenHost() + ilmsConfiguration.getIdGenPath(), req,
                     IdGenerationResponse.class);
         } catch (HttpClientErrorException e) {
             throw new ServiceCallException(e.getResponseBodyAsString());

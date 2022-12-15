@@ -1,9 +1,9 @@
 package org.ilms.util;
 
-import org.ilms.service.EnrichmentService;
+import java.util.Objects;
+import org.ilms.service.CaseEnrichmentService;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingRequest;
-import org.ilms.web.model.HearingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -11,9 +11,9 @@ import org.springframework.util.StringUtils;
 @Component
 public class HearingUtils {
     @Autowired
-    private EnrichmentService enrichmentService;
+    private CaseEnrichmentService caseEnrichmentService;
 
-    public HearingRequest prepareHearingDetailsModalForUpdate(HearingRequest hearingDetailsRequest,Hearing oldHearingRequest ) {
+    public HearingRequest prepareHearingDetailsModalForUpdate(HearingRequest hearingDetailsRequest, Hearing oldHearingRequest) {
         HearingRequest updatedRequest = new HearingRequest();
         updatedRequest.setRequestInfo(hearingDetailsRequest.getRequestInfo());
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseId())) {
@@ -228,8 +228,19 @@ public class HearingUtils {
                 oldHearingRequest.setAdditionalDetails(hearingDetailsRequest.getHearing().getAdditionalDetails());
             }
         }
+        if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
+            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate())) {
+                oldHearingRequest.getPayment().setFineImposedDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate());
+            }
+            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineDueDate())) {
+                oldHearingRequest.getPayment().setFineDueDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate());
+            }
+            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
+                oldHearingRequest.getPayment().setFineAmount(hearingDetailsRequest.getHearing().getPayment().getFineAmount());
+            }
+        }
         updatedRequest.setHearing(oldHearingRequest);
-        enrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
+        caseEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
         return updatedRequest;
     }
 }

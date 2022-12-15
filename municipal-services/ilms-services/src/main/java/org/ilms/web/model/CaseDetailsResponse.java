@@ -3,11 +3,7 @@ package org.ilms.web.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
-
-
 import java.util.List;
-
-
 
 @Builder
 @AllArgsConstructor
@@ -15,25 +11,23 @@ import java.util.List;
 @Getter
 @Setter
 public class CaseDetailsResponse {
-
-    @JsonProperty("responseInfo")
+    @JsonProperty ("responseInfo")
     private ResponseInfo responseInfo = null;
 
     @JsonProperty ("totalCount")
-    private Integer totalCount =null;
+    private Integer totalCount = null;
 
-    @JsonProperty("caseList")
-    private List<ILMSCase> caseList = null;
+    @JsonProperty ("caseList")
+    private List<Case> caseList = null;
 
-    @JsonProperty("HearingList")
+    @JsonProperty ("HearingList")
     private List<Hearing> HearingList = null;
 
-    @JsonProperty("judgementList")
+    @JsonProperty ("judgementList")
     private List<Judgement> judgementList = null;
 
-    @JsonProperty("workflow")
+    @JsonProperty ("workflow")
     private Workflow workflow = null;
-
 
     public CaseDetailsResponse responseInfo(ResponseInfo responseInfo) {
         this.responseInfo = responseInfo;
