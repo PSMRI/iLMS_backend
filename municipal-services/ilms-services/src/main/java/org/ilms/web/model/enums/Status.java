@@ -8,8 +8,6 @@ public enum Status {
 
     INACTIVE ("INACTIVE"),
 
-    INWORKFLOW ("INWORKFLOW"),
-
     CANCELLED ("CANCELLED"),
 
     REJECTED ("REJECTED");

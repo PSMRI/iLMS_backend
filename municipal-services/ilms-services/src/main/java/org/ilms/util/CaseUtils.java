@@ -1,16 +1,16 @@
 package org.ilms.util;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.ilms.configs.ILMSConfiguration;
+import org.ilms.repository.CaseRepository;
 import org.ilms.service.CaseEnrichmentService;
-import org.ilms.web.model.AuditDetails;
-import org.ilms.web.model.Case;
-import org.ilms.web.model.CaseRequest;
-import org.ilms.web.model.Document;
+import org.ilms.web.model.*;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.workflow.ProcessInstance;
 import org.ilms.web.model.workflow.ProcessInstanceRequest;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -22,6 +22,9 @@ public class CaseUtils {
 
     @Autowired
     private ILMSConfiguration ilmsConfiguration;
+
+    @Autowired
+    private CaseRepository caseRepository;
 
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
@@ -284,13 +287,30 @@ public class CaseUtils {
 
         Case aCase = request.getCases();
         ProcessInstance wf = null != aCase.getWorkflow() ? aCase.getWorkflow() : new ProcessInstance();
+           wf.setBusinessId(aCase.getId());
+        switch (creationReasonForWorkflow) {
+            case CREATE:
+                wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());
+                wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
+                wf.setAction("Create");
+                wf.setTenantId(request.getCases().getTenantId());
+                break;
 
-        wf.setBusinessId(aCase.getId());
-        wf.setTenantId(aCase.getTenantId());
-        wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());
-        wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
-        wf.setAction("Create");
+            case UPDATE:
+                String caseId = request.getCases().getId();
+                CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
+                CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+                String tenantId = caseResponse.getCases().get(0).getTenantId();
+                wf.setTenantId(tenantId);
+                break;
+
+            default:
+                break;
+        }
         aCase.setWorkflow(wf);
-        return ProcessInstanceRequest.builder().processInstances(Arrays.asList(wf)).requestInfo(request.getRequestInfo()).build();
+        return ProcessInstanceRequest.builder()
+                .processInstances(Arrays.asList(wf))
+                .requestInfo(request.getRequestInfo())
+                .build();
     }
 }
