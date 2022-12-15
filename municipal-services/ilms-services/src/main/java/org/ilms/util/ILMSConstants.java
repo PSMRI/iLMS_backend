@@ -81,11 +81,9 @@ public class ILMSConstants {
 
     public static final String UPDATED_STRING = "Updated";
 
-    public static final String PT_BUSINESSSERVICE = "PT";
+    public static final String PT_BUSINESSSERVICE = "ILMS";
 
-    public static final String MUTATION_BUSINESSSERVICE = "PT.MUTATION";
-
-    public static final String NOTIFICATION_PROPERTYID = "{PROPERTYID}";
+    public static final String NOTIFICATION_CASEID = "{ID}";
 
     public static final String PT_OWNER_NAME = "{ownername}";
 
@@ -115,15 +113,15 @@ public class ILMSConstants {
 
     public static final String WF_NO_WORKFLOW = "NO_WORKFLOW";
 
-    public static final String WF_STATUS_OPEN_LOCALE = "PT_NOTIF_WF_STATE_LOCALE_OPEN";
+    public static final String WF_STATUS_OPEN_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_OPEN";
 
-    public static final String WF_STATUS_DOCVERIFIED_LOCALE = "PT_NOTIF_WF_STATE_LOCALE_DOCVERIFIED";
+    public static final String WF_STATUS_DOCVERIFIED_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_DOCVERIFIED";
 
-    public static final String WF_STATUS_FIELDVERIFIED_LOCALE = "PT_NOTIF_WF_STATE_LOCALE_FIELDVERIFIED";
+    public static final String WF_STATUS_FIELDVERIFIED_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_FIELDVERIFIED";
 
-    public static final String WF_STATUS_APPROVED_LOCALE = "PT_NOTIF_WF_STATE_LOCALE_APPROVED";
+    public static final String WF_STATUS_APPROVED_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_APPROVED";
 
-    public static final String WF_STATUS_REJECTED_LOCALE = "PT_NOTIF_WF_STATE_LOCALE_REJECTED";
+    public static final String WF_STATUS_REJECTED_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_REJECTED";
 
     //    public static final String CREATE_STRING = "Create";
     //
@@ -134,18 +132,20 @@ public class ILMSConstants {
     //    public static final String UPDATED_STRING = "Updated";
 
     /* update */
-    public static final String WF_UPDATE_STATUS_OPEN_CODE = "PT_NOTIF_WF_OPEN";
+    public static final String WF_UPDATE_STATUS_OPEN_CODE = "ILMS_NOTIF_WF_OPEN";
 
-    public static final String WF_UPDATE_STATUS_CHANGE_CODE = "PT_NOTIF_WF_STATUS_CHANGE";
+    public static final String WF_UPDATE_STATUS_CHANGE_CODE = "ILMS_NOTIF_WF_STATUS_CHANGE";
 
-    public static final String WF_UPDATE_STATUS_APPROVED_CODE = "PT_NOTIF_WF_APPROVED";
+    public static final String WF_UPDATE_STATUS_APPROVED_CODE = "ILMS_NOTIF_WF_APPROVED";
 
-    public static final String UPDATE_NO_WORKFLOW = "PT_NOTIF_WF_UPDATE_NONE";
+    public static final String UPDATE_NO_WORKFLOW = "ILMS_NOTIF_WF_UPDATE_NONE";
 
     public static final String NOTIFICATION_TENANTID = "{TENANTID}";
 
     public static final String NOTIFICATION_PROPERTY_LINK = "{PTURL}";
 
     public static final String NOTIFICATION_APPID = "{APPID}";
+
+    public static final String MUTATION_PROCESS_CONSTANT = "MUTATION";
 
 }

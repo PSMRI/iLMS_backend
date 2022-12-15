@@ -1,11 +1,12 @@
 package org.ilms.service;
 
+import static org.ilms.util.ILMSConstants.CHANNEL_NAME_EMAIL;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_SMS;
 import static org.ilms.util.ILMSConstants.CORRECTION_PENDING;
 import static org.ilms.util.ILMSConstants.CREATED_STRING;
 import static org.ilms.util.ILMSConstants.CREATE_STRING;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_APPID;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_PROPERTYID;
+import static org.ilms.util.ILMSConstants.NOTIFICATION_CASEID;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_PROPERTY_LINK;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_STATUS;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_TENANTID;
@@ -26,19 +27,30 @@ import static org.ilms.util.ILMSConstants.WF_STATUS_REJECTED_LOCALE;
 import static org.ilms.util.ILMSConstants.WF_UPDATE_STATUS_APPROVED_CODE;
 import static org.ilms.util.ILMSConstants.WF_UPDATE_STATUS_CHANGE_CODE;
 import static org.ilms.util.ILMSConstants.WF_UPDATE_STATUS_OPEN_CODE;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.util.NotificationUtil;
+import org.ilms.web.model.EmailRequest;
+import org.ilms.web.model.Event;
+import org.ilms.web.model.EventRequest;
 import org.ilms.web.model.ILMSCase;
 import org.ilms.web.model.ILMSCaseRequest;
 import org.ilms.web.model.SMSRequest;
+import org.ilms.web.model.enums.CreationReason;
+import org.ilms.web.model.enums.Status;
+import org.ilms.web.model.workflow.Action;
+import org.ilms.web.model.workflow.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -50,17 +62,18 @@ public class NotificationService {
     @Autowired
     ILMSConfiguration ilmsConfiguration;
 
+    @Value ("${notification.url}")
+    private String notificationURL;
+
     public void sendNotificationForUpdate(ILMSCaseRequest ilmsCaseRequest) {
 
         ILMSCase ilmsCase = ilmsCaseRequest.getIlmsCase();
-        //        ProcessInstance wf = property.getWorkflow();
+               ProcessInstance wf = ilmsCase.getWorkflow();
         String createOrUpdate = null;
         String msg = null;
 
-        Boolean isCreate = CreationReason.CREATE.equals(property.getCreationReason());
-        String state = getStateFromWf(wf, configs.getIsWorkflowEnabled());
-        // TODO: 12-Dec-22
-        String state = null;
+        Boolean isCreate = CreationReason.CREATE.equals(ilmsCase.getCreationReason());
+        String state = getStateFromWf(wf, ilmsConfiguration.getIsWorkflowEnabled());
         String completeMsgs = notificationUtil.getLocalizationMessages(ilmsCase.getTenantId(), ilmsCaseRequest.getRequestInfo());
         String localisedState = getLocalisedState(wf, completeMsgs);
         switch (state) {
@@ -96,27 +109,23 @@ public class NotificationService {
         RequestInfo requestInfo = request.getRequestInfo();
         Map<String, String> mobileNumberToOwner = new HashMap<>();
         String tenantId = request.getIlmsCase().getTenantId();
-        //        String moduleName = request.getWorkflow().getModuleName();
+                String moduleName = request.getIlmsCase().getWorkflow().getModuleName();
 
-        //        String action;
-        //        if(request.getWorkflow()!=null)
-        //            action = request.getWorkflow().getAction();
-        //        else
-        //            action = WF_NO_WORKFLOW;
-
-        // TODO: 12-Dec-22 setting temperary values
-        String action = null;
-        String moduleName = null;
+                String action;
+                if(ilmsCase.getWorkflow()!=null)
+                    action = ilmsCase.getWorkflow().getAction();
+                else
+                    action = WF_NO_WORKFLOW;
 
         List<String> configuredChannelNames = notificationUtil.fetchChannelList(new RequestInfo(), tenantId, moduleName, action);
         Set<String> mobileNumbers = new HashSet<>();
 
-        // TODO: 12-Dec-22 Implement workflow to get the next state mobile no.
-        //        request.getWorkflow().getAssignes().forEach(assigne -> {
-        //            if (assigne.getMobileNumber() != null)
-        //                mobileNumberToOwner.put(assigne.getMobileNumber(), assigne.getName());
-        //            mobileNumbers.add(assigne.getMobileNumber());
-        //        });
+
+                request.getIlmsCase().getWorkflow().getAssignes().forEach(assigne -> {
+                    if (assigne.getMobileNumber() != null)
+                        mobileNumberToOwner.put(assigne.getMobileNumber(), assigne.getName());
+                    mobileNumbers.add(assigne.getMobileNumber());
+                });
 
         List<SMSRequest> smsRequests = notificationUtil.createSMSRequest(msg, mobileNumberToOwner);
 
@@ -128,21 +137,23 @@ public class NotificationService {
                 isActionReq = true;
             }
 
-            //            List<Event> events = notifUtil.enrichEvent(smsRequests, requestInfo, property.getTenantId(), property, isActionReq);
-            //            notifUtil.sendEventNotification(new EventRequest(requestInfo, events));
+
+            List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, ilmsCase.getTenantId(), ilmsCase, isActionReq);
+            notificationUtil.sendEventNotification(new EventRequest(requestInfo, events));
         }
-        //        if (configuredChannelNames.contains(CHANNEL_NAME_EMAIL)) {
-        //            List<EmailRequest> emailRequests = notifUtil.createEmailRequestFromSMSRequests(requestInfo, smsRequests, tenantId);
-        //            notifUtil.sendEmail(emailRequests);
-        //        }
+        if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
+            List<EmailRequest> emailRequests = notificationUtil.createEmailRequestFromSMSRequests(requestInfo,smsRequests, tenantId);
+            notificationUtil.sendEmail(emailRequests);
+        }
     }
+
 
     private String getLocalisedState(ProcessInstance workflow, String completeMsgs) {
 
         String state = "";
-        //        if (ilmsConfiguration.getIsWorkflowEnabled()) {
-        //            state = workflow.getState().getState();
-        //        }
+                if (ilmsConfiguration.getIsWorkflowEnabled()) {
+                    state = workflow.getState().getState();
+                }
 
         switch (state) {
 
@@ -157,18 +168,14 @@ public class NotificationService {
 
             case WF_STATUS_OPEN:
                 return notificationUtil.getMessageTemplate(WF_STATUS_OPEN_LOCALE, completeMsgs);
-
-            //            case PT_UPDATE_OWNER_NUMBER:
-            //                return notifUtil.getMessageTemplate(PT_UPDATE_OWNER_NUMBER, completeMsgs);
-
         }
         return state;
     }
 
     private String getMsgForUpdate(ILMSCase ilmsCase, String msgCode, String completeMsgs, String createUpdateReplaceString) {
 
-        String url = notificationUtil.getShortenedUrl(ilmsConfiguration.getUiAppHost().concat(ilmsConfiguration.getViewPropertyLink()
-                                                                                                               .replace(NOTIFICATION_PROPERTYID,
+        String url = notificationUtil.getShortenedUrl(ilmsConfiguration.getUiAppHost().concat(ilmsConfiguration.getViewCaseLink()
+                                                                                                               .replace(NOTIFICATION_CASEID,
                                                                                                                        ilmsCase.getId())
                                                                                                                .replace(NOTIFICATION_TENANTID,
                                                                                                                        ilmsCase.getTenantId())));
@@ -179,11 +186,35 @@ public class NotificationService {
 
     private String replaceCommonValues(ILMSCase ilmsCase, String msg, String localisedState) {
 
-        msg = msg.replace(NOTIFICATION_PROPERTYID, ilmsCase.getId()).replace(NOTIFICATION_APPID, ilmsCase.getCaseNumber());
+        msg = msg.replace(NOTIFICATION_CASEID, ilmsCase.getId()).replace(NOTIFICATION_APPID, ilmsCase.getCaseNumber());
 
         if (ilmsConfiguration.getIsWorkflowEnabled()) {
             msg = msg.replace(NOTIFICATION_STATUS, localisedState);
         }
         return msg;
+    }
+    private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
+
+        String state;
+        if (isWorkflowEnabled) {
+
+            Boolean isPropertyActive = wf.getState().getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString());
+            Boolean isTerminateState = wf.getState().getIsTerminateState();
+            Set<String> actions = null != wf.getState().getActions()
+                    ? actions = wf.getState().getActions().stream().map(Action::getAction).collect(Collectors.toSet())
+                    : Collections.emptySet();
+
+            if (isTerminateState && CollectionUtils.isEmpty(actions)) {
+
+                state = isPropertyActive ? WF_STATUS_APPROVED : WF_STATUS_REJECTED;
+            } else {
+
+                state = wf.getState().getState();
+            }
+
+        } else {
+            state = WF_NO_WORKFLOW;
+        }
+        return state;
     }
 }

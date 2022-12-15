@@ -6,15 +6,19 @@ import static org.ilms.util.ILMSConstants.ACTION;
 import static org.ilms.util.ILMSConstants.CHANNEL;
 import static org.ilms.util.ILMSConstants.CHANNEL_LIST;
 import static org.ilms.util.ILMSConstants.MODULE;
+import static org.ilms.util.ILMSConstants.NOTIFICATION_EMAIL;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_LOCALE;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_MODULENAME;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_OWNERNAME;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -25,7 +29,15 @@ import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.producer.Producer;
 import org.ilms.repository.ServiceRequestRepository;
+import org.ilms.web.model.Email;
+import org.ilms.web.model.EmailRequest;
+import org.ilms.web.model.Event;
+import org.ilms.web.model.EventRequest;
+import org.ilms.web.model.ILMSCase;
+import org.ilms.web.model.Recepient;
 import org.ilms.web.model.SMSRequest;
+import org.ilms.web.model.enums.Source;
+import org.ilms.web.model.workflow.Action;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -184,4 +196,120 @@ public class NotificationUtil {
             return res;
         }
     }
+    public void sendEmail(List < EmailRequest > emailRequestList) {
+
+        if (ilmsConfiguration.getIsEmailNotificationEnabled()) {
+            if (CollectionUtils.isEmpty(emailRequestList))
+                log.info("Messages from localization couldn't be fetched!");
+            for (EmailRequest emailRequest: emailRequestList) {
+                if (!StringUtils.isEmpty(emailRequest.getEmail().getBody())) {
+                    producer.push(ilmsConfiguration.getEmailNotifTopic(), emailRequest);
+                    log.info("Sending EMAIL notification! ");
+                    log.info("Email Id: " + emailRequest.getEmail().toString());
+                } else {
+                    log.info("Email body is empty, hence no email notification will be sent.");
+                }
+            }
+
+        }
+    }
+    public List<EmailRequest> createEmailRequestFromSMSRequests(RequestInfo requestInfo,List<SMSRequest> smsRequests,String tenantId) {
+        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
+        Map<String, String> mobileNumberToEmailId = fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
+        if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
+            log.error("Email Ids Not found for Mobilenumbers");
+        }
+
+        Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+        List<EmailRequest> emailRequest = new LinkedList<>();
+        for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
+            String customizedMsg = "";
+            String message = mobileNumberToMsg.get(entryset.getKey());
+            if(message.contains(NOTIFICATION_EMAIL))
+                customizedMsg = message.replace(NOTIFICATION_EMAIL, entryset.getValue());
+            String subject = "";
+            String body = customizedMsg;
+            Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false).body(body).subject(subject).build();
+            EmailRequest email = new EmailRequest(requestInfo,emailobj);
+            emailRequest.add(email);
+        }
+        return emailRequest;
+    }
+    public Map<String, String> fetchUserEmailIds(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
+        Map<String, String> mapOfPhnoAndEmailIds = new HashMap<>();
+        StringBuilder uri = new StringBuilder();
+        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndpoint());
+        Map<String, Object> userSearchRequest = new HashMap<>();
+        userSearchRequest.put("RequestInfo", requestInfo);
+        userSearchRequest.put("tenantId", tenantId);
+        userSearchRequest.put("userType", "CITIZEN");
+        for(String mobileNo: mobileNumbers) {
+            userSearchRequest.put("userName", mobileNo);
+            try {
+                Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest).get();
+                if(null != user) {
+                    if(JsonPath.read(user, "$.user[0].emailId")!=null) {
+                        String email = JsonPath.read(user, "$.user[0].emailId");
+                        mapOfPhnoAndEmailIds.put(mobileNo, email);
+                    }
+                }else {
+                    log.error("Service returned null while fetching user for username - "+mobileNo);
+                }
+            }catch(Exception e) {
+                log.error("Exception while fetching user for username - "+mobileNo);
+                log.error("Exception trace: ",e);
+                continue;
+            }
+        }
+        return mapOfPhnoAndEmailIds;
+    }
+    public void sendEventNotification(EventRequest request) {
+        log.info("EVENT notification sent!");
+        producer.push(ilmsConfiguration.getSaveUserEventsTopic(), request);
+    }
+    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, ILMSCase ilmsCase, Boolean isActionReq){
+
+        List<Event> events = new ArrayList<>();
+        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
+        Map<String, String> mapOfPhnoAndUUIDs = fetchUserUUIDs(mobileNumbers, requestInfo, tenantId);
+        if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
+            log.error("UUIDs Not found for Mobilenumbers");
+        }
+
+        Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+        mobileNumbers.forEach(mobileNumber -> {
+
+            List<String> toUsers = new ArrayList<>();
+            toUsers.add(mapOfPhnoAndUUIDs.get(mobileNumber));
+        });
+        return events;
+    }
+    public Map<String, String> fetchUserUUIDs(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
+
+        Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
+        StringBuilder uri = new StringBuilder();
+        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndpoint());
+        Map<String, Object> userSearchRequest = new HashMap<>();
+        userSearchRequest.put("RequestInfo", requestInfo);
+        userSearchRequest.put("tenantId", tenantId);
+        userSearchRequest.put("userType", "EMPLOYEE");
+        for(String mobileNo: mobileNumbers) {
+            userSearchRequest.put("userName", mobileNo);
+            try {
+                Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest).get();
+                if(null != user) {
+                    String uuid = JsonPath.read(user, "$.user[0].uuid");
+                    mapOfPhnoAndUUIDs.put(mobileNo, uuid);
+                }else {
+                    log.error("Service returned null while fetching user for username - "+mobileNo);
+                }
+            }catch(Exception e) {
+                log.error("Exception while fetching user for username - "+mobileNo);
+                log.error("Exception trace: ",e);
+                continue;
+            }
+        }
+        return mapOfPhnoAndUUIDs;
+    }
+
 }

@@ -181,9 +181,6 @@ public class ILMSConfiguration {
     @Value ("${kafka.topics.notification.email}")
     private String emailNotifTopic;
 
-    @Value ("${kafka.topics.receipt.create}")
-    private String receiptTopic;
-
     @Value ("${kafka.topics.notification.pg.save.txns}")
     private String pgTopic;
 
@@ -218,9 +215,6 @@ public class ILMSConfiguration {
     @Value ("${egov.url.shortner.endpoint}")
     private String urlShortnerEndpoint;
 
-    @Value ("${state.level.tenant.id}")
-    private String stateLevelTenantId;
-
     //USER EVENTS
     @Value ("${egov.ui.app.host}")
     private String uiAppHost;
@@ -231,8 +225,16 @@ public class ILMSConfiguration {
     @Value ("${egov.user.event.notification.enabled}")
     private Boolean isUserEventsNotificationEnabled;
 
-    @Value ("${egov.notif.view.property}")
-    private String viewPropertyLink;
+    @Value ("${egov.notif.view.case}")
+    private String viewCaseLink;
+
+    //USER
+    @Value("${egov.user.host}")
+    private String userHost;
+
+    @Value("${egov.user.search.path}")
+    private String userSearchEndpoint;
+
 
     @PostConstruct
     public void initialize() {
