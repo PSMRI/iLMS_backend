@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JudgementQueryBuilder {
+
+    private static final String getTenantIdQuery = "SELECT tenant_id FROM ilms_case WHERE ID=(select case_id FROM ilms_judgement WHERE id=?)";
     private static final String Query = "SELECT count(*) OVER() AS full_count, id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, case_id, revised_complaince_reason, compliance_status," + "remarks, additional_details, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime" + " FROM ilms_judgement";
 
     private final String paginationWrapper = "{} {orderBy} {pagination}";
@@ -92,5 +94,8 @@ public class JudgementQueryBuilder {
         } else if (criteria.getSortOrder() == CaseSearchCriteria.SortOrder.DESC) {
             builder.append("DESC");
         }
+    }
+    public String getTenantIdFromHearingQuery() {
+        return getTenantIdQuery;
     }
 }

@@ -12,6 +12,7 @@ import org.ilms.web.model.JudgementResponse;
 import org.ilms.web.model.JudgementSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -84,6 +85,16 @@ public class JudgementRepository {
         updatedJudgementRequest.setJudgement(oldJudgement);
         judgementEnrichmentService.enrichJugmentUpdateRequest(updatedJudgementRequest);
         return updatedJudgementRequest;
+    }
+
+    public String getTenantIdFromJudgement(String id) {
+
+        List<String> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(id);
+        List<String> tenantId = jdbcTemplate.query(judgementQueryBuilder.getTenantIdFromHearingQuery(), preparedStmtList.toArray(),
+                new SingleColumnRowMapper<>(String.class));
+
+        return tenantId.get(0);
     }
 }
 
