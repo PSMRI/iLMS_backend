@@ -6,6 +6,7 @@ import org.ilms.repository.querybuilder.JudgementQueryBuilder;
 import org.ilms.repository.rowmapper.JudgementRowMapper;
 import org.ilms.service.JudgementEnrichmentService;
 import org.ilms.util.CaseUtils;
+import org.ilms.util.CommonUtils;
 import org.ilms.web.model.Judgement;
 import org.ilms.web.model.JudgementRequest;
 import org.ilms.web.model.JudgementResponse;
@@ -33,6 +34,9 @@ public class JudgementRepository {
     @Autowired
     private JudgementEnrichmentService judgementEnrichmentService;
 
+    @Autowired
+    private CommonUtils commonUtils;
+
     public JudgementResponse getJudgementData(JudgementSearchCriteria judgementSearchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = judgementQueryBuilder.getFSMSearchQuery(judgementSearchCriteria, preparedStmtList);
@@ -43,6 +47,7 @@ public class JudgementRepository {
     }
 
     public JudgementRequest getMappedData(JudgementRequest request, Judgement oldJudgement) {
+        final String tenantId = getTenantIdFromJudgement(request.getJudgement().getId());
         JudgementRequest updatedJudgementRequest = new JudgementRequest();
         updatedJudgementRequest.setRequestInfo(request.getRequestInfo());
         updatedJudgementRequest.setWorkflow(request.getWorkflow());
@@ -53,16 +58,26 @@ public class JudgementRepository {
             oldJudgement.setOrderType(request.getJudgement().getOrderType());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getOrderDate())) {
-            oldJudgement.setOrderDate(request.getJudgement().getOrderDate());
+            if (commonUtils.isCorrectDate(request.getJudgement().getOrderDate())) {
+                oldJudgement.setOrderDate(request.getJudgement().getOrderDate());
+            }
         }
         if (!StringUtils.isEmpty(request.getJudgement().getDecisionStatus())) {
-            oldJudgement.setDecisionStatus(request.getJudgement().getDecisionStatus());
+            List<String> uuids = new ArrayList<>();
+            uuids.add(request.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserOIC(uuids, tenantId, "DecisionStatus")) {
+                oldJudgement.setDecisionStatus(request.getJudgement().getDecisionStatus());
+            }
         }
         if (!StringUtils.isEmpty(request.getJudgement().getComplianceDate())) {
-            oldJudgement.setComplianceDate(request.getJudgement().getComplianceDate());
+            if (commonUtils.isCorrectDate(request.getJudgement().getComplianceDate())) {
+                oldJudgement.setComplianceDate(request.getJudgement().getComplianceDate());
+            }
         }
         if (!StringUtils.isEmpty(request.getJudgement().getRevisedComplianceDate())) {
-            oldJudgement.setRevisedComplianceDate(request.getJudgement().getRevisedComplianceDate());
+            if (commonUtils.isCorrectDate(request.getJudgement().getRevisedComplianceDate())) {
+                oldJudgement.setRevisedComplianceDate(request.getJudgement().getRevisedComplianceDate());
+            }
         }
         if (!StringUtils.isEmpty(request.getJudgement().getOrderNoOverride())) {
             oldJudgement.setOrderNoOverride(request.getJudgement().getOrderNoOverride());
@@ -71,7 +86,11 @@ public class JudgementRepository {
             oldJudgement.setRevisedComplainceReason(request.getJudgement().getRevisedComplainceReason());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getComplianceStatus())) {
-            oldJudgement.setComplianceStatus(request.getJudgement().getComplianceStatus());
+            List<String> uuids = new ArrayList<>();
+            uuids.add(request.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserOIC(uuids, tenantId, "ComplianceStatus")) {
+                oldJudgement.setComplianceStatus(request.getJudgement().getComplianceStatus());
+            }
         }
         if (!StringUtils.isEmpty(request.getJudgement().getRemarks())) {
             oldJudgement.setRemarks(request.getJudgement().getRemarks());
@@ -93,7 +112,6 @@ public class JudgementRepository {
         preparedStmtList.add(id);
         List<String> tenantId = jdbcTemplate.query(judgementQueryBuilder.getTenantIdFromHearingQuery(), preparedStmtList.toArray(),
                 new SingleColumnRowMapper<>(String.class));
-
         return tenantId.get(0);
     }
 }

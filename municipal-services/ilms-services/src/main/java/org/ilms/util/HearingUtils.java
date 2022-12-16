@@ -1,6 +1,9 @@
 package org.ilms.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import org.ilms.repository.HearingRepository;
 import org.ilms.service.CaseEnrichmentService;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingRequest;
@@ -13,8 +16,15 @@ public class HearingUtils {
     @Autowired
     private CaseEnrichmentService caseEnrichmentService;
 
+    @Autowired
+    private CommonUtils commonUtils;
+
+    @Autowired
+    private HearingRepository hearingRepository;
+
     public HearingRequest prepareHearingDetailsModalForUpdate(HearingRequest hearingDetailsRequest, Hearing oldHearingRequest) {
         HearingRequest updatedRequest = new HearingRequest();
+        final String tenantId = hearingRepository.getTenantIdFromHearing(hearingDetailsRequest.getHearing().getId());
         updatedRequest.setRequestInfo(hearingDetailsRequest.getRequestInfo());
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseId())) {
             oldHearingRequest.setCaseId(hearingDetailsRequest.getHearing().getCaseId());
@@ -29,10 +39,14 @@ public class HearingUtils {
             oldHearingRequest.setJudgeName(hearingDetailsRequest.getHearing().getJudgeName());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingDate())) {
-            oldHearingRequest.setHearingDate(hearingDetailsRequest.getHearing().getHearingDate());
+            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getHearingDate())) {
+                oldHearingRequest.setHearingDate(hearingDetailsRequest.getHearing().getHearingDate());
+            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBusinessDate())) {
-            oldHearingRequest.setBusinessDate(hearingDetailsRequest.getHearing().getBusinessDate());
+            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getBusinessDate())) {
+                oldHearingRequest.setBusinessDate(hearingDetailsRequest.getHearing().getBusinessDate());
+            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingPurpose())) {
             oldHearingRequest.setHearingPurpose(hearingDetailsRequest.getHearing().getHearingPurpose());
@@ -41,28 +55,73 @@ public class HearingUtils {
             oldHearingRequest.setRequiredOfficer(hearingDetailsRequest.getHearing().getRequiredOfficer());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAffidavitFilingDate())) {
-            oldHearingRequest.setAffidavitFilingDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate());
+            List<String> uuids = new ArrayList<>();
+            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserOIC(uuids, tenantId, "AffidavitFilingDate")) {
+                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate())) {
+                    oldHearingRequest.setAffidavitFilingDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate());
+                }
+            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate())) {
-            oldHearingRequest.setAffidavitFilingDueDate(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate());
+            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate())) {
+                oldHearingRequest.setAffidavitFilingDueDate(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate());
+            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseNumber())) {
             oldHearingRequest.setCaseNumber(hearingDetailsRequest.getHearing().getCaseNumber());
         }
+        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPreviousHearingDate())) {
+            List<String> uuids = new ArrayList<>();
+            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserOIC(uuids, tenantId, "PreviousHearingDate")) {
+                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPreviousHearingDate())) {
+                    oldHearingRequest.setPreviousHearingDate(hearingDetailsRequest.getHearing().getPreviousHearingDate());
+                }
+            }
+        }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getOathNumber())) {
-            oldHearingRequest.setOathNumber(hearingDetailsRequest.getHearing().getOathNumber());
+            List<String> uuids = new ArrayList<>();
+            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserOIC(uuids, tenantId, "OathNumber")) {
+                oldHearingRequest.setOathNumber(hearingDetailsRequest.getHearing().getOathNumber());
+            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getNextHearingDate())) {
-            oldHearingRequest.setNextHearingDate(hearingDetailsRequest.getHearing().getNextHearingDate());
+            List<String> uuids = new ArrayList<>();
+            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserOIC(uuids, tenantId, "NextHearingDate")) {
+                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getNextHearingDate())) {
+                    oldHearingRequest.setNextHearingDate(hearingDetailsRequest.getHearing().getNextHearingDate());
+                }
+            }
+        }
+        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getFirstHearingDate())) {
+            List<String> uuids = new ArrayList<>();
+            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserOIC(uuids, tenantId, "FirstHearingDate")) {
+                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getFirstHearingDate())) {
+                    oldHearingRequest.setFirstHearingDate(hearingDetailsRequest.getHearing().getFirstHearingDate());
+                }
+            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getIsPresenceRequired())) {
-            oldHearingRequest.setIsPresenceRequired(hearingDetailsRequest.getHearing().getIsPresenceRequired());
+            List<String> uuids = new ArrayList<>();
+            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserOIC(uuids, tenantId, "IsPresenceRequired")) {
+                oldHearingRequest.setIsPresenceRequired(hearingDetailsRequest.getHearing().getIsPresenceRequired());
+            }
         }
+
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingType())) {
             oldHearingRequest.setHearingType(hearingDetailsRequest.getHearing().getHearingType());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getDepartmentOfficer())) {
-            oldHearingRequest.setDepartmentOfficer(hearingDetailsRequest.getHearing().getDepartmentOfficer());
+            List<String> uuids = new ArrayList<>();
+            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserOIC(uuids, tenantId, "DepartmentOfficer")) {
+                oldHearingRequest.setDepartmentOfficer(hearingDetailsRequest.getHearing().getDepartmentOfficer());
+            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRemarks())) {
             oldHearingRequest.setRemarks(hearingDetailsRequest.getHearing().getRemarks());
@@ -230,10 +289,14 @@ public class HearingUtils {
         }
         if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate())) {
-                oldHearingRequest.getPayment().setFineImposedDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate());
+                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate())) {
+                    oldHearingRequest.getPayment().setFineImposedDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate());
+                }
             }
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineDueDate())) {
-                oldHearingRequest.getPayment().setFineDueDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate());
+                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate())) {
+                    oldHearingRequest.getPayment().setFineDueDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate());
+                }
             }
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
                 oldHearingRequest.getPayment().setFineAmount(hearingDetailsRequest.getHearing().getPayment().getFineAmount());

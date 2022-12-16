@@ -157,6 +157,10 @@ public class CaseValidator {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "caseSubStage is mandatory [ " + caseRequest.getCases().getCaseSubStage() + " ]");
         }
+        if (StringUtils.isNotBlank(caseRequest.getCases().getCaseFlag())) {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                    "caseFlag is not mandatory while creating the case [ " + caseRequest.getCases().getCaseFlag() + " ]");
+        }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getDepartmentName())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "DepartmentName is mandatory [ " + caseRequest.getCases().getDepartmentName() + " ]");
