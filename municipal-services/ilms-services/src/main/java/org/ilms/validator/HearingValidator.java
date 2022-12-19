@@ -78,11 +78,13 @@ public class HearingValidator {
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getRequiredOfficer())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "requiredOfficer is mandatory");
         }
-        if (StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getAffidavitFilingDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDate is not allowed while creating hearing ");
-        } else {
-            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate()))
-                ;
+        if (Objects.nonNull(hearingDetailsRequest.getHearing().getAffidavitFilingDate())) {
+            if (StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getAffidavitFilingDate().toString())) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDate is not allowed while creating hearing ");
+            } else {
+                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate()))
+                    ;
+            }
         }
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDueDate is mandatory");

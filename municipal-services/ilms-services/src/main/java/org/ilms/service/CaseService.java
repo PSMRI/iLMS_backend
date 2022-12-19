@@ -200,7 +200,7 @@ public class CaseService {
                     }
                 }
                 producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
-                //                processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
+                processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
             }
