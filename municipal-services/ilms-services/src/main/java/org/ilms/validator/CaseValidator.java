@@ -109,15 +109,19 @@ public class CaseValidator {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "filingDate is mandatory [ " + caseRequest.getCases().getFilingDate() + " ]");
         } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getFilingDate()))
-                ;
+            if (commonUtils.isCorrectDate(caseRequest.getCases().getFilingDate())) {
+                if (commonUtils.isBeforeDate(caseRequest.getCases().getFilingDate()))
+                    ;
+            }
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getRegistrationDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "registrationDate is mandatory [ " + caseRequest.getCases().getRegistrationDate() + " ]");
         } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getRegistrationDate()))
-                ;
+            if (commonUtils.isCorrectDate(caseRequest.getCases().getRegistrationDate())) {
+                if (commonUtils.isBeforeDate(caseRequest.getCases().getRegistrationDate()))
+                    ;
+            }
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseSummary())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
