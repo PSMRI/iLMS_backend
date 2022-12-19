@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.CaseRepository;
 import org.ilms.service.CaseEnrichmentService;
@@ -122,11 +123,13 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseSubStage())) {
             oldData.setCaseSubStage(caseRequest.getCases().getCaseSubStage());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseFlag())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserMO(uuids, caseRequest.getCases().getTenantId(), "caseFlag")) {
-                oldData.setCaseStage(caseRequest.getCases().getCaseFlag());
+        if (Objects.nonNull(caseRequest.getCases().getCaseFlag())) {
+            if (!StringUtils.isEmpty(caseRequest.getCases().getCaseFlag())) {
+                List<String> uuids = new ArrayList<>();
+                uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
+                if (commonUtils.isUserMO(uuids, caseRequest.getCases().getTenantId(), "caseFlag")) {
+                    oldData.setCaseStage(caseRequest.getCases().getCaseFlag());
+                }
             }
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getDepartmentName())) {
