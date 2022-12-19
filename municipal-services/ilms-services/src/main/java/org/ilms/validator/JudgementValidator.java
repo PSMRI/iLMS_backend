@@ -56,8 +56,8 @@ public class JudgementValidator {
             if (commonUtils.isCorrectDate(request.getJudgement().getOrderDate()))
                 ;
         }
-        if (!StringUtils.isNotBlank(request.getJudgement().getDecisionStatus())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "decisionStatus is mandatory");
+        if (StringUtils.isNotBlank(request.getJudgement().getDecisionStatus())) {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "decisionStatus is not allowed while creating judgement");
         }
         if (!StringUtils.isNotBlank(request.getJudgement().getComplianceDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "complianceDate is mandatory");
@@ -77,8 +77,8 @@ public class JudgementValidator {
         if (!StringUtils.isNotBlank(request.getJudgement().getRevisedComplainceReason())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "revisedComplianceReason is mandatory");
         }
-        if (!StringUtils.isNotBlank(request.getJudgement().getComplianceStatus())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "complianceStatus is mandatory");
+        if (StringUtils.isNotBlank(request.getJudgement().getComplianceStatus())) {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "complianceStatus is not allowed while creating judgement");
         }
         if (!StringUtils.isNotBlank(request.getJudgement().getRemarks())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "remarks is mandatory");

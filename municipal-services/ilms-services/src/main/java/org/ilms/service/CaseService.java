@@ -36,6 +36,7 @@ import org.ilms.web.model.enums.CaseHierarchy;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
+import org.ilms.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.itextpdf.text.Anchor;
@@ -175,8 +176,8 @@ public class CaseService {
             CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
             if (!caseResponse.getCases().isEmpty()) {
                 CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCases().get(0), caseRequest);
-                Case aCase = caseResponse.getCases().get(0);
-                caseValidator.validateUpdate(aCase, caseRequest);
+                Case cases = caseResponse.getCases().get(0);
+                caseValidator.validateUpdate(cases, caseRequest);
                 if (Objects.nonNull(caseRequest.getCases().getCaseHierarchy())) {
                     if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
                         updatedCaseRequest.getCases().setParentCaseId(null);
@@ -199,6 +200,7 @@ public class CaseService {
                     }
                 }
                 producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+                //                processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
             }
@@ -206,6 +208,15 @@ public class CaseService {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "id is mandatory");
         }
         return caseRequest.getCases();
+    }
+
+    private void processCaseUpdate(CaseRequest request, Case cases) {
+        if (ilmsConfiguration.getIsWorkflowEnabled()) {
+            State state = workflowService.updateWorkflow(request, CreationReason.UPDATE);
+            if (state.getIsStartState() == true && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !cases.getStatus()
+                                                                                                                                    .equals(Status.ACTIVE)) {
+            }
+        }
     }
 
     public ByteArrayInputStream generatePDF(final CaseSearchCriteria criteria) {
@@ -1534,5 +1545,6 @@ public class CaseService {
         producer.push(ilmsConfiguration.getUpdateChildCaseTopic(), childCaseRequest);
         return childCaseRequest.getChildCase();
     }
+
 }
 

@@ -106,14 +106,14 @@ public class WorkflowService {
      */
     public State updateWorkflow(CaseRequest request, CreationReason creationReasonForWorkflow) {
 
-        Case aCase = request.getCases();
+        Case cases = request.getCases();
 
         ProcessInstanceRequest workflowReq = caseUtils.getWfForCaseCreate(request, creationReasonForWorkflow);
         State state = callWorkFlow(workflowReq);
 
-        if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && aCase.getId() == null) {
+        if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && cases.getId() == null) {
 
-            String pId = commonUtils.getIdList(request.getRequestInfo(), aCase.getTenantId(), ilmsConfiguration.getCaseIdgenName(),
+            String pId = commonUtils.getIdList(request.getRequestInfo(), cases.getTenantId(), ilmsConfiguration.getCaseIdgenName(),
                     ilmsConfiguration.getCaseIdgenFormat(), 1).get(0);
             request.getCases().setId(pId);
         }

@@ -78,8 +78,8 @@ public class HearingValidator {
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getRequiredOfficer())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "requiredOfficer is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getAffidavitFilingDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDate is mandatory");
+        if (StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getAffidavitFilingDate().toString())) {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDate is not allowed while creating hearing ");
         } else {
             if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate()))
                 ;
@@ -93,8 +93,8 @@ public class HearingValidator {
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getCaseNumber())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "CaseNumber is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getOathNumber())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "OathNumber is mandatory");
+        if (StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getOathNumber())) {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "OathNumber is not allowed while creating hearing");
         }
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getNextHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "nextHearingDate is mandatory");

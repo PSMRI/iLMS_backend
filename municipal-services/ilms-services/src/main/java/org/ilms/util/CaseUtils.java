@@ -1,12 +1,17 @@
 package org.ilms.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.ilms.configs.ILMSConfiguration;
+import org.ilms.repository.CaseRepository;
 import org.ilms.service.CaseEnrichmentService;
 import org.ilms.web.model.AuditDetails;
 import org.ilms.web.model.Case;
 import org.ilms.web.model.CaseRequest;
+import org.ilms.web.model.CaseResponse;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.Document;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.workflow.ProcessInstance;
@@ -22,6 +27,12 @@ public class CaseUtils {
 
     @Autowired
     private ILMSConfiguration ilmsConfiguration;
+
+    @Autowired
+    private CaseRepository caseRepository;
+
+    @Autowired
+    private CommonUtils commonUtils;
 
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
@@ -63,10 +74,14 @@ public class CaseUtils {
             oldData.setFilingNumber(caseRequest.getCases().getFilingNumber());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getFilingDate())) {
-            oldData.setFilingDate(caseRequest.getCases().getFilingDate());
+            if (commonUtils.isCorrectDate(caseRequest.getCases().getFilingDate())) {
+                oldData.setFilingDate(caseRequest.getCases().getFilingDate());
+            }
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getRegistrationDate())) {
-            oldData.setRegistrationDate(caseRequest.getCases().getRegistrationDate());
+            if (commonUtils.isCorrectDate(caseRequest.getCases().getRegistrationDate())) {
+                oldData.setRegistrationDate(caseRequest.getCases().getRegistrationDate());
+            }
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseSummary())) {
             oldData.setCaseSummary(caseRequest.getCases().getCaseSummary());
@@ -87,22 +102,32 @@ public class CaseUtils {
             oldData.setCaseStatus(caseRequest.getCases().getCaseStatus());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getFirstHearingDate())) {
-            oldData.setFirstHearingDate(caseRequest.getCases().getFirstHearingDate());
+            if (commonUtils.isCorrectDate(caseRequest.getCases().getFirstHearingDate())) {
+                oldData.setFirstHearingDate(caseRequest.getCases().getFirstHearingDate());
+            }
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getPreviousHearingDate())) {
-            oldData.setPreviousHearingDate(caseRequest.getCases().getPreviousHearingDate());
+            if (commonUtils.isCorrectDate(caseRequest.getCases().getPreviousHearingDate())) {
+                oldData.setPreviousHearingDate(caseRequest.getCases().getPreviousHearingDate());
+            }
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getNextHearingDate())) {
-            oldData.setNextHearingDate(caseRequest.getCases().getPreviousHearingDate());
+            if (commonUtils.isCorrectDate(caseRequest.getCases().getPreviousHearingDate())) {
+                oldData.setNextHearingDate(caseRequest.getCases().getPreviousHearingDate());
+            }
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseStage())) {
             oldData.setCaseStage(caseRequest.getCases().getCaseStage());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseSubStage())) {
-            oldData.setCaseStage(caseRequest.getCases().getCaseSubStage());
+            oldData.setCaseSubStage(caseRequest.getCases().getCaseSubStage());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseFlag())) {
-            oldData.setCaseStage(caseRequest.getCases().getCaseFlag());
+            List<String> uuids = new ArrayList<>();
+            uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
+            if (commonUtils.isUserMO(uuids, caseRequest.getCases().getTenantId(), "caseFlag")) {
+                oldData.setCaseStage(caseRequest.getCases().getCaseFlag());
+            }
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getDepartmentName())) {
             oldData.setDepartmentName(caseRequest.getCases().getDepartmentName());
@@ -284,12 +309,26 @@ public class CaseUtils {
 
         Case aCase = request.getCases();
         ProcessInstance wf = null != aCase.getWorkflow() ? aCase.getWorkflow() : new ProcessInstance();
-
         wf.setBusinessId(aCase.getId());
-        wf.setTenantId(aCase.getTenantId());
-        wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());
-        wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
-        wf.setAction("Create");
+        switch (creationReasonForWorkflow) {
+            case CREATE:
+                wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());
+                wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
+                wf.setAction("Create");
+                wf.setTenantId(request.getCases().getTenantId());
+                break;
+
+            case UPDATE:
+                String caseId = request.getCases().getId();
+                CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
+                CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+                String tenantId = caseResponse.getCases().get(0).getTenantId();
+                wf.setTenantId(tenantId);
+                break;
+
+            default:
+                break;
+        }
         aCase.setWorkflow(wf);
         return ProcessInstanceRequest.builder().processInstances(Arrays.asList(wf)).requestInfo(request.getRequestInfo()).build();
     }

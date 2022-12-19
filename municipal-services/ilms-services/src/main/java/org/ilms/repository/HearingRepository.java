@@ -83,6 +83,16 @@ public class HearingRepository {
         return finalValue;
     }
 
+    public String getTenantIdFromHearing(String id) {
+
+        List<String> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(id);
+        List<String> tenantId = jdbcTemplate.query(hearingQueryBuilder.getTenantIdFromHearingQuery(), preparedStmtList.toArray(),
+                new SingleColumnRowMapper<>(String.class));
+
+        return tenantId.get(0);
+    }
+
     public List<Party> getGetFromPartyQuery(String caseId) {
         List<Party> partyList = caseRepository.getParty(caseId);
         return partyList;

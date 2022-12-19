@@ -179,6 +179,13 @@ public class ILMSConfiguration {
 
     @Value ("${egov.mdms.search.endpoint}")
     private String mdmsEndpoint;
+    //user
+
+    @Value ("${egov.user.search.endpoint}")
+    private String userSearchEndPoint;
+
+    @Value ("${egov.user.host}")
+    private String userHost;
 
     //NOTIFICATION TOPICS
     @Value ("${kafka.topics.notification.sms}")
