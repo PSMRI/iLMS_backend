@@ -59,24 +59,9 @@ public class JudgementValidator {
         }
         if (!StringUtils.isNotBlank(request.getJudgement().getOrderDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "orderDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(request.getJudgement().getOrderDate()))
-                ;
         }
         if (StringUtils.isNotBlank(request.getJudgement().getDecisionStatus())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "decisionStatus is not allowed while creating judgement");
-        }
-        if (!StringUtils.isNotBlank(request.getJudgement().getComplianceDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "complianceDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(request.getJudgement().getComplianceDate()))
-                ;
-        }
-        if (!StringUtils.isNotBlank(request.getJudgement().getRevisedComplianceDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "revisedComplianceDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(request.getJudgement().getRevisedComplianceDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(request.getJudgement().getOrderNoOverride())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "orderNoOverride is mandatory");

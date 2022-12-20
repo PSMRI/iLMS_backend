@@ -62,15 +62,9 @@ public class HearingValidator {
         }
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "hearingDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getHearingDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getBusinessDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "businessDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getBusinessDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getHearingPurpose())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "hearingPurpose is mandatory");
@@ -81,16 +75,10 @@ public class HearingValidator {
         if (Objects.nonNull(hearingDetailsRequest.getHearing().getAffidavitFilingDate())) {
             if (StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getAffidavitFilingDate().toString())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDate is not allowed while creating hearing ");
-            } else {
-                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate()))
-                    ;
             }
         }
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDueDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getCaseNumber())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "CaseNumber is mandatory");
@@ -100,16 +88,11 @@ public class HearingValidator {
         }
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getNextHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "nextHearingDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getNextHearingDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getFirstHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "FirstHearingDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getFirstHearingDate()))
-                ;
         }
+
         if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getIsPresenceRequired().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "isPresenceRequired is mandatory");
         }
@@ -178,15 +161,9 @@ public class HearingValidator {
         if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
             if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate().toString())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "FineImposedDate is mandatory");
-            } else {
-                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate()))
-                    ;
             }
             if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPayment().getFineDueDate().toString())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fineDueDate is mandatory");
-            } else {
-                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate()))
-                    ;
             }
             if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fineAmount is mandatory");

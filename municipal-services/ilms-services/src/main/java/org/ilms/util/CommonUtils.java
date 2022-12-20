@@ -1,8 +1,5 @@
 package org.ilms.util;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,41 +34,7 @@ public class CommonUtils {
 
     @Autowired
     private ServiceRepository restRepo;
-
-    public boolean isCorrectDate(long milliseconds) {
-        final LocalDate todayDate = LocalDate.now();
-        final Instant instant = Instant.ofEpochMilli(milliseconds);
-        LocalDate inputDate = null;
-        if (String.valueOf(milliseconds).length() == 13) {
-            inputDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-        } else {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Date should be in proper timestamp format [ " + milliseconds + " ] ");
-        }
-        return true;
-    }
-
-    public boolean isBeforeDate(long milliseconds) {
-        final LocalDate todayDate = LocalDate.now();
-        final Instant instant = Instant.ofEpochMilli(milliseconds);
-        LocalDate inputDate = null;
-        inputDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-        if (!inputDate.isBefore(todayDate)) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Date should be before then today's date [ " + todayDate + " ]");
-        }
-        return true;
-    }
-
-    public boolean isPreviousDate(long milliseconds) {
-        final LocalDate todayDate = LocalDate.now();
-        final Instant instant = Instant.ofEpochMilli(milliseconds);
-        LocalDate inputDate = null;
-        inputDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-        if (!inputDate.isAfter(todayDate)) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Date should be after then today's date [ " + todayDate + " ]");
-        }
-        return true;
-    }
-
+    
     public Map<String, List<String>> getAttributeValues(String tenantId, String moduleName, List<String> names, String filter, String jsonpath,
             RequestInfo requestInfo) {
 

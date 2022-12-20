@@ -108,16 +108,10 @@ public class CaseValidator {
         if (!StringUtils.isNotBlank(caseRequest.getCases().getFilingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "filingDate is mandatory [ " + caseRequest.getCases().getFilingDate() + " ]");
-        } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getFilingDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getRegistrationDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "registrationDate is mandatory [ " + caseRequest.getCases().getRegistrationDate() + " ]");
-        } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getRegistrationDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseSummary())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
@@ -138,16 +132,10 @@ public class CaseValidator {
         if (!StringUtils.isNotBlank(caseRequest.getCases().getFirstHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "firstHearingDate is mandatory [ " + caseRequest.getCases().getFirstHearingDate() + " ]");
-        } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getFirstHearingDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getNextHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "nextHearingDate is mandatory [ " + caseRequest.getCases().getNextHearingDate() + " ]");
-        } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getNextHearingDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseStage())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
