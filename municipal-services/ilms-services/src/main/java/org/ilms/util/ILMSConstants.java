@@ -65,7 +65,7 @@ public class ILMSConstants {
 
     //  NOTIFICATION PLACEHOLDER
 
-    public static final String NOTIFICATION_OWNERNAME = "{RO_NAME}";
+    public static final String NOTIFICATION_OWNERNAME = "Avanish";
 
     public static final String NOTIFICATION_EMAIL = "{EMAIL_ID}";
 
@@ -81,9 +81,11 @@ public class ILMSConstants {
 
     public static final String UPDATED_STRING = "Updated";
 
-    public static final String PT_BUSINESSSERVICE = "ILMS";
+    public static final String PT_BUSINESSSERVICE = "iLMS-services";
+    public static final String ACTION_FOR_ASSESSMENT =  "Create";
 
-    public static final String NOTIFICATION_CASEID = "{ID}";
+
+    public static final String NOTIFICATION_CASEID = "{id}";
 
     public static final String PT_OWNER_NAME = "{ownername}";
 
@@ -97,7 +99,7 @@ public class ILMSConstants {
 
     public static final String NOTIFICATION_LOCALE = "en_IN";
 
-    public static final String NOTIFICATION_MODULENAME = "rainmaker-pt";
+    public static final String NOTIFICATION_MODULENAME = "rainmaker-common";
 
     public static final String WF_STATUS_REJECTED = "REJECTED";
 
@@ -109,7 +111,7 @@ public class ILMSConstants {
 
     public static final String WF_STATUS_APPROVED = "APPROVED";
 
-    public static final String WF_STATUS_OPEN = "OPEN";
+    public static final String WF_STATUS_OPEN = "Create";
 
     public static final String WF_NO_WORKFLOW = "NO_WORKFLOW";
 

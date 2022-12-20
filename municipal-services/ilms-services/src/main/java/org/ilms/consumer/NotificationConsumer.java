@@ -4,7 +4,7 @@ import java.util.HashMap;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.service.NotificationService;
 import org.ilms.util.ILMSConstants;
-import org.ilms.web.model.ILMSCaseRequest;
+import org.ilms.web.model.CaseRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -32,12 +32,9 @@ public class NotificationConsumer {
 
             if (topic.equalsIgnoreCase(configs.getCreateCaseTopic()) || topic.equalsIgnoreCase(configs.getUpdateCaseTopic())) {
 
-                ILMSCaseRequest request = mapper.convertValue(record, ILMSCaseRequest.class);
+                CaseRequest request = mapper.convertValue(record, CaseRequest.class);
+                notifService.process(topic, request);
 
-//                if (ILMSConstants.MUTATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getIlmsCase().getCreationReason().toString())) {
-
-                    notifService.sendNotificationForUpdate(request);
-   //             }
             }
 
         } catch (final Exception e) {

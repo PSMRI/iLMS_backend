@@ -241,13 +241,6 @@ public class ILMSConfiguration {
     @Value ("${egov.notif.view.case}")
     private String viewCaseLink;
 
-    //USER
-    @Value("${egov.user.host}")
-    private String userHost;
-
-    @Value("${egov.user.search.path}")
-    private String userSearchEndpoint;
-
 
     @PostConstruct
     public void initialize() {

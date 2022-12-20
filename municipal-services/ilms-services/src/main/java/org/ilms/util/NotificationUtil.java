@@ -28,12 +28,12 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.producer.Producer;
-import org.ilms.repository.ServiceRequestRepository;
+import org.ilms.repository.ServiceRepository;
+import org.ilms.web.model.Case;
 import org.ilms.web.model.Email;
 import org.ilms.web.model.EmailRequest;
 import org.ilms.web.model.Event;
 import org.ilms.web.model.EventRequest;
-import org.ilms.web.model.ILMSCase;
 import org.ilms.web.model.Recepient;
 import org.ilms.web.model.SMSRequest;
 import org.ilms.web.model.enums.Source;
@@ -60,7 +60,7 @@ public class NotificationUtil {
     Producer producer;
 
     @Autowired
-    ServiceRequestRepository serviceRequestRepository;
+    ServiceRepository serviceRepository;
 
     public List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
         List<String> masterData = new ArrayList<>();
@@ -110,7 +110,7 @@ public class NotificationUtil {
         List<SMSRequest> smsRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
             String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
-            smsRequest.add(new SMSRequest(entryset.getKey(), customizedMsg));
+            smsRequest.add(new SMSRequest(entryset.getValue(), customizedMsg));
         }
         return smsRequest;
     }
@@ -140,12 +140,12 @@ public class NotificationUtil {
             isRetryNeeded = true;
         }
 
-        responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, locale), requestInfo).get();
+        responseMap = (LinkedHashMap) serviceRepository.fetchResult(getUri(tenantId, requestInfo, locale), requestInfo).get();
         jsonString = new JSONObject(responseMap).toString();
 
         if (StringUtils.isEmpty(jsonString) && isRetryNeeded) {
 
-            responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, NOTIFICATION_LOCALE), requestInfo).get();
+            responseMap = (LinkedHashMap) serviceRepository.fetchResult(getUri(tenantId, requestInfo, NOTIFICATION_LOCALE), requestInfo).get();
             jsonString = new JSONObject(responseMap).toString();
             if (StringUtils.isEmpty(jsonString)) {
                 throw new CustomException("LOCALE_ERROR", "Localisation values not found for notifications");
@@ -215,38 +215,44 @@ public class NotificationUtil {
     }
     public List<EmailRequest> createEmailRequestFromSMSRequests(RequestInfo requestInfo,List<SMSRequest> smsRequests,String tenantId) {
         Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
-        Map<String, String> mobileNumberToEmailId = fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
+        Map<String, String> mobileNumberToEmailId = fetchUserEmailIds(mobileNumbers, tenantId);
+//        Map<String, String> mobileNumberToEmailId=new HashMap<>();
+//        mobileNumberToEmailId.put("email","savanish521@gmail.com");
         if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
             log.error("Email Ids Not found for Mobilenumbers");
         }
 
         Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+//        Map<String,String > mobileNumberToMsg = new HashMap<>();
+//        mobileNumberToMsg.put("emailFrom","shivaamoria1997@gmail.com");
         List<EmailRequest> emailRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
             String customizedMsg = "";
             String message = mobileNumberToMsg.get(entryset.getKey());
+           // String message="hello shiva digit";
             if(message.contains(NOTIFICATION_EMAIL))
-                customizedMsg = message.replace(NOTIFICATION_EMAIL, entryset.getValue());
+               customizedMsg = message.replace(NOTIFICATION_EMAIL, entryset.getValue());
+           // customizedMsg="hello man digit mail";
+            //String subject = "testing";
+            //String body = "customizedMsg";
             String subject = "";
-            String body = customizedMsg;
+            String body = "";
             Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false).body(body).subject(subject).build();
             EmailRequest email = new EmailRequest(requestInfo,emailobj);
             emailRequest.add(email);
         }
         return emailRequest;
     }
-    public Map<String, String> fetchUserEmailIds(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
+    public Map<String, String> fetchUserEmailIds(Set<String> mobileNumbers, String tenantId) {
         Map<String, String> mapOfPhnoAndEmailIds = new HashMap<>();
         StringBuilder uri = new StringBuilder();
-        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndpoint());
+        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndPoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
-        userSearchRequest.put("RequestInfo", requestInfo);
         userSearchRequest.put("tenantId", tenantId);
-        userSearchRequest.put("userType", "CITIZEN");
         for(String mobileNo: mobileNumbers) {
-            userSearchRequest.put("userName", mobileNo);
+            userSearchRequest.put("mobileNumber", mobileNo);
             try {
-                Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest).get();
+                Object user = serviceRepository.fetchResult(uri, userSearchRequest).get();
                 if(null != user) {
                     if(JsonPath.read(user, "$.user[0].emailId")!=null) {
                         String email = JsonPath.read(user, "$.user[0].emailId");
@@ -267,7 +273,7 @@ public class NotificationUtil {
         log.info("EVENT notification sent!");
         producer.push(ilmsConfiguration.getSaveUserEventsTopic(), request);
     }
-    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, ILMSCase ilmsCase, Boolean isActionReq){
+    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Case cases, Boolean isActionReq){
 
         List<Event> events = new ArrayList<>();
         Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
@@ -288,7 +294,7 @@ public class NotificationUtil {
 
         Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
         StringBuilder uri = new StringBuilder();
-        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndpoint());
+        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndPoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
         userSearchRequest.put("RequestInfo", requestInfo);
         userSearchRequest.put("tenantId", tenantId);
@@ -296,7 +302,7 @@ public class NotificationUtil {
         for(String mobileNo: mobileNumbers) {
             userSearchRequest.put("userName", mobileNo);
             try {
-                Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest).get();
+                Object user = serviceRepository.fetchResult(uri, userSearchRequest).get();
                 if(null != user) {
                     String uuid = JsonPath.read(user, "$.user[0].uuid");
                     mapOfPhnoAndUUIDs.put(mobileNo, uuid);

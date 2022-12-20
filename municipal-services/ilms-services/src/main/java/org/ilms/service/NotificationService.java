@@ -1,6 +1,8 @@
 package org.ilms.service;
 
+import static org.ilms.util.ILMSConstants.ACTION_FOR_ASSESSMENT;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_EMAIL;
+import static org.ilms.util.ILMSConstants.CHANNEL_NAME_EVENT;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_SMS;
 import static org.ilms.util.ILMSConstants.CORRECTION_PENDING;
 import static org.ilms.util.ILMSConstants.CREATED_STRING;
@@ -11,6 +13,7 @@ import static org.ilms.util.ILMSConstants.NOTIFICATION_PROPERTY_LINK;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_STATUS;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_TENANTID;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_UPDATED_CREATED_REPLACE;
+import static org.ilms.util.ILMSConstants.PT_BUSINESSSERVICE;
 import static org.ilms.util.ILMSConstants.UPDATED_STRING;
 import static org.ilms.util.ILMSConstants.UPDATE_NO_WORKFLOW;
 import static org.ilms.util.ILMSConstants.UPDATE_STRING;
@@ -27,6 +30,8 @@ import static org.ilms.util.ILMSConstants.WF_STATUS_REJECTED_LOCALE;
 import static org.ilms.util.ILMSConstants.WF_UPDATE_STATUS_APPROVED_CODE;
 import static org.ilms.util.ILMSConstants.WF_UPDATE_STATUS_CHANGE_CODE;
 import static org.ilms.util.ILMSConstants.WF_UPDATE_STATUS_OPEN_CODE;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,13 +40,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
+import org.ilms.repository.ServiceRepository;
+import org.ilms.util.ILMSErrorConstants;
 import org.ilms.util.NotificationUtil;
+import org.ilms.web.model.Case;
+import org.ilms.web.model.CaseRequest;
+import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.EmailRequest;
 import org.ilms.web.model.Event;
 import org.ilms.web.model.EventRequest;
-import org.ilms.web.model.ILMSCase;
-import org.ilms.web.model.ILMSCaseRequest;
 import org.ilms.web.model.SMSRequest;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.Status;
@@ -51,6 +60,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -65,156 +75,102 @@ public class NotificationService {
     @Value ("${notification.url}")
     private String notificationURL;
 
-    public void sendNotificationForUpdate(ILMSCaseRequest ilmsCaseRequest) {
+    @Autowired
+    private ServiceRepository restRepo;
 
-        ILMSCase ilmsCase = ilmsCaseRequest.getIlmsCase();
-               ProcessInstance wf = ilmsCase.getWorkflow();
-        String createOrUpdate = null;
-        String msg = null;
+    public void process(String topicName, CaseRequest caseRequest) {
 
-        Boolean isCreate = CreationReason.CREATE.equals(ilmsCase.getCreationReason());
-        String state = getStateFromWf(wf, ilmsConfiguration.getIsWorkflowEnabled());
-        String completeMsgs = notificationUtil.getLocalizationMessages(ilmsCase.getTenantId(), ilmsCaseRequest.getRequestInfo());
-        String localisedState = getLocalisedState(wf, completeMsgs);
-        switch (state) {
+        RequestInfo requestInfo = caseRequest.getRequestInfo();
+        Case cases = caseRequest.getCases();
+        String tenantId = cases.getTenantId();
 
-            case WF_NO_WORKFLOW:
-                createOrUpdate = isCreate ? CREATED_STRING : UPDATED_STRING;
-                msg = getMsgForUpdate(ilmsCase, UPDATE_NO_WORKFLOW, completeMsgs, createOrUpdate);
-                break;
+        List<String> configuredChannelNamesForCase = notificationUtil.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE,
+                ACTION_FOR_ASSESSMENT);
 
-            case WF_STATUS_OPEN:
-                createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
-                msg = getMsgForUpdate(ilmsCase, WF_UPDATE_STATUS_OPEN_CODE, completeMsgs, createOrUpdate);
-                break;
-
-            case WF_STATUS_APPROVED:
-                createOrUpdate = isCreate ? CREATED_STRING : UPDATED_STRING;
-                msg = getMsgForUpdate(ilmsCase, WF_UPDATE_STATUS_APPROVED_CODE, completeMsgs, createOrUpdate);
-                break;
-
-            default:
-                createOrUpdate = isCreate ? CREATE_STRING : UPDATE_STRING;
-                msg = getMsgForUpdate(ilmsCase, WF_UPDATE_STATUS_CHANGE_CODE, completeMsgs, createOrUpdate);
-                break;
-        }
-
-        msg = replaceCommonValues(ilmsCase, msg, localisedState);
-        prepareMsgAndSend(ilmsCaseRequest, msg, state);
-    }
-
-    private void prepareMsgAndSend(ILMSCaseRequest request, String msg, String state) {
-
-        ILMSCase ilmsCase = request.getIlmsCase();
-        RequestInfo requestInfo = request.getRequestInfo();
-        Map<String, String> mobileNumberToOwner = new HashMap<>();
-        String tenantId = request.getIlmsCase().getTenantId();
-                String moduleName = request.getIlmsCase().getWorkflow().getModuleName();
-
-                String action;
-                if(ilmsCase.getWorkflow()!=null)
-                    action = ilmsCase.getWorkflow().getAction();
-                else
-                    action = WF_NO_WORKFLOW;
-
-        List<String> configuredChannelNames = notificationUtil.fetchChannelList(new RequestInfo(), tenantId, moduleName, action);
-        Set<String> mobileNumbers = new HashSet<>();
-
-
-                request.getIlmsCase().getWorkflow().getAssignes().forEach(assigne -> {
-                    if (assigne.getMobileNumber() != null)
-                        mobileNumberToOwner.put(assigne.getMobileNumber(), assigne.getName());
-                    mobileNumbers.add(assigne.getMobileNumber());
-                });
-
-        List<SMSRequest> smsRequests = notificationUtil.createSMSRequest(msg, mobileNumberToOwner);
-
-        if (configuredChannelNames.contains(CHANNEL_NAME_SMS)) {
+        List<SMSRequest> smsRequests = enrichSMSRequest(topicName, caseRequest, cases);
+        if (configuredChannelNamesForCase.contains(CHANNEL_NAME_SMS)) {
             notificationUtil.sendSMS(smsRequests);
-
-            Boolean isActionReq = false;
-            if (state.equalsIgnoreCase(CORRECTION_PENDING)) {
-                isActionReq = true;
-            }
-
-
-            List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, ilmsCase.getTenantId(), ilmsCase, isActionReq);
-            notificationUtil.sendEventNotification(new EventRequest(requestInfo, events));
         }
-        if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
-            List<EmailRequest> emailRequests = notificationUtil.createEmailRequestFromSMSRequests(requestInfo,smsRequests, tenantId);
+
+//        if (configuredChannelNamesForCase.contains(CHANNEL_NAME_EVENT)) {
+//            Boolean isActionReq = false;
+//            if (topicName.equalsIgnoreCase(ilmsConfiguration.getCreateCaseTopic()) && cases.getWorkflow() == null)
+//                isActionReq = true;
+//
+//            List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, tenantId, cases, isActionReq);
+//            notificationUtil.sendEventNotification(new EventRequest(requestInfo, events));
+//        }
+
+        if (configuredChannelNamesForCase.contains(CHANNEL_NAME_EMAIL)) {
+            List<EmailRequest> emailRequests = notificationUtil.createEmailRequestFromSMSRequests(requestInfo, smsRequests, tenantId);
             notificationUtil.sendEmail(emailRequests);
         }
     }
 
+    private List<SMSRequest> enrichSMSRequest(String topicName, CaseRequest request, Case cases) {
 
-    private String getLocalisedState(ProcessInstance workflow, String completeMsgs) {
+        String tenantId = request.getCases().getTenantId();
+        String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
+       String message = getCustomizedMsg(topicName, request, cases, localizationMessages);
+       // String message="hello Digit";
+        String officerId=request.getCases().getAssignedOfficerId();
+        List<String> ids = new ArrayList<>();
+        ids.add(officerId);
+        Map<String, String> mobileNumberToOwner =  fetchUsersByOfficerId(ids,tenantId);
+        if (message == null)
+            return Collections.emptyList();
+        return notificationUtil.createSMSRequest(message, mobileNumberToOwner);
+    }
 
-        String state = "";
-                if (ilmsConfiguration.getIsWorkflowEnabled()) {
-                    state = workflow.getState().getState();
-                }
+    private String getCustomizedMsg(String topicName, CaseRequest request, Case cases, String localizationMessages) {
 
-        switch (state) {
+        //        Case cases1 = request.getCases();
 
-            case WF_STATUS_REJECTED:
-                return notificationUtil.getMessageTemplate(WF_STATUS_REJECTED_LOCALE, completeMsgs);
+        ProcessInstance processInstance = cases.getWorkflow();
 
-            case WF_STATUS_DOCVERIFIED:
-                return notificationUtil.getMessageTemplate(WF_STATUS_DOCVERIFIED_LOCALE, completeMsgs);
+        String msgCode = null, messageTemplate = null;
 
-            case WF_STATUS_FIELDVERIFIED:
-                return notificationUtil.getMessageTemplate(WF_STATUS_FIELDVERIFIED_LOCALE, completeMsgs);
+        if (processInstance != null) {
 
-            case WF_STATUS_OPEN:
-                return notificationUtil.getMessageTemplate(WF_STATUS_OPEN_LOCALE, completeMsgs);
+            if (topicName.equalsIgnoreCase(ilmsConfiguration.getCreateCaseTopic()))
+                msgCode = CREATE_STRING;
+
+            else
+                msgCode = UPDATE_STRING;
+
+            messageTemplate = customize(cases, msgCode, localizationMessages);
+
         }
-        return state;
+        return messageTemplate;
     }
 
-    private String getMsgForUpdate(ILMSCase ilmsCase, String msgCode, String completeMsgs, String createUpdateReplaceString) {
+    private String customize(Case cases, String msgCode, String localizationMessages) {
 
-        String url = notificationUtil.getShortenedUrl(ilmsConfiguration.getUiAppHost().concat(ilmsConfiguration.getViewCaseLink()
-                                                                                                               .replace(NOTIFICATION_CASEID,
-                                                                                                                       ilmsCase.getId())
-                                                                                                               .replace(NOTIFICATION_TENANTID,
-                                                                                                                       ilmsCase.getTenantId())));
+        String messageTemplate = notificationUtil.getMessageTemplate(msgCode, localizationMessages);
 
-        return notificationUtil.getMessageTemplate(msgCode, completeMsgs).replace(NOTIFICATION_PROPERTY_LINK, url)
-                               .replace(NOTIFICATION_UPDATED_CREATED_REPLACE, createUpdateReplaceString);
+        if (messageTemplate.contains(NOTIFICATION_CASEID))
+            messageTemplate = messageTemplate.replace(NOTIFICATION_CASEID, cases.getId());
+
+        return messageTemplate;
     }
 
-    private String replaceCommonValues(ILMSCase ilmsCase, String msg, String localisedState) {
-
-        msg = msg.replace(NOTIFICATION_CASEID, ilmsCase.getId()).replace(NOTIFICATION_APPID, ilmsCase.getCaseNumber());
-
-        if (ilmsConfiguration.getIsWorkflowEnabled()) {
-            msg = msg.replace(NOTIFICATION_STATUS, localisedState);
-        }
-        return msg;
-    }
-    private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
-
-        String state;
-        if (isWorkflowEnabled) {
-
-            Boolean isPropertyActive = wf.getState().getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString());
-            Boolean isTerminateState = wf.getState().getIsTerminateState();
-            Set<String> actions = null != wf.getState().getActions()
-                    ? actions = wf.getState().getActions().stream().map(Action::getAction).collect(Collectors.toSet())
-                    : Collections.emptySet();
-
-            if (isTerminateState && CollectionUtils.isEmpty(actions)) {
-
-                state = isPropertyActive ? WF_STATUS_APPROVED : WF_STATUS_REJECTED;
-            } else {
-
-                state = wf.getState().getState();
+    public Map<String, String> fetchUsersByOfficerId(List<String> officerId, String tenantId) {
+        StringBuilder uri = new StringBuilder();
+        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndPoint());
+        Map<String, Object> userSearchRequest = new HashMap<>();
+        userSearchRequest.put("tenantId", tenantId);
+        userSearchRequest.put("uuid", officerId);
+        Map<String, String> mobileNumberToUser  = new HashMap<>();
+        try {
+            Object user = restRepo.fetchUserResult(uri, userSearchRequest);
+            if (user != null) {
+                String mobileNumber = JsonPath.read(user, "$.user[0].mobileNumber");
+                mobileNumberToUser.put("mobileNumber", mobileNumber);
             }
-
-        } else {
-            state = WF_NO_WORKFLOW;
+        } catch (Exception e) {
+            throw new CustomException(ILMSErrorConstants.UNABLE_TO_FETCH, "Unable to fetch User from system");
         }
-        return state;
+        return  mobileNumberToUser;
     }
+
 }
