@@ -200,6 +200,9 @@ public class CaseService {
                     }
                 }
                 producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+                if (Objects.isNull(caseRequest.getCases().getWorkflow())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Workflow is mandatory");
+                }
                 processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");

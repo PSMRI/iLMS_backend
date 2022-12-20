@@ -75,14 +75,10 @@ public class CaseUtils {
             oldData.setFilingNumber(caseRequest.getCases().getFilingNumber());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getFilingDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getFilingDate())) {
-                oldData.setFilingDate(caseRequest.getCases().getFilingDate());
-            }
+            oldData.setFilingDate(caseRequest.getCases().getFilingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getRegistrationDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getRegistrationDate())) {
-                oldData.setRegistrationDate(caseRequest.getCases().getRegistrationDate());
-            }
+            oldData.setRegistrationDate(caseRequest.getCases().getRegistrationDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseSummary())) {
             oldData.setCaseSummary(caseRequest.getCases().getCaseSummary());
@@ -103,19 +99,13 @@ public class CaseUtils {
             oldData.setCaseStatus(caseRequest.getCases().getCaseStatus());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getFirstHearingDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getFirstHearingDate())) {
-                oldData.setFirstHearingDate(caseRequest.getCases().getFirstHearingDate());
-            }
+            oldData.setFirstHearingDate(caseRequest.getCases().getFirstHearingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getPreviousHearingDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getPreviousHearingDate())) {
-                oldData.setPreviousHearingDate(caseRequest.getCases().getPreviousHearingDate());
-            }
+            oldData.setPreviousHearingDate(caseRequest.getCases().getPreviousHearingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getNextHearingDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getPreviousHearingDate())) {
-                oldData.setNextHearingDate(caseRequest.getCases().getPreviousHearingDate());
-            }
+            oldData.setNextHearingDate(caseRequest.getCases().getPreviousHearingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseStage())) {
             oldData.setCaseStage(caseRequest.getCases().getCaseStage());
