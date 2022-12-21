@@ -28,6 +28,8 @@ public class ILMSConstants {
 
     public static final String MDMS_ILMS_DEPARTMENT_IOC = "DepartmentIOC";
 
+    public static final String CASE_FLAG = "CaseFlag";
+
     public static final String MDMS_ILMS_STATUS_OF_COMPLIANCE = "StageCompliance";
 
     public static final String MDMS_ILMS_ORDER_TYPE = "OrderType";

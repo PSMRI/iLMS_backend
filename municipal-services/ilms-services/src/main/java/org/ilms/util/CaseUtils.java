@@ -118,7 +118,7 @@ public class CaseUtils {
                 List<String> uuids = new ArrayList<>();
                 uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
                 if (commonUtils.isUserMO(uuids, caseRequest.getCases().getTenantId(), "caseFlag")) {
-                    oldData.setCaseStage(caseRequest.getCases().getCaseFlag());
+                    oldData.setCaseFlag(caseRequest.getCases().getCaseFlag());
                 }
             }
         }
