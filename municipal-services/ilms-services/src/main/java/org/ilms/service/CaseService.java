@@ -200,6 +200,7 @@ public class CaseService {
                     }
                 }
                 producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+                //                todo : notification has send to all the officers who has worked on this case.
                 if (Objects.nonNull(caseRequest.getCases().getWorkflow())) {
                     processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
                 }

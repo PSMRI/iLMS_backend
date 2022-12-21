@@ -66,6 +66,9 @@ public class CaseValidator {
         if (cases.getRecommendOIC() != null && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
             errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + cases.getRecommendOIC() + "' does not exists");
         }
+        if (cases.getCaseFlag() != null && !codes.get(ILMSConstants.CASE_FLAG).contains(cases.getCaseFlag())) {
+            errorMap.put("Invalid CaseFlag", "The CaseFlag '" + cases.getCaseFlag() + "' does not exists");
+        }
         if (Objects.nonNull(cases.getDocuments())) {
             cases.getDocuments().forEach(document -> {
                 if (document.getDocumentType() != null && !codes.get(ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY)
@@ -295,7 +298,7 @@ public class CaseValidator {
                 Arrays.asList(ILMSConstants.MDMS_ILMS_CASE_TYPE, ILMSConstants.MDMS_ILMS_CASE_STATUS, ILMSConstants.MDMS_ILMS_CASE_CATEGORY,
                         ILMSConstants.MDMS_ILMS_CASE_STAGE, ILMSConstants.MDMS_ILMS_SUB_STAGE, ILMSConstants.MDMS_ILMS_GENDER_TYPE,
                         ILMSConstants.MDMS_ILMS_PETITIONER_TYPE, ILMSConstants.MDMS_ILMS_DEPARTMENT_NAME, ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY,
-                        ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC));
+                        ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC, ILMSConstants.CASE_FLAG));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",
                 ILMSConstants.JSONPATH_CODES, request.getRequestInfo());
