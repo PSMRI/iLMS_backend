@@ -58,9 +58,7 @@ public class JudgementRepository {
             oldJudgement.setOrderType(request.getJudgement().getOrderType());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getOrderDate())) {
-            if (commonUtils.isCorrectDate(request.getJudgement().getOrderDate())) {
-                oldJudgement.setOrderDate(request.getJudgement().getOrderDate());
-            }
+            oldJudgement.setOrderDate(request.getJudgement().getOrderDate());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getDecisionStatus())) {
             List<String> uuids = new ArrayList<>();
@@ -70,14 +68,10 @@ public class JudgementRepository {
             }
         }
         if (!StringUtils.isEmpty(request.getJudgement().getComplianceDate())) {
-            if (commonUtils.isCorrectDate(request.getJudgement().getComplianceDate())) {
-                oldJudgement.setComplianceDate(request.getJudgement().getComplianceDate());
-            }
+            oldJudgement.setComplianceDate(request.getJudgement().getComplianceDate());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getRevisedComplianceDate())) {
-            if (commonUtils.isCorrectDate(request.getJudgement().getRevisedComplianceDate())) {
-                oldJudgement.setRevisedComplianceDate(request.getJudgement().getRevisedComplianceDate());
-            }
+            oldJudgement.setRevisedComplianceDate(request.getJudgement().getRevisedComplianceDate());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getOrderNoOverride())) {
             oldJudgement.setOrderNoOverride(request.getJudgement().getOrderNoOverride());

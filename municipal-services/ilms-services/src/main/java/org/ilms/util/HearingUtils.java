@@ -39,14 +39,10 @@ public class HearingUtils {
             oldHearingRequest.setJudgeName(hearingDetailsRequest.getHearing().getJudgeName());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingDate())) {
-            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getHearingDate())) {
-                oldHearingRequest.setHearingDate(hearingDetailsRequest.getHearing().getHearingDate());
-            }
+            oldHearingRequest.setHearingDate(hearingDetailsRequest.getHearing().getHearingDate());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBusinessDate())) {
-            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getBusinessDate())) {
-                oldHearingRequest.setBusinessDate(hearingDetailsRequest.getHearing().getBusinessDate());
-            }
+            oldHearingRequest.setBusinessDate(hearingDetailsRequest.getHearing().getBusinessDate());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingPurpose())) {
             oldHearingRequest.setHearingPurpose(hearingDetailsRequest.getHearing().getHearingPurpose());
@@ -58,15 +54,11 @@ public class HearingUtils {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
             if (commonUtils.isUserOIC(uuids, tenantId, "AffidavitFilingDate")) {
-                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate())) {
-                    oldHearingRequest.setAffidavitFilingDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate());
-                }
+                oldHearingRequest.setAffidavitFilingDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate());
             }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate())) {
-            if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate())) {
-                oldHearingRequest.setAffidavitFilingDueDate(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate());
-            }
+            oldHearingRequest.setAffidavitFilingDueDate(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseNumber())) {
             oldHearingRequest.setCaseNumber(hearingDetailsRequest.getHearing().getCaseNumber());
@@ -75,9 +67,7 @@ public class HearingUtils {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
             if (commonUtils.isUserOIC(uuids, tenantId, "PreviousHearingDate")) {
-                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPreviousHearingDate())) {
-                    oldHearingRequest.setPreviousHearingDate(hearingDetailsRequest.getHearing().getPreviousHearingDate());
-                }
+                oldHearingRequest.setPreviousHearingDate(hearingDetailsRequest.getHearing().getPreviousHearingDate());
             }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getOathNumber())) {
@@ -91,18 +81,15 @@ public class HearingUtils {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
             if (commonUtils.isUserOIC(uuids, tenantId, "NextHearingDate")) {
-                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getNextHearingDate())) {
-                    oldHearingRequest.setNextHearingDate(hearingDetailsRequest.getHearing().getNextHearingDate());
-                }
+                oldHearingRequest.setNextHearingDate(hearingDetailsRequest.getHearing().getNextHearingDate());
+
             }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getFirstHearingDate())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
             if (commonUtils.isUserOIC(uuids, tenantId, "FirstHearingDate")) {
-                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getFirstHearingDate())) {
-                    oldHearingRequest.setFirstHearingDate(hearingDetailsRequest.getHearing().getFirstHearingDate());
-                }
+                oldHearingRequest.setFirstHearingDate(hearingDetailsRequest.getHearing().getFirstHearingDate());
             }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getIsPresenceRequired())) {
@@ -289,14 +276,10 @@ public class HearingUtils {
         }
         if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate())) {
-                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate())) {
-                    oldHearingRequest.getPayment().setFineImposedDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate());
-                }
+                oldHearingRequest.getPayment().setFineImposedDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate());
             }
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineDueDate())) {
-                if (commonUtils.isCorrectDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate())) {
-                    oldHearingRequest.getPayment().setFineDueDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate());
-                }
+                oldHearingRequest.getPayment().setFineDueDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate());
             }
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
                 oldHearingRequest.getPayment().setFineAmount(hearingDetailsRequest.getHearing().getPayment().getFineAmount());

@@ -200,7 +200,10 @@ public class CaseService {
                     }
                 }
                 producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
-                //                processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
+                //                todo : notification has send to all the officers who has worked on this case.
+                if (Objects.nonNull(caseRequest.getCases().getWorkflow())) {
+                    processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
+                }
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
             }

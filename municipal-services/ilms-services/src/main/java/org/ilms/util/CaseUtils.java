@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.CaseRepository;
 import org.ilms.service.CaseEnrichmentService;
@@ -74,14 +75,10 @@ public class CaseUtils {
             oldData.setFilingNumber(caseRequest.getCases().getFilingNumber());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getFilingDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getFilingDate())) {
-                oldData.setFilingDate(caseRequest.getCases().getFilingDate());
-            }
+            oldData.setFilingDate(caseRequest.getCases().getFilingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getRegistrationDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getRegistrationDate())) {
-                oldData.setRegistrationDate(caseRequest.getCases().getRegistrationDate());
-            }
+            oldData.setRegistrationDate(caseRequest.getCases().getRegistrationDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseSummary())) {
             oldData.setCaseSummary(caseRequest.getCases().getCaseSummary());
@@ -102,19 +99,13 @@ public class CaseUtils {
             oldData.setCaseStatus(caseRequest.getCases().getCaseStatus());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getFirstHearingDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getFirstHearingDate())) {
-                oldData.setFirstHearingDate(caseRequest.getCases().getFirstHearingDate());
-            }
+            oldData.setFirstHearingDate(caseRequest.getCases().getFirstHearingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getPreviousHearingDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getPreviousHearingDate())) {
-                oldData.setPreviousHearingDate(caseRequest.getCases().getPreviousHearingDate());
-            }
+            oldData.setPreviousHearingDate(caseRequest.getCases().getPreviousHearingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getNextHearingDate())) {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getPreviousHearingDate())) {
-                oldData.setNextHearingDate(caseRequest.getCases().getPreviousHearingDate());
-            }
+            oldData.setNextHearingDate(caseRequest.getCases().getPreviousHearingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseStage())) {
             oldData.setCaseStage(caseRequest.getCases().getCaseStage());
@@ -122,11 +113,13 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCases().getCaseSubStage())) {
             oldData.setCaseSubStage(caseRequest.getCases().getCaseSubStage());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCases().getCaseFlag())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserMO(uuids, caseRequest.getCases().getTenantId(), "caseFlag")) {
-                oldData.setCaseStage(caseRequest.getCases().getCaseFlag());
+        if (Objects.nonNull(caseRequest.getCases().getCaseFlag())) {
+            if (!StringUtils.isEmpty(caseRequest.getCases().getCaseFlag())) {
+                List<String> uuids = new ArrayList<>();
+                uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
+                if (commonUtils.isUserMO(uuids, caseRequest.getCases().getTenantId(), "caseFlag")) {
+                    oldData.setCaseFlag(caseRequest.getCases().getCaseFlag());
+                }
             }
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getDepartmentName())) {

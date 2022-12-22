@@ -66,6 +66,9 @@ public class CaseValidator {
         if (cases.getRecommendOIC() != null && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
             errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + cases.getRecommendOIC() + "' does not exists");
         }
+        if (cases.getCaseFlag() != null && !codes.get(ILMSConstants.CASE_FLAG).contains(cases.getCaseFlag())) {
+            errorMap.put("Invalid CaseFlag", "The CaseFlag '" + cases.getCaseFlag() + "' does not exists");
+        }
         if (Objects.nonNull(cases.getDocuments())) {
             cases.getDocuments().forEach(document -> {
                 if (document.getDocumentType() != null && !codes.get(ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY)
@@ -108,16 +111,10 @@ public class CaseValidator {
         if (!StringUtils.isNotBlank(caseRequest.getCases().getFilingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "filingDate is mandatory [ " + caseRequest.getCases().getFilingDate() + " ]");
-        } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getFilingDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getRegistrationDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "registrationDate is mandatory [ " + caseRequest.getCases().getRegistrationDate() + " ]");
-        } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getRegistrationDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseSummary())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
@@ -138,16 +135,10 @@ public class CaseValidator {
         if (!StringUtils.isNotBlank(caseRequest.getCases().getFirstHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "firstHearingDate is mandatory [ " + caseRequest.getCases().getFirstHearingDate() + " ]");
-        } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getFirstHearingDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getNextHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "nextHearingDate is mandatory [ " + caseRequest.getCases().getNextHearingDate() + " ]");
-        } else {
-            if (commonUtils.isCorrectDate(caseRequest.getCases().getNextHearingDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseStage())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
@@ -307,7 +298,7 @@ public class CaseValidator {
                 Arrays.asList(ILMSConstants.MDMS_ILMS_CASE_TYPE, ILMSConstants.MDMS_ILMS_CASE_STATUS, ILMSConstants.MDMS_ILMS_CASE_CATEGORY,
                         ILMSConstants.MDMS_ILMS_CASE_STAGE, ILMSConstants.MDMS_ILMS_SUB_STAGE, ILMSConstants.MDMS_ILMS_GENDER_TYPE,
                         ILMSConstants.MDMS_ILMS_PETITIONER_TYPE, ILMSConstants.MDMS_ILMS_DEPARTMENT_NAME, ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY,
-                        ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC));
+                        ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC, ILMSConstants.CASE_FLAG));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",
                 ILMSConstants.JSONPATH_CODES, request.getRequestInfo());

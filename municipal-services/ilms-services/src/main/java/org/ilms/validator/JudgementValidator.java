@@ -30,7 +30,14 @@ public class JudgementValidator {
     @Autowired
     private CaseRepository caseRepository;
 
-    private static Map<String, String> validateCodes(Judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
+    private static Map<String, String> validateCode(Judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
+        if (judgement.getOrderType() != null && !codes.get(ILMSConstants.MDMS_ILMS_ORDER_TYPE).contains(judgement.getOrderType())) {
+            errorMap.put("Invalid OrderType", "The OrderType '" + judgement.getOrderType() + "' does not exists");
+        }
+        return errorMap;
+    }
+
+    private static Map<String, String> validateCodesForUpdate(Judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
 
         if (judgement.getComplianceStatus() != null && !codes.get(ILMSConstants.MDMS_ILMS_STATUS_OF_COMPLIANCE)
                                                              .contains(judgement.getComplianceStatus())) {
@@ -52,24 +59,9 @@ public class JudgementValidator {
         }
         if (!StringUtils.isNotBlank(request.getJudgement().getOrderDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "orderDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(request.getJudgement().getOrderDate()))
-                ;
         }
         if (StringUtils.isNotBlank(request.getJudgement().getDecisionStatus())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "decisionStatus is not allowed while creating judgement");
-        }
-        if (!StringUtils.isNotBlank(request.getJudgement().getComplianceDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "complianceDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(request.getJudgement().getComplianceDate()))
-                ;
-        }
-        if (!StringUtils.isNotBlank(request.getJudgement().getRevisedComplianceDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "revisedComplianceDate is mandatory");
-        } else {
-            if (commonUtils.isCorrectDate(request.getJudgement().getRevisedComplianceDate()))
-                ;
         }
         if (!StringUtils.isNotBlank(request.getJudgement().getOrderNoOverride())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "orderNoOverride is mandatory");
@@ -95,7 +87,7 @@ public class JudgementValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterData(judgement, request, errorMap);
+        validateMasterDataForUpdate(judgement, request, errorMap);
     }
 
     private void validateMasterData(Judgement judgement, JudgementRequest request, Map<String, String> errorMap) {
@@ -104,14 +96,14 @@ public class JudgementValidator {
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
         CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
         String tenantId = caseResponse.getCases().get(0).getTenantId();
-        List<String> masterNames = new ArrayList<>(Arrays.asList(ILMSConstants.MDMS_ILMS_STATUS_OF_COMPLIANCE, ILMSConstants.MDMS_ILMS_ORDER_TYPE));
+        List<String> masterNames = new ArrayList<>(Arrays.asList(ILMSConstants.MDMS_ILMS_ORDER_TYPE));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",
                 ILMSConstants.JSONPATH_CODES, request.getRequestInfo());
 
         if (null != codes) {
             validateMDMSData(masterNames, codes);
-            validateCodes(judgement, codes, errorMap);
+            validateCode(judgement, codes, errorMap);
         } else {
             errorMap.put("MASTER_FETCH_FAILED", "Couldn't fetch master data for validation");
         }
@@ -129,6 +121,29 @@ public class JudgementValidator {
                 errorMap.put("MDMS DATA ERROR ", "Unable to fetch " + masterName + " codes from MDMS");
             }
         }
+        if (!errorMap.isEmpty()) {
+            throw new CustomException(errorMap);
+        }
+    }
+
+    private void validateMasterDataForUpdate(Judgement judgement, JudgementRequest request, Map<String, String> errorMap) {
+
+        String caseId = judgement.getCaseId();
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
+        CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+        String tenantId = caseResponse.getCases().get(0).getTenantId();
+        List<String> masterNames = new ArrayList<>(Arrays.asList(ILMSConstants.MDMS_ILMS_STATUS_OF_COMPLIANCE, ILMSConstants.MDMS_ILMS_ORDER_TYPE));
+
+        Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",
+                ILMSConstants.JSONPATH_CODES, request.getRequestInfo());
+
+        if (null != codes) {
+            validateMDMSData(masterNames, codes);
+            validateCodesForUpdate(judgement, codes, errorMap);
+        } else {
+            errorMap.put("MASTER_FETCH_FAILED", "Couldn't fetch master data for validation");
+        }
+
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
