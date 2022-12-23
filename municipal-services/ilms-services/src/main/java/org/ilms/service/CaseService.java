@@ -1532,14 +1532,24 @@ public class CaseService {
     }
 
     public ChildCase addChildCases(ChildCaseRequest childCaseRequest) {
-        if (!StringUtils.isNotBlank(childCaseRequest.getChildCase().getParentCaseId())) {
+
+        if (StringUtils.isNotBlank(childCaseRequest.getChildCase().getCaseHierarchy().toString())) {
+            if (childCaseRequest.getChildCase().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
+                childCaseRequest.getChildCase().setParentCaseId(null);
+            } else if (childCaseRequest.getChildCase().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
+                if (!StringUtils.isNotBlank(childCaseRequest.getChildCase().getParentCaseId())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                            "ParentCaseId is mandatory to create child case [ " + childCaseRequest.getChildCase().getParentCaseId() + " ]");
+                }
+            }
+        } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "ParentCaseId is mandatory to create child case [ " + childCaseRequest.getChildCase().getParentCaseId() + " ]");
+                    "CaseHierarchy is mandatory to create child case [ " + childCaseRequest.getChildCase().getCaseHierarchy() + " ]");
         }
         if (Objects.nonNull(childCaseRequest.getChildCase().getCaseIds())) {
             if (childCaseRequest.getChildCase().getCaseIds().isEmpty()) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "caseIds can not be empty [ " + childCaseRequest.getChildCase().getCaseIds() + " ]");
+                        "caseIds can not be null [ " + childCaseRequest.getChildCase().getCaseIds() + " ]");
             }
         } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,

@@ -868,9 +868,11 @@ serviceMaps:
       fromTopic: update-child-case-application
       isTransaction: true
       queryMaps:
-        - query: update ilms_case set parent_case_id = ? , case_hierarchy='CHILD' where id IN (?);
+        - query: update ilms_case set parent_case_id = ? , case_hierarchy= ? where id IN (?);
           basePath: childCase.caseIds.*
           jsonMaps:
             - jsonPath: $.childCase.parentCaseId
+
+            - jsonPath: $.childCase.caseHierarchy
 
             - jsonPath: $.childCase.caseIds.*.id

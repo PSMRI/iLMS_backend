@@ -107,7 +107,15 @@ public class CommonUtils {
         return roleList;
     }
 
-    public boolean isUserDEC(List<String> listUuids, String tenantId, String columnValue) {
+    public boolean isUserExists(List<String> listUuids, String tenantId) {
+        Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
+        if (userRoles.get("role").isEmpty()) {
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                     "User does not exists in system");
+        }
+        return true;
+    }
+public boolean isUserDEC(List<String> listUuids, String tenantId, String columnValue) {
         Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
         if (!userRoles.get("role").equalsIgnoreCase("DEC")) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
