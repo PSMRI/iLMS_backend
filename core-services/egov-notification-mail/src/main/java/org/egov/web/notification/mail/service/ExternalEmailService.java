@@ -2,8 +2,9 @@ package org.egov.web.notification.mail.service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-
+import org.egov.web.notification.mail.config.EmailProperties;
 import org.egov.web.notification.mail.consumer.contract.Email;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -16,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnProperty(value = "mail.enabled", havingValue = "true")
 @Slf4j
 public class ExternalEmailService implements EmailService {
+
+	@Autowired
+	EmailProperties emailProperties;
 
 	public static final String EXCEPTION_MESSAGE = "Exception creating HTML email";
 	private JavaMailSenderImpl mailSender;
@@ -35,6 +39,7 @@ public class ExternalEmailService implements EmailService {
 
 	private void sendTextEmail(Email email) {
 		final SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setFrom(emailProperties.getMailSenderUsername());
 		mailMessage.setTo(email.getEmailTo().toArray(new String[0]));
 		mailMessage.setSubject(email.getSubject());
 		mailMessage.setText(email.getBody());

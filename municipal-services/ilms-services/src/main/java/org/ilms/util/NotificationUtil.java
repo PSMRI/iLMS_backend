@@ -9,7 +9,7 @@ import static org.ilms.util.ILMSConstants.MODULE;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_EMAIL;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_LOCALE;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_MODULENAME;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_OWNERNAME;
+import static org.ilms.util.ILMSConstants.NOTIFICATION_USER_NAME;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -105,12 +105,11 @@ public class NotificationUtil {
         return mdmsCriteriaReq;
     }
 
-    public List<SMSRequest> createSMSRequest(String message, Map<String, String> mobileNumberToOwnerName) {
+    public List<SMSRequest> createSMSRequest(String message, Map<String, String> mobileNumberOfUser) {
 
         List<SMSRequest> smsRequest = new LinkedList<>();
-        for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
-            String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
-            smsRequest.add(new SMSRequest(entryset.getValue(), customizedMsg));
+        for (Map.Entry<String, String> entryset : mobileNumberOfUser.entrySet()) {
+            smsRequest.add(new SMSRequest(entryset.getValue(), message));
         }
         return smsRequest;
     }
@@ -216,27 +215,16 @@ public class NotificationUtil {
     public List<EmailRequest> createEmailRequestFromSMSRequests(RequestInfo requestInfo,List<SMSRequest> smsRequests,String tenantId) {
         Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
         Map<String, String> mobileNumberToEmailId = fetchUserEmailIds(mobileNumbers, tenantId);
-//        Map<String, String> mobileNumberToEmailId=new HashMap<>();
-//        mobileNumberToEmailId.put("email","savanish521@gmail.com");
         if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
             log.error("Email Ids Not found for Mobilenumbers");
         }
 
         Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
-//        Map<String,String > mobileNumberToMsg = new HashMap<>();
-//        mobileNumberToMsg.put("emailFrom","shivaamoria1997@gmail.com");
         List<EmailRequest> emailRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
-            String customizedMsg = "";
             String message = mobileNumberToMsg.get(entryset.getKey());
-           // String message="hello shiva digit";
-            if(message.contains(NOTIFICATION_EMAIL))
-               customizedMsg = message.replace(NOTIFICATION_EMAIL, entryset.getValue());
-           // customizedMsg="hello man digit mail";
-            //String subject = "testing";
-            //String body = "customizedMsg";
-            String subject = "";
-            String body = "";
+            String subject = ilmsConfiguration.getNotifSubject();
+            String body = message;
             Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false).body(body).subject(subject).build();
             EmailRequest email = new EmailRequest(requestInfo,emailobj);
             emailRequest.add(email);

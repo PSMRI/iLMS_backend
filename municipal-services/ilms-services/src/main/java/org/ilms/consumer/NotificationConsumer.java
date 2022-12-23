@@ -25,17 +25,25 @@ public class NotificationConsumer {
     @Autowired
     private NotificationService notifService;
 
-    @KafkaListener (topics = {"${persister.save.ilms.case.topic}", "${persister.update.ilms.case.topic}" })
+    @KafkaListener (topics = {"${persister.save.ilms.case.topic}" })
     public void listen(final HashMap<String, Object> record, @Header (KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
         try {
 
-            if (topic.equalsIgnoreCase(configs.getCreateCaseTopic()) || topic.equalsIgnoreCase(configs.getUpdateCaseTopic())) {
+            if (topic.equalsIgnoreCase(configs.getCreateCaseTopic())) {
 
                 CaseRequest request = mapper.convertValue(record, CaseRequest.class);
                 notifService.process(topic, request);
 
             }
+//            else if(topic.equalsIgnoreCase(configs.getUpdateCaseTopic())){
+//                CaseRequest request = mapper.convertValue(record, CaseRequest.class);
+//                if (ILMSConstants.UPDATE_STRING.equalsIgnoreCase(request.getCases().getCreationReason().toString())) {
+//                    if (request.getCases().getWorkflow() != null) {
+//                        notifService.process(topic, request);
+//                    }
+//                }
+//            }
 
         } catch (final Exception e) {
 

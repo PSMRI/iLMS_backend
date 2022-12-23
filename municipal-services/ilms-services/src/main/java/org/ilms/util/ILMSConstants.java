@@ -67,73 +67,24 @@ public class ILMSConstants {
 
     //  NOTIFICATION PLACEHOLDER
 
-    public static final String NOTIFICATION_OWNERNAME = "Avanish";
+    public static final String NOTIFICATION_USER_NAME = "{name}";
 
-    public static final String NOTIFICATION_EMAIL = "{EMAIL_ID}";
+    public static final String NOTIFICATION_EMAIL = "{email_id}";
 
-    public static final String NOTIFICATION_STATUS = "{STATUS}";
-
-    public static final String NOTIFICATION_UPDATED_CREATED_REPLACE = "{updated/created}";
 
     public static final String CREATE_STRING = "Create";
 
-    public static final String UPDATE_STRING = "Update";
-
-    public static final String CREATED_STRING = "Created";
-
-    public static final String UPDATED_STRING = "Updated";
-
     public static final String PT_BUSINESSSERVICE = "iLMS-services";
+
     public static final String ACTION_FOR_ASSESSMENT =  "Create";
 
-
     public static final String NOTIFICATION_CASEID = "{id}";
-
-    public static final String PT_OWNER_NAME = "{ownername}";
-
-    public static final String PT_ALTERNATE_NUMBER = "{alternatenumber}";
-
-    public static final String PT_OLD_MOBILENUMBER = "{oldmobilenumber}";
-
-    public static final String PT_NEW_MOBILENUMBER = "{newmobilenumber}";
-
-    public static final String CORRECTION_PENDING = "CORRECTIONPENDING";
 
     public static final String NOTIFICATION_LOCALE = "en_IN";
 
     public static final String NOTIFICATION_MODULENAME = "rainmaker-common";
 
-    public static final String WF_STATUS_REJECTED = "REJECTED";
-
-    public static final String WF_STATUS_FIELDVERIFIED = "FIELDVERIFIED";
-
-    public static final String WF_STATUS_DOCVERIFIED = "DOCVERIFIED";
-
-    public static final String WF_STATUS_CANCELLED = "CANCELLED";
-
-    public static final String WF_STATUS_APPROVED = "APPROVED";
-
-    public static final String WF_STATUS_OPEN = "Create";
-
-    public static final String WF_NO_WORKFLOW = "NO_WORKFLOW";
-
-    public static final String WF_STATUS_OPEN_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_OPEN";
-
-    public static final String WF_STATUS_DOCVERIFIED_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_DOCVERIFIED";
-
-    public static final String WF_STATUS_FIELDVERIFIED_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_FIELDVERIFIED";
-
-    public static final String WF_STATUS_APPROVED_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_APPROVED";
-
-    public static final String WF_STATUS_REJECTED_LOCALE = "ILMS_NOTIF_WF_STATE_LOCALE_REJECTED";
-
-    //    public static final String CREATE_STRING = "Create";
-    //
-    //    public static final String UPDATE_STRING = "Update";
-    //
-    //    public static final String CREATED_STRING = "Created";
-    //
-    //    public static final String UPDATED_STRING = "Updated";
+    public static final String UPDATE_STRING = "UPDATE";
 
     /* update */
     public static final String WF_UPDATE_STATUS_OPEN_CODE = "ILMS_NOTIF_WF_OPEN";

@@ -241,6 +241,9 @@ public class ILMSConfiguration {
     @Value ("${egov.notif.view.case}")
     private String viewCaseLink;
 
+    @Value ("${egov.notif.subject}")
+    private String notifSubject;
+
 
     @PostConstruct
     public void initialize() {

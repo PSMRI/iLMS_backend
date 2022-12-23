@@ -2,64 +2,31 @@ package org.ilms.service;
 
 import static org.ilms.util.ILMSConstants.ACTION_FOR_ASSESSMENT;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_EMAIL;
-import static org.ilms.util.ILMSConstants.CHANNEL_NAME_EVENT;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_SMS;
-import static org.ilms.util.ILMSConstants.CORRECTION_PENDING;
-import static org.ilms.util.ILMSConstants.CREATED_STRING;
 import static org.ilms.util.ILMSConstants.CREATE_STRING;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_APPID;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_CASEID;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_PROPERTY_LINK;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_STATUS;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_TENANTID;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_UPDATED_CREATED_REPLACE;
 import static org.ilms.util.ILMSConstants.PT_BUSINESSSERVICE;
-import static org.ilms.util.ILMSConstants.UPDATED_STRING;
-import static org.ilms.util.ILMSConstants.UPDATE_NO_WORKFLOW;
-import static org.ilms.util.ILMSConstants.UPDATE_STRING;
-import static org.ilms.util.ILMSConstants.WF_NO_WORKFLOW;
-import static org.ilms.util.ILMSConstants.WF_STATUS_APPROVED;
-import static org.ilms.util.ILMSConstants.WF_STATUS_DOCVERIFIED;
-import static org.ilms.util.ILMSConstants.WF_STATUS_DOCVERIFIED_LOCALE;
-import static org.ilms.util.ILMSConstants.WF_STATUS_FIELDVERIFIED;
-import static org.ilms.util.ILMSConstants.WF_STATUS_FIELDVERIFIED_LOCALE;
-import static org.ilms.util.ILMSConstants.WF_STATUS_OPEN;
-import static org.ilms.util.ILMSConstants.WF_STATUS_OPEN_LOCALE;
-import static org.ilms.util.ILMSConstants.WF_STATUS_REJECTED;
-import static org.ilms.util.ILMSConstants.WF_STATUS_REJECTED_LOCALE;
-import static org.ilms.util.ILMSConstants.WF_UPDATE_STATUS_APPROVED_CODE;
-import static org.ilms.util.ILMSConstants.WF_UPDATE_STATUS_CHANGE_CODE;
-import static org.ilms.util.ILMSConstants.WF_UPDATE_STATUS_OPEN_CODE;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
+import org.ilms.repository.CaseRepository;
 import org.ilms.repository.ServiceRepository;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.util.NotificationUtil;
 import org.ilms.web.model.Case;
 import org.ilms.web.model.CaseRequest;
+import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.EmailRequest;
-import org.ilms.web.model.Event;
-import org.ilms.web.model.EventRequest;
 import org.ilms.web.model.SMSRequest;
-import org.ilms.web.model.enums.CreationReason;
-import org.ilms.web.model.enums.Status;
-import org.ilms.web.model.workflow.Action;
-import org.ilms.web.model.workflow.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,6 +39,9 @@ public class NotificationService {
     @Autowired
     ILMSConfiguration ilmsConfiguration;
 
+    @Autowired
+    CaseRepository caseRepository;
+
     @Value ("${notification.url}")
     private String notificationURL;
 
@@ -82,12 +52,20 @@ public class NotificationService {
 
         RequestInfo requestInfo = caseRequest.getRequestInfo();
         Case cases = caseRequest.getCases();
-        String tenantId = cases.getTenantId();
+        String tenantId;
+        if (cases.getTenantId()!=null){
+            tenantId = cases.getTenantId();
+        } else {
+            String caseId = caseRequest.getCases().getId();
+            CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
+            CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+            tenantId = caseResponse.getCases().get(0).getTenantId();
+        }
 
         List<String> configuredChannelNamesForCase = notificationUtil.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE,
                 ACTION_FOR_ASSESSMENT);
 
-        List<SMSRequest> smsRequests = enrichSMSRequest(topicName, caseRequest, cases);
+        List<SMSRequest> smsRequests = enrichSMSRequest(topicName, caseRequest, cases,tenantId);
         if (configuredChannelNamesForCase.contains(CHANNEL_NAME_SMS)) {
             notificationUtil.sendSMS(smsRequests);
         }
@@ -107,12 +85,10 @@ public class NotificationService {
         }
     }
 
-    private List<SMSRequest> enrichSMSRequest(String topicName, CaseRequest request, Case cases) {
+    private List<SMSRequest> enrichSMSRequest(String topicName, CaseRequest request, Case cases,String tenantId) {
 
-        String tenantId = request.getCases().getTenantId();
         String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
-       String message = getCustomizedMsg(topicName, request, cases, localizationMessages);
-       // String message="hello Digit";
+       String message = getCustomizedMsg(topicName, cases, localizationMessages);
         String officerId=request.getCases().getAssignedOfficerId();
         List<String> ids = new ArrayList<>();
         ids.add(officerId);
@@ -122,25 +98,20 @@ public class NotificationService {
         return notificationUtil.createSMSRequest(message, mobileNumberToOwner);
     }
 
-    private String getCustomizedMsg(String topicName, CaseRequest request, Case cases, String localizationMessages) {
-
-        //        Case cases1 = request.getCases();
-
-        ProcessInstance processInstance = cases.getWorkflow();
+    private String getCustomizedMsg(String topicName, Case cases, String localizationMessages) {
 
         String msgCode = null, messageTemplate = null;
-
-        if (processInstance != null) {
+        String action;
+        action = cases.getWorkflow().getAction();
 
             if (topicName.equalsIgnoreCase(ilmsConfiguration.getCreateCaseTopic()))
                 msgCode = CREATE_STRING;
 
             else
-                msgCode = UPDATE_STRING;
+                msgCode = action;
 
             messageTemplate = customize(cases, msgCode, localizationMessages);
 
-        }
         return messageTemplate;
     }
 
@@ -148,7 +119,6 @@ public class NotificationService {
 
         String messageTemplate = notificationUtil.getMessageTemplate(msgCode, localizationMessages);
 
-        if (messageTemplate.contains(NOTIFICATION_CASEID))
             messageTemplate = messageTemplate.replace(NOTIFICATION_CASEID, cases.getId());
 
         return messageTemplate;
