@@ -132,7 +132,11 @@ public class CaseUtils {
             oldData.setRemarks(caseRequest.getCases().getRemarks());
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getAssignedOfficerId())) {
-            oldData.setAssignedOfficerId(caseRequest.getCases().getAssignedOfficerId());
+            List<String> uuids = new ArrayList<>();
+            uuids.add(caseRequest.getCases().getAssignedOfficerId());
+            if (commonUtils.isUserExists(uuids, caseRequest.getCases().getTenantId())) {
+                oldData.setAssignedOfficerId(caseRequest.getCases().getAssignedOfficerId());
+            }
         }
         if (!StringUtils.isEmpty(caseRequest.getCases().getAdditionalDetails())) {
             oldData.setAdditionalDetails(caseRequest.getCases().getAdditionalDetails());

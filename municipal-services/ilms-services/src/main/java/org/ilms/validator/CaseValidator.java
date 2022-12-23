@@ -160,6 +160,12 @@ public class CaseValidator {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "recommendedOIC is mandatory [ " + caseRequest.getCases().getRecommendOIC() + " ]");
         }
+        if (StringUtils.isNotBlank(caseRequest.getCases().getAssignedOfficerId())) {
+            List<String> uuids = new ArrayList<>();
+            uuids.add(caseRequest.getCases().getAssignedOfficerId());
+            if (commonUtils.isUserRO(uuids, caseRequest.getCases().getTenantId(), "AssignedOfficerId")) ;
+
+        }
         //        Setting Petitioner Details
         if (Objects.nonNull(caseRequest.getCases().getPetitioner())) {
             if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getFirstName())) {
