@@ -59,6 +59,14 @@ public class EmailProperties {
     @Getter
     private String mailProtocol;
 
+    @Value("${mail.smtp.ssl.trust}")
+    @Getter
+    private String mailSslTrust;
+
+    @Value("${mail.tls}")
+    @Getter
+    private String mailtls;
+
     @Value("${mail.sender.username}")
     @Getter
     private String mailSenderUsername;
@@ -71,7 +79,7 @@ public class EmailProperties {
     @Getter
     private String mailSmtpsAuth;
 
-    @Value("${mail.smtps.starttls.enable}")
+    @Value("${mail.smtp.starttls.enable}")
     @Getter
     private String mailStartTlsEnabled;
 

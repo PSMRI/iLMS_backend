@@ -187,6 +187,64 @@ public class ILMSConfiguration {
     @Value ("${egov.user.host}")
     private String userHost;
 
+    //NOTIFICATION TOPICS
+    @Value ("${kafka.topics.notification.sms}")
+    private String smsNotifTopic;
+
+    @Value ("${kafka.topics.notification.email}")
+    private String emailNotifTopic;
+
+    @Value ("${kafka.topics.notification.pg.save.txns}")
+    private String pgTopic;
+
+    @Value ("${egov.localization.statelevel}")
+    private Boolean isStateLevel;
+
+    @Value ("${notif.sms.enabled}")
+    private Boolean isSMSNotificationEnabled;
+
+    @Value ("${notif.email.enabled}")
+    private Boolean isEmailNotificationEnabled;
+
+    //localization
+
+    @Value ("${egov.localization.statelevel}")
+    private Boolean isLocalizationStateLevel;
+
+    @Value ("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value ("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value ("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    // url shortner
+
+    @Value ("${egov.url.shortner.host}")
+    private String urlShortnerHost;
+
+    @Value ("${egov.url.shortner.endpoint}")
+    private String urlShortnerEndpoint;
+
+    //USER EVENTS
+    @Value ("${egov.ui.app.host}")
+    private String uiAppHost;
+
+    @Value ("${egov.usr.events.create.topic}")
+    private String saveUserEventsTopic;
+
+    @Value ("${egov.user.event.notification.enabled}")
+    private Boolean isUserEventsNotificationEnabled;
+
+    @Value ("${egov.notif.view.case}")
+    private String viewCaseLink;
+
+    @Value ("${egov.notif.subject}")
+    private String notifSubject;
+
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));

@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
+import org.ilms.consumer.NotificationConsumer;
 import org.ilms.producer.Producer;
 import org.ilms.repository.CaseRepository;
 import org.ilms.repository.HearingRepository;
@@ -38,6 +40,9 @@ import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
 import org.ilms.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BaseColor;
@@ -81,6 +86,9 @@ public class CaseService {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public CaseService() {
     }
@@ -203,6 +211,7 @@ public class CaseService {
                 //                todo : notification has send to all the officers who has worked on this case.
                 if (Objects.nonNull(caseRequest.getCases().getWorkflow())) {
                     processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
+                    notificationService.process(ilmsConfiguration.getUpdateCaseTopic(),caseRequest);
                 }
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");

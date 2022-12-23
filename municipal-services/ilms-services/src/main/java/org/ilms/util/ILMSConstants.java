@@ -46,4 +46,61 @@ public class ILMSConstants {
 
     public static final String MDMS_ILMS_DIVISION = "Division";
 
+    //Notification Enhancement
+    public static final String CHANNEL_NAME_SMS = "SMS";
+
+    public static final String CHANNEL_NAME_EVENT = "EVENT";
+
+    public static final String CHANNEL_NAME_EMAIL = "EMAIL";
+
+    public static final String MODULE = "module";
+
+    public static final String ACTION = "action";
+
+    public static final String CHANNEL_LIST = "channelList";
+
+    public static final String CHANNEL = "Channel";
+
+    public static final String LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+
+    public static final String LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+
+    //  NOTIFICATION PLACEHOLDER
+
+    public static final String NOTIFICATION_USER_NAME = "{name}";
+
+    public static final String NOTIFICATION_EMAIL = "{email_id}";
+
+
+    public static final String CREATE_STRING = "Create";
+
+    public static final String PT_BUSINESSSERVICE = "iLMS-services";
+
+    public static final String ACTION_FOR_ASSESSMENT =  "Create";
+
+    public static final String NOTIFICATION_CASEID = "{id}";
+
+    public static final String NOTIFICATION_LOCALE = "en_IN";
+
+    public static final String NOTIFICATION_MODULENAME = "rainmaker-common";
+
+    public static final String UPDATE_STRING = "UPDATE";
+
+    /* update */
+    public static final String WF_UPDATE_STATUS_OPEN_CODE = "ILMS_NOTIF_WF_OPEN";
+
+    public static final String WF_UPDATE_STATUS_CHANGE_CODE = "ILMS_NOTIF_WF_STATUS_CHANGE";
+
+    public static final String WF_UPDATE_STATUS_APPROVED_CODE = "ILMS_NOTIF_WF_APPROVED";
+
+    public static final String UPDATE_NO_WORKFLOW = "ILMS_NOTIF_WF_UPDATE_NONE";
+
+    public static final String NOTIFICATION_TENANTID = "{TENANTID}";
+
+    public static final String NOTIFICATION_PROPERTY_LINK = "{PTURL}";
+
+    public static final String NOTIFICATION_APPID = "{APPID}";
+
+    public static final String MUTATION_PROCESS_CONSTANT = "MUTATION";
+
 }
