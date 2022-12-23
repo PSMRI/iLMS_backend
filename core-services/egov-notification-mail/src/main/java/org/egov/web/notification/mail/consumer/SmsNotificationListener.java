@@ -1,42 +1,42 @@
-package org.egov.web.notification.mail.consumer;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.egov.web.notification.mail.config.ApplicationConfiguration;
-import org.egov.web.notification.mail.consumer.contract.Email;
-import org.egov.web.notification.mail.repository.UserRepository;
-import org.egov.web.notification.mail.service.EmailService;
-import org.egov.web.notification.mail.utils.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-@Service
-public class SmsNotificationListener {
-
-	private UserRepository userRepository;
-
-	private ApplicationConfiguration config;
-
-	private EmailService emailService;
-
-	@Value("${email.subject}")
-	private String subject;
-
-	@Autowired
-	public SmsNotificationListener(UserRepository userRepository, ApplicationConfiguration config,
-			EmailService emailService) {
-		this.userRepository = userRepository;
-		this.config = config;
-		this.emailService = emailService;
-	}
-
+//package org.egov.web.notification.mail.consumer;
+//
+//import java.util.HashMap;
+//import java.util.HashSet;
+//import java.util.List;
+//import java.util.Set;
+//import java.util.regex.Pattern;
+//
+//import org.egov.web.notification.mail.config.ApplicationConfiguration;
+//import org.egov.web.notification.mail.consumer.contract.Email;
+//import org.egov.web.notification.mail.repository.UserRepository;
+//import org.egov.web.notification.mail.service.EmailService;
+//import org.egov.web.notification.mail.utils.Constants;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.kafka.annotation.KafkaListener;
+//import org.springframework.stereotype.Service;
+//import org.springframework.util.CollectionUtils;
+//
+//@Service
+//public class SmsNotificationListener {
+//
+//	private UserRepository userRepository;
+//
+//	private ApplicationConfiguration config;
+//
+//	private EmailService emailService;
+//
+//	@Value("${email.subject}")
+//	private String subject;
+//
+//	@Autowired
+//	public SmsNotificationListener(UserRepository userRepository, ApplicationConfiguration config,
+//			EmailService emailService) {
+//		this.userRepository = userRepository;
+//		this.config = config;
+//		this.emailService = emailService;
+//	}
+//
 //	@KafkaListener(topics = "${kafka.topics.notification.sms.topic.name}")
 //	public void process(final HashMap<String, Object> record) {
 //		List<String> emails = userRepository.getEmailsByMobileNo(config.getStateTenantId(),
@@ -70,5 +70,5 @@ public class SmsNotificationListener {
 //			return false;
 //		return pat.matcher(email).matches();
 //	}
-
-}
+//
+//}
