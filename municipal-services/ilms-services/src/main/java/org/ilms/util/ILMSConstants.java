@@ -86,6 +86,14 @@ public class ILMSConstants {
 
     public static final String UPDATE_STRING = "UPDATE";
 
+    public static final String VIEW_APPLICATION_CODE = "View Application";
+
+    public static final String USREVENTS_EVENT_TYPE = "SYSTEMGENERATED";
+
+    public static final String USREVENTS_EVENT_NAME = "iLMS";
+
+    public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-iLMS";
+
     /* update */
     public static final String WF_UPDATE_STATUS_OPEN_CODE = "ILMS_NOTIF_WF_OPEN";
 

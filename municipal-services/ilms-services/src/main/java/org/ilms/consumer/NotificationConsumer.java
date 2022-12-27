@@ -36,15 +36,6 @@ public class NotificationConsumer {
                 notifService.process(topic, request);
 
             }
-//            else if(topic.equalsIgnoreCase(configs.getUpdateCaseTopic())){
-//                CaseRequest request = mapper.convertValue(record, CaseRequest.class);
-//                if (ILMSConstants.UPDATE_STRING.equalsIgnoreCase(request.getCases().getCreationReason().toString())) {
-//                    if (request.getCases().getWorkflow() != null) {
-//                        notifService.process(topic, request);
-//                    }
-//                }
-//            }
-
         } catch (final Exception e) {
 
             log.error("Error while listening to value: " + record + " on topic: " + topic + ": ", e);
