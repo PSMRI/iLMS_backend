@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.CaseRepository;
 import org.ilms.service.CaseEnrichmentService;
@@ -15,6 +16,7 @@ import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.Document;
 import org.ilms.web.model.enums.CreationReason;
+import org.ilms.web.model.user.User;
 import org.ilms.web.model.workflow.ProcessInstance;
 import org.ilms.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -307,6 +309,11 @@ public class CaseUtils {
         Case aCase = request.getCases();
         ProcessInstance wf = null != aCase.getWorkflow() ? aCase.getWorkflow() : new ProcessInstance();
         wf.setBusinessId(aCase.getId());
+        List<User> userList = new ArrayList<>();
+        User user = new User();
+        user.setUuid(request.getCases().getAssignedOfficerId());
+        userList.add(user);
+        wf.setAssignes(userList);
         switch (creationReasonForWorkflow) {
             case CREATE:
                 wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());

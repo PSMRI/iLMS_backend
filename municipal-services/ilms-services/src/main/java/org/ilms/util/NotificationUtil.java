@@ -6,14 +6,11 @@ import static org.ilms.util.ILMSConstants.ACTION;
 import static org.ilms.util.ILMSConstants.CHANNEL;
 import static org.ilms.util.ILMSConstants.CHANNEL_LIST;
 import static org.ilms.util.ILMSConstants.MODULE;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_EMAIL;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_LOCALE;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_MODULENAME;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_USER_NAME;
 import static org.ilms.util.ILMSConstants.USREVENTS_EVENT_NAME;
 import static org.ilms.util.ILMSConstants.USREVENTS_EVENT_POSTEDBY;
 import static org.ilms.util.ILMSConstants.USREVENTS_EVENT_TYPE;
-import static org.ilms.util.ILMSConstants.VIEW_APPLICATION_CODE;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -278,20 +275,6 @@ public class NotificationUtil {
         List<String> toUsers = new ArrayList<>();
         toUsers.add(cases.getAssignedOfficerId());
         Action action = null;
-
-            List<ActionItem> items = new ArrayList<>();
-            String actionLink = "";
-
-            String actionUrl = ilmsConfiguration.getActionLink();
-        actionLink = actionUrl.replace("{id}",cases.getId() );
-        actionLink = ilmsConfiguration.getUiAppHost() + actionLink;
-
-            ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(VIEW_APPLICATION_CODE).build();
-
-            items.add(actionItem);
-
-
-            action = Action.builder().actionUrls(items).build();
 
         Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
         events.add(Event.builder().tenantId(tenantId).description(message.toString()).eventType(USREVENTS_EVENT_TYPE)

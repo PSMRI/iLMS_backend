@@ -229,20 +229,12 @@ public class ILMSConfiguration {
     private String urlShortnerEndpoint;
 
     //USER EVENTS
-    @Value ("${egov.ui.app.host}")
-    private String uiAppHost;
-
-    @Value("${egov.ilms.events.action.link}")
-    private String actionLink;
 
     @Value ("${egov.usr.events.create.topic}")
     private String saveUserEventsTopic;
 
     @Value ("${egov.user.event.notification.enabled}")
     private Boolean isUserEventsNotificationEnabled;
-
-    @Value ("${egov.notif.view.case}")
-    private String viewCaseLink;
 
     @Value ("${egov.notif.subject}")
     private String notifSubject;
