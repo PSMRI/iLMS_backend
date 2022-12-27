@@ -232,6 +232,9 @@ public class ILMSConfiguration {
     @Value ("${egov.ui.app.host}")
     private String uiAppHost;
 
+    @Value("${egov.ilms.events.action.link}")
+    private String actionLink;
+
     @Value ("${egov.usr.events.create.topic}")
     private String saveUserEventsTopic;
 

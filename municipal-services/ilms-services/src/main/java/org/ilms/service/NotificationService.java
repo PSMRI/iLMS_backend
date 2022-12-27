@@ -2,6 +2,7 @@ package org.ilms.service;
 
 import static org.ilms.util.ILMSConstants.ACTION_FOR_ASSESSMENT;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_EMAIL;
+import static org.ilms.util.ILMSConstants.CHANNEL_NAME_EVENT;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_SMS;
 import static org.ilms.util.ILMSConstants.CREATE_STRING;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_CASEID;
@@ -23,6 +24,8 @@ import org.ilms.web.model.CaseRequest;
 import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.EmailRequest;
+import org.ilms.web.model.Event;
+import org.ilms.web.model.EventRequest;
 import org.ilms.web.model.SMSRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,14 +73,10 @@ public class NotificationService {
             notificationUtil.sendSMS(smsRequests);
         }
 
-//        if (configuredChannelNamesForCase.contains(CHANNEL_NAME_EVENT)) {
-//            Boolean isActionReq = false;
-//            if (topicName.equalsIgnoreCase(ilmsConfiguration.getCreateCaseTopic()) && cases.getWorkflow() == null)
-//                isActionReq = true;
-//
-//            List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, tenantId, cases, isActionReq);
-//            notificationUtil.sendEventNotification(new EventRequest(requestInfo, events));
-//        }
+        if (configuredChannelNamesForCase.contains(CHANNEL_NAME_EVENT)) {
+            List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, tenantId, cases);
+            notificationUtil.sendEventNotification(new EventRequest(requestInfo, events));
+        }
 
         if (configuredChannelNamesForCase.contains(CHANNEL_NAME_EMAIL)) {
             List<EmailRequest> emailRequests = notificationUtil.createEmailRequestFromSMSRequests(requestInfo, smsRequests, tenantId);

@@ -14,7 +14,9 @@ public enum Source {
     
   WS("WS"),
 	
-  WATER_CHARGES("WATER_CHARGES");
+  WATER_CHARGES("WATER_CHARGES"),
+
+  WEBAPP("WEBAPP");
 
   private String value;
 

@@ -10,6 +10,10 @@ import static org.ilms.util.ILMSConstants.NOTIFICATION_EMAIL;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_LOCALE;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_MODULENAME;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_USER_NAME;
+import static org.ilms.util.ILMSConstants.USREVENTS_EVENT_NAME;
+import static org.ilms.util.ILMSConstants.USREVENTS_EVENT_POSTEDBY;
+import static org.ilms.util.ILMSConstants.USREVENTS_EVENT_TYPE;
+import static org.ilms.util.ILMSConstants.VIEW_APPLICATION_CODE;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +33,8 @@ import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.producer.Producer;
 import org.ilms.repository.ServiceRepository;
+import org.ilms.web.model.Action;
+import org.ilms.web.model.ActionItem;
 import org.ilms.web.model.Case;
 import org.ilms.web.model.Email;
 import org.ilms.web.model.EmailRequest;
@@ -37,7 +43,6 @@ import org.ilms.web.model.EventRequest;
 import org.ilms.web.model.Recepient;
 import org.ilms.web.model.SMSRequest;
 import org.ilms.web.model.enums.Source;
-import org.ilms.web.model.workflow.Action;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -261,21 +266,37 @@ public class NotificationUtil {
         log.info("EVENT notification sent!");
         producer.push(ilmsConfiguration.getSaveUserEventsTopic(), request);
     }
-    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Case cases, Boolean isActionReq){
-
-        List<Event> events = new ArrayList<>();
+    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Case cases){
         Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
+        Set<String> message = smsRequests.stream().map(SMSRequest :: getMessage).collect(Collectors.toSet());
         Map<String, String> mapOfPhnoAndUUIDs = fetchUserUUIDs(mobileNumbers, requestInfo, tenantId);
+
         if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
             log.error("UUIDs Not found for Mobilenumbers");
         }
+        List<Event> events = new ArrayList<>();
+        List<String> toUsers = new ArrayList<>();
+        toUsers.add(cases.getAssignedOfficerId());
+        Action action = null;
 
-        Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
-        mobileNumbers.forEach(mobileNumber -> {
+            List<ActionItem> items = new ArrayList<>();
+            String actionLink = "";
 
-            List<String> toUsers = new ArrayList<>();
-            toUsers.add(mapOfPhnoAndUUIDs.get(mobileNumber));
-        });
+            String actionUrl = ilmsConfiguration.getActionLink();
+        actionLink = actionUrl.replace("{id}",cases.getId() );
+        actionLink = ilmsConfiguration.getUiAppHost() + actionLink;
+
+            ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(VIEW_APPLICATION_CODE).build();
+
+            items.add(actionItem);
+
+
+            action = Action.builder().actionUrls(items).build();
+
+        Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+        events.add(Event.builder().tenantId(tenantId).description(message.toString()).eventType(USREVENTS_EVENT_TYPE)
+                        .name(USREVENTS_EVENT_NAME).postedBy(USREVENTS_EVENT_POSTEDBY)
+                        .source(Source.WEBAPP).recepient(recepient).actions(action).eventDetails(null).build());
         return events;
     }
     public Map<String, String> fetchUserUUIDs(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
@@ -284,11 +305,10 @@ public class NotificationUtil {
         StringBuilder uri = new StringBuilder();
         uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndPoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
-        userSearchRequest.put("RequestInfo", requestInfo);
         userSearchRequest.put("tenantId", tenantId);
         userSearchRequest.put("userType", "EMPLOYEE");
         for(String mobileNo: mobileNumbers) {
-            userSearchRequest.put("userName", mobileNo);
+            userSearchRequest.put("mobileNumber", mobileNo);
             try {
                 Object user = serviceRepository.fetchResult(uri, userSearchRequest).get();
                 if(null != user) {
