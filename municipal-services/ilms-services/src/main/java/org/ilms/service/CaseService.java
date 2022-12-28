@@ -99,13 +99,18 @@ public class CaseService {
         CaseResponse caseResponse = null;
         caseResponse = caseRepository.getILMSCaseData(criteria);
         if (!caseResponse.getCases().isEmpty()) {
-            caseList = caseResponse.getCases();
-            ProcessInstanceResponse processInstanceResponse=workflowService.getWorkflow(requestInfo,caseResponse.getCases().get(0).getTenantId(),caseResponse.getCases().get(0).getId());
-           caseList.get(0).setWorkflow(processInstanceResponse.getProcessInstances().get(0));
+//            caseList = caseResponse.getCases();
+            caseResponse.getCases().forEach(resp ->{
+                ProcessInstanceResponse processInstanceResponse=workflowService.getWorkflow(requestInfo,resp.getTenantId(),resp.getId());
+                resp.setWorkflow(processInstanceResponse.getProcessInstances().get(0));
+                caseList.add(resp);
+            });
         } else {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
         }
-        return caseResponse;
+        CaseResponse finalResult = new CaseResponse();
+        finalResult.setCases(caseList);
+        return finalResult;
     }
 
     public CaseDetailsResponse caseDetailsSearch(CaseSearchCriteria criteria, RequestInfo requestInfo) {
