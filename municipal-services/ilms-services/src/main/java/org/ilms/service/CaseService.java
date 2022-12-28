@@ -38,6 +38,7 @@ import org.ilms.web.model.enums.CaseHierarchy;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
+import org.ilms.web.model.workflow.ProcessInstanceResponse;
 import org.ilms.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -99,6 +100,8 @@ public class CaseService {
         caseResponse = caseRepository.getILMSCaseData(criteria);
         if (!caseResponse.getCases().isEmpty()) {
             caseList = caseResponse.getCases();
+            ProcessInstanceResponse processInstanceResponse=workflowService.getWorkflow(requestInfo,caseResponse.getCases().get(0).getTenantId(),caseResponse.getCases().get(0).getId());
+           caseList.get(0).setWorkflow(processInstanceResponse.getProcessInstances().get(0));
         } else {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
         }

@@ -157,7 +157,7 @@ public class WorkflowService {
     /**
      * Fetches the workflow object for the given assessment
      */
-    public State getCurrentState(RequestInfo requestInfo, String tenantId, String businessId) {
+    public ProcessInstanceResponse getWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
 
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
@@ -173,7 +173,7 @@ public class WorkflowService {
         }
 
         if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null) {
-            return response.getProcessInstances().get(0).getState();
+            return response;
         }
 
         return null;
