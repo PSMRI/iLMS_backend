@@ -19,7 +19,7 @@ public class JudgementResponse {
     private Integer totalCount =null;
 
     @JsonProperty("judgementList")
-    private List<Judgement> judgements = null;
+    private List<Judgement> judgementList = null;
 
     @JsonProperty("workflow")
     private Workflow workflow = null;

@@ -23,6 +23,6 @@ public class CaseResponse {
     private Integer totalCount = null;
 
     @JsonProperty ("caseList")
-    private List<Case> Cases = null;
+    private List<Case> caseList = null;
     
 }

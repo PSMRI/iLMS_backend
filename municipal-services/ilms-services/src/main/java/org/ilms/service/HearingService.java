@@ -57,8 +57,8 @@ public class HearingService {
         CaseResponse caseResponse = null;
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(hearingRequest.getHearing().getCaseId())).build();
         caseResponse = caseRepository.getILMSCaseData(criteria);
-        if (Objects.nonNull(caseResponse.getCases())) {
-            if (caseResponse.getCases().get(0).getCaseNumber().equals(hearingRequest.getHearing().getCaseNumber())) {
+        if (Objects.nonNull(caseResponse.getCaseList())) {
+            if (caseResponse.getCaseList().get(0).getCaseNumber().equals(hearingRequest.getHearing().getCaseNumber())) {
                 hearingRequest.getHearing().setStatus(Status.ACTIVE);
                 hearingRequest.getHearing().getCourt().setStatus(Status.ACTIVE);
                 hearingRequest.getHearing().getPetitioner().setStatus(Status.ACTIVE);
@@ -99,8 +99,8 @@ public class HearingService {
         List<Hearing> ilmsHearingList = new ArrayList<>();
         HearingResponse hearingResponse = null;
         hearingResponse = hearingDetailsRepository.getHearingDetails(criteria);
-        if (!hearingResponse.getHearingDetails().isEmpty()) {
-            ilmsHearingList = hearingResponse.getHearingDetails();
+        if (!hearingResponse.getHearingList().isEmpty()) {
+            ilmsHearingList = hearingResponse.getHearingList();
         } else {
             throw new CustomException(ILMSErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available");
         }
@@ -111,8 +111,8 @@ public class HearingService {
         if (hearingDetailsRequest.getHearing().getId() != null) {
             HearingSearchCriteria criteria = HearingSearchCriteria.builder().id((hearingDetailsRequest.getHearing().getId())).build();
             HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
-            if (!hearingDetailsResponse.getHearingDetails().isEmpty()) {
-                List<Hearing> hearingList = hearingDetailsResponse.getHearingDetails();
+            if (!hearingDetailsResponse.getHearingList().isEmpty()) {
+                List<Hearing> hearingList = hearingDetailsResponse.getHearingList();
                 Hearing oldHearing = hearingList.get(0);
                 HearingRequest updatedRequest = hearingUtils.prepareHearingDetailsModalForUpdate(hearingDetailsRequest, oldHearing);
                 hearingDetailsValidator.updateValidator(updatedRequest.getHearing(), hearingDetailsRequest);

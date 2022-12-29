@@ -54,15 +54,15 @@ public class NotificationService {
     public void process(String topicName, CaseRequest caseRequest) {
 
         RequestInfo requestInfo = caseRequest.getRequestInfo();
-        Case cases = caseRequest.getCases();
+        Case cases = caseRequest.getCaseObj();
         String tenantId;
         if (cases.getTenantId()!=null){
             tenantId = cases.getTenantId();
         } else {
-            String caseId = caseRequest.getCases().getId();
+            String caseId = caseRequest.getCaseObj().getId();
             CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
             CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
-            tenantId = caseResponse.getCases().get(0).getTenantId();
+            tenantId = caseResponse.getCaseList().get(0).getTenantId();
         }
 
         List<String> configuredChannelNamesForCase = notificationUtil.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE,
@@ -88,7 +88,7 @@ public class NotificationService {
 
         String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
        String message = getCustomizedMsg(topicName, cases, localizationMessages);
-        String officerId=request.getCases().getAssignedOfficerId();
+        String officerId=request.getCaseObj().getAssignedOfficerId();
         List<String> ids = new ArrayList<>();
         ids.add(officerId);
         Map<String, String> mobileNumberToOwner =  fetchUsersByOfficerId(ids,tenantId);

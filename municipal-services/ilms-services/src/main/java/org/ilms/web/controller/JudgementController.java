@@ -36,7 +36,7 @@ public class JudgementController {
         Judgement judgement = judgementService.create(judgementRequest);
         List<Judgement> judgements = new ArrayList<Judgement>();
         judgements.add(judgement);
-        JudgementResponse response = JudgementResponse.builder().judgements(judgements).responseInfo(
+        JudgementResponse response = JudgementResponse.builder().judgementList(judgements).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -53,7 +53,7 @@ public class JudgementController {
     public ResponseEntity<JudgementResponse> update(@Valid @RequestBody JudgementRequest judgementRequest) {
         Judgement judgement = judgementService.updateJudgement(judgementRequest);
         ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true);
-        JudgementResponse response = JudgementResponse.builder().judgements(Arrays.asList(judgement)).responseInfo(resInfo).build();
+        JudgementResponse response = JudgementResponse.builder().judgementList(Arrays.asList(judgement)).responseInfo(resInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

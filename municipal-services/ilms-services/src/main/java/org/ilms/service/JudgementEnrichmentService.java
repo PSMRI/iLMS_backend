@@ -61,7 +61,7 @@ public class JudgementEnrichmentService {
         RequestInfo requestInfo = request.getRequestInfo();
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(request.getJudgement().getCaseId())).build();
         CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
-        String tenantId = caseResponse.getCases().get(0).getTenantId();
+        String tenantId = caseResponse.getCaseList().get(0).getTenantId();
         Judgement judgement = request.getJudgement();
         List<String> caseId = getIdList(requestInfo, tenantId, config.getJudgementIdgenName(), config.getJudgementIdgenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();

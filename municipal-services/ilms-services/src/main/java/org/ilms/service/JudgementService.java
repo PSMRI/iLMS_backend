@@ -46,7 +46,7 @@ public class JudgementService {
         HearingSearchCriteria criteria = HearingSearchCriteria.builder()
                                                               .caseId(Collections.singletonList(judgementRequest.getJudgement().getCaseId())).build();
         hearingResponse = hearingRepository.getHearingDetails(criteria);
-        if (!hearingResponse.getHearingDetails().isEmpty()) {
+        if (!hearingResponse.getHearingList().isEmpty()) {
             judgementRequest.getJudgement().setStatus(Status.ACTIVE);
             judgementValidator.createValidator(judgementRequest);
             judgementEnrichmentService.enrichJudgementCreateRequest(judgementRequest);
@@ -61,7 +61,7 @@ public class JudgementService {
         List<Judgement> judgements = new LinkedList<>();
         JudgementResponse judgementResponse = null;
         judgementResponse = judgementRepository.getJudgementData(criteria);
-        judgements = judgementResponse.getJudgements();
+        judgements = judgementResponse.getJudgementList();
         if (!judgements.isEmpty()) {
             judgementEnrichmentService.enrichJudgementSearch();
         } else {
@@ -75,8 +75,8 @@ public class JudgementService {
             JudgementSearchCriteria criteria = JudgementSearchCriteria.builder()
                                                                       .id(Collections.singletonList(judgementRequest.getJudgement().getId())).build();
             JudgementResponse judgementResponse = judgementRepository.getJudgementData(criteria);
-            if (!judgementResponse.getJudgements().isEmpty()) {
-                List<Judgement> judgements = judgementResponse.getJudgements();
+            if (!judgementResponse.getJudgementList().isEmpty()) {
+                List<Judgement> judgements = judgementResponse.getJudgementList();
                 Judgement oldJudgement = judgements.get(0);
                 JudgementRequest finalRequest = judgementRepository.getMappedData(judgementRequest, oldJudgement);
                 judgementValidator.updateValidator(finalRequest.getJudgement(), judgementRequest);

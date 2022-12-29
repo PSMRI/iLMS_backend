@@ -35,7 +35,7 @@ public class HearingController {
         Hearing hearing = hearingService.create(hearingRequest);
         List<Hearing> hearingList = new ArrayList<Hearing>();
         hearingList.add(hearing);
-        HearingResponse response = HearingResponse.builder().hearingDetails(hearingList).responseInfo(
+        HearingResponse response = HearingResponse.builder().hearingList(hearingList).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(hearingRequest.getRequestInfo(), true)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -53,7 +53,7 @@ public class HearingController {
         Hearing hearingDetails = hearingService.update(hearingDetailsRequest);
         List<Hearing> hearingDetailsList = new ArrayList<Hearing>();
         hearingDetailsList.add(hearingDetails);
-        HearingResponse response = HearingResponse.builder().hearingDetails(hearingDetailsList).responseInfo(
+        HearingResponse response = HearingResponse.builder().hearingList(hearingDetailsList).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(hearingDetailsRequest.getRequestInfo(), true)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
