@@ -54,10 +54,10 @@ public class CaseController {
 
     @PostMapping (value = "/_create")
     public ResponseEntity<CaseResponse> create(@Valid @RequestBody CaseRequest caseRequest) {
-        Case aCase = caseService.create(caseRequest);
+        Case caseObj = caseService.create(caseRequest);
         List<Case> caseList = new ArrayList<Case>();
-        caseList.add(aCase);
-        CaseResponse response = CaseResponse.builder().Cases(caseList)
+        caseList.add(caseObj);
+        CaseResponse response = CaseResponse.builder().caseList(caseList)
                                             .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true))
                                             .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -66,10 +66,10 @@ public class CaseController {
     @PostMapping (value = "/_update")
     public ResponseEntity<CaseResponse> update(@Valid @RequestBody CaseRequest caseRequest) {
         CaseResponse response = new CaseResponse();
-        Case aCase = caseService.update(caseRequest);
+        Case caseObj = caseService.update(caseRequest);
         List<Case> caseList = new ArrayList<>();
-        caseList.add(aCase);
-        response.setCases(caseList);
+        caseList.add(caseObj);
+        response.setCaseList(caseList);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

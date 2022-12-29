@@ -54,10 +54,10 @@ public class DocumentEnrichmentService {
         request.getDocument().forEach(document -> {
             CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(document.getCaseId())).build();
             CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
-            if (caseResponse.getCases().size() <= 0) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "caseDetails Not Found [ " + caseResponse.getCases() + " ]");
+            if (caseResponse.getCaseList().size() <= 0) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "caseDetails Not Found [ " + caseResponse.getCaseList() + " ]");
             }
-            String tenantId = caseResponse.getCases().get(0).getTenantId();
+            String tenantId = caseResponse.getCaseList().get(0).getTenantId();
             List<String> caseId = getIdList(requestInfo, tenantId, ilmsConfiguration.getDocumentIdgenName(),
                     ilmsConfiguration.getDocumentIdgenFormat(), 1);
             ListIterator<String> caseItr = caseId.listIterator();

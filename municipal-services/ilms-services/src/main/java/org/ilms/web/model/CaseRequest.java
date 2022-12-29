@@ -18,6 +18,6 @@ public class CaseRequest {
     private RequestInfo RequestInfo;
 
     @JsonProperty ("case")
-    private Case cases;
+    private Case caseObj;
 
 }

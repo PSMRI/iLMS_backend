@@ -41,7 +41,7 @@ public class JudgementRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = judgementQueryBuilder.getFSMSearchQuery(judgementSearchCriteria, preparedStmtList);
         List<Judgement> judgements = jdbcTemplate.query(query, preparedStmtList.toArray(), judgementRowMapper);
-        JudgementResponse judgementResponse = JudgementResponse.builder().judgements(judgements).totalCount(judgementRowMapper.getFull_count())
+        JudgementResponse judgementResponse = JudgementResponse.builder().judgementList(judgements).totalCount(judgementRowMapper.getFull_count())
                                                                .build();
         return judgementResponse;
     }

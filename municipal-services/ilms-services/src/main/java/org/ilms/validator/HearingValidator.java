@@ -52,67 +52,67 @@ public class HearingValidator {
         return errorMap;
     }
 
-    public void createValidator(HearingRequest hearingDetailsRequest) {
+    public void createValidator(HearingRequest hearingRequest) {
 
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getCaseId())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCaseId())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "CaseId is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getJudgeName())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getJudgeName())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "judgeName is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getHearingDate().toString())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "hearingDate is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getBusinessDate().toString())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getBusinessDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "businessDate is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getHearingPurpose())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getHearingPurpose())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "hearingPurpose is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getRequiredOfficer())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getRequiredOfficer())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "requiredOfficer is mandatory");
         }
-        if (Objects.nonNull(hearingDetailsRequest.getHearing().getAffidavitFilingDate())) {
-            if (StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getAffidavitFilingDate().toString())) {
+        if (Objects.nonNull(hearingRequest.getHearing().getAffidavitFilingDate())) {
+            if (StringUtils.isNotBlank(hearingRequest.getHearing().getAffidavitFilingDate().toString())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDate is not allowed while creating hearing ");
             }
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate().toString())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getAffidavitFilingDueDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDueDate is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getCaseNumber())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCaseNumber())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "CaseNumber is mandatory");
         }
-        if (StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getOathNumber())) {
+        if (StringUtils.isNotBlank(hearingRequest.getHearing().getOathNumber())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "OathNumber is not allowed while creating hearing");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getNextHearingDate().toString())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getNextHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "nextHearingDate is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getFirstHearingDate().toString())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getFirstHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "FirstHearingDate is mandatory");
         }
 
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getIsPresenceRequired().toString())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getIsPresenceRequired().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "isPresenceRequired is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getHearingType())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getHearingType())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "hearingType is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getDepartmentOfficer())) {
+        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getDepartmentOfficer())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "departmentOfficer is mandatory");
         }
         //checking respondent details
-        if (Objects.nonNull(hearingDetailsRequest.getHearing().getRespondent())) {
+        if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
             //Setting Data For Respondent Advocate
-            if (Objects.nonNull(hearingDetailsRequest.getHearing().getRespondent().getAdvocate())) {
-                if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getFirstName())) {
+            if (Objects.nonNull(hearingRequest.getHearing().getRespondent().getAdvocate())) {
+                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getRespondent().getAdvocate().getFirstName())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "firstName for Advocate in Respondent is mandatory");
                 }
-                if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getLastName())) {
+                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getRespondent().getAdvocate().getLastName())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "lastName for Advocate in Respondent is mandatory");
                 }
-                if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getContactNumber())) {
+                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getRespondent().getAdvocate().getContactNumber())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "contactNumber for Advocate in Respondent is mandatory");
                 }
             } else {
@@ -122,16 +122,16 @@ public class HearingValidator {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Respondent is mandatory");
         }
         //checking petitioner details
-        if (Objects.nonNull(hearingDetailsRequest.getHearing().getPetitioner())) {
+        if (Objects.nonNull(hearingRequest.getHearing().getPetitioner())) {
             //Setting Data For Petitioner Advocate
-            if (Objects.nonNull(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate())) {
-                if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getFirstName())) {
+            if (Objects.nonNull(hearingRequest.getHearing().getPetitioner().getAdvocate())) {
+                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPetitioner().getAdvocate().getFirstName())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "firstName for Advocate in Petitioner is mandatory");
                 }
-                if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getLastName())) {
+                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPetitioner().getAdvocate().getLastName())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "lastName for Advocate in Petitioner is mandatory");
                 }
-                if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getContactNumber())) {
+                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPetitioner().getAdvocate().getContactNumber())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "contactNumber for Advocate in Petitioner is mandatory");
                 }
             } else {
@@ -140,32 +140,32 @@ public class HearingValidator {
         } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Petitioner is mandatory");
         }
-        if (Objects.nonNull(hearingDetailsRequest.getHearing().getCourt())) {
-            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getCourt().getCourtName())) {
+        if (Objects.nonNull(hearingRequest.getHearing().getCourt())) {
+            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getCourtName())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "courtName is mandatory");
             }
-            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getCourt().getCourtNumber())) {
+            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getCourtNumber())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "courtNumber is mandatory");
             }
-            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getCourt().getDistrict())) {
+            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getDistrict())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "District for Court is mandatory");
             }
-            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getCourt().getState())) {
+            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getState())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "state for court is mandatory");
             }
-            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getCourt().getDivision())) {
+            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getDivision())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "division for court is mandatory");
             }
         }
         //checking payment request
-        if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
-            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate().toString())) {
+        if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
+            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPayment().getFineImposedDate().toString())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "FineImposedDate is mandatory");
             }
-            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPayment().getFineDueDate().toString())) {
+            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPayment().getFineDueDate().toString())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fineDueDate is mandatory");
             }
-            if (!StringUtils.isNotBlank(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
+            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPayment().getFineAmount())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fineAmount is mandatory");
             }
         } else {
@@ -176,7 +176,7 @@ public class HearingValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterData(hearingDetailsRequest.getHearing(), hearingDetailsRequest, errorMap);
+        validateMasterData(hearingRequest.getHearing(), hearingRequest, errorMap);
     }
 
     public void updateValidator(Hearing hearing, HearingRequest hearingRequest) {
@@ -192,7 +192,7 @@ public class HearingValidator {
         String caseId = hearing.getCaseId();
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
         CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
-        String tenantId = caseResponse.getCases().get(0).getTenantId();
+        String tenantId = caseResponse.getCaseList().get(0).getTenantId();
 
         List<String> masterNames = new ArrayList<>(
                 Arrays.asList(ILMSConstants.MDMS_ILMS_COURT_NAME, ILMSConstants.MDMS_ILMS_DISTRICT, ILMSConstants.MDMS_ILMS_STATE,
