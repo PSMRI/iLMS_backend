@@ -53,7 +53,7 @@ public class HearingRepository {
                 }
             }
         }
-        HearingResponse hearingResponse = HearingResponse.builder().hearingDetails(hearingDetails).totalCount(hearingRowMapper.getFullCount())
+        HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount())
                                                          .build();
         return hearingResponse;
     }

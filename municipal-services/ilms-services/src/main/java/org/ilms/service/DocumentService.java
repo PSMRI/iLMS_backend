@@ -57,8 +57,8 @@ public class DocumentService {
             ids.add(document.getCaseId());
             CaseSearchCriteria criteria1 = CaseSearchCriteria.builder().id(ids).build();
             CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria1);
-            if (!caseResponse.getCases().isEmpty()) {
-                caseResponse.getCases().forEach(ilmsCase -> {
+            if (!caseResponse.getCaseList().isEmpty()) {
+                caseResponse.getCaseList().forEach(ilmsCase -> {
                     if (!document.getCaseId().equalsIgnoreCase(ilmsCase.getId())) {
                         throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
                                 "Case Not Found For The CaseId  [ " + document.getCaseId() + " ]");
@@ -68,7 +68,7 @@ public class DocumentService {
                 });
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
-                        "CaseList Not Found In The System [ " + caseResponse.getCases() + " ]");
+                        "CaseList Not Found In The System [ " + caseResponse.getCaseList() + " ]");
             }
         });
         producer.push(ilmsConfiguration.getCreateDocumentTopic(), request);

@@ -20,7 +20,7 @@ public class HearingResponse {
     private Integer totalCount =null;
 
     @JsonProperty("HearingList")
-    private List<Hearing> hearingDetails = null;
+    private List<Hearing> hearingList = null;
 
     @JsonProperty("workflow")
     private Workflow workflow = null;

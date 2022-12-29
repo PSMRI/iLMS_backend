@@ -95,7 +95,7 @@ public class JudgementValidator {
         String caseId = judgement.getCaseId();
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
         CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
-        String tenantId = caseResponse.getCases().get(0).getTenantId();
+        String tenantId = caseResponse.getCaseList().get(0).getTenantId();
         List<String> masterNames = new ArrayList<>(Arrays.asList(ILMSConstants.MDMS_ILMS_ORDER_TYPE));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",
@@ -131,7 +131,7 @@ public class JudgementValidator {
         String caseId = judgement.getCaseId();
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
         CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
-        String tenantId = caseResponse.getCases().get(0).getTenantId();
+        String tenantId = caseResponse.getCaseList().get(0).getTenantId();
         List<String> masterNames = new ArrayList<>(Arrays.asList(ILMSConstants.MDMS_ILMS_STATUS_OF_COMPLIANCE, ILMSConstants.MDMS_ILMS_ORDER_TYPE));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",

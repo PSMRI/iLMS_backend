@@ -106,7 +106,7 @@ public class WorkflowService {
      */
     public State updateWorkflow(CaseRequest request, CreationReason creationReasonForWorkflow) {
 
-        Case cases = request.getCases();
+        Case cases = request.getCaseObj();
 
         ProcessInstanceRequest workflowReq = caseUtils.getWfForCaseCreate(request, creationReasonForWorkflow);
         State state = callWorkFlow(workflowReq);
@@ -115,10 +115,10 @@ public class WorkflowService {
 
             String pId = commonUtils.getIdList(request.getRequestInfo(), cases.getTenantId(), ilmsConfiguration.getCaseIdgenName(),
                     ilmsConfiguration.getCaseIdgenFormat(), 1).get(0);
-            request.getCases().setId(pId);
+            request.getCaseObj().setId(pId);
         }
 
-        request.getCases().getWorkflow().setState(state);
+        request.getCaseObj().getWorkflow().setState(state);
         return state;
     }
 

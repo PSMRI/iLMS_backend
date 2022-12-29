@@ -84,208 +84,208 @@ public class CaseValidator {
 
     public void validateCreate(CaseRequest caseRequest) {
 
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getTenantId())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getTenantId())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "TenantId is mandatory [ " + caseRequest.getCases().getTenantId() + " ]");
+                    "TenantId is mandatory [ " + caseRequest.getCaseObj().getTenantId() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseNumber())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseNumber())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseNumber is mandatory [ " + caseRequest.getCases().getCaseNumber() + " ]");
+                    "caseNumber is mandatory [ " + caseRequest.getCaseObj().getCaseNumber() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getCnrNumber())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCnrNumber())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "CNRNumber is mandatory [ " + caseRequest.getCases().getCnrNumber() + " ]");
+                    "CNRNumber is mandatory [ " + caseRequest.getCaseObj().getCnrNumber() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseType())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseType())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseType is mandatory [ " + caseRequest.getCases().getCaseType() + " ]");
+                    "caseType is mandatory [ " + caseRequest.getCaseObj().getCaseType() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseCategory())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseCategory())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseCategory is mandatory [ " + caseRequest.getCases().getCaseCategory() + " ]");
+                    "caseCategory is mandatory [ " + caseRequest.getCaseObj().getCaseCategory() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseYear().toString())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseYear().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseYear is mandatory [ " + caseRequest.getCases().getCaseYear() + " ]");
+                    "caseYear is mandatory [ " + caseRequest.getCaseObj().getCaseYear() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getFilingDate().toString())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getFilingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "filingDate is mandatory [ " + caseRequest.getCases().getFilingDate() + " ]");
+                    "filingDate is mandatory [ " + caseRequest.getCaseObj().getFilingDate() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getRegistrationDate().toString())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRegistrationDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "registrationDate is mandatory [ " + caseRequest.getCases().getRegistrationDate() + " ]");
+                    "registrationDate is mandatory [ " + caseRequest.getCaseObj().getRegistrationDate() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseSummary())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseSummary())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseSummary is mandatory [ " + caseRequest.getCases().getCaseSummary() + " ]");
+                    "caseSummary is mandatory [ " + caseRequest.getCaseObj().getCaseSummary() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getPolicyOrNonPolicyMatter())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPolicyOrNonPolicyMatter())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "policyOrNonPolicyMatters is mandatory [ " + caseRequest.getCases().getPolicyOrNonPolicyMatter() + " ]");
+                    "policyOrNonPolicyMatters is mandatory [ " + caseRequest.getCaseObj().getPolicyOrNonPolicyMatter() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getIsCaseNumberCorrect().toString())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getIsCaseNumberCorrect().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "isCaseNumberCorrect is mandatory [ " + caseRequest.getCases().getIsCaseNumberCorrect() + " ]");
+                    "isCaseNumberCorrect is mandatory [ " + caseRequest.getCaseObj().getIsCaseNumberCorrect() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseStatus())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseStatus())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseStatus is mandatory [ " + caseRequest.getCases().getCaseStatus() + " ]");
+                    "caseStatus is mandatory [ " + caseRequest.getCaseObj().getCaseStatus() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getFirstHearingDate().toString())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getFirstHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "firstHearingDate is mandatory [ " + caseRequest.getCases().getFirstHearingDate() + " ]");
+                    "firstHearingDate is mandatory [ " + caseRequest.getCaseObj().getFirstHearingDate() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getNextHearingDate().toString())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getNextHearingDate().toString())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "nextHearingDate is mandatory [ " + caseRequest.getCases().getNextHearingDate() + " ]");
+                    "nextHearingDate is mandatory [ " + caseRequest.getCaseObj().getNextHearingDate() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseStage())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseStage())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseStage is mandatory [ " + caseRequest.getCases().getCaseStage() + " ]");
+                    "caseStage is mandatory [ " + caseRequest.getCaseObj().getCaseStage() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getCaseSubStage())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseSubStage())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseSubStage is mandatory [ " + caseRequest.getCases().getCaseSubStage() + " ]");
+                    "caseSubStage is mandatory [ " + caseRequest.getCaseObj().getCaseSubStage() + " ]");
         }
-        if (StringUtils.isNotBlank(caseRequest.getCases().getCaseFlag())) {
+        if (StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseFlag())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseFlag is not mandatory while creating the case [ " + caseRequest.getCases().getCaseFlag() + " ]");
+                    "caseFlag is not mandatory while creating the case [ " + caseRequest.getCaseObj().getCaseFlag() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getDepartmentName())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getDepartmentName())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "DepartmentName is mandatory [ " + caseRequest.getCases().getDepartmentName() + " ]");
+                    "DepartmentName is mandatory [ " + caseRequest.getCaseObj().getDepartmentName() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCases().getRecommendOIC())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRecommendOIC())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "recommendedOIC is mandatory [ " + caseRequest.getCases().getRecommendOIC() + " ]");
+                    "recommendedOIC is mandatory [ " + caseRequest.getCaseObj().getRecommendOIC() + " ]");
         }
-        if (StringUtils.isNotBlank(caseRequest.getCases().getAssignedOfficerId())) {
+        if (StringUtils.isNotBlank(caseRequest.getCaseObj().getAssignedOfficerId())) {
             List<String> uuids = new ArrayList<>();
-            uuids.add(caseRequest.getCases().getAssignedOfficerId());
-            if (commonUtils.isUserRO(uuids, caseRequest.getCases().getTenantId(), "AssignedOfficerId")) ;
+            uuids.add(caseRequest.getCaseObj().getAssignedOfficerId());
+            if (commonUtils.isUserRO(uuids, caseRequest.getCaseObj().getTenantId(), "AssignedOfficerId")) ;
 
         }
         //        Setting Petitioner Details
-        if (Objects.nonNull(caseRequest.getCases().getPetitioner())) {
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getFirstName())) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPetitioner().getFirstName())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "firstName for Petitioner is mandatory [ " + caseRequest.getCases().getPetitioner().getFirstName() + " ]");
+                        "firstName for Petitioner is mandatory [ " + caseRequest.getCaseObj().getPetitioner().getFirstName() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getLastName())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPetitioner().getLastName())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "lastName for Petitioner is mandatory [ " + caseRequest.getCases().getPetitioner().getLastName() + " ]");
+                        "lastName for Petitioner is mandatory [ " + caseRequest.getCaseObj().getPetitioner().getLastName() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getGender())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPetitioner().getGender())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "gender for Petitioner is mandatory [ " + caseRequest.getCases().getPetitioner().getGender() + " ]");
+                        "gender for Petitioner is mandatory [ " + caseRequest.getCaseObj().getPetitioner().getGender() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getPetitionerType())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPetitioner().getPetitionerType())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "petitionerType for Petitioner is mandatory [ " + caseRequest.getCases().getPetitioner().getPetitionerType() + " ]");
+                        "petitionerType for Petitioner is mandatory [ " + caseRequest.getCaseObj().getPetitioner().getPetitionerType() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getAddress())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPetitioner().getAddress())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "address for Petitioner is mandatory [ " + caseRequest.getCases().getPetitioner().getAddress() + " ]");
+                        "address for Petitioner is mandatory [ " + caseRequest.getCaseObj().getPetitioner().getAddress() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getContactNumber())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPetitioner().getContactNumber())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "contactNumber for Petitioner is mandatory [ " + caseRequest.getCases().getPetitioner().getContactNumber() + " ]");
+                        "contactNumber for Petitioner is mandatory [ " + caseRequest.getCaseObj().getPetitioner().getContactNumber() + " ]");
             }
             //Setting Data For Petitioner Advocate
-            if (Objects.nonNull(caseRequest.getCases().getPetitioner().getAdvocate())) {
-                if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getAdvocate().getFirstName())) {
+            if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
+                if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPetitioner().getAdvocate().getFirstName())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                            "firstName for Advocate in Petitioner is mandatory [ " + caseRequest.getCases().getPetitioner().getAdvocate()
+                            "firstName for Advocate in Petitioner is mandatory [ " + caseRequest.getCaseObj().getPetitioner().getAdvocate()
                                                                                                 .getFirstName() + " ]");
                 }
-                if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getAdvocate().getLastName())) {
+                if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPetitioner().getAdvocate().getLastName())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                            "lastName for Advocate in Petitioner is mandatory [ " + caseRequest.getCases().getPetitioner().getAdvocate()
+                            "lastName for Advocate in Petitioner is mandatory [ " + caseRequest.getCaseObj().getPetitioner().getAdvocate()
                                                                                                .getLastName() + " ]");
                 }
-                if (!StringUtils.isNotBlank(caseRequest.getCases().getPetitioner().getAdvocate().getContactNumber())) {
+                if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getPetitioner().getAdvocate().getContactNumber())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                            "contactNumber for Advocate in Petitioner is mandatory [ " + caseRequest.getCases().getPetitioner().getAdvocate()
+                            "contactNumber for Advocate in Petitioner is mandatory [ " + caseRequest.getCaseObj().getPetitioner().getAdvocate()
                                                                                                     .getContactNumber() + " ]");
                 }
             } else {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "Advocate details are mandatory [ " + caseRequest.getCases().getPetitioner().getAdvocate() + " ]");
+                        "Advocate details are mandatory [ " + caseRequest.getCaseObj().getPetitioner().getAdvocate() + " ]");
             }
         } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "petitioner details are mandatory [ " + caseRequest.getCases().getPetitioner() + " ]");
+                    "petitioner details are mandatory [ " + caseRequest.getCaseObj().getPetitioner() + " ]");
         }
         //       Setting Respondent details
-        if (Objects.nonNull(caseRequest.getCases().getRespondent())) {
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getRespondent().getFirstName())) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getRespondent())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRespondent().getFirstName())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "firstName for Respondent is mandatory [ " + caseRequest.getCases().getRespondent().getFirstName() + " ]");
+                        "firstName for Respondent is mandatory [ " + caseRequest.getCaseObj().getRespondent().getFirstName() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getRespondent().getLastName())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRespondent().getLastName())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "lastName for Respondent is mandatory [ " + caseRequest.getCases().getRespondent().getLastName() + " ]");
+                        "lastName for Respondent is mandatory [ " + caseRequest.getCaseObj().getRespondent().getLastName() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getRespondent().getGender())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRespondent().getGender())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "gender for Respondent is mandatory [ " + caseRequest.getCases().getRespondent().getGender() + " ]");
+                        "gender for Respondent is mandatory [ " + caseRequest.getCaseObj().getRespondent().getGender() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getRespondent().getAddress())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRespondent().getAddress())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "address for Respondent is mandatory [ " + caseRequest.getCases().getRespondent().getAddress() + " ]");
+                        "address for Respondent is mandatory [ " + caseRequest.getCaseObj().getRespondent().getAddress() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getRespondent().getDepartmentName())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRespondent().getDepartmentName())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "departmentName for Respondent is mandatory [ " + caseRequest.getCases().getRespondent().getDepartmentName() + " ]");
+                        "departmentName for Respondent is mandatory [ " + caseRequest.getCaseObj().getRespondent().getDepartmentName() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getRespondent().getContactNumber())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRespondent().getContactNumber())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "contactNumber for Respondent is mandatory [ " + caseRequest.getCases().getRespondent().getContactNumber() + " ]");
+                        "contactNumber for Respondent is mandatory [ " + caseRequest.getCaseObj().getRespondent().getContactNumber() + " ]");
             }
             //Setting Data For getRespondent Advocate
-            if (Objects.nonNull(caseRequest.getCases().getRespondent().getAdvocate())) {
-                if (!StringUtils.isNotBlank(caseRequest.getCases().getRespondent().getAdvocate().getFirstName())) {
+            if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getAdvocate())) {
+                if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRespondent().getAdvocate().getFirstName())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                            "firstName for Advocate in Respondent is mandatory [ " + caseRequest.getCases().getRespondent().getAdvocate()
+                            "firstName for Advocate in Respondent is mandatory [ " + caseRequest.getCaseObj().getRespondent().getAdvocate()
                                                                                                 .getFirstName() + " ]");
                 }
-                if (!StringUtils.isNotBlank(caseRequest.getCases().getRespondent().getAdvocate().getLastName())) {
+                if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRespondent().getAdvocate().getLastName())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                            "lastName for Advocate in Respondent is mandatory [ " + caseRequest.getCases().getRespondent().getAdvocate()
+                            "lastName for Advocate in Respondent is mandatory [ " + caseRequest.getCaseObj().getRespondent().getAdvocate()
                                                                                                .getLastName() + " ]");
                 }
-                if (!StringUtils.isNotBlank(caseRequest.getCases().getRespondent().getAdvocate().getContactNumber())) {
+                if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getRespondent().getAdvocate().getContactNumber())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                            "contactNumber for Advocate in Respondent is mandatory [ " + caseRequest.getCases().getRespondent().getAdvocate()
+                            "contactNumber for Advocate in Respondent is mandatory [ " + caseRequest.getCaseObj().getRespondent().getAdvocate()
                                                                                                     .getContactNumber() + " ]");
                 }
             } else {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "Advocate details for Respondent are mandatory [ " + caseRequest.getCases().getRespondent().getAdvocate() + " ]");
+                        "Advocate details for Respondent are mandatory [ " + caseRequest.getCaseObj().getRespondent().getAdvocate() + " ]");
             }
         } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "Respondent details are mandatory [ " + caseRequest.getCases().getRespondent() + " ]");
+                    "Respondent details are mandatory [ " + caseRequest.getCaseObj().getRespondent() + " ]");
         }
         //setting act details
-        if (Objects.nonNull(caseRequest.getCases().getAct())) {
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getAct().getActName())) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getAct().getActName())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "actName for act details is mandatory [ " + caseRequest.getCases().getAct().getActName() + " ]");
+                        "actName for act details is mandatory [ " + caseRequest.getCaseObj().getAct().getActName() + " ]");
             }
-            if (!StringUtils.isNotBlank(caseRequest.getCases().getAct().getSectionNumber())) {
+            if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getAct().getSectionNumber())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "sectionNumber for act details is mandatory [ " + caseRequest.getCases().getAct().getSectionNumber() + " ]");
+                        "sectionNumber for act details is mandatory [ " + caseRequest.getCaseObj().getAct().getSectionNumber() + " ]");
             }
         } else {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "act Details are mandatory [ " + caseRequest.getCases().getAct() + " ]");
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "act Details are mandatory [ " + caseRequest.getCaseObj().getAct() + " ]");
         }
         Map<String, String> errorMap = new HashMap<>();
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterData(caseRequest.getCases(), caseRequest, errorMap);
+        validateMasterData(caseRequest.getCaseObj(), caseRequest, errorMap);
     }
 
     public void validateUpdate(Case aCase, CaseRequest caseRequest) {
@@ -335,21 +335,21 @@ public class CaseValidator {
     }
 
     public void caseNumberDuplicacyCheck(CaseRequest caseRequest) {
-        CaseSearchCriteria criteria = CaseSearchCriteria.builder().caseNumber(Collections.singletonList(caseRequest.getCases().getCaseNumber()))
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().caseNumber(Collections.singletonList(caseRequest.getCaseObj().getCaseNumber()))
                                                         .build();
         CaseResponse response = caseRepository.getILMSCaseData(criteria);
-        if (response.getCases().size() >= 1) {
+        if (response.getCaseList().size() >= 1) {
             throw new CustomException(ILMSErrorConstants.DUPLICATE_VALUE_ERROR,
-                    "Already Exists In System, case number should be unique [ " + caseRequest.getCases().getCaseNumber() + " ]");
+                    "Already Exists In System, case number should be unique [ " + caseRequest.getCaseObj().getCaseNumber() + " ]");
         }
     }
 
     public void cnrDuplicacyCheck(CaseRequest caseRequest) {
-        CaseSearchCriteria criteria = CaseSearchCriteria.builder().cnrNumber(caseRequest.getCases().getCnrNumber()).build();
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().cnrNumber(caseRequest.getCaseObj().getCnrNumber()).build();
         CaseResponse response = caseRepository.getILMSCaseData(criteria);
-        if (response.getCases().size() >= 1) {
+        if (response.getCaseList().size() >= 1) {
             throw new CustomException(ILMSErrorConstants.DUPLICATE_VALUE_ERROR,
-                    "Already Exists In System, CNR number should be unique [ " + caseRequest.getCases().getCnrNumber() + " ]");
+                    "Already Exists In System, CNR number should be unique [ " + caseRequest.getCaseObj().getCnrNumber() + " ]");
         }
     }
 }
