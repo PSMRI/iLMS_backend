@@ -110,6 +110,7 @@ public class CaseService {
         }
         CaseResponse finalResult = new CaseResponse();
         finalResult.setCases(caseList);
+        finalResult.setTotalCount(caseResponse.getTotalCount());
         return finalResult;
     }
 
