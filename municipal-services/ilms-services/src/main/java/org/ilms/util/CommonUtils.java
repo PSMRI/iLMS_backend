@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
@@ -14,6 +15,7 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.ServiceRepository;
+import org.ilms.web.model.UserResponse;
 import org.ilms.web.model.idGen.IdGenerationRequest;
 import org.ilms.web.model.idGen.IdGenerationResponse;
 import org.ilms.web.model.idGen.IdRequest;
@@ -34,7 +36,7 @@ public class CommonUtils {
 
     @Autowired
     private ServiceRepository restRepo;
-    
+
     public Map<String, List<String>> getAttributeValues(String tenantId, String moduleName, List<String> names, String filter, String jsonpath,
             RequestInfo requestInfo) {
 
@@ -96,9 +98,9 @@ public class CommonUtils {
         userSearchRequest.put("uuid", listUuids);
         Map<String, String> roleList = new HashMap<>();
         try {
-            Object user = restRepo.fetchUserResult(uri, userSearchRequest);
-            if (user != null) {
-                String role = JsonPath.read(user, "$.user[0].roles[0].code");
+            UserResponse userResponse = restRepo.fetchUserResult(uri, userSearchRequest);
+            if (Objects.nonNull(userResponse)) {
+                String role = userResponse.getUser().get(0).getRoles().get(0).getCode();
                 roleList.put("role", role);
             }
         } catch (Exception e) {
@@ -110,12 +112,12 @@ public class CommonUtils {
     public boolean isUserExists(List<String> listUuids, String tenantId) {
         Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
         if (userRoles.get("role").isEmpty()) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                     "User does not exists in system");
+            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "User does not exists in system");
         }
         return true;
     }
-public boolean isUserDEC(List<String> listUuids, String tenantId, String columnValue) {
+
+    public boolean isUserDEC(List<String> listUuids, String tenantId, String columnValue) {
         Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
         if (!userRoles.get("role").equalsIgnoreCase("DEC")) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
