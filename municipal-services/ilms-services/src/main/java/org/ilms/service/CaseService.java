@@ -108,6 +108,7 @@ public class CaseService {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
         }
         CaseResponse finalResult = new CaseResponse();
+        finalResult.setTotalCount(caseResponse.getTotalCount());
         finalResult.setCaseList(caseList);
         return finalResult;
     }
