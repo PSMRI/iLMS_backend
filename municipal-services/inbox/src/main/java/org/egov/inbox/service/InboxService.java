@@ -21,8 +21,7 @@ import static org.egov.inbox.util.FSMConstants.VEHICLE_LOG;
 import static org.egov.inbox.util.FSMConstants.WAITING_FOR_DISPOSAL_STATE;
 import static org.egov.inbox.util.NocConstants.NOC;
 import static org.egov.inbox.util.NocConstants.NOC_APPLICATION_NUMBER_PARAM;
-import static org.egov.inbox.util.PTConstants.ACKNOWLEDGEMENT_IDS_PARAM;
-import static org.egov.inbox.util.PTConstants.PT;
+import static org.egov.inbox.util.PTConstants.*;
 import static org.egov.inbox.util.TLConstants.APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.TLConstants.BUSINESS_SERVICE_PARAM;
 import static org.egov.inbox.util.TLConstants.REQUESTINFO_PARAM;
@@ -105,7 +104,7 @@ public class InboxService {
 
     @Autowired
     private FSMInboxFilterService fsmInboxFilter;
-    
+
     @Autowired
     private NOCInboxFilterService nocInboxFilterService;
 
@@ -124,7 +123,7 @@ public class InboxService {
     }
 
     public InboxResponse fetchInboxData(InboxSearchCriteria criteria, RequestInfo requestInfo) {
-    	
+
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
         HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
         processCriteria.setTenantId(criteria.getTenantId());
@@ -149,6 +148,23 @@ public class InboxService {
             dsoId = JsonPath.read(resultForDsoId, "$.vendor[0].id");
 
         }
+
+//        if (requestInfo.getUserInfo().getRoles().get(0).getCode().equals("RO")) {
+//            Map<String, Object> searcherRequestForRO = new HashMap<>();
+//            Map<String, Object> searchCriteriaForRO = new HashMap<>();
+//            searchCriteriaForRO.put(TENANT_ID_PARAM, criteria.getTenantId());
+//            searchCriteriaForRO.put(FSMConstants.OWNER_ID, requestInfo.getUserInfo().getUuid());
+//            searcherRequestForRO.put(REQUESTINFO_PARAM, requestInfo);
+//            searcherRequestForRO.put(SEARCH_CRITERIA_PARAM, searchCriteriaForRO);
+//            StringBuilder uri = new StringBuilder();
+//            uri.append(config.getSearcherHost()).append(config.getFsmInboxDSoIDEndpoint());
+//
+//            Object resultForDsoId = restTemplate.postForObject(uri.toString(), searcherRequestForRO, Map.class);
+//
+//            dsoId = JsonPath.read(resultForDsoId, "$.vendor[0].id");
+//
+//        }
+
         if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
             assigneeUuid = assigneeUuid.append(processCriteria.getAssignee());
             processCriteria.setStatus(null);
@@ -156,12 +172,12 @@ public class InboxService {
         // Since we want the whole status count map regardless of the status filter and assignee filter being passed
         processCriteria.setAssignee(null);
         processCriteria.setStatus(null);
-        
+
         List<HashMap<String, Object>> bpaCitizenStatusCountMap = new ArrayList<HashMap<String,Object>>();
         List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
-        
+
          String moduleName = processCriteria.getModuleName();
-			
+
          /*
 			 * SAN-920: Commenting out this code as Module name will now be passed for FSM
 			 * if(ObjectUtils.isEmpty(processCriteria.getModuleName()) &&
@@ -183,7 +199,7 @@ public class InboxService {
         if (CollectionUtils.isEmpty(businessServiceName)) {
             throw new CustomException(ErrorConstants.MODULE_SEARCH_INVLAID, "Bussiness Service is mandatory for module search");
         }
-        
+
         if (!CollectionUtils.isEmpty(moduleSearchCriteria)) {
             moduleSearchCriteria.put("tenantId", criteria.getTenantId());
             moduleSearchCriteria.put("offset", criteria.getOffset());
@@ -218,7 +234,7 @@ public class InboxService {
                 }
 
             }
-            
+
             Map<String, List<String>> tenantAndApplnNumbersMap = new HashMap<>();
             if(processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
                     && processCriteria.getModuleName().equals(BPA) && roles.contains(BpaConstants.CITIZEN)) {
@@ -227,7 +243,7 @@ public class InboxService {
                     moduleSearchCriteria = new HashMap<>();
                     moduleSearchCriteria.put(MOBILE_NUMBER_PARAM, requestInfo.getUserInfo().getMobileNumber());
                     criteria.setModuleSearchCriteria(moduleSearchCriteria);
-                } 
+                }
                 for(Map<String, String> tenantAppln : tenantWiseApplns) {
                     String tenant = tenantAppln.get("tenantid");
                     String applnNo = tenantAppln.get("applicationno");
@@ -269,7 +285,7 @@ public class InboxService {
                 processCriteria.setBusinessIds(inputBusinessIds);
                 processCriteria.setStatus(inputStatus);
             }
-            
+
             /*
              * In the WF statuscount API, locality based fileter is not supported.
              * To support status wise count based on locality, with status and locality API
@@ -286,7 +302,7 @@ public class InboxService {
                         if(count == 0) {
                             statusWiseCount.clear();
                         } else {
-                            statusWiseCount.put(COUNT, count); 
+                            statusWiseCount.put(COUNT, count);
                         }
                     }
                     criteria.getProcessSearchCriteria().setStatus(inputStatuses);
@@ -319,6 +335,20 @@ public class InboxService {
                     isSearchResultEmpty = true;
                 }
             }
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(ILMS_SERVICES)) {
+                totalCount = ptInboxFilterService.fetchCaseIdsCountFromSearcher(criteria, StatusIdNameMap,
+                        requestInfo);
+                List<String> caseIds = ptInboxFilterService.fetchCasesFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(caseIds)) {
+                    moduleSearchCriteria.put(CAES_IDS_PARAM, caseIds);
+                    businessKeys.addAll(caseIds);
+//                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                }
+                else{
+                    isSearchResultEmpty = true;
+                }
+            }
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && ( processCriteria.getModuleName().equals(TL)
                     || processCriteria.getModuleName().equals(BPAREG))) {
                 totalCount = tlInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
@@ -335,14 +365,15 @@ public class InboxService {
                 }
             }
 
+
 			/*
 			 * if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) &&
 			 * processCriteria.getModuleName().equalsIgnoreCase(FSMConstants.FSM_MODULE)) {
-			 * 
+			 *
 			 * totalCount = fsmInboxFilter.fetchApplicationCountFromSearcher(criteria,
 			 * StatusIdNameMap, requestInfo, dsoId); }
 			 */
-            
+
             if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
                     && processCriteria.getModuleName().equals(BPA)) {
                 totalCount = bpaInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
@@ -359,7 +390,7 @@ public class InboxService {
                     isSearchResultEmpty = true;
                 }
             }
-            
+
             if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
                     && processCriteria.getModuleName().equals(NOC)) {
                 totalCount = nocInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
@@ -375,7 +406,7 @@ public class InboxService {
                     isSearchResultEmpty = true;
                 }
             }
-            
+
             businessObjects = new JSONArray();
             if (!isSearchResultEmpty) {
                 businessObjects = fetchModuleObjects(moduleSearchCriteria, businessServiceName, criteria.getTenantId(),
@@ -430,9 +461,9 @@ public class InboxService {
             } else {
                 processInstanceResponse = workflowService.getProcessInstance(processCriteria, requestInfo);
             }
-            
+
             List<ProcessInstance> processInstances = processInstanceResponse.getProcessInstances();
-          
+
             if (businessObjects.length() > 0 && processInstances.size() > 0) {
             	 Map<String, ProcessInstance> processInstanceMap = processInstances.stream()
                         .collect(Collectors.toMap(ProcessInstance::getBusinessId, Function.identity()));
@@ -488,7 +519,7 @@ public class InboxService {
             }
 
         }
-        
+
        // log.info("businessServiceName.contains(FSM_MODULE) ::: " + businessServiceName.contains(FSM_MODULE));
         
 		if (businessServiceName.contains(FSM_MODULE)) {
@@ -786,12 +817,13 @@ public class InboxService {
 				} else {
 					url.append("&").append(param).append("=").append(moduleSearchCriteria.get(param).toString());
 				}
+
 			}
 		});
         
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
-        
+
         LinkedHashMap responseMap;
         try {
             responseMap = mapper.convertValue(result, LinkedHashMap.class);
