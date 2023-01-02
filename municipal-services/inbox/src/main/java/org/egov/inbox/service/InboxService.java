@@ -328,7 +328,7 @@ public class InboxService {
                 if (!CollectionUtils.isEmpty(caseIds)) {
                     moduleSearchCriteria.put(CAES_IDS_PARAM, caseIds);
                     businessKeys.addAll(caseIds);
-//                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
                 }
                 else{
                     isSearchResultEmpty = true;
