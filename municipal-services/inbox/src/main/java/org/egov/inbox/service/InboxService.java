@@ -149,21 +149,6 @@ public class InboxService {
 
         }
 
-//        if (requestInfo.getUserInfo().getRoles().get(0).getCode().equals("RO")) {
-//            Map<String, Object> searcherRequestForRO = new HashMap<>();
-//            Map<String, Object> searchCriteriaForRO = new HashMap<>();
-//            searchCriteriaForRO.put(TENANT_ID_PARAM, criteria.getTenantId());
-//            searchCriteriaForRO.put(FSMConstants.OWNER_ID, requestInfo.getUserInfo().getUuid());
-//            searcherRequestForRO.put(REQUESTINFO_PARAM, requestInfo);
-//            searcherRequestForRO.put(SEARCH_CRITERIA_PARAM, searchCriteriaForRO);
-//            StringBuilder uri = new StringBuilder();
-//            uri.append(config.getSearcherHost()).append(config.getFsmInboxDSoIDEndpoint());
-//
-//            Object resultForDsoId = restTemplate.postForObject(uri.toString(), searcherRequestForRO, Map.class);
-//
-//            dsoId = JsonPath.read(resultForDsoId, "$.vendor[0].id");
-//
-//        }
 
         if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
             assigneeUuid = assigneeUuid.append(processCriteria.getAssignee());
