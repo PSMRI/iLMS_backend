@@ -172,8 +172,8 @@ public class CaseService {
         caseValidator.cnrDuplicacyCheck(caseRequest);
         caseValidator.caseNumberDuplicacyCheck(caseRequest);
         caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
-        if (ilmsConfiguration.getIsWorkflowEnabled() && !caseRequest.getCases().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
-            workflowService.updateWorkflow(caseRequest, caseRequest.getCases().getCreationReason());
+        if (ilmsConfiguration.getIsWorkflowEnabled()) {
+            workflowService.updateWorkflow(caseRequest, CreationReason.CREATE);
 
         }
         producer.push(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
@@ -219,7 +219,7 @@ public class CaseService {
                 //                todo : notification has send to all the officers who has worked on this case.
                 if (Objects.nonNull(caseRequest.getCases().getWorkflow())) {
                     processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
-                    notificationService.process(ilmsConfiguration.getUpdateCaseTopic(),caseRequest);
+            //        notificationService.process(ilmsConfiguration.getUpdateCaseTopic(),caseRequest);
                 }
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");

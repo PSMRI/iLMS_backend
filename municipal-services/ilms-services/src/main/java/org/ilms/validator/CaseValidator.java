@@ -163,7 +163,8 @@ public class CaseValidator {
         if (StringUtils.isNotBlank(caseRequest.getCases().getAssignedOfficerId())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(caseRequest.getCases().getAssignedOfficerId());
-            if (commonUtils.isUserRO(uuids, caseRequest.getCases().getTenantId(), "AssignedOfficerId")) ;
+            if (commonUtils.isUserDEC(uuids, caseRequest.getCases().getTenantId(), "AssignedOfficerId")) ;
+
 
         }
         //        Setting Petitioner Details

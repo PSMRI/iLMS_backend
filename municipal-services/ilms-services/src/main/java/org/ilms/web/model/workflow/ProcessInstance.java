@@ -3,8 +3,9 @@ package org.ilms.web.model.workflow;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
+import org.egov.common.contract.request.User;
 import org.ilms.web.model.Document;
-import org.ilms.web.model.user.User;
+
 import org.springframework.validation.annotation.Validated;
 import org.hibernate.validator.constraints.SafeHtml;
 
