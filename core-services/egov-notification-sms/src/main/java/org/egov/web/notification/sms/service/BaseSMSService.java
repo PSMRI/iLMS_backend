@@ -81,7 +81,7 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
     protected <T> ResponseEntity<T> executeAPI(URI uri, HttpMethod method, HttpEntity<?> requestEntity, Class<T> type) {
         ResponseEntity<T> res = (ResponseEntity<T>) restTemplate.exchange(uri, method, requestEntity, String.class);
         String responseString = res.getBody().toString();
-        if (!isResponseValidated(res)) {
+        if (isResponseValidated(res)) {
             log.error("Response from API - " + responseString);
             throw new RuntimeException(SMS_RESPONSE_NOT_SUCCESSFUL);
         }
@@ -121,12 +121,6 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
             String value = smsProperties.getConfigMap().get(key);
             if (value.startsWith("$")) {
                 switch (value) {
-                    case "$username":
-                        map.add(key, smsProperties.getUsername());
-                        break;
-                    case "$password":
-                        map.add(key, smsProperties.getPassword());
-                        break;
                     case "$senderid":
                         map.add(key, smsProperties.getSenderid());
                         break;
@@ -175,6 +169,7 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
     protected HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf(smsProperties.getContentType()));
+        headers.setBasicAuth(smsProperties.getUsername(),smsProperties.getPassword());
         return headers;
     }
 
