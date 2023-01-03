@@ -164,8 +164,6 @@ public class CaseValidator {
             List<String> uuids = new ArrayList<>();
             uuids.add(caseRequest.getCases().getAssignedOfficerId());
             if (commonUtils.isUserDEC(uuids, caseRequest.getCases().getTenantId(), "AssignedOfficerId")) ;
-
-
         }
         //        Setting Petitioner Details
         if (Objects.nonNull(caseRequest.getCases().getPetitioner())) {
