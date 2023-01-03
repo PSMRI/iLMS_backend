@@ -317,7 +317,7 @@ public class CaseUtils {
                 wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
 
                 wf.setAction("CREATE");
-                wf.setTenantId(request.getCases().getTenantId());
+                wf.setTenantId(request.getCaseObj().getTenantId());
                 List<User> userList = new ArrayList<>();
                 User user = new User();
                 user.setUuid(request.getRequestInfo().getUserInfo().getUuid());
@@ -332,7 +332,7 @@ public class CaseUtils {
                 CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
                 String tenantId = caseResponse.getCaseList().get(0).getTenantId();
                 wf.setTenantId(tenantId);
-                wf.setAssignes(request.getCases().getWorkflow().getAssignes());
+                wf.setAssignes(request.getCaseObj().getWorkflow().getAssignes());
                 break;
 
             default:
