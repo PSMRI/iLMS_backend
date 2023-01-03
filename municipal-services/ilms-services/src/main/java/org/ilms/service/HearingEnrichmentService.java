@@ -78,7 +78,7 @@ public class HearingEnrichmentService {
         RequestInfo requestInfo = request.getRequestInfo();
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(request.getHearing().getCaseId())).build();
         CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
-        String tenantId = caseResponse.getCases().get(0).getTenantId();
+        String tenantId = caseResponse.getCaseList().get(0).getTenantId();
         Hearing hearing = request.getHearing();
         List<String> applicationNumbers = getIdList(requestInfo, tenantId, ilmsConfiguration.getHearingIdgenName(),
                 ilmsConfiguration.getHearingIdgenFormat(), 1);

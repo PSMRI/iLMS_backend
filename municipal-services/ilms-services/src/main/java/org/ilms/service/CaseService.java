@@ -98,18 +98,18 @@ public class CaseService {
         List<Case> caseList = new ArrayList<>();
         CaseResponse caseResponse = null;
         caseResponse = caseRepository.getILMSCaseData(criteria);
-        if (!caseResponse.getCases().isEmpty()) {
-//            caseList = caseResponse.getCases();
-            caseResponse.getCases().forEach(resp ->{
-                ProcessInstanceResponse processInstanceResponse=workflowService.getWorkflow(requestInfo,resp.getTenantId(),resp.getId());
-                resp.setWorkflow(processInstanceResponse.getProcessInstances().get(0));
-                caseList.add(resp);
+        if (!caseResponse.getCaseList().isEmpty()) {
+            caseResponse.getCaseList().forEach(caseObj ->{
+                ProcessInstanceResponse processInstanceResponse=workflowService.getWorkflow(requestInfo,caseObj.getTenantId(),caseObj.getId());
+                caseObj.setWorkflow(processInstanceResponse.getProcessInstances().get(0));
+                caseList.add(caseObj);
             });
         } else {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
         }
         CaseResponse finalResult = new CaseResponse();
-        finalResult.setCases(caseList);
+        finalResult.setTotalCount(caseResponse.getTotalCount());
+        finalResult.setCaseList(caseList);
         return finalResult;
     }
 
@@ -121,63 +121,62 @@ public class CaseService {
         JudgementResponse judgementResponse = null;
         caseResponse = caseRepository.getILMSCaseData(criteria);
         HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
-                                                                     .caseId(Collections.singletonList(caseResponse.getCases().get(0).getId()))
+                                                                     .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
                                                                      .build();
         hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
         JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
-                caseResponse.getCases().get(0).getId())).build();
+                caseResponse.getCaseList().get(0).getId())).build();
         judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
-        caseList = caseResponse.getCases();
-        downloadResponse.setCaseList(caseResponse.getCases());
-        downloadResponse.setHearingList(hearingResponse.getHearingDetails());
-        downloadResponse.setJudgementList(judgementResponse.getJudgements());
+        caseList = caseResponse.getCaseList();
+        downloadResponse.setCaseList(caseResponse.getCaseList());
+        downloadResponse.setHearingList(hearingResponse.getHearingList());
+        downloadResponse.setJudgementList(judgementResponse.getJudgementList());
         return downloadResponse;
     }
 
     public Case create(CaseRequest caseRequest) {
-        if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
-            if (StringUtils.isNotBlank(caseRequest.getCases().getParentCaseId())) {
+        if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
+            if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                         "ParentCaseId must be null to create " + CaseHierarchy.INDEPENDENT + " Case");
             }
-        } else if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
-            if (StringUtils.isNotBlank(caseRequest.getCases().getParentCaseId())) {
+        } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
+            if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                         "ParentCaseId must be null to create " + CaseHierarchy.PARENT + " Case");
             }
-        } else if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
-            if (StringUtils.isBlank(caseRequest.getCases().getParentCaseId())) {
+        } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
+            if (StringUtils.isBlank(caseRequest.getCaseObj().getParentCaseId())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                         "ParentCaseId is mandatory to create " + CaseHierarchy.CHILD + " Case");
             }
             List<String> caseIds = new ArrayList<>();
-            caseIds.add(caseRequest.getCases().getParentCaseId());
+            caseIds.add(caseRequest.getCaseObj().getParentCaseId());
             CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(caseIds).build();
             CaseResponse response = caseRepository.getILMSCaseData(criteria);
-            if (response.getCases().size() != 1) {
+            if (response.getCaseList().size() != 1) {
                 throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
             }
         }
-        caseRequest.getCases().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
-        caseRequest.getCases().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
-        caseRequest.getCases().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
-        caseRequest.getCases().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
-        caseRequest.getCases().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
-        caseRequest.getCases().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
-        caseRequest.getCases().getPetitioner().setStatus(Status.ACTIVE);
-        caseRequest.getCases().getRespondent().setStatus(Status.ACTIVE);
-        caseRequest.getCases().getAct().setStatus(Status.ACTIVE);
-        caseRequest.getCases().setStatus(Status.ACTIVE);
+        caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
+        caseRequest.getCaseObj().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
+        caseRequest.getCaseObj().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
+        caseRequest.getCaseObj().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
+        caseRequest.getCaseObj().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
+        caseRequest.getCaseObj().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
+        caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
+        caseRequest.getCaseObj().getRespondent().setStatus(Status.ACTIVE);
+        caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
+        caseRequest.getCaseObj().setStatus(Status.ACTIVE);
         caseValidator.validateCreate(caseRequest);
         caseValidator.cnrDuplicacyCheck(caseRequest);
         caseValidator.caseNumberDuplicacyCheck(caseRequest);
         caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
         if (ilmsConfiguration.getIsWorkflowEnabled()) {
             workflowService.updateWorkflow(caseRequest, CreationReason.CREATE);
-
         }
         producer.push(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
-        return caseRequest.getCases();
+        return caseRequest.getCaseObj();
     }
 
     /**
@@ -187,38 +186,38 @@ public class CaseService {
      * @return Updated ilmsCase
      */
     public Case update(CaseRequest caseRequest) {
-        if (caseRequest.getCases().getId() != null) {
-            CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseRequest.getCases().getId())).build();
+        if (caseRequest.getCaseObj().getId() != null) {
+            CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseRequest.getCaseObj().getId())).build();
             CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
-            if (!caseResponse.getCases().isEmpty()) {
-                CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCases().get(0), caseRequest);
-                Case cases = caseResponse.getCases().get(0);
+            if (!caseResponse.getCaseList().isEmpty()) {
+                CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCaseList().get(0), caseRequest);
+                Case cases = caseResponse.getCaseList().get(0);
                 caseValidator.validateUpdate(cases, caseRequest);
-                if (Objects.nonNull(caseRequest.getCases().getCaseHierarchy())) {
-                    if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
-                        updatedCaseRequest.getCases().setParentCaseId(null);
-                        if (Objects.nonNull(caseRequest.getCases().getParentCaseId())) {
+                if (Objects.nonNull(caseRequest.getCaseObj().getCaseHierarchy())) {
+                    if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
+                        updatedCaseRequest.getCaseObj().setParentCaseId(null);
+                        if (Objects.nonNull(caseRequest.getCaseObj().getParentCaseId())) {
                             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Independent Case does not exist Parent Case");
                         }
-                    } else if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
-                        updatedCaseRequest.getCases().setParentCaseId(null);
-                        if (Objects.nonNull(caseRequest.getCases().getParentCaseId())) {
+                    } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
+                        updatedCaseRequest.getCaseObj().setParentCaseId(null);
+                        if (Objects.nonNull(caseRequest.getCaseObj().getParentCaseId())) {
                             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Parent Case does not exist Parent Case");
                         }
-                    } else if (caseRequest.getCases().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
+                    } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
                         List<String> caseIds = new ArrayList<>();
-                        caseIds.add(caseRequest.getCases().getParentCaseId());
+                        caseIds.add(caseRequest.getCaseObj().getParentCaseId());
                         CaseSearchCriteria criteria1 = CaseSearchCriteria.builder().id(caseIds).build();
                         CaseResponse response = caseRepository.getILMSCaseData(criteria1);
-                        if (response.getCases().size() != 1) {
+                        if (response.getCaseList().size() != 1) {
                             throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
                         }
                     }
                 }
                 producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
                 //                todo : notification has send to all the officers who has worked on this case.
-                if (Objects.nonNull(caseRequest.getCases().getWorkflow())) {
-                    processCaseUpdate(caseRequest, updatedCaseRequest.getCases());
+                if (Objects.nonNull(caseRequest.getCaseObj().getWorkflow())) {
+                    processCaseUpdate(caseRequest, updatedCaseRequest.getCaseObj());
                     notificationService.process(ilmsConfiguration.getUpdateCaseTopic(),caseRequest);
                 }
             } else {
@@ -227,7 +226,7 @@ public class CaseService {
         } else {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "id is mandatory");
         }
-        return caseRequest.getCases();
+        return caseRequest.getCaseObj();
     }
 
     private void processCaseUpdate(CaseRequest request, Case cases) {

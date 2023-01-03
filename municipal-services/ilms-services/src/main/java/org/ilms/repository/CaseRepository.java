@@ -39,8 +39,8 @@ public class CaseRepository {
     public CaseResponse getILMSCaseData(CaseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = caseQueryBuilder.getILMSCaseSearchQuery(criteria, preparedStmtList);
-        List<Case> aCases = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);
-        for (Case singleCase : aCases) {
+        List<Case> caseList = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);
+        for (Case singleCase : caseList) {
             singleCase.setDocuments(getDocumentList(singleCase.getId()));
             List<Party> partyList = getParty(singleCase.getId());
             for (Party party : partyList) {
@@ -51,7 +51,7 @@ public class CaseRepository {
                 }
             }
         }
-        CaseResponse caseResponse = CaseResponse.builder().Cases(aCases).totalCount(caseRowMapper.getFullCount()).build();
+        CaseResponse caseResponse = CaseResponse.builder().caseList(caseList).totalCount(caseRowMapper.getFullCount()).build();
         return caseResponse;
     }
 

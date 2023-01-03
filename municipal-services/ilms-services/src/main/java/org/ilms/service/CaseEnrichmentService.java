@@ -38,25 +38,25 @@ public class CaseEnrichmentService {
 
     public void enrichCaseCreateRequest(CaseRequest caseRequest) {
         RequestInfo requestInfo = caseRequest.getRequestInfo();
-        Case aCase = caseRequest.getCases();
+        Case aCase = caseRequest.getCaseObj();
         setIdgenIds(caseRequest);
         AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUserName(), true);
-        caseRequest.getCases().setAuditDetails(auditDetails);
+        caseRequest.getCaseObj().setAuditDetails(auditDetails);
         aCase.setAuditDetails(auditDetails);
-        if (caseRequest.getCases().getRespondent() != null) {
-            caseRequest.getCases().getRespondent().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getRespondent() != null) {
+            caseRequest.getCaseObj().getRespondent().setAuditDetails(auditDetails);
             aCase.getRespondent().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCases().getRespondent().getAdvocate() != null) {
-            caseRequest.getCases().getRespondent().getAdvocate().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getRespondent().getAdvocate() != null) {
+            caseRequest.getCaseObj().getRespondent().getAdvocate().setAuditDetails(auditDetails);
             aCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCases().getPetitioner() != null) {
-            caseRequest.getCases().getPetitioner().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getPetitioner() != null) {
+            caseRequest.getCaseObj().getPetitioner().setAuditDetails(auditDetails);
             aCase.getPetitioner().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCases().getPetitioner().getAdvocate() != null) {
-            caseRequest.getCases().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getPetitioner().getAdvocate() != null) {
+            caseRequest.getCaseObj().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
             aCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
         }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
@@ -65,8 +65,8 @@ public class CaseEnrichmentService {
                 doc.setStatus(Status.ACTIVE);
             });
         }
-        if (caseRequest.getCases().getAct() != null) {
-            caseRequest.getCases().getAct().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getAct() != null) {
+            caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
             aCase.getAct().setAuditDetails(auditDetails);
         }
     }
@@ -105,8 +105,8 @@ public class CaseEnrichmentService {
 
     private void setIdgenIds(CaseRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        String tenantId = request.getCases().getTenantId();
-        Case aCase = request.getCases();
+        String tenantId = request.getCaseObj().getTenantId();
+        Case aCase = request.getCaseObj();
         List<String> caseId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCaseIdgenName(), ilmsConfiguration.getCaseIdgenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();
         List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
@@ -152,29 +152,29 @@ public class CaseEnrichmentService {
 
     public void enrichCaseUpdateRequest(CaseRequest caseRequest) {
         RequestInfo requestInfo = caseRequest.getRequestInfo();
-        Case aCase = caseRequest.getCases();
-        AuditDetails auditDetails = caseUtils.getAuditDetails(caseRequest.getCases().getId(), true);
-        caseRequest.getCases().setAuditDetails(auditDetails);
+        Case aCase = caseRequest.getCaseObj();
+        AuditDetails auditDetails = caseUtils.getAuditDetails(caseRequest.getCaseObj().getId(), true);
+        caseRequest.getCaseObj().setAuditDetails(auditDetails);
         aCase.setAuditDetails(auditDetails);
-        if (caseRequest.getCases().getRespondent() != null) {
-            caseRequest.getCases().getRespondent().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getRespondent() != null) {
+            caseRequest.getCaseObj().getRespondent().setAuditDetails(auditDetails);
             aCase.getRespondent().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCases().getRespondent().getAdvocate() != null) {
-            caseRequest.getCases().getRespondent().getAdvocate().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getRespondent().getAdvocate() != null) {
+            caseRequest.getCaseObj().getRespondent().getAdvocate().setAuditDetails(auditDetails);
             aCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
         }
 
-        if (caseRequest.getCases().getPetitioner() != null) {
-            caseRequest.getCases().getPetitioner().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getPetitioner() != null) {
+            caseRequest.getCaseObj().getPetitioner().setAuditDetails(auditDetails);
             aCase.getPetitioner().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCases().getPetitioner().getAdvocate() != null) {
-            caseRequest.getCases().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getPetitioner().getAdvocate() != null) {
+            caseRequest.getCaseObj().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
             aCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCases().getAct() != null) {
-            caseRequest.getCases().getAct().setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getAct() != null) {
+            caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
             aCase.getAct().setAuditDetails(auditDetails);
         }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
