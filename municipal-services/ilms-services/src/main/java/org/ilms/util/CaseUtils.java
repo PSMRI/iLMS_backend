@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.egov.common.contract.request.User;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.CaseRepository;
 import org.ilms.service.CaseEnrichmentService;
@@ -16,7 +17,7 @@ import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.Document;
 import org.ilms.web.model.enums.CreationReason;
-import org.ilms.web.model.user.User;
+
 import org.ilms.web.model.workflow.ProcessInstance;
 import org.ilms.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -309,17 +310,20 @@ public class CaseUtils {
         Case aCase = request.getCaseObj();
         ProcessInstance wf = null != aCase.getWorkflow() ? aCase.getWorkflow() : new ProcessInstance();
         wf.setBusinessId(aCase.getId());
-        List<User> userList = new ArrayList<>();
-        User user = new User();
-        user.setUuid(request.getCaseObj().getAssignedOfficerId());
-        userList.add(user);
-        wf.setAssignes(userList);
+
         switch (creationReasonForWorkflow) {
             case CREATE:
                 wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());
                 wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
-                wf.setAction("Create");
-                wf.setTenantId(request.getCaseObj().getTenantId());
+
+                wf.setAction("CREATE");
+                wf.setTenantId(request.getCases().getTenantId());
+                List<User> userList = new ArrayList<>();
+                User user = new User();
+                user.setUuid(request.getRequestInfo().getUserInfo().getUuid());
+                userList.add(user);
+                wf.setAssignes(userList);
+
                 break;
 
             case UPDATE:
@@ -328,6 +332,7 @@ public class CaseUtils {
                 CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
                 String tenantId = caseResponse.getCaseList().get(0).getTenantId();
                 wf.setTenantId(tenantId);
+                wf.setAssignes(request.getCases().getWorkflow().getAssignes());
                 break;
 
             default:

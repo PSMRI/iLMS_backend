@@ -172,9 +172,8 @@ public class CaseService {
         caseValidator.cnrDuplicacyCheck(caseRequest);
         caseValidator.caseNumberDuplicacyCheck(caseRequest);
         caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
-        if (ilmsConfiguration.getIsWorkflowEnabled() && !caseRequest.getCaseObj().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
-            workflowService.updateWorkflow(caseRequest, caseRequest.getCaseObj().getCreationReason());
-
+        if (ilmsConfiguration.getIsWorkflowEnabled()) {
+            workflowService.updateWorkflow(caseRequest, CreationReason.CREATE);
         }
         producer.push(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
         return caseRequest.getCaseObj();
