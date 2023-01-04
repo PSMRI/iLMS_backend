@@ -6,14 +6,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
-import org.ilms.consumer.NotificationConsumer;
 import org.ilms.producer.Producer;
 import org.ilms.repository.CaseRepository;
 import org.ilms.repository.HearingRepository;
@@ -23,6 +21,7 @@ import org.ilms.util.ILMSErrorConstants;
 import org.ilms.validator.CaseValidator;
 import org.ilms.web.model.Case;
 import org.ilms.web.model.CaseDetailsResponse;
+import org.ilms.web.model.CaseIds;
 import org.ilms.web.model.CaseRequest;
 import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
@@ -41,9 +40,6 @@ import org.ilms.web.model.enums.Status;
 import org.ilms.web.model.workflow.ProcessInstanceResponse;
 import org.ilms.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BaseColor;
@@ -99,8 +95,8 @@ public class CaseService {
         CaseResponse caseResponse = null;
         caseResponse = caseRepository.getILMSCaseData(criteria);
         if (!caseResponse.getCaseList().isEmpty()) {
-            caseResponse.getCaseList().forEach(caseObj ->{
-                ProcessInstanceResponse processInstanceResponse=workflowService.getWorkflow(requestInfo,caseObj.getTenantId(),caseObj.getId());
+            caseResponse.getCaseList().forEach(caseObj -> {
+                ProcessInstanceResponse processInstanceResponse = workflowService.getWorkflow(requestInfo, caseObj.getTenantId(), caseObj.getId());
                 caseObj.setWorkflow(processInstanceResponse.getProcessInstances().get(0));
                 caseList.add(caseObj);
             });
@@ -218,7 +214,7 @@ public class CaseService {
                 //                todo : notification has send to all the officers who has worked on this case.
                 if (Objects.nonNull(caseRequest.getCaseObj().getWorkflow())) {
                     processCaseUpdate(caseRequest, updatedCaseRequest.getCaseObj());
-                    notificationService.process(ilmsConfiguration.getUpdateCaseTopic(),caseRequest);
+                    notificationService.process(ilmsConfiguration.getUpdateCaseTopic(), caseRequest);
                 }
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
@@ -1548,32 +1544,39 @@ public class CaseService {
     }
 
     public ChildCase addChildCases(ChildCaseRequest childCaseRequest) {
-
         if (StringUtils.isNotBlank(childCaseRequest.getChildCase().getCaseHierarchy().toString())) {
             if (childCaseRequest.getChildCase().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
+                if (StringUtils.isBlank(childCaseRequest.getChildCase().getParentCaseId())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                            "ParentCaseId is mandatory to create Independent child case [ " + childCaseRequest.getChildCase()
+                                                                                                              .getParentCaseId() + " ]");
+                }
+                List<String> caseIds = caseRepository.getCaseIdsByParentCaseId(childCaseRequest.getChildCase().getParentCaseId());
+                List<CaseIds> caseIdsList = new ArrayList<>();
+                caseIds.forEach(id -> {
+                    CaseIds caseIds1 = new CaseIds();
+                    caseIds1.setId(id);
+                    caseIdsList.add(caseIds1);
+                });
+                childCaseRequest.getChildCase().setCaseIds(caseIdsList);
                 childCaseRequest.getChildCase().setParentCaseId(null);
             } else if (childCaseRequest.getChildCase().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
                 if (!StringUtils.isNotBlank(childCaseRequest.getChildCase().getParentCaseId())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                             "ParentCaseId is mandatory to create child case [ " + childCaseRequest.getChildCase().getParentCaseId() + " ]");
+                } else if (Objects.isNull(childCaseRequest.getChildCase().getCaseIds())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                            "CaseIds  are mandatory to create child case [ " + childCaseRequest.getChildCase().getCaseIds() + " ]");
                 }
+            } else if (childCaseRequest.getChildCase().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "We are not considering the [ " + CaseHierarchy.PARENT + " ] ");
             }
         } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "CaseHierarchy is mandatory to create child case [ " + childCaseRequest.getChildCase().getCaseHierarchy() + " ]");
         }
-        if (Objects.nonNull(childCaseRequest.getChildCase().getCaseIds())) {
-            if (childCaseRequest.getChildCase().getCaseIds().isEmpty()) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "caseIds can not be null [ " + childCaseRequest.getChildCase().getCaseIds() + " ]");
-            }
-        } else {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseIds are mandatory to create child case [ " + childCaseRequest.getChildCase().getCaseIds() + " ]");
-        }
         producer.push(ilmsConfiguration.getUpdateChildCaseTopic(), childCaseRequest);
         return childCaseRequest.getChildCase();
     }
-
 }
 
