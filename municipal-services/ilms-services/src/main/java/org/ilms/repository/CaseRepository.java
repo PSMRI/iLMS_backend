@@ -68,4 +68,14 @@ public class CaseRepository {
         List<Party> parties = jdbcTemplate.query(caseQueryBuilder.getPartyQuery(), preparedStmtList.toArray(), partyRowMapper);
         return parties;
     }
+
+    public List<String> getCaseIdsByParentCaseId(String parentCaseId) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(parentCaseId);
+        preparedStmtList.add(parentCaseId);
+        String query = caseQueryBuilder.getChildCaseIds(parentCaseId, preparedStmtList);
+        List<String> caseIdsList = jdbcTemplate.queryForList(query, preparedStmtList.toArray(), String.class);
+        System.out.println(caseIdsList);
+        return caseIdsList;
+    }
 }
