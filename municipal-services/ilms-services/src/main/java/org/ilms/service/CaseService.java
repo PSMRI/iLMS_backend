@@ -1568,6 +1568,8 @@ public class CaseService {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                             "CaseIds  are mandatory to create child case [ " + childCaseRequest.getChildCase().getCaseIds() + " ]");
                 }
+            } else if (childCaseRequest.getChildCase().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
+                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "We are not considering the [ " + CaseHierarchy.PARENT + " ] ");
             }
         } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
