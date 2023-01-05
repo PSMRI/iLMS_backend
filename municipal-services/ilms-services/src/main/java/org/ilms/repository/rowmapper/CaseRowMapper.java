@@ -46,7 +46,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
             String duplicacyCheck = "";
             Case currentCase = new Case();
             // TODO fill the ILMSCase object with data in the result set record
-            if (!duplicacyCheck.equals(rs.getString("ilmsCase_id")) && Status.valueOf(rs.getString("ilms_status")) == Status.ACTIVE) {
+            if (!duplicacyCheck.equals(rs.getString("ilmsCase_id"))) {
                 String id = rs.getString("ilmsCase_id");
                 duplicacyCheck = id;
                 String cnrNumber = rs.getString("ilms_cnrNumber");
