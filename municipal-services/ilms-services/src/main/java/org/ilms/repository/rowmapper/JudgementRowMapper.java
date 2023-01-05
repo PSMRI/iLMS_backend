@@ -39,7 +39,6 @@ public class JudgementRowMapper implements ResultSetExtractor<List<Judgement>> {
         Map<String, Judgement> judgementMap = new LinkedHashMap<String, Judgement>();
         this.setFull_count(0);
         while (rs.next()) {
-/*            if (Status.valueOf(rs.getString("status")) == Status.ACTIVE) {*/
                 Judgement currentjudgement = null;
                 String id = rs.getString("id");
                 String orderType = rs.getString("order_type");
