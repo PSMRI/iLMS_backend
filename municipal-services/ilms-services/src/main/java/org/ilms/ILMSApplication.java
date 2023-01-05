@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @Import ({ TracerConfiguration.class })
 public class ILMSApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ILMSApplication.class, args);
 	}

@@ -90,7 +90,6 @@ public class CaseController {
         String pdfName = criteria.getId() + ".pdf";
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + pdfName).contentType(MediaType.APPLICATION_PDF)
                              .body(new InputStreamResource(bis));
-
     }
 
     @PostMapping (value = "/_addChildCases")

@@ -57,7 +57,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                                                     .lastModifiedTime(rs.getLong("hearing_lastmodifiedtime")).build();
 
             // TODO fill the ILMSCase object with data in the result set record
-            if (!duplicacyCheck.equals(rs.getString("hearing_id")) && Status.valueOf(rs.getString("hearing_status")) == Status.ACTIVE) {
+            if (!duplicacyCheck.equals(rs.getString("hearing_id"))) {
                 String id = rs.getString("hearing_id");
                 duplicacyCheck = id;
                 String hearingNumber = rs.getString("hearing_number");
