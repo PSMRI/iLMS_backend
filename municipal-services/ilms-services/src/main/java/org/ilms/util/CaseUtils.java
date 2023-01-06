@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
 import org.egov.common.contract.request.User;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.CaseRepository;
@@ -17,7 +16,6 @@ import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.Document;
 import org.ilms.web.model.enums.CreationReason;
-
 import org.ilms.web.model.workflow.ProcessInstance;
 import org.ilms.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +39,7 @@ public class CaseUtils {
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
         if (isCreate) {
-            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
+            return AuditDetails.builder().createdBy(by).createdTime(time).build();
         } else {
             return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
         }

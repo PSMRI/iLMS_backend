@@ -13,7 +13,6 @@ import org.ilms.web.model.CountRequest;
 import org.ilms.web.model.Document;
 import org.ilms.web.model.Party;
 import org.ilms.web.model.enums.PartyType;
-import org.ilms.web.model.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -45,9 +44,9 @@ public class CaseRepository {
             singleCase.setDocuments(getDocumentList(singleCase.getId()));
             List<Party> partyList = getParty(singleCase.getId());
             for (Party party : partyList) {
-                if (party.getPartyType().equals(PartyType.RESPONDENT.toString()) && party.getStatus() == Status.ACTIVE) {
+                if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                     singleCase.setRespondent(party);
-                } else if (party.getStatus() == Status.ACTIVE) {
+                } else {
                     singleCase.setPetitioner(party);
                 }
             }

@@ -20,6 +20,7 @@ import org.ilms.web.model.CaseRequest;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingRequest;
 import org.ilms.web.model.Party;
+import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
 import org.ilms.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +137,7 @@ public class CaseEnrichmentService {
         } else {
             Act act = new Act();
             act.setId(actItr.next());
+            act.setStatus(Status.DRAFTED);
             caseObj.setAct(act);
         }
         if (Objects.nonNull(caseObj.getPetitioner())) {
@@ -143,6 +145,8 @@ public class CaseEnrichmentService {
         } else {
             Party party = new Party();
             party.setId(petitionerItr.next());
+            party.setStatus(Status.DRAFTED);
+            party.setPartyType(PartyType.PETITIONER.toString());
             caseObj.setPetitioner(party);
         }
         if (Objects.nonNull(caseObj.getRespondent())) {
@@ -150,6 +154,8 @@ public class CaseEnrichmentService {
         } else {
             Party party = new Party();
             party.setId(respondentItr.next());
+            party.setStatus(Status.DRAFTED);
+            party.setPartyType(PartyType.RESPONDENT.toString());
             caseObj.setRespondent(party);
         }
         if (Objects.nonNull(caseObj.getRespondent().getAdvocate())) {
@@ -157,6 +163,8 @@ public class CaseEnrichmentService {
         } else {
             Advocate advocate = new Advocate();
             advocate.setId(radvocateItr.next());
+            advocate.setStatus(Status.DRAFTED);
+            advocate.setPartyType(PartyType.RESPONDENT);
             caseObj.getRespondent().setAdvocate(advocate);
         }
         if (Objects.nonNull(caseObj.getPetitioner().getAdvocate())) {
@@ -164,7 +172,9 @@ public class CaseEnrichmentService {
         } else {
             Advocate advocate = new Advocate();
             advocate.setId(padvocateItr.next());
-            caseObj.getRespondent().setAdvocate(advocate);
+            advocate.setStatus(Status.DRAFTED);
+            advocate.setPartyType(PartyType.PETITIONER);
+            caseObj.getPetitioner().setAdvocate(advocate);
         }
         if (Objects.nonNull(caseObj.getDocuments())) {
             caseObj.getDocuments().forEach((doc -> {
@@ -173,6 +183,10 @@ public class CaseEnrichmentService {
                 doc.setId(docId.get(0));
             }));
         }
+        //        else {
+        //            Document document = new Document();
+        //            document.setStatus(Status.DRAFTED);
+        //        }
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {

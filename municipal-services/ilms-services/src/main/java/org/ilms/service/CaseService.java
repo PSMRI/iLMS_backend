@@ -35,7 +35,6 @@ import org.ilms.web.model.JudgementResponse;
 import org.ilms.web.model.JudgementSearchCriteria;
 import org.ilms.web.model.enums.CaseHierarchy;
 import org.ilms.web.model.enums.CreationReason;
-import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
 import org.ilms.web.model.workflow.ProcessInstanceResponse;
 import org.ilms.web.model.workflow.State;
@@ -174,25 +173,25 @@ public class CaseService {
                 }
             }
         }
-        if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
-            caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
-            caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
-            if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
-                caseRequest.getCaseObj().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
-                caseRequest.getCaseObj().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
-            }
-        }
-        if (Objects.nonNull(caseRequest.getCaseObj().getRespondent())) {
-            caseRequest.getCaseObj().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
-            caseRequest.getCaseObj().getRespondent().setStatus(Status.ACTIVE);
-            if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getAdvocate())) {
-                caseRequest.getCaseObj().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
-                caseRequest.getCaseObj().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
-            }
-        }
-        if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
-            caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
-        }
+        //        if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
+        //            caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
+        //            caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
+        //            if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
+        //                caseRequest.getCaseObj().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
+        //                caseRequest.getCaseObj().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
+        //            }
+        //        }
+        //        if (Objects.nonNull(caseRequest.getCaseObj().getRespondent())) {
+        //            caseRequest.getCaseObj().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
+        //            caseRequest.getCaseObj().getRespondent().setStatus(Status.ACTIVE);
+        //            if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getAdvocate())) {
+        //                caseRequest.getCaseObj().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
+        //                caseRequest.getCaseObj().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
+        //            }
+        //        }
+        //        if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
+        //            caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
+        //        }
         caseRequest.getCaseObj().setStatus(Status.DRAFTED);
 
         caseValidator.validateCreate(caseRequest);

@@ -42,7 +42,6 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
         Map<String, Case> ilmsCaseMap = new LinkedHashMap<String, Case>();
         this.setFullCount(0);
         while (rs.next()) {
-            System.out.println(rs);
             String duplicacyCheck = "";
             Case currentCase = new Case();
             // TODO fill the ILMSCase object with data in the result set record
@@ -108,15 +107,13 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
     @SuppressWarnings ("unused")
     private void addChildrenToProperty(ResultSet rs, Case aCase) throws SQLException {
         // TODO add all the child data petitioner, respondant, act, advocate
-        if (Status.valueOf(rs.getString("actStatus")) == Status.ACTIVE) {
-            AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("act_createdBy")).createdTime(rs.getLong("act_createdTime"))
-                                                    .lastModifiedBy(rs.getString("act_lastModifiedBy"))
-                                                    .lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("act_createdBy")).createdTime(rs.getLong("act_createdTime"))
+                                                .lastModifiedBy(rs.getString("act_lastModifiedBy"))
+                                                .lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
 
-            Act act = Act.builder().id(rs.getString("actId")).actName(rs.getString("actName")).status(Status.valueOf(rs.getString("actStatus")))
-                         .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
-            aCase.setAct(act);
-        }
+        Act act = Act.builder().id(rs.getString("actId")).actName(rs.getString("actName")).status(Status.valueOf(rs.getString("actStatus")))
+                     .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
+        aCase.setAct(act);
     }
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
