@@ -47,7 +47,6 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
         Map<String, Hearing> ilmsHearingMap = new LinkedHashMap<String, Hearing>();
         this.setFullCount(0);
         while (rs.next()) {
-            System.out.println(rs);
             String duplicacyCheck = "";
             Hearing currentHearing = new Hearing();
 
