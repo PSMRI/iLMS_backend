@@ -4,24 +4,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Status {
-    ACTIVE ("ACTIVE"),
+    ACTIVE("ACTIVE"),
+    INACTIVE("INACTIVE"),
+    CANCELLED("CANCELLED"),
+    REJECTED("REJECTED"),
+    DRAFTED("DRAFTED");
 
-    INACTIVE ("INACTIVE"),
-
-    CANCELLED ("CANCELLED"),
-
-    REJECTED ("REJECTED");
-
-    private String value;
+    private final String value;
 
     Status(String value) {
         this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-        return String.valueOf(value);
     }
 
     @JsonCreator
@@ -32,5 +24,11 @@ public enum Status {
             }
         }
         return null;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
     }
 }

@@ -9,6 +9,7 @@ import org.ilms.repository.rowmapper.PartyRowMapper;
 import org.ilms.web.model.Case;
 import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
+import org.ilms.web.model.CountRequest;
 import org.ilms.web.model.Document;
 import org.ilms.web.model.Party;
 import org.ilms.web.model.enums.PartyType;
@@ -75,7 +76,12 @@ public class CaseRepository {
         preparedStmtList.add(parentCaseId);
         String query = caseQueryBuilder.getChildCaseIds(parentCaseId, preparedStmtList);
         List<String> caseIdsList = jdbcTemplate.queryForList(query, preparedStmtList.toArray(), String.class);
-        System.out.println(caseIdsList);
         return caseIdsList;
+    }
+
+    public Integer getCaseCount(CaseSearchCriteria criteria) {
+        CountRequest query = caseQueryBuilder.getTotalCount(criteria);
+        String count = this.jdbcTemplate.queryForObject(query.getQuery(), query.getPreparedStatement().toArray(), String.class);
+        return Integer.parseInt(count);
     }
 }

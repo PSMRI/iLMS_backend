@@ -12,11 +12,14 @@ import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.IdGenRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
+import org.ilms.web.model.Act;
+import org.ilms.web.model.Advocate;
 import org.ilms.web.model.AuditDetails;
 import org.ilms.web.model.Case;
 import org.ilms.web.model.CaseRequest;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingRequest;
+import org.ilms.web.model.Party;
 import org.ilms.web.model.enums.Status;
 import org.ilms.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +109,7 @@ public class CaseEnrichmentService {
     private void setIdgenIds(CaseRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getCaseObj().getTenantId();
-        Case aCase = request.getCaseObj();
+        Case caseObj = request.getCaseObj();
         List<String> caseId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCaseIdgenName(), ilmsConfiguration.getCaseIdgenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();
         List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
@@ -127,14 +130,44 @@ public class CaseEnrichmentService {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        aCase.setId(caseItr.next());
-        aCase.getAct().setId(actItr.next());
-        aCase.getRespondent().getAdvocate().setId(radvocateItr.next());
-        aCase.getPetitioner().getAdvocate().setId(padvocateItr.next());
-        aCase.getPetitioner().setId(petitionerItr.next());
-        aCase.getRespondent().setId(respondentItr.next());
-        if (Objects.nonNull(aCase.getDocuments())) {
-            aCase.getDocuments().forEach((doc -> {
+        caseObj.setId(caseItr.next());
+        if (Objects.nonNull(caseObj.getAct())) {
+            caseObj.getAct().setId(actItr.next());
+        } else {
+            Act act = new Act();
+            act.setId(actItr.next());
+            caseObj.setAct(act);
+        }
+        if (Objects.nonNull(caseObj.getPetitioner())) {
+            caseObj.getPetitioner().setId(petitionerItr.next());
+        } else {
+            Party party = new Party();
+            party.setId(petitionerItr.next());
+            caseObj.setPetitioner(party);
+        }
+        if (Objects.nonNull(caseObj.getRespondent())) {
+            caseObj.getRespondent().setId(respondentItr.next());
+        } else {
+            Party party = new Party();
+            party.setId(respondentItr.next());
+            caseObj.setRespondent(party);
+        }
+        if (Objects.nonNull(caseObj.getRespondent().getAdvocate())) {
+            caseObj.getRespondent().getAdvocate().setId(radvocateItr.next());
+        } else {
+            Advocate advocate = new Advocate();
+            advocate.setId(radvocateItr.next());
+            caseObj.getRespondent().setAdvocate(advocate);
+        }
+        if (Objects.nonNull(caseObj.getPetitioner().getAdvocate())) {
+            caseObj.getPetitioner().getAdvocate().setId(padvocateItr.next());
+        } else {
+            Advocate advocate = new Advocate();
+            advocate.setId(padvocateItr.next());
+            caseObj.getRespondent().setAdvocate(advocate);
+        }
+        if (Objects.nonNull(caseObj.getDocuments())) {
+            caseObj.getDocuments().forEach((doc -> {
                 List<String> docId = getIdList(requestInfo, tenantId, ilmsConfiguration.getDocumentIdgenName(),
                         ilmsConfiguration.getDocumentIdgenFormat(), 1);
                 doc.setId(docId.get(0));
