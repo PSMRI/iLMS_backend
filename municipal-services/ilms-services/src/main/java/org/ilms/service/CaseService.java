@@ -146,20 +146,22 @@ public class CaseService {
     }
 
     public Case create(CaseRequest caseRequest) {
-        if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
-            if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "ParentCaseId must be null to create " + CaseHierarchy.INDEPENDENT + " Case");
-            }
-        } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
-            if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "ParentCaseId must be null to create " + CaseHierarchy.PARENT + " Case");
-            }
-        } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
-            if (StringUtils.isBlank(caseRequest.getCaseObj().getParentCaseId())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                        "ParentCaseId is mandatory to create " + CaseHierarchy.CHILD + " Case");
+        if (Objects.nonNull(caseRequest.getCaseObj().getCaseHierarchy())) {
+            if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
+                if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                            "ParentCaseId must be null to create " + CaseHierarchy.INDEPENDENT + " Case");
+                }
+            } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
+                if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                            "ParentCaseId must be null to create " + CaseHierarchy.PARENT + " Case");
+                }
+            } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
+                if (StringUtils.isBlank(caseRequest.getCaseObj().getParentCaseId())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                            "ParentCaseId is mandatory to create " + CaseHierarchy.CHILD + " Case");
+                }
             }
             List<String> caseIds = new ArrayList<>();
             caseIds.add(caseRequest.getCaseObj().getParentCaseId());
@@ -169,16 +171,27 @@ public class CaseService {
                 throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
             }
         }
-        caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
-        caseRequest.getCaseObj().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
-        caseRequest.getCaseObj().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
-        caseRequest.getCaseObj().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
-        caseRequest.getCaseObj().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
-        caseRequest.getCaseObj().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
-        caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
-        caseRequest.getCaseObj().getRespondent().setStatus(Status.ACTIVE);
-        caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
-        caseRequest.getCaseObj().setStatus(Status.ACTIVE);
+        if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
+            caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
+            caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
+            if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
+                caseRequest.getCaseObj().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
+                caseRequest.getCaseObj().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
+            }
+        }
+        if (Objects.nonNull(caseRequest.getCaseObj().getRespondent())) {
+            caseRequest.getCaseObj().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
+            caseRequest.getCaseObj().getRespondent().setStatus(Status.ACTIVE);
+            if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getAdvocate())) {
+                caseRequest.getCaseObj().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
+                caseRequest.getCaseObj().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
+            }
+        }
+        if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
+            caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
+        }
+        caseRequest.getCaseObj().setStatus(Status.DRAFTED);
+
         caseValidator.validateCreate(caseRequest);
         caseValidator.cnrDuplicacyCheck(caseRequest);
         caseValidator.caseNumberDuplicacyCheck(caseRequest);
