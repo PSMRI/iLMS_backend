@@ -1,10 +1,13 @@
 package org.egov.inbox.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.inbox.repository.querybuilder.CountQueryBuilder;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +22,12 @@ public class ServiceRequestRepository {
 	private ObjectMapper mapper;
 
 	private RestTemplate restTemplate;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	private CountQueryBuilder countQueryBuilder;
 
 	@Autowired
 	public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate) {
@@ -91,6 +100,14 @@ public class ServiceRequestRepository {
 		}
 
 		return response;
+	}
+
+
+	public Integer getCountOfUser(String user){
+		List<Object> preparedStmtList = new ArrayList<>();
+		preparedStmtList.add(user);
+		String count = jdbcTemplate.queryForObject(countQueryBuilder.getCountQuery(), preparedStmtList.toArray() ,String.class);
+		return Integer.parseInt(count);
 	}
 
 }

@@ -20,10 +20,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InboxResponse {
 
-	
+
     @JsonProperty("responseInfo")
     private ResponseInfo responseInfo = null;
 
+    @JsonProperty("DEC")
+    private Integer DEC = null;
+
+    @JsonProperty("RO")
+    private Integer RO = null;
+
+    @JsonProperty("OICA")
+    private Integer OICA = null;
+
+    @JsonProperty("AO")
+    private Integer AO = null;
+
+    @JsonProperty("OIC")
+    private Integer OIC = null;
+
+    @JsonProperty("MO")
+    private Integer MO = null;
  
     @JsonProperty("totalCount")
     private Integer totalCount =null;
@@ -33,5 +50,6 @@ public class InboxResponse {
     
     @JsonProperty("items")
 	private List<Inbox> items = null;
+
 }
 

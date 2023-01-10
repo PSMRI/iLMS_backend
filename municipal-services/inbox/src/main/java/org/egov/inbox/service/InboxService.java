@@ -123,7 +123,6 @@ public class InboxService {
     }
 
     public InboxResponse fetchInboxData(InboxSearchCriteria criteria, RequestInfo requestInfo) {
-
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
         HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
         processCriteria.setTenantId(criteria.getTenantId());
@@ -325,6 +324,7 @@ public class InboxService {
                         requestInfo);
                 List<String> caseIds = ptInboxFilterService.fetchCasesFromSearcher(criteria,
                         StatusIdNameMap, requestInfo);
+
                 if (!CollectionUtils.isEmpty(caseIds)) {
                     moduleSearchCriteria.put(CAES_IDS_PARAM, caseIds);
                     businessKeys.addAll(caseIds);
@@ -634,10 +634,74 @@ public class InboxService {
 			statusCountMap=	aggregateStatusCountMap;
 			//log.info("removeStatusCountMap:: "+ new Gson().toJson(statusCountMap));
 	}
-		log.info("statusCountMap size :::: " + statusCountMap.size());
+        String userRole = requestInfo.getUserInfo().getRoles().get(0).getCode();
+        Integer dec = null;
+        Integer ro = null;
+        Integer oica = null;
+        Integer ao = null;
+        Integer oic = null;
+        Integer mo = null;
+
+        if (userRole.equals("DEC")) {
+            dec = serviceRequestRepository.getCountOfUser("DEC");
+            response.setDEC(dec);
+        }
+        else if (userRole.equals("RO")) {
+            dec = serviceRequestRepository.getCountOfUser("DEC");
+            ro = serviceRequestRepository.getCountOfUser("RO");
+            response.setDEC(dec);
+            response.setRO(ro);
+        }
+        else if (userRole.equals("OICA")) {
+            dec = serviceRequestRepository.getCountOfUser("DEC");
+            ro = serviceRequestRepository.getCountOfUser("RO");
+            oica = serviceRequestRepository.getCountOfUser("OICA");
+            response.setDEC(dec);
+            response.setRO(ro);
+            response.setOICA(oica);
+        }
+        else if (userRole.equals("AO")) {
+            dec = serviceRequestRepository.getCountOfUser("DEC");
+            ro = serviceRequestRepository.getCountOfUser("RO");
+            oica = serviceRequestRepository.getCountOfUser("OICA");
+            ao = serviceRequestRepository.getCountOfUser("AO");
+            response.setDEC(dec);
+            response.setRO(ro);
+            response.setOICA(oica);
+            response.setAO(ao);
+        }
+        else if (userRole.equals("OIC")) {
+            dec = serviceRequestRepository.getCountOfUser("DEC");
+            ro = serviceRequestRepository.getCountOfUser("RO");
+            oica = serviceRequestRepository.getCountOfUser("OICA");
+            ao = serviceRequestRepository.getCountOfUser("AO");
+            oic = serviceRequestRepository.getCountOfUser("OIC");
+            response.setDEC(dec);
+            response.setRO(ro);
+            response.setOICA(oica);
+            response.setAO(ao);
+            response.setOIC(oic);
+        }
+        else if (userRole.equals("MO")) {
+            dec = serviceRequestRepository.getCountOfUser("DEC");
+            ro = serviceRequestRepository.getCountOfUser("RO");
+            oica = serviceRequestRepository.getCountOfUser("OICA");
+            ao = serviceRequestRepository.getCountOfUser("AO");
+            oic = serviceRequestRepository.getCountOfUser("OIC");
+            mo = serviceRequestRepository.getCountOfUser("MO");
+            response.setDEC(dec);
+            response.setRO(ro);
+            response.setOICA(oica);
+            response.setAO(ao);
+            response.setOIC(oic);
+            response.setMO(mo);
+        }
+
+        log.info("statusCountMap size :::: " + statusCountMap.size());
         response.setTotalCount(totalCount);
         response.setStatusMap(statusCountMap);
         response.setItems(inboxes);
+
         return response;
     }
 
