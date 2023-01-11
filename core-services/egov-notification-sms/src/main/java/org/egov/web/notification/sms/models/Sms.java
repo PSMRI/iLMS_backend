@@ -4,7 +4,6 @@ import lombok.*;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Getter
 @AllArgsConstructor

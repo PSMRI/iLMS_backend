@@ -38,7 +38,7 @@ public class EgovNotificationSmsApplication {
     }
 
     @PostConstruct
-    private void init() {
+    public void init() {
         if (StringUtils.isEmpty(environment.getProperty("sms.provider.class"))) {
             log.error("The provider gateway has not been configured. Please configure sms.provider.class");
             int exitCode = SpringApplication.exit(context, (ExitCodeGenerator) () -> 1);

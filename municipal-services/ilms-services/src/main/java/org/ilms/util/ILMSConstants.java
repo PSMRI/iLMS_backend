@@ -76,7 +76,7 @@ public class ILMSConstants {
 
     public static final String PT_BUSINESSSERVICE = "iLMS-services";
 
-    public static final String ACTION_FOR_ASSESSMENT =  "Create";
+    public static final String ACTION_FOR_ASSESSMENT =  "CREATE";
 
     public static final String NOTIFICATION_CASEID = "{id}";
 

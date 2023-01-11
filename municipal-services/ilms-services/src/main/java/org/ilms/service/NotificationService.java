@@ -1,12 +1,10 @@
 package org.ilms.service;
 
-import static org.ilms.util.ILMSConstants.ACTION_FOR_ASSESSMENT;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_EMAIL;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_EVENT;
 import static org.ilms.util.ILMSConstants.CHANNEL_NAME_SMS;
 import static org.ilms.util.ILMSConstants.CREATE_STRING;
 import static org.ilms.util.ILMSConstants.NOTIFICATION_CASEID;
-import static org.ilms.util.ILMSConstants.PT_BUSINESSSERVICE;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,6 +53,8 @@ public class NotificationService {
 
         RequestInfo requestInfo = caseRequest.getRequestInfo();
         Case cases = caseRequest.getCaseObj();
+        String moduleName=cases.getWorkflow().getModuleName();
+        String action=cases.getWorkflow().getAction();
         String tenantId;
         if (cases.getTenantId()!=null){
             tenantId = cases.getTenantId();
@@ -65,8 +65,8 @@ public class NotificationService {
             tenantId = caseResponse.getCaseList().get(0).getTenantId();
         }
 
-        List<String> configuredChannelNamesForCase = notificationUtil.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE,
-                ACTION_FOR_ASSESSMENT);
+        List<String> configuredChannelNamesForCase = notificationUtil.fetchChannelList(new RequestInfo(), tenantId, moduleName,
+                action);
 
         List<SMSRequest> smsRequests = enrichSMSRequest(topicName, caseRequest, cases,tenantId);
         if (configuredChannelNamesForCase.contains(CHANNEL_NAME_SMS)) {
@@ -102,12 +102,7 @@ public class NotificationService {
         String msgCode = null, messageTemplate = null;
         String action;
         action = cases.getWorkflow().getAction();
-
-            if (topicName.equalsIgnoreCase(ilmsConfiguration.getCreateCaseTopic()))
-                msgCode = CREATE_STRING;
-
-            else
-                msgCode = action;
+         msgCode = action;
 
             messageTemplate = customize(cases, msgCode, localizationMessages);
 
