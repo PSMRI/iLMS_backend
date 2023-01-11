@@ -1,12 +1,6 @@
 package org.ilms.validator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.ilms.repository.CaseRepository;
@@ -20,7 +14,8 @@ import org.ilms.web.model.HearingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
 
 @Component
 @Slf4j
@@ -32,21 +27,22 @@ public class HearingValidator {
     private CaseRepository caseRepository;
 
     private static Map<String, String> validateCodes(Hearing hearing, Map<String, List<String>> codes, Map<String, String> errorMap) {
-
-        if (hearing.getCourt().getCourtName() != null && !codes.get(ILMSConstants.MDMS_ILMS_COURT_NAME).contains(hearing.getCourt().getCourtName())) {
-            errorMap.put("Invalid CourtName", "The CourtName '" + hearing.getCourt().getCourtName() + "' does not exists");
-        }
-        if (hearing.getCourt().getDistrict() != null && !codes.get(ILMSConstants.MDMS_ILMS_DISTRICT).contains(hearing.getCourt().getDistrict())) {
-            errorMap.put("Invalid District", "The District '" + hearing.getCourt().getDistrict() + "' does not exists");
-        }
-        if (hearing.getCourt().getState() != null && !codes.get(ILMSConstants.MDMS_ILMS_STATE).contains(hearing.getCourt().getState())) {
-            errorMap.put("Invalid State", "The State '" + hearing.getCourt().getState() + "' does not exists");
-        }
-        if (hearing.getCourt().getBench() != null && !codes.get(ILMSConstants.MDMS_ILMS_BENCH).contains(hearing.getCourt().getBench())) {
-            errorMap.put("Invalid Bench", "The Bench '" + hearing.getCourt().getBench() + "' does not exists");
-        }
-        if (hearing.getCourt().getDivision() != null && !codes.get(ILMSConstants.MDMS_ILMS_DIVISION).contains(hearing.getCourt().getDivision())) {
-            errorMap.put("Invalid Division", "The Division '" + hearing.getCourt().getDivision() + "' does not exists");
+        if (Objects.nonNull(hearing.getCourt())) {
+            if (Objects.nonNull(hearing.getCourt().getCourtName()) && !codes.get(ILMSConstants.MDMS_ILMS_COURT_NAME).contains(hearing.getCourt().getCourtName())) {
+                errorMap.put("Invalid CourtName", "The CourtName '" + hearing.getCourt().getCourtName() + "' does not exists");
+            }
+            if (Objects.nonNull(hearing.getCourt().getDistrict()) && !codes.get(ILMSConstants.MDMS_ILMS_DISTRICT).contains(hearing.getCourt().getDistrict())) {
+                errorMap.put("Invalid District", "The District '" + hearing.getCourt().getDistrict() + "' does not exists");
+            }
+            if (Objects.nonNull(hearing.getCourt().getState()) && !codes.get(ILMSConstants.MDMS_ILMS_STATE).contains(hearing.getCourt().getState())) {
+                errorMap.put("Invalid State", "The State '" + hearing.getCourt().getState() + "' does not exists");
+            }
+            if (Objects.nonNull(hearing.getCourt().getBench()) && !codes.get(ILMSConstants.MDMS_ILMS_BENCH).contains(hearing.getCourt().getBench())) {
+                errorMap.put("Invalid Bench", "The Bench '" + hearing.getCourt().getBench() + "' does not exists");
+            }
+            if (Objects.nonNull(hearing.getCourt().getDivision()) && !codes.get(ILMSConstants.MDMS_ILMS_DIVISION).contains(hearing.getCourt().getDivision())) {
+                errorMap.put("Invalid Division", "The Division '" + hearing.getCourt().getDivision() + "' does not exists");
+            }
         }
 
         return errorMap;
@@ -57,119 +53,16 @@ public class HearingValidator {
         if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCaseId())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "CaseId is mandatory");
         }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getJudgeName())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "judgeName is mandatory");
-        }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getHearingDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "hearingDate is mandatory");
-        }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getBusinessDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "businessDate is mandatory");
-        }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getHearingPurpose())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "hearingPurpose is mandatory");
-        }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getRequiredOfficer())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "requiredOfficer is mandatory");
-        }
-        if (Objects.nonNull(hearingRequest.getHearing().getAffidavitFilingDate())) {
-            if (StringUtils.isNotBlank(hearingRequest.getHearing().getAffidavitFilingDate().toString())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDate is not allowed while creating hearing ");
-            }
-        }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getAffidavitFilingDueDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "affidavitFilingDueDate is mandatory");
-        }
+
         if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCaseNumber())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "CaseNumber is mandatory");
         }
-        if (StringUtils.isNotBlank(hearingRequest.getHearing().getOathNumber())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "OathNumber is not allowed while creating hearing");
-        }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getNextHearingDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "nextHearingDate is mandatory");
-        }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getFirstHearingDate().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "FirstHearingDate is mandatory");
-        }
 
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getIsPresenceRequired().toString())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "isPresenceRequired is mandatory");
-        }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getHearingType())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "hearingType is mandatory");
-        }
-        if (!StringUtils.isNotBlank(hearingRequest.getHearing().getDepartmentOfficer())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "departmentOfficer is mandatory");
-        }
-        //checking respondent details
-        if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
-            //Setting Data For Respondent Advocate
-            if (Objects.nonNull(hearingRequest.getHearing().getRespondent().getAdvocate())) {
-                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getRespondent().getAdvocate().getFirstName())) {
-                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "firstName for Advocate in Respondent is mandatory");
-                }
-                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getRespondent().getAdvocate().getLastName())) {
-                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "lastName for Advocate in Respondent is mandatory");
-                }
-                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getRespondent().getAdvocate().getContactNumber())) {
-                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "contactNumber for Advocate in Respondent is mandatory");
-                }
-            } else {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Advocate in Respondent is mandatory");
-            }
-        } else {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Respondent is mandatory");
-        }
-        //checking petitioner details
-        if (Objects.nonNull(hearingRequest.getHearing().getPetitioner())) {
-            //Setting Data For Petitioner Advocate
-            if (Objects.nonNull(hearingRequest.getHearing().getPetitioner().getAdvocate())) {
-                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPetitioner().getAdvocate().getFirstName())) {
-                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "firstName for Advocate in Petitioner is mandatory");
-                }
-                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPetitioner().getAdvocate().getLastName())) {
-                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "lastName for Advocate in Petitioner is mandatory");
-                }
-                if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPetitioner().getAdvocate().getContactNumber())) {
-                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "contactNumber for Advocate in Petitioner is mandatory");
-                }
-            } else {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Advocate in Petitioner is mandatory");
-            }
-        } else {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Petitioner is mandatory");
-        }
         if (Objects.nonNull(hearingRequest.getHearing().getCourt())) {
-            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getCourtName())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "courtName is mandatory");
-            }
-            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getCourtNumber())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "courtNumber is mandatory");
-            }
-            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getDistrict())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "District for Court is mandatory");
-            }
+
             if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getState())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "state for court is mandatory");
             }
-            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getDivision())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "division for court is mandatory");
-            }
-        }
-        //checking payment request
-        if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
-            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPayment().getFineImposedDate().toString())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "FineImposedDate is mandatory");
-            }
-            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPayment().getFineDueDate().toString())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fineDueDate is mandatory");
-            }
-            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getPayment().getFineAmount())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fineAmount is mandatory");
-            }
-        } else {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Payment is mandatory");
         }
 
         Map<String, String> errorMap = new HashMap<>();

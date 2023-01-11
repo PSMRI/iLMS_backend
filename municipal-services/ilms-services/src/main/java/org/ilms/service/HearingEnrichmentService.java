@@ -1,11 +1,6 @@
 package org.ilms.service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
@@ -13,16 +8,14 @@ import org.ilms.repository.CaseRepository;
 import org.ilms.repository.IdGenRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
-import org.ilms.web.model.AuditDetails;
-import org.ilms.web.model.CaseResponse;
-import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.Hearing;
-import org.ilms.web.model.HearingRequest;
+import org.ilms.web.model.*;
 import org.ilms.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -47,28 +40,31 @@ public class HearingEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(hearingRequest.getRequestInfo().getUserInfo().getUserName(), true);
         hearingRequest.getHearing().setAuditDetails(auditDetails);
         hearing.setAuditDetails(auditDetails);
-        if (hearingRequest.getHearing().getCourt() != null) {
+        if (Objects.nonNull(hearingRequest.getHearing().getCourt())) {
             hearingRequest.getHearing().getCourt().setAuditDetails(auditDetails);
             hearing.getCourt().setAuditDetails(auditDetails);
         }
-        if (hearingRequest.getHearing().getRespondent() != null) {
-
+        if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
             hearingRequest.getHearing().getRespondent().setAuditDetails(auditDetails);
             hearing.getRespondent().setAuditDetails(auditDetails);
         }
-        if (hearingRequest.getHearing().getRespondent().getAdvocate() != null) {
-            hearingRequest.getHearing().getRespondent().getAdvocate().setAuditDetails(auditDetails);
-            hearing.getRespondent().getAdvocate().setAuditDetails(auditDetails);
+        if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
+            if (Objects.nonNull(hearingRequest.getHearing().getRespondent().getAdvocate())) {
+                hearingRequest.getHearing().getRespondent().getAdvocate().setAuditDetails(auditDetails);
+                hearing.getRespondent().getAdvocate().setAuditDetails(auditDetails);
+            }
         }
-        if (hearingRequest.getHearing().getPetitioner() != null) {
+        if (Objects.nonNull(hearingRequest.getHearing().getPetitioner())) {
             hearingRequest.getHearing().getPetitioner().setAuditDetails(auditDetails);
             hearing.getPetitioner().setAuditDetails(auditDetails);
         }
-        if (hearingRequest.getHearing().getPetitioner().getAdvocate() != null) {
-            hearingRequest.getHearing().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-            hearing.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+        if (Objects.nonNull(hearingRequest.getHearing().getPetitioner())) {
+            if (Objects.nonNull(hearingRequest.getHearing().getPetitioner().getAdvocate())) {
+                hearingRequest.getHearing().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+                hearing.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+            }
         }
-        if (hearingRequest.getHearing().getPayment() != null) {
+        if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
             hearingRequest.getHearing().getPayment().setAuditDetails(auditDetails);
             hearing.getPayment().setAuditDetails(auditDetails);
         }
@@ -103,10 +99,42 @@ public class HearingEnrichmentService {
         }
 
         hearing.setId(itr.next());
-        hearing.getCourt().setId(courtItr.next());
-        hearing.getRespondent().getAdvocate().setId(radvocateItr.next());
-        hearing.getPetitioner().getAdvocate().setId(padvocateItr.next());
-        hearing.getPayment().setId(paymentItr.next());
+        if (Objects.nonNull(hearing.getCourt())) {
+            hearing.getCourt().setId(courtItr.next());
+        } else {
+            Court court = new Court();
+            court.setId(courtItr.next());
+            hearing.setCourt(court);
+        }
+        if (Objects.nonNull(hearing.getRespondent())) {
+            if (Objects.nonNull(hearing.getRespondent().getAdvocate())) {
+                hearing.getRespondent().getAdvocate().setId(radvocateItr.next());
+            }
+        } else {
+            Party party = new Party();
+            Advocate advocate = new Advocate();
+            advocate.setId(radvocateItr.next());
+            party.setAdvocate(advocate);
+            hearing.setRespondent(party);
+        }
+        if (Objects.nonNull(hearing.getPetitioner())) {
+            if (Objects.nonNull(hearing.getPetitioner().getAdvocate())) {
+                hearing.getPetitioner().getAdvocate().setId(padvocateItr.next());
+            }
+        } else {
+            Party party = new Party();
+            Advocate advocate = new Advocate();
+            advocate.setId(padvocateItr.next());
+            party.setAdvocate(advocate);
+            hearing.setPetitioner(party);
+        }
+        if (Objects.nonNull(hearing.getPayment())) {
+            hearing.getPayment().setId(paymentItr.next());
+        } else {
+            Payment payment = new Payment();
+            payment.setId(paymentItr.next());
+            hearing.setPayment(payment);
+        }
 
     }
 
