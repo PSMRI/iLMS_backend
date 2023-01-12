@@ -1,13 +1,9 @@
 package org.ilms.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -19,20 +15,7 @@ import org.ilms.repository.JudgementRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.validator.CaseValidator;
-import org.ilms.web.model.Case;
-import org.ilms.web.model.CaseDetailsResponse;
-import org.ilms.web.model.CaseIds;
-import org.ilms.web.model.CaseRequest;
-import org.ilms.web.model.CaseResponse;
-import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.ChildCase;
-import org.ilms.web.model.ChildCaseRequest;
-import org.ilms.web.model.Hearing;
-import org.ilms.web.model.HearingResponse;
-import org.ilms.web.model.HearingSearchCriteria;
-import org.ilms.web.model.Judgement;
-import org.ilms.web.model.JudgementResponse;
-import org.ilms.web.model.JudgementSearchCriteria;
+import org.ilms.web.model.*;
 import org.ilms.web.model.enums.CaseHierarchy;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.PartyType;
@@ -41,19 +24,15 @@ import org.ilms.web.model.workflow.ProcessInstanceResponse;
 import org.ilms.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CaseService {
@@ -119,8 +98,8 @@ public class CaseService {
         JudgementResponse judgementResponse = null;
         caseResponse = caseRepository.getILMSCaseData(criteria);
         HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
-                                                                     .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
-                                                                     .build();
+                .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
+                .build();
         hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
         JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
                 caseResponse.getCaseList().get(0).getId())).build();
@@ -174,26 +153,45 @@ public class CaseService {
                 }
             }
         }
-                if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
-                    caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
-                    caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
-                    if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
-                        caseRequest.getCaseObj().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
-                        caseRequest.getCaseObj().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
-                    }
-                }
-                if (Objects.nonNull(caseRequest.getCaseObj().getRespondent())) {
-                    caseRequest.getCaseObj().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
-                    caseRequest.getCaseObj().getRespondent().setStatus(Status.ACTIVE);
-                    if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getAdvocate())) {
-                        caseRequest.getCaseObj().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
-                        caseRequest.getCaseObj().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
-                    }
-                }
-                if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
-                    caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
-                }
-        caseRequest.getCaseObj().setStatus(Status.DRAFTED);
+        if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
+            caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
+            caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
+            if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
+                caseRequest.getCaseObj().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
+                caseRequest.getCaseObj().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
+            }
+        }
+        if (Objects.nonNull(caseRequest.getCaseObj().getRespondent())) {
+            caseRequest.getCaseObj().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
+            caseRequest.getCaseObj().getRespondent().setStatus(Status.ACTIVE);
+            if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getAdvocate())) {
+                caseRequest.getCaseObj().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
+                caseRequest.getCaseObj().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
+            }
+        }
+        if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
+            caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
+        }
+        if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
+            caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
+            caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
+            if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
+                caseRequest.getCaseObj().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
+                caseRequest.getCaseObj().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
+            }
+        }
+        if (Objects.nonNull(caseRequest.getCaseObj().getRespondent())) {
+            caseRequest.getCaseObj().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
+            caseRequest.getCaseObj().getRespondent().setStatus(Status.ACTIVE);
+            if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getAdvocate())) {
+                caseRequest.getCaseObj().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
+                caseRequest.getCaseObj().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
+            }
+        }
+        if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
+            caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
+        }
+        caseRequest.getCaseObj().setStatus(Status.ACTIVE);
 
         caseValidator.validateCreate(caseRequest);
         caseValidator.cnrDuplicacyCheck(caseRequest);
@@ -260,8 +258,8 @@ public class CaseService {
     private void processCaseUpdate(CaseRequest request, Case cases) {
         if (ilmsConfiguration.getIsWorkflowEnabled()) {
             State state = workflowService.updateWorkflow(request, CreationReason.UPDATE);
-            if (state.getIsStartState() == true && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !cases.getStatus()
-                                                                                                                                    .equals(Status.ACTIVE)) {
+            if (state.getIsStartState() && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !cases.getStatus()
+                    .equals(Status.ACTIVE)) {
             }
         }
     }
@@ -1581,7 +1579,7 @@ public class CaseService {
                 if (StringUtils.isBlank(childCaseRequest.getChildCase().getParentCaseId())) {
                     throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                             "ParentCaseId is mandatory to create Independent child case [ " + childCaseRequest.getChildCase()
-                                                                                                              .getParentCaseId() + " ]");
+                                    .getParentCaseId() + " ]");
                 }
                 List<String> caseIds = caseRepository.getCaseIdsByParentCaseId(childCaseRequest.getChildCase().getParentCaseId());
                 List<CaseIds> caseIdsList = new ArrayList<>();

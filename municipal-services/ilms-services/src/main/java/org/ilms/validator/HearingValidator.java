@@ -58,13 +58,6 @@ public class HearingValidator {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "CaseNumber is mandatory");
         }
 
-        if (Objects.nonNull(hearingRequest.getHearing().getCourt())) {
-
-            if (!StringUtils.isNotBlank(hearingRequest.getHearing().getCourt().getState())) {
-                throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "state for court is mandatory");
-            }
-        }
-
         Map<String, String> errorMap = new HashMap<>();
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);

@@ -1,7 +1,6 @@
 package org.ilms.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.ilms.repository.querybuilder.CaseQueryBuilder;
 import org.ilms.repository.querybuilder.HearingQueryBuilder;
 import org.ilms.repository.rowmapper.HearingRowMapper;
@@ -11,12 +10,13 @@ import org.ilms.web.model.HearingResponse;
 import org.ilms.web.model.HearingSearchCriteria;
 import org.ilms.web.model.Party;
 import org.ilms.web.model.enums.PartyType;
-import org.ilms.web.model.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 @Slf4j
@@ -46,15 +46,15 @@ public class HearingRepository {
         for (Hearing singleHearing : hearingDetails) {
             List<Party> partyList = getHearing(singleHearing.getCaseId());
             for (Party party : partyList) {
-                if (party.getPartyType().equals(PartyType.RESPONDENT.toString()) && party.getStatus() == Status.ACTIVE) {
+                if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                     singleHearing.setRespondent(party);
-                } else if (party.getStatus() == Status.ACTIVE) {
+                } else {
                     singleHearing.setPetitioner(party);
                 }
             }
         }
         HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount())
-                                                         .build();
+                .build();
         return hearingResponse;
     }
 

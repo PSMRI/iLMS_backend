@@ -5,10 +5,13 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.CaseRepository;
+import org.ilms.repository.HearingRepository;
 import org.ilms.repository.IdGenRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.web.model.*;
+import org.ilms.web.model.enums.PartyType;
+import org.ilms.web.model.enums.Status;
 import org.ilms.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,8 @@ public class HearingEnrichmentService {
 
     @Autowired
     private CaseRepository caseRepository;
+    @Autowired
+    private HearingRepository hearingDetailsRepository;
 
     public void enrichHearingCreateRequest(HearingRequest hearingRequest) {
 
@@ -71,6 +76,8 @@ public class HearingEnrichmentService {
     }
 
     private void setIdgenIds(HearingRequest request) {
+        String petitionerId = null;
+        String respondentId = null;
         RequestInfo requestInfo = request.getRequestInfo();
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(request.getHearing().getCaseId())).build();
         CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
@@ -97,12 +104,21 @@ public class HearingEnrichmentService {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
+        List<Party> partyList = hearingDetailsRepository.getGetFromPartyQuery(request.getHearing().getCaseId());
+        for (Party party : partyList) {
+            if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
+                respondentId = party.getId();
+            } else {
+                petitionerId = party.getId();
+            }
+        }
 
         hearing.setId(itr.next());
         if (Objects.nonNull(hearing.getCourt())) {
             hearing.getCourt().setId(courtItr.next());
         } else {
             Court court = new Court();
+            court.setStatus(Status.ACTIVE);
             court.setId(courtItr.next());
             hearing.setCourt(court);
         }
@@ -114,6 +130,9 @@ public class HearingEnrichmentService {
             Party party = new Party();
             Advocate advocate = new Advocate();
             advocate.setId(radvocateItr.next());
+            advocate.setStatus(Status.ACTIVE);
+            advocate.setPartyType(PartyType.RESPONDENT);
+            advocate.setPartyId(respondentId);
             party.setAdvocate(advocate);
             hearing.setRespondent(party);
         }
@@ -125,6 +144,9 @@ public class HearingEnrichmentService {
             Party party = new Party();
             Advocate advocate = new Advocate();
             advocate.setId(padvocateItr.next());
+            advocate.setStatus(Status.ACTIVE);
+            advocate.setPartyType(PartyType.PETITIONER);
+            advocate.setPartyId(petitionerId);
             party.setAdvocate(advocate);
             hearing.setPetitioner(party);
         }
@@ -133,6 +155,7 @@ public class HearingEnrichmentService {
         } else {
             Payment payment = new Payment();
             payment.setId(paymentItr.next());
+            payment.setStatus(Status.ACTIVE);
             hearing.setPayment(payment);
         }
 

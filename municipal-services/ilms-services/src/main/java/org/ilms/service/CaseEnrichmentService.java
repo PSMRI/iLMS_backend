@@ -1,32 +1,22 @@
 package org.ilms.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.IdGenRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
-import org.ilms.web.model.Act;
-import org.ilms.web.model.Advocate;
-import org.ilms.web.model.AuditDetails;
-import org.ilms.web.model.Case;
-import org.ilms.web.model.CaseRequest;
-import org.ilms.web.model.Hearing;
-import org.ilms.web.model.HearingRequest;
-import org.ilms.web.model.Party;
+import org.ilms.web.model.*;
 import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
 import org.ilms.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -88,19 +78,21 @@ public class CaseEnrichmentService {
         if (request.getHearing().getRespondent() != null) {
             request.getHearing().getRespondent().setAuditDetails(auditDetails);
             ilmsCase.getRespondent().setAuditDetails(auditDetails);
+            if (request.getHearing().getRespondent().getAdvocate() != null) {
+                request.getHearing().getRespondent().getAdvocate().setAuditDetails(auditDetails);
+                ilmsCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
+            }
         }
-        if (request.getHearing().getRespondent().getAdvocate() != null) {
-            request.getHearing().getRespondent().getAdvocate().setAuditDetails(auditDetails);
-            ilmsCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
-        }
+
         if (request.getHearing().getPetitioner() != null) {
             request.getHearing().getPetitioner().setAuditDetails(auditDetails);
             ilmsCase.getPetitioner().setAuditDetails(auditDetails);
+            if (request.getHearing().getPetitioner().getAdvocate() != null) {
+                request.getHearing().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+                ilmsCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+            }
         }
-        if (request.getHearing().getPetitioner().getAdvocate() != null) {
-            request.getHearing().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-            ilmsCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-        }
+
         if (request.getHearing().getPayment() != null) {
             request.getHearing().getPayment().setAuditDetails(auditDetails);
             ilmsCase.getPayment().setAuditDetails(auditDetails);
