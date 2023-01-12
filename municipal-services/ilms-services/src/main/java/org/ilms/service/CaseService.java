@@ -20,7 +20,6 @@ import org.ilms.web.model.enums.CaseHierarchy;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
-import org.ilms.web.model.workflow.ProcessInstanceResponse;
 import org.ilms.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,8 +74,6 @@ public class CaseService {
         caseResponse = caseRepository.getILMSCaseData(criteria);
         if (!caseResponse.getCaseList().isEmpty()) {
             caseResponse.getCaseList().forEach(caseObj -> {
-                ProcessInstanceResponse processInstanceResponse = workflowService.getWorkflow(requestInfo, caseObj.getTenantId(), caseObj.getId());
-                caseObj.setWorkflow(processInstanceResponse.getProcessInstances().get(0));
                 caseList.add(caseObj);
             });
         } else {
