@@ -197,9 +197,11 @@ public class CaseService {
         caseValidator.cnrDuplicacyCheck(caseRequest);
         caseValidator.caseNumberDuplicacyCheck(caseRequest);
         caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
-        if (ilmsConfiguration.getIsWorkflowEnabled()) {
-            workflowService.updateWorkflow(caseRequest, CreationReason.CREATE);
-            notificationService.process(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
+        if (Objects.nonNull(caseRequest.getCaseObj().getAssignedOfficerId())) {
+            if (ilmsConfiguration.getIsWorkflowEnabled()) {
+                workflowService.updateWorkflow(caseRequest, CreationReason.CREATE);
+                notificationService.process(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
+            }
         }
         producer.push(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
         return caseRequest.getCaseObj();
