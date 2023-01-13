@@ -20,6 +20,7 @@ import org.ilms.web.model.enums.CaseHierarchy;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
+import org.ilms.web.model.workflow.ProcessInstanceSearchCriteria;
 import org.ilms.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class CaseService {
@@ -68,9 +67,10 @@ public class CaseService {
     public CaseService() {
     }
 
-    public CaseResponse ilmsCaseSearch(CaseSearchCriteria criteria, RequestInfo requestInfo) {
+    public CaseResponse ilmsCaseSearch(CaseSearchCriteria criteria, RequestInfo requestInfo, ProcessInstanceSearchCriteria processInstanceSearchCriteria) {
         List<Case> caseList = new ArrayList<>();
         CaseResponse caseResponse = null;
+        List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
         caseResponse = caseRepository.getILMSCaseData(criteria);
         if (!caseResponse.getCaseList().isEmpty()) {
             caseResponse.getCaseList().forEach(caseObj -> {
@@ -80,8 +80,57 @@ public class CaseService {
             throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
         }
         CaseResponse finalResult = new CaseResponse();
+        String userRole = requestInfo.getUserInfo().getRoles().get(0).getCode();
+        Integer dec = null;
+        Integer ro = null;
+        Integer oica = null;
+        Integer ao = null;
+        Integer oic = null;
+        Integer mo = null;
+
+        if (userRole.equals("DEC")) {
+            dec = caseRepository.getCountOfUser("DEC");
+            finalResult.setDEC(dec);
+        }
+        else if (userRole.equals("RO")) {
+            dec = caseRepository.getCountOfUser("DEC");
+            ro = caseRepository.getCountOfUser("RO");
+            finalResult.setDEC(dec);
+            finalResult.setRO(ro);
+        }
+        else if (userRole.equals("OICA")) {
+            dec = caseRepository.getCountOfUser("DEC");
+            ro = caseRepository.getCountOfUser("RO");
+            oica = caseRepository.getCountOfUser("OICA");
+            finalResult.setDEC(dec);
+            finalResult.setRO(ro);
+            finalResult.setOICA(oica);
+        }
+        else if (userRole.equals("AO")) {
+            dec = caseRepository.getCountOfUser("DEC");
+            ro = caseRepository.getCountOfUser("RO");
+            oica = caseRepository.getCountOfUser("OICA");
+            ao = caseRepository.getCountOfUser("AO");
+            finalResult.setDEC(dec);
+            finalResult.setRO(ro);
+            finalResult.setOICA(oica);
+            finalResult.setAO(ao);
+        }
+        else if (userRole.equals("OIC")) {
+            dec = caseRepository.getCountOfUser("DEC");
+            ro = caseRepository.getCountOfUser("RO");
+            oica = caseRepository.getCountOfUser("OICA");
+            ao = caseRepository.getCountOfUser("AO");
+            oic = caseRepository.getCountOfUser("OIC");
+            finalResult.setDEC(dec);
+            finalResult.setRO(ro);
+            finalResult.setOICA(oica);
+            finalResult.setAO(ao);
+            finalResult.setOIC(oic);
+        }
         finalResult.setTotalCount(caseResponse.getTotalCount());
         finalResult.setCaseList(caseList);
+        finalResult.setStatusMap(statusCountMap);
         return finalResult;
     }
 

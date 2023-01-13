@@ -1,33 +1,32 @@
 package org.ilms.service;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.ServiceRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.CommonUtils;
+import org.ilms.util.ILMSConstants;
 import org.ilms.web.model.Case;
 import org.ilms.web.model.CaseRequest;
 import org.ilms.web.model.RequestInfoWrapper;
 import org.ilms.web.model.enums.CreationReason;
-import org.ilms.web.model.workflow.BusinessService;
-import org.ilms.web.model.workflow.BusinessServiceResponse;
-import org.ilms.web.model.workflow.ProcessInstanceRequest;
-import org.ilms.web.model.workflow.ProcessInstanceResponse;
-import org.ilms.web.model.workflow.State;
+import org.ilms.web.model.workflow.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 @Service
 public class WorkflowService {
     @Autowired
     private ILMSConfiguration ilmsConfiguration;
-
-    @Autowired
-    private ServiceRepository restRepo;
 
     @Autowired
     private ObjectMapper mapper;
@@ -68,7 +67,7 @@ public class WorkflowService {
 
         StringBuilder url = getSearchURLWithParams(tenantId, businessService);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-        Optional<Object> result = restRepo.fetchResult(url, requestInfoWrapper);
+        Optional<Object> result = serviceRepository.fetchResult(url, requestInfoWrapper);
         BusinessServiceResponse response = null;
         try {
             response = mapper.convertValue(result.get(), BusinessServiceResponse.class);
@@ -163,7 +162,7 @@ public class WorkflowService {
 
         StringBuilder url = getWorkflowSearchURLWithParams(tenantId, businessId);
 
-        Optional<Object> res = restRepo.fetchResult(url, requestInfoWrapper);
+        Optional<Object> res = serviceRepository.fetchResult(url, requestInfoWrapper);
         ProcessInstanceResponse response = null;
 
         try {
@@ -178,5 +177,71 @@ public class WorkflowService {
 
         return null;
     }
+
+    public List<HashMap<String, Object>> getProcessStatusCount(RequestInfo requestInfo,
+                                                               ProcessInstanceSearchCriteria criteria) {
+        List<String> listOfBusinessServices = new ArrayList<>(criteria.getBusinessService());
+        List<HashMap<String, Object>> finalResponse = null;
+        for (String businessSrv : listOfBusinessServices) {
+            criteria.setBusinessService(Collections.singletonList(businessSrv));
+            StringBuilder url = new StringBuilder(ilmsConfiguration.getWfHost());
+            url.append(ilmsConfiguration.getProcessStatusCountPath());
+            criteria.setIsProcessCountCall(true);
+            // For BPA having large request, so that it was sending from the body
+            List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+            if (!ObjectUtils.isEmpty(criteria.getModuleName()))
+                url = this.buildWorkflowUrl(criteria, url, Boolean.FALSE);
+            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+            if (finalResponse == null) {
+                finalResponse = (List<HashMap<String, Object>>) serviceRepository.fetchListResult(url,
+                        requestInfoWrapper);
+            }
+        }
+        criteria.setBusinessService(listOfBusinessServices);
+        return finalResponse;
+    }
+
+    private StringBuilder buildWorkflowUrl(ProcessInstanceSearchCriteria criteria, StringBuilder url, boolean noStatus) {
+        url.append("?tenantId=").append(criteria.getTenantId());
+        if(!CollectionUtils.isEmpty(criteria.getStatus()) && noStatus == Boolean.FALSE) {
+            url.append("&status=").append(StringUtils.arrayToDelimitedString(criteria.getStatus().toArray(),","));
+        }
+
+        if(!CollectionUtils.isEmpty(criteria.getBusinessIds())) {
+            url.append("&businessIds=").append(StringUtils.arrayToDelimitedString(criteria.getBusinessIds().toArray(),","));
+        }
+
+        if(!CollectionUtils.isEmpty(criteria.getIds())) {
+            url.append("&ids=").append(StringUtils.arrayToDelimitedString(criteria.getIds().toArray(),","));
+        }
+        if(!StringUtils.isEmpty(criteria.getAssignee())) {
+            url.append("&assignee=").append( criteria.getAssignee());
+        }
+        if(criteria.getHistory() != null) {
+            url.append("&history=").append( criteria.getHistory());
+        }
+        if(criteria.getFromDate() != null) {
+            url.append("&fromDate=").append( criteria.getFromDate());
+        }
+        if(criteria.getToDate() != null) {
+            url.append("&toDate=").append( criteria.getToDate());
+        }
+
+        if(!StringUtils.isEmpty(criteria.getModuleName())) {
+            url.append("&moduleName=").append( criteria.getModuleName());
+        }
+        if(criteria.getIsProcessCountCall() || ObjectUtils.isEmpty(criteria.getModuleName()) && !StringUtils.isEmpty(criteria.getBusinessService())) {
+            url.append("&businessService=").append( StringUtils.arrayToDelimitedString(criteria.getBusinessService().toArray(),","));
+        }
+        if(!StringUtils.isEmpty(criteria.getLimit())) {
+            url.append("&limit=").append( criteria.getLimit());
+        }
+        if(!StringUtils.isEmpty(criteria.getOffset())) {
+            url.append("&offset=").append( criteria.getOffset());
+        }
+
+        return url;
+    }
+
 
 }

@@ -54,6 +54,7 @@ public class ILMSConstants {
     public static final String CHANNEL_NAME_EMAIL = "EMAIL";
 
     public static final String MODULE = "module";
+    public static final String ILMS = "iLMS-services";
 
     public static final String ACTION = "action";
 

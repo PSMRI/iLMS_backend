@@ -1,5 +1,6 @@
 package org.ilms.repository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.egov.tracer.model.CustomException;
@@ -61,6 +62,23 @@ public class ServiceRepository {
             log.error("Exception while fetching from external service: ", e);
             throw new CustomException("REST_CALL_EXCEPTION : " + uri, e.getMessage());
         }
+        return response;
+    }
+
+    public List fetchListResult(StringBuilder uri, Object request) {
+        List response = null;
+        //log.debug("URI: " + uri.toString());
+        try {
+            //log.debug("Request: " + mapper.writeValueAsString(request));
+            response = restTemplate.postForObject(uri.toString(), request, List.class);
+        } catch (HttpClientErrorException e) {
+            //log.error("External Service threw an Exception: ", e);
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        } catch (Exception e) {
+            //log.error("Exception while fetching from searcher: ", e);
+            throw new ServiceCallException(e.getMessage());
+        }
+
         return response;
     }
 }

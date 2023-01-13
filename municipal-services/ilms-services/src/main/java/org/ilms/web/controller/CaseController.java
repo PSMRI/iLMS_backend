@@ -46,7 +46,7 @@ public class CaseController {
     public ResponseEntity<CaseResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CaseSearchCriteria criteria) {
         log.info("ILMSCaseController :: search() : START ");
-        CaseResponse response = caseService.ilmsCaseSearch(criteria, requestInfoWrapper.getRequestInfo());
+        CaseResponse response = caseService.ilmsCaseSearch(criteria, requestInfoWrapper.getRequestInfo(),requestInfoWrapper.getProcessSearchCriteria());
         response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
         log.info("ILMSCaseController :: search() : END With Response [ " + response + " ]");
         return new ResponseEntity<>(response, HttpStatus.OK);

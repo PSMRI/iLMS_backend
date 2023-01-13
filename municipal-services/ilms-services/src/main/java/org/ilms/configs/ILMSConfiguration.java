@@ -39,6 +39,9 @@ public class ILMSConfiguration {
     @Value ("${workflow.processinstance.search.path}")
     private String wfProcessInstanceSearchPath;
 
+    @Value("${workflow.process.statuscount.path}")
+    private String processStatusCountPath;
+
     @Value ("${is.workflow.enabled}")
     private Boolean isWorkflowEnabled;
 

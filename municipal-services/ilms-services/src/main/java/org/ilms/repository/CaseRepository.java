@@ -3,6 +3,7 @@ package org.ilms.repository;
 import java.util.ArrayList;
 import java.util.List;
 import org.ilms.repository.querybuilder.CaseQueryBuilder;
+import org.ilms.repository.querybuilder.CountQueryBuilder;
 import org.ilms.repository.rowmapper.CaseRowMapper;
 import org.ilms.repository.rowmapper.DocumentMapper;
 import org.ilms.repository.rowmapper.PartyRowMapper;
@@ -35,6 +36,9 @@ public class CaseRepository {
 
     @Autowired
     private PartyRowMapper partyRowMapper;
+
+    @Autowired
+    private CountQueryBuilder countQueryBuilder;
 
     public CaseResponse getILMSCaseData(CaseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
@@ -81,6 +85,13 @@ public class CaseRepository {
     public Integer getCaseCount(CaseSearchCriteria criteria) {
         CountRequest query = caseQueryBuilder.getTotalCount(criteria);
         String count = this.jdbcTemplate.queryForObject(query.getQuery(), query.getPreparedStatement().toArray(), String.class);
+        return Integer.parseInt(count);
+    }
+
+    public Integer getCountOfUser(String user){
+        List<Object> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(user);
+        String count = jdbcTemplate.queryForObject(countQueryBuilder.getCountQuery(), preparedStmtList.toArray() ,String.class);
         return Integer.parseInt(count);
     }
 }
