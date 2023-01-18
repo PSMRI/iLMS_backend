@@ -1,23 +1,19 @@
 package org.ilms.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.ilms.repository.querybuilder.CaseQueryBuilder;
 import org.ilms.repository.querybuilder.CountQueryBuilder;
 import org.ilms.repository.rowmapper.CaseRowMapper;
 import org.ilms.repository.rowmapper.DocumentMapper;
 import org.ilms.repository.rowmapper.PartyRowMapper;
-import org.ilms.web.model.Case;
-import org.ilms.web.model.CaseResponse;
-import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.CountRequest;
-import org.ilms.web.model.Document;
-import org.ilms.web.model.Party;
+import org.ilms.web.model.*;
 import org.ilms.web.model.enums.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 @Slf4j
@@ -40,22 +36,25 @@ public class CaseRepository {
     @Autowired
     private CountQueryBuilder countQueryBuilder;
 
-    public CaseResponse getILMSCaseData(CaseSearchCriteria criteria) {
+    public CaseSearchResponse getILMSCaseData(CaseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = caseQueryBuilder.getILMSCaseSearchQuery(criteria, preparedStmtList);
         List<Case> caseList = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);
         for (Case singleCase : caseList) {
             singleCase.setDocuments(getDocumentList(singleCase.getId()));
             List<Party> partyList = getParty(singleCase.getId());
-            for (Party party : partyList) {
+            singleCase.setPartyList(partyList);
+            for (Party party : singleCase.getPartyList()) {
                 if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                    singleCase.setRespondent(party);
+                    party.setPartyType(party.getPartyType());
+
                 } else {
-                    singleCase.setPetitioner(party);
+                    party.setPartyType(party.getPartyType());
                 }
             }
         }
-        CaseResponse caseResponse = CaseResponse.builder().caseList(caseList).totalCount(caseRowMapper.getFullCount()).build();
+
+        CaseSearchResponse caseResponse = CaseSearchResponse.builder().caseList(caseList).totalCount(caseRowMapper.getFullCount()).build();
         return caseResponse;
     }
 
@@ -88,10 +87,10 @@ public class CaseRepository {
         return Integer.parseInt(count);
     }
 
-    public Integer getCountOfUser(String user){
+    public Integer getCountOfUser(String user) {
         List<Object> preparedStmtList = new ArrayList<>();
         preparedStmtList.add(user);
-        String count = jdbcTemplate.queryForObject(countQueryBuilder.getCountQuery(), preparedStmtList.toArray() ,String.class);
+        String count = jdbcTemplate.queryForObject(countQueryBuilder.getCountQuery(), preparedStmtList.toArray(), String.class);
         return Integer.parseInt(count);
     }
 }

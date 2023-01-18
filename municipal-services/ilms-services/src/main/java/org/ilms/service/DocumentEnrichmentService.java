@@ -1,11 +1,6 @@
 package org.ilms.service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
@@ -14,14 +9,16 @@ import org.ilms.repository.IdGenRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.web.model.AuditDetails;
-import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
+import org.ilms.web.model.CaseSearchResponse;
 import org.ilms.web.model.DocumentRequest;
 import org.ilms.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -53,7 +50,7 @@ public class DocumentEnrichmentService {
         RequestInfo requestInfo = request.getRequestInfo();
         request.getDocument().forEach(document -> {
             CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(document.getCaseId())).build();
-            CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+            CaseSearchResponse caseResponse = caseRepository.getILMSCaseData(criteria);
             if (caseResponse.getCaseList().size() <= 0) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "caseDetails Not Found [ " + caseResponse.getCaseList() + " ]");
             }

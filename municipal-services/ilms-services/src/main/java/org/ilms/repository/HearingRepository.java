@@ -6,8 +6,8 @@ import org.ilms.repository.querybuilder.HearingQueryBuilder;
 import org.ilms.repository.rowmapper.HearingRowMapper;
 import org.ilms.repository.rowmapper.PartyRowMapper;
 import org.ilms.web.model.Hearing;
-import org.ilms.web.model.HearingResponse;
 import org.ilms.web.model.HearingSearchCriteria;
+import org.ilms.web.model.HearingSearchResponse;
 import org.ilms.web.model.Party;
 import org.ilms.web.model.enums.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,21 +39,22 @@ public class HearingRepository {
     @Autowired
     private CaseRepository caseRepository;
 
-    public HearingResponse getHearingDetails(HearingSearchCriteria criteria) {
+    public HearingSearchResponse getHearingDetails(HearingSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = hearingQueryBuilder.getHearingSearchQuery(criteria, preparedStmtList);
         List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
         for (Hearing singleHearing : hearingDetails) {
             List<Party> partyList = getHearing(singleHearing.getCaseId());
-            for (Party party : partyList) {
+            singleHearing.setPartyList(partyList);
+            for (Party party : singleHearing.getPartyList()) {
                 if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                    singleHearing.setRespondent(party);
+                    party.setPartyType(party.getPartyType());
                 } else {
-                    singleHearing.setPetitioner(party);
+                    party.setPartyType(party.getPartyType());
                 }
             }
         }
-        HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount())
+        HearingSearchResponse hearingResponse = HearingSearchResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount())
                 .build();
         return hearingResponse;
     }

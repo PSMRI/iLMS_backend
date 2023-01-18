@@ -1,11 +1,12 @@
 package org.ilms.repository.querybuilder;
 
-import java.util.List;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.JudgementSearchCriteria;
+import org.ilms.web.model.OrderSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class JudgementQueryBuilder {
@@ -26,7 +27,7 @@ public class JudgementQueryBuilder {
         }
     }
 
-    public String getFSMSearchQuery(JudgementSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getFSMSearchQuery(OrderSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(Query);
         if (criteria.getId() != null) {
             addClauseIfRequired(preparedStmtList, builder);
@@ -42,12 +43,12 @@ public class JudgementQueryBuilder {
     }
 
     /**
-     * @param query prepared Query
+     * @param query            prepared Query
      * @param preparedStmtList values to be replased on the query
-     * @param criteria judgement search criteria
+     * @param criteria         judgement search criteria
      * @return the query by replacing the placeholders with preparedStmtList
      */
-    private String addPaginationWrapper(String query, List<Object> preparedStmtList, JudgementSearchCriteria criteria) {
+    private String addPaginationWrapper(String query, List<Object> preparedStmtList, OrderSearchCriteria criteria) {
 
         int limit = ilmsConfiguration.getDefaultLimit();
         int offset = ilmsConfiguration.getDefaultOffset();
@@ -83,7 +84,7 @@ public class JudgementQueryBuilder {
     /**
      *
      */
-    private void addOrderByClause(StringBuilder builder, JudgementSearchCriteria criteria) {
+    private void addOrderByClause(StringBuilder builder, OrderSearchCriteria criteria) {
         if (criteria.getSortBy() == CaseSearchCriteria.SortBy.caseNumber) {
             builder.append(" ORDER BY ilms_judgement.id ");
         } else if (criteria.getSortBy() == CaseSearchCriteria.SortBy.cnrNumber) {
@@ -95,6 +96,7 @@ public class JudgementQueryBuilder {
             builder.append("DESC");
         }
     }
+
     public String getTenantIdFromHearingQuery() {
         return getTenantIdQuery;
     }

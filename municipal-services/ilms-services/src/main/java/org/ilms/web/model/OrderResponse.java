@@ -9,14 +9,11 @@ import org.egov.common.contract.response.ResponseInfo;
 @NoArgsConstructor
 @Getter
 @Setter
-public class HearingResponse {
-
+public class OrderResponse {
     @JsonProperty("responseInfo")
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("Hearing")
-    private Hearing hearing = null;
+    @JsonProperty("order")
+    private Order order = null;
 
-    @JsonProperty("workflow")
-    private Workflow workflow = null;
 }

@@ -11,16 +11,16 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class JudgementResponse {
+
+public class OrderSearchResponse {
     @JsonProperty("responseInfo")
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty ("totalCount")
-    private Integer totalCount =null;
+    @JsonProperty("totalCount")
+    private Integer totalCount = null;
 
-    @JsonProperty("judgementList")
-    private List<Judgement> judgementList = null;
+    @JsonProperty("order")
+    private List<Order> orderList = null;
 
-    @JsonProperty("workflow")
-    private Workflow workflow = null;
+
 }

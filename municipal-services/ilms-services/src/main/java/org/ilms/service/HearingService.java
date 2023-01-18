@@ -49,15 +49,19 @@ public class HearingService {
     public Hearing create(HearingRequest hearingRequest) {
         String petitionerId = null;
         String respondentId = null;
-        CaseResponse caseResponse = null;
+        String radvacate = null;
+        String padvacate = null;
+        CaseSearchResponse caseResponse = null;
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(hearingRequest.getHearing().getCaseId())).build();
         caseResponse = caseRepository.getILMSCaseData(criteria);
         List<Party> partyList = hearingDetailsRepository.getGetFromPartyQuery(hearingRequest.getHearing().getCaseId());
         for (Party party : partyList) {
             if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                 respondentId = party.getId();
+                radvacate = party.getAdvocate().getId();
             } else {
                 petitionerId = party.getId();
+                padvacate = party.getAdvocate().getId();
             }
         }
         if (Objects.nonNull(caseResponse.getCaseList())) {
@@ -66,25 +70,65 @@ public class HearingService {
                 if (Objects.nonNull(hearingRequest.getHearing().getCourt())) {
                     hearingRequest.getHearing().getCourt().setStatus(Status.ACTIVE);
                 }
-                if (Objects.nonNull(hearingRequest.getHearing().getPetitioner())) {
-                    hearingRequest.getHearing().getPetitioner().setStatus(Status.ACTIVE);
-                    hearingRequest.getHearing().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
-                    hearingRequest.getHearing().getPetitioner().setCaseId(hearingRequest.getHearing().getCaseId());
-                    if (Objects.nonNull(hearingRequest.getHearing().getPetitioner().getAdvocate())) {
-                        hearingRequest.getHearing().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
-                        hearingRequest.getHearing().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
-                        hearingRequest.getHearing().getPetitioner().getAdvocate().setPartyId(petitionerId);
+                if (Objects.nonNull(hearingRequest.getHearing().getPartyList())) {
+                    for (Party party : hearingRequest.getHearing().getPartyList()) {
+                        if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
+                            party.setStatus(Status.ACTIVE);
+                            party.setPartyType(PartyType.PETITIONER.toString());
+                            party.setCaseId(hearingRequest.getHearing().getCaseId());
+                            if (Objects.nonNull(party.getAdvocate())) {
+                                party.getAdvocate().setStatus(Status.ACTIVE);
+                                party.getAdvocate().setPartyType(PartyType.PETITIONER);
+                                party.getAdvocate().setPartyId(petitionerId);
+                            }
+                        }
                     }
+
+                } else {
+                    for (Party party : partyList) {
+                        if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
+                            party.setStatus(Status.ACTIVE);
+                            party.setPartyType(PartyType.PETITIONER.toString());
+                            party.setCaseId(hearingRequest.getHearing().getCaseId());
+                            if (Objects.nonNull(party.getAdvocate())) {
+                                party.getAdvocate().setId(padvacate);
+                                party.getAdvocate().setStatus(Status.ACTIVE);
+                                party.getAdvocate().setPartyType(PartyType.PETITIONER);
+                                party.getAdvocate().setPartyId(petitionerId);
+                            }
+                        }
+                    }
+
                 }
-                if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
-                    hearingRequest.getHearing().getRespondent().setStatus(Status.ACTIVE);
-                    hearingRequest.getHearing().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
-                    hearingRequest.getHearing().getRespondent().setCaseId(hearingRequest.getHearing().getCaseId());
-                    if (Objects.nonNull(hearingRequest.getHearing().getRespondent().getAdvocate())) {
-                        hearingRequest.getHearing().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
-                        hearingRequest.getHearing().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
-                        hearingRequest.getHearing().getRespondent().getAdvocate().setPartyId(respondentId);
+                if (Objects.nonNull(hearingRequest.getHearing().getPartyList())) {
+                    for (Party party : hearingRequest.getHearing().getPartyList()) {
+                        if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
+                            party.setStatus(Status.ACTIVE);
+                            party.setPartyType(PartyType.RESPONDENT.toString());
+                            party.setCaseId(hearingRequest.getHearing().getCaseId());
+                            if (Objects.nonNull(party.getAdvocate())) {
+                                party.getAdvocate().setStatus(Status.ACTIVE);
+                                party.getAdvocate().setPartyType(PartyType.RESPONDENT);
+                                party.getAdvocate().setPartyId(respondentId);
+                            }
+                        }
                     }
+
+                } else {
+                    for (Party party : partyList) {
+                        if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
+                            party.setStatus(Status.ACTIVE);
+                            party.setPartyType(PartyType.RESPONDENT.toString());
+                            party.setCaseId(hearingRequest.getHearing().getCaseId());
+                            if (Objects.nonNull(party.getAdvocate())) {
+                                party.getAdvocate().setId(radvacate);
+                                party.getAdvocate().setStatus(Status.ACTIVE);
+                                party.getAdvocate().setPartyType(PartyType.RESPONDENT);
+                                party.getAdvocate().setPartyId(petitionerId);
+                            }
+                        }
+                    }
+
                 }
                 if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
                     hearingRequest.getHearing().getPayment().setStatus(Status.ACTIVE);
@@ -103,9 +147,9 @@ public class HearingService {
         return hearingRequest.getHearing();
     }
 
-    public HearingResponse hearingSearch(HearingSearchCriteria criteria, RequestInfo requestInfo) {
+    public HearingSearchResponse hearingSearch(HearingSearchCriteria criteria, RequestInfo requestInfo) {
         List<Hearing> ilmsHearingList = new ArrayList<>();
-        HearingResponse hearingResponse = null;
+        HearingSearchResponse hearingResponse = null;
         hearingResponse = hearingDetailsRepository.getHearingDetails(criteria);
         if (!hearingResponse.getHearingList().isEmpty()) {
             ilmsHearingList = hearingResponse.getHearingList();
@@ -118,7 +162,7 @@ public class HearingService {
     public Hearing update(HearingRequest hearingDetailsRequest) {
         if (hearingDetailsRequest.getHearing().getId() != null) {
             HearingSearchCriteria criteria = HearingSearchCriteria.builder().id((hearingDetailsRequest.getHearing().getId())).build();
-            HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
+            HearingSearchResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
             if (!hearingDetailsResponse.getHearingList().isEmpty()) {
                 List<Hearing> hearingList = hearingDetailsResponse.getHearingList();
                 Hearing oldHearing = hearingList.get(0);

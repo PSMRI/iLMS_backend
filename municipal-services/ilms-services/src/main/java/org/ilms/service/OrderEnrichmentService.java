@@ -1,11 +1,6 @@
 package org.ilms.service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
@@ -13,21 +8,18 @@ import org.ilms.repository.CaseRepository;
 import org.ilms.repository.IdGenRepository;
 import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
-import org.ilms.web.model.AuditDetails;
-import org.ilms.web.model.CaseResponse;
-import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.Judgement;
-import org.ilms.web.model.JudgementRequest;
-import org.ilms.web.model.JudgementSearchCriteria;
+import org.ilms.web.model.*;
 import org.ilms.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class JudgementEnrichmentService {
+public class OrderEnrichmentService {
     @Autowired
     private ILMSConfiguration config;
 
@@ -40,36 +32,36 @@ public class JudgementEnrichmentService {
     @Autowired
     private CaseRepository caseRepository;
 
-    public void enrichJudgementCreateRequest(JudgementRequest judgementRequest) {
-        RequestInfo requestInfo = judgementRequest.getRequestInfo();
-        Judgement judgement = judgementRequest.getJudgement();
-        setIdgenIds(judgementRequest);
-        AuditDetails auditDetails = caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUserName(), true);
-        judgementRequest.getJudgement().setAuditDetails(auditDetails);
-        judgement.setAuditDetails(auditDetails);
+    public void enrichOrderCreateRequest(OrderRequest orderRequest) {
+        RequestInfo requestInfo = orderRequest.getRequestInfo();
+        Order order = orderRequest.getOrder();
+        setIdgenIds(orderRequest);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(orderRequest.getRequestInfo().getUserInfo().getUserName(), true);
+        orderRequest.getOrder().setAuditDetails(auditDetails);
+        order.setAuditDetails(auditDetails);
     }
 
-    public void enrichJugmentUpdateRequest(JudgementRequest request) {
+    public void enrichJugmentUpdateRequest(OrderRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        Judgement judgement = request.getJudgement();
-        AuditDetails auditDetails = caseUtils.getAuditDetails(request.getJudgement().getId(), false);
-        request.getJudgement().setAuditDetails(auditDetails);
-        judgement.setAuditDetails(auditDetails);
+        Order order = request.getOrder();
+        AuditDetails auditDetails = caseUtils.getAuditDetails(request.getOrder().getId(), false);
+        request.getOrder().setAuditDetails(auditDetails);
+        order.setAuditDetails(auditDetails);
     }
 
-    private void setIdgenIds(JudgementRequest request) {
+    private void setIdgenIds(OrderRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(request.getJudgement().getCaseId())).build();
-        CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(request.getOrder().getCaseId())).build();
+        CaseSearchResponse caseResponse = caseRepository.getILMSCaseData(criteria);
         String tenantId = caseResponse.getCaseList().get(0).getTenantId();
-        Judgement judgement = request.getJudgement();
+        Order order = request.getOrder();
         List<String> caseId = getIdList(requestInfo, tenantId, config.getJudgementIdgenName(), config.getJudgementIdgenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();
         Map<String, String> errorMap = new HashMap<>();
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        judgement.setId(caseItr.next());
+        order.setId(caseItr.next());
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {
@@ -80,8 +72,8 @@ public class JudgementEnrichmentService {
         return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
     }
 
-    public void enrichJudgementSearch() {
-        JudgementSearchCriteria judgementSearchCriteria = new JudgementSearchCriteria();
+    public void enrichOrderSearch() {
+        OrderSearchCriteria judgementSearchCriteria = new OrderSearchCriteria();
         judgementSearchCriteria.setId(judgementSearchCriteria.getId());
         judgementSearchCriteria.setCaseId(judgementSearchCriteria.getCaseId());
     }
