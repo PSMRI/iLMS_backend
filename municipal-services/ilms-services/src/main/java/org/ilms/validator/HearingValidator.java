@@ -7,8 +7,8 @@ import org.ilms.repository.CaseRepository;
 import org.ilms.util.CommonUtils;
 import org.ilms.util.ILMSConstants;
 import org.ilms.util.ILMSErrorConstants;
+import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.CaseSearchResponse;
 import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class HearingValidator {
 
         String caseId = hearing.getCaseId();
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
-        CaseSearchResponse caseResponse = caseRepository.getILMSCaseData(criteria);
+        CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria);
         String tenantId = caseResponse.getCaseList().get(0).getTenantId();
 
         List<String> masterNames = new ArrayList<>(

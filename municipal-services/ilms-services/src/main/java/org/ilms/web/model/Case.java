@@ -1,15 +1,18 @@
 package org.ilms.web.model;
 
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.ilms.web.model.enums.CaseHierarchy;
-import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.Status;
+import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.workflow.ProcessInstance;
 import org.javers.core.metamodel.annotation.DiffIgnore;
-
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -17,118 +20,116 @@ import java.util.List;
 @Getter
 @Setter
 public class Case {
-    @JsonProperty("id")
+    @JsonProperty ("id")
     private String id;
 
-    @JsonProperty("tenantId")
+    @JsonProperty ("tenantId")
     private String tenantId;
 
-    @JsonProperty("caseNumber")
+    @JsonProperty ("caseNumber")
     private String caseNumber;
 
-    @JsonProperty("cnrNumber")
+    @JsonProperty ("cnrNumber")
     private String cnrNumber;
 
-    @JsonProperty("parentCaseId")
+    @JsonProperty ("parentCaseId")
     private String parentCaseId;
 
-    @JsonProperty("caseHierarchy")
+    @JsonProperty ("caseHierarchy")
     private CaseHierarchy caseHierarchy;
 
-    @JsonProperty("caseType")
+    @JsonProperty ("caseType")
     private String caseType;
 
-    @JsonProperty("caseCategory")
+    @JsonProperty ("caseCategory")
     private String caseCategory;
 
-    @JsonProperty("caseYear")
+    @JsonProperty ("caseYear")
     private Long caseYear;
 
-    @JsonProperty("filingNumber")
+    @JsonProperty ("filingNumber")
     private String filingNumber;
 
-    @JsonProperty("filingDate")
+    @JsonProperty ("filingDate")
     private Long filingDate;
 
-    @JsonProperty("registrationDate")
+    @JsonProperty ("registrationDate")
     private Long registrationDate;
 
-    @JsonProperty("caseSummary")
+    @JsonProperty ("caseSummary")
     private String caseSummary;
 
-    @JsonProperty("arisingDetails")
+    @JsonProperty ("arisingDetails")
     private String arisingDetails;
 
-    @JsonProperty("policyOrNonPolicyMatter")
+    @JsonProperty ("policyOrNonPolicyMatter")
     private String policyOrNonPolicyMatter;
 
-    @JsonProperty("applicationNo")
+    @JsonProperty ("applicationNo")
     private String applicationNumber;
 
-    @JsonProperty("isCaseNumberCorrect")
+    @JsonProperty ("isCaseNumberCorrect")
     private Boolean isCaseNumberCorrect;
 
-    @JsonProperty("caseStatus")
+    @JsonProperty ("caseStatus")
     private String caseStatus;
 
-    @JsonProperty("firstHearingDate")
+    @JsonProperty ("firstHearingDate")
     private Long firstHearingDate;
 
-    @JsonProperty("previousHearingDate")
+    @JsonProperty ("previousHearingDate")
     private Long previousHearingDate;
 
-    @JsonProperty("nextHearingDate")
+    @JsonProperty ("nextHearingDate")
     private Long nextHearingDate;
 
-    @JsonProperty("caseStage")
+    @JsonProperty ("caseStage")
     private String caseStage;
 
-    @JsonProperty("caseSubStage")
+    @JsonProperty ("caseSubStage")
     private String caseSubStage;
 
-    @JsonProperty("caseFlag")
+    @JsonProperty ("caseFlag")
     private String caseFlag;
 
-    @JsonProperty("departmentName")
+    @JsonProperty ("departmentName")
     private String departmentName;
 
-    @JsonProperty("recommendOic")
+    @JsonProperty ("recommendOic")
     private String recommendOIC;
 
-    @JsonProperty("remarks")
+    @JsonProperty ("remarks")
     private String remarks;
 
-    @JsonProperty("assignedOfficerId")
+    @JsonProperty ("assignedOfficerId")
     private String assignedOfficerId;
 
-    @JsonProperty("additionalDetails")
+    @JsonProperty ("additionalDetails")
     private Object additionalDetails;
 
-    @JsonProperty("status")
+    @JsonProperty ("status")
     private Status status;
 
-    //    @JsonProperty ("petitioner")
-//    private Party petitioner;
-//
-//    @JsonProperty ("respondent")
-//    private Party respondent;
-    @JsonProperty("partyList")
-    private List<Party> partyList;
+    @JsonProperty ("petitioner")
+    private Party petitioner;
 
-    @JsonProperty("act")
+    @JsonProperty ("respondent")
+    private Party respondent;
+
+    @JsonProperty ("act")
     private Act act;
 
-    @JsonProperty("documents")
+    @JsonProperty ("documents")
     private List<Document> documents;
 
-    @JsonProperty("auditDetails")
+    @JsonProperty ("auditDetails")
     private AuditDetails auditDetails;
 
-    @JsonProperty("creationReason")
-    @NotNull(message = "The value provided is either Invald or null")
+    @JsonProperty ("creationReason")
+    @NotNull (message = "The value provided is either Invald or null")
     private CreationReason creationReason;
 
-    @JsonProperty("workflow")
+    @JsonProperty ("workflow")
     @DiffIgnore
     private ProcessInstance workflow;
 

@@ -1,5 +1,7 @@
 package org.ilms.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
@@ -8,13 +10,15 @@ import org.ilms.repository.CaseRepository;
 import org.ilms.repository.DocumentRepository;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.validator.DocumentValidator;
-import org.ilms.web.model.*;
+import org.ilms.web.model.CaseResponse;
+import org.ilms.web.model.CaseSearchCriteria;
+import org.ilms.web.model.Document;
+import org.ilms.web.model.DocumentRequest;
+import org.ilms.web.model.DocumentResponse;
+import org.ilms.web.model.DocumentSearchCriteria;
 import org.ilms.web.model.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class DocumentService {
@@ -52,7 +56,7 @@ public class DocumentService {
             List<String> ids = new ArrayList<>();
             ids.add(document.getCaseId());
             CaseSearchCriteria criteria1 = CaseSearchCriteria.builder().id(ids).build();
-            CaseSearchResponse caseResponse = caseRepository.getILMSCaseData(criteria1);
+            CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria1);
             if (!caseResponse.getCaseList().isEmpty()) {
                 caseResponse.getCaseList().forEach(ilmsCase -> {
                     if (!document.getCaseId().equalsIgnoreCase(ilmsCase.getId())) {

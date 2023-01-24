@@ -9,14 +9,14 @@ import org.egov.common.contract.request.RequestInfo;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OrderRequest {
+public class JudgementRequest {
 
     @JsonProperty("RequestInfo")
     private RequestInfo RequestInfo;
 
-    @JsonProperty("order")
-    private Order order;
+    @JsonProperty("judgement")
+    private Judgement judgement ;
 
     @JsonProperty("workflow")
-    private Workflow workflow;
+    private Workflow workflow ;
 }
