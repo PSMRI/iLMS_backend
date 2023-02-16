@@ -1,25 +1,8 @@
 package org.ilms.util;
 
-import static com.jayway.jsonpath.Criteria.where;
-import static com.jayway.jsonpath.Filter.filter;
-import static org.ilms.util.ILMSConstants.ACTION;
-import static org.ilms.util.ILMSConstants.CHANNEL;
-import static org.ilms.util.ILMSConstants.CHANNEL_LIST;
-import static org.ilms.util.ILMSConstants.MODULE;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_LOCALE;
-import static org.ilms.util.ILMSConstants.NOTIFICATION_MODULENAME;
-import static org.ilms.util.ILMSConstants.USREVENTS_EVENT_NAME;
-import static org.ilms.util.ILMSConstants.USREVENTS_EVENT_POSTEDBY;
-import static org.ilms.util.ILMSConstants.USREVENTS_EVENT_TYPE;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.jayway.jsonpath.Filter;
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -30,24 +13,20 @@ import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.producer.Producer;
 import org.ilms.repository.ServiceRepository;
-import org.ilms.web.model.Action;
-import org.ilms.web.model.ActionItem;
-import org.ilms.web.model.Case;
-import org.ilms.web.model.Email;
-import org.ilms.web.model.EmailRequest;
-import org.ilms.web.model.Event;
-import org.ilms.web.model.EventRequest;
-import org.ilms.web.model.Recepient;
-import org.ilms.web.model.SMSRequest;
+import org.ilms.web.model.*;
 import org.ilms.web.model.enums.Source;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
-import com.jayway.jsonpath.Filter;
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.jayway.jsonpath.Criteria.where;
+import static com.jayway.jsonpath.Filter.filter;
+import static org.ilms.util.ILMSConstants.*;
 
 @Slf4j
 @Component
@@ -162,8 +141,8 @@ public class NotificationUtil {
         }
         StringBuilder uri = new StringBuilder();
         uri.append(ilmsConfiguration.getLocalizationHost()).append(ilmsConfiguration.getLocalizationContextPath())
-           .append(ilmsConfiguration.getLocalizationSearchEndpoint()).append("?").append("locale=").append(locale).append("&tenantId=")
-           .append(tenantId).append("&module=").append(NOTIFICATION_MODULENAME);
+                .append(ilmsConfiguration.getLocalizationSearchEndpoint()).append("?").append("locale=").append(locale).append("&tenantId=")
+                .append(tenantId).append("&module=").append(NOTIFICATION_MODULENAME);
 
         return uri;
     }
@@ -186,9 +165,7 @@ public class NotificationUtil {
 
         HashMap<String, String> body = new HashMap<>();
         body.put("url", url);
-        StringBuilder builder = new StringBuilder(ilmsConfiguration.getUrlShortnerHost());
-        builder.append(ilmsConfiguration.getUrlShortnerEndpoint());
-        String res = restTemplate.postForObject(builder.toString(), body, String.class);
+        String res = restTemplate.postForObject(ilmsConfiguration.getUrlShortnerHost() + ilmsConfiguration.getUrlShortnerEndpoint(), body, String.class);
 
         if (StringUtils.isEmpty(res)) {
             log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
@@ -197,12 +174,13 @@ public class NotificationUtil {
             return res;
         }
     }
-    public void sendEmail(List < EmailRequest > emailRequestList) {
+
+    public void sendEmail(List<EmailRequest> emailRequestList) {
 
         if (ilmsConfiguration.getIsEmailNotificationEnabled()) {
             if (CollectionUtils.isEmpty(emailRequestList))
                 log.info("Messages from localization couldn't be fetched!");
-            for (EmailRequest emailRequest: emailRequestList) {
+            for (EmailRequest emailRequest : emailRequestList) {
                 if (!StringUtils.isEmpty(emailRequest.getEmail().getBody())) {
                     producer.push(ilmsConfiguration.getEmailNotifTopic(), emailRequest);
                     log.info("Sending EMAIL notification! ");
@@ -214,58 +192,62 @@ public class NotificationUtil {
 
         }
     }
-    public List<EmailRequest> createEmailRequestFromSMSRequests(RequestInfo requestInfo,List<SMSRequest> smsRequests,String tenantId) {
-        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
+
+    public List<EmailRequest> createEmailRequestFromSMSRequests(RequestInfo requestInfo, List<SMSRequest> smsRequests, String tenantId) {
+        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest::getMobileNumber).collect(Collectors.toSet());
         Map<String, String> mobileNumberToEmailId = fetchUserEmailIds(mobileNumbers, tenantId);
         if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
             log.error("Email Ids Not found for Mobilenumbers");
         }
 
-        Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+        Map<String, String> mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
         List<EmailRequest> emailRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
             String message = mobileNumberToMsg.get(entryset.getKey());
             String subject = ilmsConfiguration.getNotifSubject();
             String body = message;
             Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false).body(body).subject(subject).build();
-            EmailRequest email = new EmailRequest(requestInfo,emailobj);
+            EmailRequest email = new EmailRequest(requestInfo, emailobj);
             emailRequest.add(email);
         }
         return emailRequest;
     }
+
     public Map<String, String> fetchUserEmailIds(Set<String> mobileNumbers, String tenantId) {
         Map<String, String> mapOfPhnoAndEmailIds = new HashMap<>();
         StringBuilder uri = new StringBuilder();
         uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndPoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
         userSearchRequest.put("tenantId", tenantId);
-        for(String mobileNo: mobileNumbers) {
+        for (String mobileNo : mobileNumbers) {
             userSearchRequest.put("mobileNumber", mobileNo);
             try {
                 Object user = serviceRepository.fetchResult(uri, userSearchRequest).get();
-                if(null != user) {
-                    if(JsonPath.read(user, "$.user[0].emailId")!=null) {
+                if (null != user) {
+                    if (JsonPath.read(user, "$.user[0].emailId") != null) {
                         String email = JsonPath.read(user, "$.user[0].emailId");
                         mapOfPhnoAndEmailIds.put(mobileNo, email);
                     }
-                }else {
-                    log.error("Service returned null while fetching user for username - "+mobileNo);
+                } else {
+                    log.error("Service returned null while fetching user for username - " + mobileNo);
                 }
-            }catch(Exception e) {
-                log.error("Exception while fetching user for username - "+mobileNo);
-                log.error("Exception trace: ",e);
+            } catch (Exception e) {
+                log.error("Exception while fetching user for username - " + mobileNo);
+                log.error("Exception trace: ", e);
                 continue;
             }
         }
         return mapOfPhnoAndEmailIds;
     }
+
     public void sendEventNotification(EventRequest request) {
         log.info("EVENT notification sent!");
         producer.push(ilmsConfiguration.getSaveUserEventsTopic(), request);
     }
-    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Case cases){
-        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
-        Set<String> message = smsRequests.stream().map(SMSRequest :: getMessage).collect(Collectors.toSet());
+
+    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Case cases) {
+        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest::getMobileNumber).collect(Collectors.toSet());
+        Set<String> message = smsRequests.stream().map(SMSRequest::getMessage).collect(Collectors.toSet());
         Map<String, String> mapOfPhnoAndUUIDs = fetchUserUUIDs(mobileNumbers, requestInfo, tenantId);
 
         if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
@@ -273,15 +255,16 @@ public class NotificationUtil {
         }
         List<Event> events = new ArrayList<>();
         List<String> toUsers = new ArrayList<>();
-        toUsers.add(cases.getAssignedOfficerId());
+        toUsers.add(cases.getWorkflow().getAssignes().get(0).getUuid());
         Action action = null;
 
         Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
         events.add(Event.builder().tenantId(tenantId).description(message.toString()).eventType(USREVENTS_EVENT_TYPE)
-                        .name(USREVENTS_EVENT_NAME).postedBy(USREVENTS_EVENT_POSTEDBY)
-                        .source(Source.WEBAPP).recepient(recepient).actions(action).eventDetails(null).build());
+                .name(USREVENTS_EVENT_NAME).postedBy(USREVENTS_EVENT_POSTEDBY)
+                .source(Source.WEBAPP).recepient(recepient).actions(action).eventDetails(null).build());
         return events;
     }
+
     public Map<String, String> fetchUserUUIDs(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
 
         Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
@@ -290,19 +273,19 @@ public class NotificationUtil {
         Map<String, Object> userSearchRequest = new HashMap<>();
         userSearchRequest.put("tenantId", tenantId);
         userSearchRequest.put("userType", "EMPLOYEE");
-        for(String mobileNo: mobileNumbers) {
+        for (String mobileNo : mobileNumbers) {
             userSearchRequest.put("mobileNumber", mobileNo);
             try {
                 Object user = serviceRepository.fetchResult(uri, userSearchRequest).get();
-                if(null != user) {
+                if (null != user) {
                     String uuid = JsonPath.read(user, "$.user[0].uuid");
                     mapOfPhnoAndUUIDs.put(mobileNo, uuid);
-                }else {
-                    log.error("Service returned null while fetching user for username - "+mobileNo);
+                } else {
+                    log.error("Service returned null while fetching user for username - " + mobileNo);
                 }
-            }catch(Exception e) {
-                log.error("Exception while fetching user for username - "+mobileNo);
-                log.error("Exception trace: ",e);
+            } catch (Exception e) {
+                log.error("Exception while fetching user for username - " + mobileNo);
+                log.error("Exception trace: ", e);
                 continue;
             }
         }

@@ -49,13 +49,16 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String id = rs.getString("ilmsCase_id");
                 duplicacyCheck = id;
                 String cnrNumber = rs.getString("ilms_cnrNumber");
+                String caseType = rs.getString("ilms_caseType");
                 currentCase = ilmsCaseMap.get(id);
                 String tenantId = rs.getString("ilms_tenandId");
                 String parentCaseId = rs.getString("ilms_parentCaseId");
-                String caseType = rs.getString("ilms_caseType");
                 String caseCategory = rs.getString("ilms_caseCategory");
                 String caseNumber = rs.getString("ilms_caseNumber");
-                Long caseYear = rs.getLong("ilms_caseYear");
+                String state = rs.getString("ilms_state");
+                String district = rs.getString("ilms_district");
+                String division = rs.getString("ilms_division");
+                String courtName = rs.getString("ilms_court_name");
                 String filingNumber = rs.getString("ilms_filingNumber");
                 Long filingDate = rs.getLong("ilms_filingDate");
                 Long registrationDate = rs.getLong("ilms_registrationDate");
@@ -63,20 +66,14 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String arisingDetails = rs.getString("ilms_arisingDetails");
                 String matter = rs.getString("ilms_matter");
                 String uniqueId = rs.getString("ilms_uniqueId");
-                Boolean isCaseNumberCorrect = rs.getBoolean("ilms_isCaseNumberCorrect");
                 this.setFullCount((rs.getInt("full_count")));
                 String caseStatus = rs.getString("ilms_caseStatus");
-                Long firstHearingDate = rs.getLong("ilms_firstHearingDate");
-                Long previousHearingDate = rs.getLong("ilms_previousHearingDate");
-                Long nextHearingDate = rs.getLong("ilms_nextHearingDate");
                 String caseStage = rs.getString("ilms_caseStage");
                 String caseSubStage = rs.getString("ilms_caseSubStage");
-                String caseFlag = rs.getString("ilms_caseFlag");
-                String departmentName = rs.getString("ilms_departmentName");
+                String priority = rs.getString("ilms_priority");
                 String recommendOic = rs.getString("ilms_recommendOic");
                 String remarks = rs.getString("ilms_remarks");
-                String assignedOfficerId = rs.getString("ilms_assignedOfficerId");
-                Object additionalDetails = getAdditionalDetail("ilms_additionalDetails", rs);
+                JsonNode additionalDetails = getAdditionalDetail("ilms_additionalDetails", rs);
                 String status = rs.getString("ilms_status");
 
                 AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("ilms_createdTime"))
@@ -87,13 +84,13 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 if (currentCase == null) {
                     currentCase = Case.builder().id(id).cnrNumber(cnrNumber).tenantId(tenantId).additionalDetails(additionalDetails)
                             .caseType(caseType).caseCategory(caseCategory)
-                            .parentCaseId(parentCaseId).caseNumber(caseNumber).caseYear(caseYear).filingNumber(filingNumber)
-                            .remarks(remarks).assignedOfficerId(assignedOfficerId).filingDate(filingDate).registrationDate(registrationDate)
+                            .parentCaseId(parentCaseId).caseNumber(caseNumber).filingNumber(filingNumber)
+                            .remarks(remarks).filingDate(filingDate).registrationDate(registrationDate)
                             .caseSummary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
-                            .policyOrNonPolicyMatter(matter).applicationNumber(uniqueId).isCaseNumberCorrect(isCaseNumberCorrect)
-                            .caseStatus(caseStatus).firstHearingDate(firstHearingDate).previousHearingDate(previousHearingDate)
-                            .nextHearingDate(nextHearingDate).caseStage(caseStage).caseSubStage(caseSubStage).caseFlag(caseFlag)
-                            .departmentName(departmentName).recommendOIC(recommendOic).auditDetails(auditDetails).build();
+                            .policyOrNonPolicyMatter(matter).priority(priority).applicationNumber(uniqueId)
+                            .caseStatus(caseStatus).state(state).courtName(courtName)
+                            .caseStage(caseStage).caseSubStage(caseSubStage).district(district).division(division)
+                            .recommendOIC(recommendOic).auditDetails(auditDetails).build();
 
                     ilmsCaseMap.put(id, currentCase);
                 }

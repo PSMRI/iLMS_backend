@@ -62,6 +62,9 @@ public class Case {
     @JsonProperty("arisingDetails")
     private String arisingDetails;
 
+    @JsonProperty("applicationNo")
+    private String applicationNumber;
+
     @JsonProperty("policyOrNonPolicyMatter")
     private String policyOrNonPolicyMatter;
 

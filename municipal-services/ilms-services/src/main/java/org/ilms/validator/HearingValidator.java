@@ -27,23 +27,23 @@ public class HearingValidator {
     private CaseRepository caseRepository;
 
     private static Map<String, String> validateCodes(Hearing hearing, Map<String, List<String>> codes, Map<String, String> errorMap) {
-        if (Objects.nonNull(hearing.getCourt())) {
-            if (Objects.nonNull(hearing.getCourt().getCourtName()) && !codes.get(ILMSConstants.MDMS_ILMS_COURT_NAME).contains(hearing.getCourt().getCourtName())) {
-                errorMap.put("Invalid CourtName", "The CourtName '" + hearing.getCourt().getCourtName() + "' does not exists");
-            }
-            if (Objects.nonNull(hearing.getCourt().getDistrict()) && !codes.get(ILMSConstants.MDMS_ILMS_DISTRICT).contains(hearing.getCourt().getDistrict())) {
-                errorMap.put("Invalid District", "The District '" + hearing.getCourt().getDistrict() + "' does not exists");
-            }
-            if (Objects.nonNull(hearing.getCourt().getState()) && !codes.get(ILMSConstants.MDMS_ILMS_STATE).contains(hearing.getCourt().getState())) {
-                errorMap.put("Invalid State", "The State '" + hearing.getCourt().getState() + "' does not exists");
-            }
-            if (Objects.nonNull(hearing.getCourt().getBench()) && !codes.get(ILMSConstants.MDMS_ILMS_BENCH).contains(hearing.getCourt().getBench())) {
-                errorMap.put("Invalid Bench", "The Bench '" + hearing.getCourt().getBench() + "' does not exists");
-            }
-            if (Objects.nonNull(hearing.getCourt().getDivision()) && !codes.get(ILMSConstants.MDMS_ILMS_DIVISION).contains(hearing.getCourt().getDivision())) {
-                errorMap.put("Invalid Division", "The Division '" + hearing.getCourt().getDivision() + "' does not exists");
-            }
-        }
+//        if (Objects.nonNull(hearing.getCourt())) {
+//            if (Objects.nonNull(hearing.getCourt().getCourtName()) && !codes.get(ILMSConstants.MDMS_ILMS_COURT_NAME).contains(hearing.getCourt().getCourtName())) {
+//                errorMap.put("Invalid CourtName", "The CourtName '" + hearing.getCourt().getCourtName() + "' does not exists");
+//            }
+//            if (Objects.nonNull(hearing.getCourt().getDistrict()) && !codes.get(ILMSConstants.MDMS_ILMS_DISTRICT).contains(hearing.getCourt().getDistrict())) {
+//                errorMap.put("Invalid District", "The District '" + hearing.getCourt().getDistrict() + "' does not exists");
+//            }
+//            if (Objects.nonNull(hearing.getCourt().getState()) && !codes.get(ILMSConstants.MDMS_ILMS_STATE).contains(hearing.getCourt().getState())) {
+//                errorMap.put("Invalid State", "The State '" + hearing.getCourt().getState() + "' does not exists");
+//            }
+//            if (Objects.nonNull(hearing.getCourt().getBench()) && !codes.get(ILMSConstants.MDMS_ILMS_BENCH).contains(hearing.getCourt().getBench())) {
+//                errorMap.put("Invalid Bench", "The Bench '" + hearing.getCourt().getBench() + "' does not exists");
+//            }
+//            if (Objects.nonNull(hearing.getCourt().getDivision()) && !codes.get(ILMSConstants.MDMS_ILMS_DIVISION).contains(hearing.getCourt().getDivision())) {
+//                errorMap.put("Invalid Division", "The Division '" + hearing.getCourt().getDivision() + "' does not exists");
+//            }
+//        }
 
         return errorMap;
     }

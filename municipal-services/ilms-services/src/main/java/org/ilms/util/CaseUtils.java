@@ -1,26 +1,18 @@
 package org.ilms.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 import org.egov.common.contract.request.User;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.repository.CaseRepository;
 import org.ilms.service.CaseEnrichmentService;
-import org.ilms.web.model.AuditDetails;
-import org.ilms.web.model.Case;
-import org.ilms.web.model.CaseRequest;
-import org.ilms.web.model.CaseResponse;
-import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.Document;
+import org.ilms.web.model.*;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.workflow.ProcessInstance;
 import org.ilms.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.*;
 
 @Component
 public class CaseUtils {
@@ -60,18 +52,16 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getParentCaseId())) {
             oldData.setParentCaseId(caseRequest.getCaseObj().getParentCaseId());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseHierarchy())) {
-            oldData.setCaseHierarchy(caseRequest.getCaseObj().getCaseHierarchy());
-        }
+//        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseHierarchy())) {
+//            oldData.setCaseHierarchy(caseRequest.getCaseObj().getCaseHierarchy());
+//        }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseType())) {
             oldData.setCaseType(caseRequest.getCaseObj().getCaseType());
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseCategory())) {
             oldData.setCaseCategory(caseRequest.getCaseObj().getCaseCategory());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseYear())) {
-            oldData.setCaseYear(caseRequest.getCaseObj().getCaseYear());
-        }
+
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFilingNumber())) {
             oldData.setFilingNumber(caseRequest.getCaseObj().getFilingNumber());
         }
@@ -93,20 +83,8 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getApplicationNumber())) {
             oldData.setApplicationNumber(caseRequest.getCaseObj().getApplicationNumber());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getIsCaseNumberCorrect())) {
-            oldData.setIsCaseNumberCorrect(caseRequest.getCaseObj().getIsCaseNumberCorrect());
-        }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseStatus())) {
             oldData.setCaseStatus(caseRequest.getCaseObj().getCaseStatus());
-        }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFirstHearingDate())) {
-            oldData.setFirstHearingDate(caseRequest.getCaseObj().getFirstHearingDate());
-        }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPreviousHearingDate())) {
-            oldData.setPreviousHearingDate(caseRequest.getCaseObj().getPreviousHearingDate());
-        }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getNextHearingDate())) {
-            oldData.setNextHearingDate(caseRequest.getCaseObj().getPreviousHearingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseStage())) {
             oldData.setCaseStage(caseRequest.getCaseObj().getCaseStage());
@@ -114,12 +92,12 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseSubStage())) {
             oldData.setCaseSubStage(caseRequest.getCaseObj().getCaseSubStage());
         }
-        if (Objects.nonNull(caseRequest.getCaseObj().getCaseFlag())) {
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseFlag())) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getPriority())) {
+            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPriority())) {
                 List<String> uuids = new ArrayList<>();
                 uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
                 if (commonUtils.isUserMO(uuids, caseRequest.getCaseObj().getTenantId(), "caseFlag")) {
-                    oldData.setCaseFlag(caseRequest.getCaseObj().getCaseFlag());
+                    oldData.setPriority(caseRequest.getCaseObj().getPriority());
                 }
             }
         }
@@ -131,13 +109,6 @@ public class CaseUtils {
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRemarks())) {
             oldData.setRemarks(caseRequest.getCaseObj().getRemarks());
-        }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getAssignedOfficerId())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(caseRequest.getCaseObj().getAssignedOfficerId());
-            if (commonUtils.isUserExists(uuids, caseRequest.getCaseObj().getTenantId())) {
-                oldData.setAssignedOfficerId(caseRequest.getCaseObj().getAssignedOfficerId());
-            }
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getAdditionalDetails())) {
             oldData.setAdditionalDetails(caseRequest.getCaseObj().getAdditionalDetails());
@@ -337,6 +308,6 @@ public class CaseUtils {
                 break;
         }
         aCase.setWorkflow(wf);
-        return ProcessInstanceRequest.builder().processInstances(Arrays.asList(wf)).requestInfo(request.getRequestInfo()).build();
+        return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
     }
 }

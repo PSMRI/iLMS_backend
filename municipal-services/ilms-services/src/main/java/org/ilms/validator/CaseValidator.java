@@ -1,12 +1,6 @@
 package org.ilms.validator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.ilms.repository.CaseRepository;
@@ -19,7 +13,8 @@ import org.ilms.web.model.CaseSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
 
 @Component
 @Slf4j
@@ -48,17 +43,17 @@ public class CaseValidator {
         }
         if (Objects.nonNull(cases.getPetitioner())) {
             if (Objects.nonNull(cases.getPetitioner().getGender()) && !codes.get(ILMSConstants.MDMS_ILMS_GENDER_TYPE)
-                                                                            .contains(cases.getPetitioner().getGender())) {
+                    .contains(cases.getPetitioner().getGender())) {
                 errorMap.put("Invalid Gender", "The Gender '" + cases.getPetitioner().getGender() + "' does not exists");
             }
             if (cases.getPetitioner().getPetitionerType() != null && !codes.get(ILMSConstants.MDMS_ILMS_PETITIONER_TYPE)
-                                                                           .contains(cases.getPetitioner().getPetitionerType())) {
+                    .contains(cases.getPetitioner().getPetitionerType())) {
                 errorMap.put("Invalid PetitionerType", "The PetitionerType '" + cases.getPetitioner().getPetitionerType() + "' does not exists");
             }
         }
         if (Objects.nonNull(cases.getRespondent())) {
             if (Objects.nonNull(cases.getRespondent().getGender()) && !codes.get(ILMSConstants.MDMS_ILMS_GENDER_TYPE)
-                                                                            .contains(cases.getRespondent().getGender())) {
+                    .contains(cases.getRespondent().getGender())) {
                 errorMap.put("Invalid Gender", "The Gender '" + cases.getRespondent().getGender() + "' does not exists");
             }
         }
@@ -68,13 +63,13 @@ public class CaseValidator {
         if (Objects.nonNull(cases.getRecommendOIC()) && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
             errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + cases.getRecommendOIC() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getCaseFlag()) && !codes.get(ILMSConstants.CASE_FLAG).contains(cases.getCaseFlag())) {
-            errorMap.put("Invalid CaseFlag", "The CaseFlag '" + cases.getCaseFlag() + "' does not exists");
+        if (Objects.nonNull(cases.getPriority()) && !codes.get(ILMSConstants.CASE_FLAG).contains(cases.getPriority())) {
+            errorMap.put("Invalid CaseFlag", "The CaseFlag '" + cases.getPriority() + "' does not exists");
         }
         if (Objects.nonNull(cases.getDocuments())) {
             cases.getDocuments().forEach(document -> {
                 if (Objects.nonNull(document.getDocumentType()) && !codes.get(ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY)
-                                                                         .contains(document.getDocumentType())) {
+                        .contains(document.getDocumentType())) {
                     errorMap.put("Invalid DocumentCategory", "The DocumentCategory '" + document.getDocumentType() + "' does not exists");
                 }
             });
@@ -152,7 +147,7 @@ public class CaseValidator {
 
     public void caseNumberDuplicacyCheck(CaseRequest caseRequest) {
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().caseNumber(Collections.singletonList(caseRequest.getCaseObj().getCaseNumber()))
-                                                        .build();
+                .build();
         Integer count = caseRepository.getCaseCount(criteria);
         if (count >= 1) {
             throw new CustomException(ILMSErrorConstants.DUPLICATE_VALUE_ERROR,
