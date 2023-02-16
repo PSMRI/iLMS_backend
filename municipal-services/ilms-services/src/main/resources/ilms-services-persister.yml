@@ -6,7 +6,7 @@ serviceMaps:
       fromTopic: save-ilms-case-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ilms_case(id,tenant_id, case_number, cnr_number, parent_case_id, case_hierarchy, case_type, case_category, case_year, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, application_no, is_case_number_correct, case_status, first_hearing_date, previous_hearing_date, next_hearing_date, case_stage, case_sub_stage, case_flag, department_name, recommend_oic, remarks, assigned_officer_id, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ilms_case(id,tenant_id, case_number, cnr_number, parent_case_id, state, district, division, court_name, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, application_no, case_status, case_stage, case_sub_stage, priority, department_name, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
@@ -19,13 +19,19 @@ serviceMaps:
 
             - jsonPath: $.case.parentCaseId
 
-            - jsonPath: $.case.caseHierarchy
+            - jsonPath: $.case.state
+
+            - jsonPath: $.case.state
+
+            - jsonPath: $.case.district
+
+            - jsonPath: $.case.division
+
+            - jsonPath: $.case.courtName
 
             - jsonPath: $.case.caseType
 
             - jsonPath: $.case.caseCategory
-
-            - jsonPath: $.case.caseYear
 
             - jsonPath: $.case.filingNumber
 
@@ -41,21 +47,13 @@ serviceMaps:
 
             - jsonPath: $.case.applicationNo
 
-            - jsonPath: $.case.isCaseNumberCorrect
-
             - jsonPath: $.case.caseStatus
-
-            - jsonPath: $.case.firstHearingDate
-
-            - jsonPath: $.case.previousHearingDate
-
-            - jsonPath: $.case.nextHearingDate
 
             - jsonPath: $.case.caseStage
 
             - jsonPath: $.case.caseSubStage
 
-            - jsonPath: $.case.caseFlag
+            - jsonPath: $.case.priority
 
             - jsonPath: $.case.departmentName
 
@@ -220,18 +218,20 @@ serviceMaps:
       fromTopic: save-hearing-details-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ilms_hearing(id, hearing_number, court_id, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, first_hearing_date, previous_hearing_date, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ilms_hearing(id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, first_hearing_date, previous_hearing_date, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing
           jsonMaps:
             - jsonPath: $.hearing.id
 
             - jsonPath: $.hearing.hearingNumber
 
-            - jsonPath: $.hearing.courtId
+            - jsonPath: $.hearing.courtNumber
+
+            - jsonPath: $.hearing.bench
 
             - jsonPath: $.hearing.caseId
 
-            - jsonPath: $.hearing.judgeName
+            - jsonPath: $.hearing.judgeName.*
 
             - jsonPath: $.hearing.hearingDate
 
@@ -416,7 +416,7 @@ serviceMaps:
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
-        - query: UPDATE ilms_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, case_hierarchy=?, case_type=?, case_category=?, case_year=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, application_no=?, is_case_number_correct=?, case_status=?, first_hearing_date=?, previous_hearing_date=?, next_hearing_date=?, case_stage=?, case_sub_stage=?, case_flag=?, department_name=?, recommend_oic=?, remarks=?, assigned_officer_id=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE ilms_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, application_no=?, state=?, district=?, division=?, court_name=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, department_name=?, recommend_oic=?, remarks=?, additional_details=?, status=?, createdby=?, createdtime=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
           jsonMaps:
 
@@ -428,7 +428,15 @@ serviceMaps:
 
             - jsonPath: $.case.parentCaseId
 
-            - jsonPath: $.case.caseHierarchy
+            - jsonPath: $.case.applicationNo
+
+            - jsonPath: $.case.state
+
+            - jsonPath: $.case.district
+
+            - jsonPath: $.case.division
+
+            - jsonPath: $.case.courtName
 
             - jsonPath: $.case.caseType
 
@@ -448,31 +456,19 @@ serviceMaps:
 
             - jsonPath: $.case.policyOrNonPolicyMatter
 
-            - jsonPath: $.case.applicationNo
-
-            - jsonPath: $.case.isCaseNumberCorrect
-
             - jsonPath: $.case.caseStatus
-
-            - jsonPath: $.case.firstHearingDate
-
-            - jsonPath: $.case.previousHearingDate
-
-            - jsonPath: $.case.nextHearingDate
 
             - jsonPath: $.case.caseStage
 
             - jsonPath: $.case.caseSubStage
 
-            - jsonPath: $.case.caseFlag
+            - jsonPath: $.case.priority
 
             - jsonPath: $.case.departmentName
 
             - jsonPath: $.case.recommendOic
 
             - jsonPath: $.case.remarks
-
-            - jsonPath: $.case.assignedOfficerId
 
             - jsonPath: $.case.additionalDetails
               type: JSON
@@ -640,15 +636,17 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.hearing.id
 
-        - query: UPDATE ilms_hearing SET hearing_number=?, court_id=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, first_hearing_date=?, previous_hearing_date=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE ilms_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, first_hearing_date=?, previous_hearing_date=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: hearing
           jsonMaps:
 
             - jsonPath: $.hearing.hearingNumber
 
-            - jsonPath: $.hearing.courtId
+            - jsonPath: $.hearing.courtNumber
 
-            - jsonPath: $.hearing.judgeName
+            - jsonPath: $.hearing.bench
+
+            - jsonPath: $.hearing.judgeName.*
 
             - jsonPath: $.hearing.hearingDate
 
