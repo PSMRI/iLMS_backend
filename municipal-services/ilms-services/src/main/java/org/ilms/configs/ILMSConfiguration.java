@@ -145,10 +145,10 @@ public class ILMSConfiguration {
     @Value ("${persister.update.hearing.details.topic}")
     private String updateHearingTopic;
 
-    @Value ("${egov.ilms.idgen.judgement.id.name}")
+    @Value ("${egov.ilms.idgen.order.id.name}")
     private String judgementIdgenName;
 
-    @Value ("${egov.ilms.idgen.judgement.id.format}")
+    @Value ("${egov.ilms.idgen.order.id.format}")
     private String judgementIdgenFormat;
 
     @Value ("${egov.ilms.idgen.document.id.name}")
@@ -157,13 +157,13 @@ public class ILMSConfiguration {
     @Value ("${egov.ilms.idgen.document.id.format}")
     private String documentIdgenFormat;
 
-    @Value ("${persister.save.judgement.details.topic}")
+    @Value ("${persister.save.order.details.topic}")
     private String createJudgementTopic;
 
     @Value ("${persister.save.document.topic}")
     private String createDocumentTopic;
 
-    @Value ("${egov.ilms.idgen.judgement.update}")
+    @Value ("${persister.update.order.details.topic}")
     private String updateJudgementTopic;
 
     @Value ("${egov.ilms.default.limit}")

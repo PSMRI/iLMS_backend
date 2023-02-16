@@ -1,8 +1,5 @@
 package org.ilms.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import org.ilms.repository.HearingRepository;
 import org.ilms.service.CaseEnrichmentService;
 import org.ilms.web.model.Hearing;
@@ -10,6 +7,10 @@ import org.ilms.web.model.HearingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 public class HearingUtils {
@@ -32,9 +33,6 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingNumber())) {
             oldHearingRequest.setHearingNumber(hearingDetailsRequest.getHearing().getHearingNumber());
         }
-        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourtId())) {
-            oldHearingRequest.setCourtId(hearingDetailsRequest.getHearing().getCourtId());
-        }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getJudgeName())) {
             oldHearingRequest.setJudgeName(hearingDetailsRequest.getHearing().getJudgeName());
         }
@@ -43,6 +41,9 @@ public class HearingUtils {
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBusinessDate())) {
             oldHearingRequest.setBusinessDate(hearingDetailsRequest.getHearing().getBusinessDate());
+        }
+        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBench())) {
+            oldHearingRequest.setBench(hearingDetailsRequest.getHearing().getBench());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingPurpose())) {
             oldHearingRequest.setHearingPurpose(hearingDetailsRequest.getHearing().getHearingPurpose());
@@ -63,13 +64,13 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseNumber())) {
             oldHearingRequest.setCaseNumber(hearingDetailsRequest.getHearing().getCaseNumber());
         }
-        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPreviousHearingDate())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "PreviousHearingDate")) {
-                oldHearingRequest.setPreviousHearingDate(hearingDetailsRequest.getHearing().getPreviousHearingDate());
-            }
-        }
+//        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPreviousHearingDate())) {
+//            List<String> uuids = new ArrayList<>();
+//            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+//            if (commonUtils.isUserOIC(uuids, tenantId, "PreviousHearingDate")) {
+//                oldHearingRequest.setPreviousHearingDate(hearingDetailsRequest.getHearing().getPreviousHearingDate());
+//            }
+//        }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getOathNumber())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
@@ -85,13 +86,13 @@ public class HearingUtils {
 
             }
         }
-        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getFirstHearingDate())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "FirstHearingDate")) {
-                oldHearingRequest.setFirstHearingDate(hearingDetailsRequest.getHearing().getFirstHearingDate());
-            }
-        }
+//        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getFirstHearingDate())) {
+//            List<String> uuids = new ArrayList<>();
+//            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+//            if (commonUtils.isUserOIC(uuids, tenantId, "FirstHearingDate")) {
+//                oldHearingRequest.setFirstHearingDate(hearingDetailsRequest.getHearing().getFirstHearingDate());
+//            }
+        //}
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getIsPresenceRequired())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
@@ -117,32 +118,32 @@ public class HearingUtils {
             oldHearingRequest.setStatus(hearingDetailsRequest.getHearing().getStatus());
         }
         //check court details
-        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt())) {
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getCourtNumber())) {
-                oldHearingRequest.getCourt().setCourtNumber(hearingDetailsRequest.getHearing().getCourt().getCourtNumber());
-            }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getState())) {
-                oldHearingRequest.getCourt().setState(hearingDetailsRequest.getHearing().getCourt().getState());
-            }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getDistrict())) {
-                oldHearingRequest.getCourt().setDistrict(hearingDetailsRequest.getHearing().getCourt().getDistrict());
-            }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getBench())) {
-                oldHearingRequest.getCourt().setBench(hearingDetailsRequest.getHearing().getCourt().getBench());
-            }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getStatus())) {
-                oldHearingRequest.getCourt().setStatus(hearingDetailsRequest.getHearing().getCourt().getStatus());
-            }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getHearingId())) {
-                oldHearingRequest.getCourt().setHearingId(hearingDetailsRequest.getHearing().getCourt().getHearingId());
-            }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getCourtName())) {
-                oldHearingRequest.getCourt().setCourtName(hearingDetailsRequest.getHearing().getCourt().getCourtName());
-            }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getDivision())) {
-                oldHearingRequest.getCourt().setDivision(hearingDetailsRequest.getHearing().getCourt().getDivision());
-            }
-        }
+//        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt())) {
+//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getCourtNumber())) {
+//                oldHearingRequest.getCourt().setCourtNumber(hearingDetailsRequest.getHearing().getCourt().getCourtNumber());
+//            }
+//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getState())) {
+//                oldHearingRequest.getCourt().setState(hearingDetailsRequest.getHearing().getCourt().getState());
+//            }
+//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getDistrict())) {
+//                oldHearingRequest.getCourt().setDistrict(hearingDetailsRequest.getHearing().getCourt().getDistrict());
+//            }
+//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getBench())) {
+//                oldHearingRequest.getCourt().setBench(hearingDetailsRequest.getHearing().getCourt().getBench());
+//            }
+//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getStatus())) {
+//                oldHearingRequest.getCourt().setStatus(hearingDetailsRequest.getHearing().getCourt().getStatus());
+//            }
+//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getHearingId())) {
+//                oldHearingRequest.getCourt().setHearingId(hearingDetailsRequest.getHearing().getCourt().getHearingId());
+//            }
+//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getCourtName())) {
+//                oldHearingRequest.getCourt().setCourtName(hearingDetailsRequest.getHearing().getCourt().getCourtName());
+//            }
+//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getDivision())) {
+//                oldHearingRequest.getCourt().setDivision(hearingDetailsRequest.getHearing().getCourt().getDivision());
+//            }
+//        }
         //checking respondent details
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent())) {
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getCaseId())) {
@@ -179,31 +180,31 @@ public class HearingUtils {
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getAdvocate())) {
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getPartyId())) {
                     oldHearingRequest.getRespondent().getAdvocate()
-                                     .setPartyId(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getPartyId());
+                            .setPartyId(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getPartyId());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getHearingId())) {
                     oldHearingRequest.getRespondent().getAdvocate()
-                                     .setHearingId(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getHearingId());
+                            .setHearingId(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getHearingId());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getFirstName())) {
                     oldHearingRequest.getRespondent().getAdvocate()
-                                     .setFirstName(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getFirstName());
+                            .setFirstName(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getFirstName());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getLastName())) {
                     oldHearingRequest.getRespondent().getAdvocate()
-                                     .setLastName(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getLastName());
+                            .setLastName(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getLastName());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getContactNumber())) {
                     oldHearingRequest.getRespondent().getAdvocate()
-                                     .setContactNumber(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getContactNumber());
+                            .setContactNumber(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getContactNumber());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getPartyType())) {
                     oldHearingRequest.getRespondent().getAdvocate()
-                                     .setPartyType(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getPartyType());
+                            .setPartyType(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getPartyType());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getStatus())) {
                     oldHearingRequest.getRespondent().getAdvocate()
-                                     .setStatus(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getStatus());
+                            .setStatus(hearingDetailsRequest.getHearing().getRespondent().getAdvocate().getStatus());
                 }
             }
         }
@@ -243,31 +244,31 @@ public class HearingUtils {
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate())) {
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getPartyId())) {
                     oldHearingRequest.getPetitioner().getAdvocate()
-                                     .setPartyId(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getPartyId());
+                            .setPartyId(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getPartyId());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getHearingId())) {
                     oldHearingRequest.getPetitioner().getAdvocate()
-                                     .setHearingId(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getHearingId());
+                            .setHearingId(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getHearingId());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getFirstName())) {
                     oldHearingRequest.getPetitioner().getAdvocate()
-                                     .setFirstName(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getFirstName());
+                            .setFirstName(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getFirstName());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getLastName())) {
                     oldHearingRequest.getPetitioner().getAdvocate()
-                                     .setLastName(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getLastName());
+                            .setLastName(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getLastName());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getContactNumber())) {
                     oldHearingRequest.getPetitioner().getAdvocate()
-                                     .setContactNumber(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getContactNumber());
+                            .setContactNumber(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getContactNumber());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getPartyType())) {
                     oldHearingRequest.getPetitioner().getAdvocate()
-                                     .setPartyType(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getPartyType());
+                            .setPartyType(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getPartyType());
                 }
                 if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getStatus())) {
                     oldHearingRequest.getPetitioner().getAdvocate()
-                                     .setStatus(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getStatus());
+                            .setStatus(hearingDetailsRequest.getHearing().getPetitioner().getAdvocate().getStatus());
                 }
             }
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAdditionalDetails())) {

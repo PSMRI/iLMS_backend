@@ -71,10 +71,10 @@ public class CaseEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(request.getHearing().getId(), false);
         request.getHearing().setAuditDetails(auditDetails);
         ilmsCase.setAuditDetails(auditDetails);
-        if (request.getHearing().getCourt() != null) {
-            request.getHearing().getCourt().setAuditDetails(auditDetails);
-            ilmsCase.getCourt().setAuditDetails(auditDetails);
-        }
+//        if (request.getHearing().getCourt() != null) {
+//            request.getHearing().getCourt().setAuditDetails(auditDetails);
+//            ilmsCase.getCourt().setAuditDetails(auditDetails);
+//        }
         if (request.getHearing().getRespondent() != null) {
             request.getHearing().getRespondent().setAuditDetails(auditDetails);
             ilmsCase.getRespondent().setAuditDetails(auditDetails);
@@ -192,7 +192,7 @@ public class CaseEnrichmentService {
     public void enrichCaseUpdateRequest(CaseRequest caseRequest) {
         RequestInfo requestInfo = caseRequest.getRequestInfo();
         Case aCase = caseRequest.getCaseObj();
-        AuditDetails auditDetails = caseUtils.getAuditDetails(caseRequest.getCaseObj().getId(), true);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUserName(), false);
         caseRequest.getCaseObj().setAuditDetails(auditDetails);
         aCase.setAuditDetails(auditDetails);
         if (caseRequest.getCaseObj().getRespondent() != null) {

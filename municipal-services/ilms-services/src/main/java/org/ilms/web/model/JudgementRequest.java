@@ -15,8 +15,8 @@ public class JudgementRequest {
     private RequestInfo RequestInfo;
 
     @JsonProperty("judgement")
-    private Judgement judgement ;
+    private Order order;
 
     @JsonProperty("workflow")
-    private Workflow workflow ;
+    private Workflow workflow;
 }

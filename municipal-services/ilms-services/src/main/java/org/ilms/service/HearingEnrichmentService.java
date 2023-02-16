@@ -45,10 +45,10 @@ public class HearingEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(hearingRequest.getRequestInfo().getUserInfo().getUserName(), true);
         hearingRequest.getHearing().setAuditDetails(auditDetails);
         hearing.setAuditDetails(auditDetails);
-        if (Objects.nonNull(hearingRequest.getHearing().getCourt())) {
-            hearingRequest.getHearing().getCourt().setAuditDetails(auditDetails);
-            hearing.getCourt().setAuditDetails(auditDetails);
-        }
+//        if (Objects.nonNull(hearingRequest.getHearing().getCourt())) {
+//            hearingRequest.getHearing().getCourt().setAuditDetails(auditDetails);
+//            hearing.getCourt().setAuditDetails(auditDetails);
+//        }
         if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
             hearingRequest.getHearing().getRespondent().setAuditDetails(auditDetails);
             hearing.getRespondent().setAuditDetails(auditDetails);
@@ -114,14 +114,14 @@ public class HearingEnrichmentService {
         }
 
         hearing.setId(itr.next());
-        if (Objects.nonNull(hearing.getCourt())) {
-            hearing.getCourt().setId(courtItr.next());
-        } else {
-            Court court = new Court();
-            court.setStatus(Status.ACTIVE);
-            court.setId(courtItr.next());
-            hearing.setCourt(court);
-        }
+//        if (Objects.nonNull(hearing.getCourt())) {
+//            hearing.getCourt().setId(courtItr.next());
+//        } else {
+//            Court court = new Court();
+//            court.setStatus(Status.ACTIVE);
+//            court.setId(courtItr.next());
+//            hearing.setCourt(court);
+//        }
         if (Objects.nonNull(hearing.getRespondent())) {
             if (Objects.nonNull(hearing.getRespondent().getAdvocate())) {
                 hearing.getRespondent().getAdvocate().setId(radvocateItr.next());

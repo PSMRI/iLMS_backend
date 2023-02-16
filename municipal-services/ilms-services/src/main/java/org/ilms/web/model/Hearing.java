@@ -1,12 +1,9 @@
 package org.ilms.web.model;
 
-import org.ilms.web.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.*;
+import org.ilms.web.model.enums.Status;
 
 @Builder
 @AllArgsConstructor
@@ -14,85 +11,79 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Hearing {
-    @JsonProperty ("id")
+    @JsonProperty("id")
     private String id;
 
-    @JsonProperty ("hearingNumber")
+    @JsonProperty("hearingNumber")
     private String hearingNumber;
 
-    @JsonProperty ("courtId")
-    private String courtId;
+    @JsonProperty("courtNumber")
+    private String courtNumber;
 
-    @JsonProperty ("court")
-    private Court court;
+    @JsonProperty("bench")
+    private String bench;
 
-    @JsonProperty ("caseId")
+    @JsonProperty("caseId")
     private String caseId;
 
-    @JsonProperty ("judgeName")
-    private String judgeName;
+    @JsonProperty("judgeName")
+    private JsonNode judgeName;
 
-    @JsonProperty ("hearingDate")
+    @JsonProperty("hearingDate")
     private Long hearingDate;
 
-    @JsonProperty ("businessDate")
+    @JsonProperty("businessDate")
     private Long businessDate;
 
-    @JsonProperty ("hearingPurpose")
+    @JsonProperty("hearingPurpose")
     private String hearingPurpose;
 
-    @JsonProperty ("requiredOfficer")
+    @JsonProperty("requiredOfficer")
     private String requiredOfficer;
 
-    @JsonProperty ("affidavitFilingDate")
+    @JsonProperty("affidavitFilingDate")
     private Long affidavitFilingDate;
 
-    @JsonProperty ("affidavitFilingDueDate")
+    @JsonProperty("affidavitFilingDueDate")
     private Long affidavitFilingDueDate;
 
-    @JsonProperty ("caseNumber")
+    @JsonProperty("caseNumber")
     private String caseNumber;
 
-    @JsonProperty ("oathNumber")
+    @JsonProperty("oathNumber")
     private String oathNumber;
 
-    @JsonProperty ("firstHearingDate")
-    private Long firstHearingDate;
-
-    @JsonProperty ("previousHearingDate")
-    private Long previousHearingDate;
-
-    @JsonProperty ("nextHearingDate")
+    @JsonProperty("nextHearingDate")
     private Long nextHearingDate;
 
-    @JsonProperty ("isPresenceRequired")
+    @JsonProperty("isPresenceRequired")
     private Boolean isPresenceRequired;
 
-    @JsonProperty ("hearingType")
+    @JsonProperty("hearingType")
     private String hearingType;
 
-    @JsonProperty ("departmentOfficer")
+    @JsonProperty("departmentOfficer")
     private String departmentOfficer;
 
-    @JsonProperty ("remarks")
+    @JsonProperty("remarks")
     private String remarks;
 
-    @JsonProperty ("status")
+    @JsonProperty("status")
     private Status status;
 
-    @JsonProperty ("petitioner")
+    @JsonProperty("petitioner")
     private Party petitioner;
 
-    @JsonProperty ("respondent")
+    @JsonProperty("respondent")
     private Party respondent;
 
-    @JsonProperty ("payment")
+    @JsonProperty("payment")
     private Payment payment;
 
-    @JsonProperty ("additionalDetails")
+    @JsonProperty("additionalDetails")
     private Object additionalDetails;
 
-    @JsonProperty ("auditDetails")
+    @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
 }

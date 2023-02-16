@@ -1,5 +1,18 @@
 package org.ilms.repository.rowmapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.tracer.model.CustomException;
+import org.ilms.web.model.Act;
+import org.ilms.web.model.AuditDetails;
+import org.ilms.web.model.Case;
+import org.ilms.web.model.enums.Status;
+import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.stereotype.Repository;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,19 +20,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.egov.tracer.model.CustomException;
-import org.ilms.web.model.Act;
-import org.ilms.web.model.AuditDetails;
-import org.ilms.web.model.Case;
-import org.ilms.web.model.enums.CaseHierarchy;
-import org.ilms.web.model.enums.Status;
-import org.postgresql.util.PGobject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.stereotype.Repository;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Repository
 public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
@@ -49,52 +49,47 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String id = rs.getString("ilmsCase_id");
                 duplicacyCheck = id;
                 String cnrNumber = rs.getString("ilms_cnrNumber");
+                String caseType = rs.getString("ilms_caseType");
                 currentCase = ilmsCaseMap.get(id);
                 String tenantId = rs.getString("ilms_tenandId");
                 String parentCaseId = rs.getString("ilms_parentCaseId");
-                String caseHierarchy = rs.getString("ilms_caseHierarchy");
-                String caseType = rs.getString("ilms_caseType");
                 String caseCategory = rs.getString("ilms_caseCategory");
                 String caseNumber = rs.getString("ilms_caseNumber");
-                Long caseYear = rs.getLong("ilms_caseYear");
+                String state = rs.getString("ilms_state");
+                String district = rs.getString("ilms_district");
+                String division = rs.getString("ilms_division");
+                String courtName = rs.getString("ilms_courtName");
                 String filingNumber = rs.getString("ilms_filingNumber");
                 Long filingDate = rs.getLong("ilms_filingDate");
                 Long registrationDate = rs.getLong("ilms_registrationDate");
                 String caseSummary = rs.getString("ilms_caseSummary");
                 String arisingDetails = rs.getString("ilms_arisingDetails");
                 String matter = rs.getString("ilms_matter");
-                String uniqueId = rs.getString("ilms_uniqueId");
-                Boolean isCaseNumberCorrect = rs.getBoolean("ilms_isCaseNumberCorrect");
                 this.setFullCount((rs.getInt("full_count")));
                 String caseStatus = rs.getString("ilms_caseStatus");
-                Long firstHearingDate = rs.getLong("ilms_firstHearingDate");
-                Long previousHearingDate = rs.getLong("ilms_previousHearingDate");
-                Long nextHearingDate = rs.getLong("ilms_nextHearingDate");
                 String caseStage = rs.getString("ilms_caseStage");
                 String caseSubStage = rs.getString("ilms_caseSubStage");
-                String caseFlag = rs.getString("ilms_caseFlag");
-                String departmentName = rs.getString("ilms_departmentName");
+                String priority = rs.getString("ilms_priority");
                 String recommendOic = rs.getString("ilms_recommendOic");
                 String remarks = rs.getString("ilms_remarks");
-                String assignedOfficerId = rs.getString("ilms_assignedOfficerId");
-                Object additionalDetails = getAdditionalDetail("ilms_additionalDetails", rs);
+                JsonNode additionalDetails = getAdditionalDetail("ilms_additionalDetails", rs);
                 String status = rs.getString("ilms_status");
 
                 AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("ilms_createdTime"))
-                                                        .createdBy(rs.getString("ilms_createdBy"))
-                                                        .lastModifiedTime(rs.getLong("ilms_lastModifiedTime"))
-                                                        .lastModifiedBy(rs.getString("ilms_lastModifiedBy")).build();
+                        .createdBy(rs.getString("ilms_createdBy"))
+                        .lastModifiedTime(rs.getLong("ilms_lastModifiedTime"))
+                        .lastModifiedBy(rs.getString("ilms_lastModifiedBy")).build();
 
                 if (currentCase == null) {
                     currentCase = Case.builder().id(id).cnrNumber(cnrNumber).tenantId(tenantId).additionalDetails(additionalDetails)
-                                      .caseHierarchy(CaseHierarchy.valueOf(caseHierarchy)).caseType(caseType).caseCategory(caseCategory)
-                                      .parentCaseId(parentCaseId).caseNumber(caseNumber).caseYear(caseYear).filingNumber(filingNumber)
-                                      .remarks(remarks).assignedOfficerId(assignedOfficerId).filingDate(filingDate).registrationDate(registrationDate)
-                                      .caseSummary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
-                                      .policyOrNonPolicyMatter(matter).applicationNumber(uniqueId).isCaseNumberCorrect(isCaseNumberCorrect)
-                                      .caseStatus(caseStatus).firstHearingDate(firstHearingDate).previousHearingDate(previousHearingDate)
-                                      .nextHearingDate(nextHearingDate).caseStage(caseStage).caseSubStage(caseSubStage).caseFlag(caseFlag)
-                                      .departmentName(departmentName).recommendOIC(recommendOic).auditDetails(auditDetails).build();
+                            .type(caseType).category(caseCategory)
+                            .parentCaseId(parentCaseId).number(caseNumber).filingNumber(filingNumber)
+                            .remarks(remarks).filingDate(filingDate).registrationDate(registrationDate)
+                            .summary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
+                            .policyOrNonPolicyMatter(matter).priority(priority)
+                            .caseStatus(caseStatus).state(state).courtName(courtName)
+                            .stage(caseStage).subStage(caseSubStage).district(district).division(division)
+                            .recommendOIC(recommendOic).auditDetails(auditDetails).build();
 
                     ilmsCaseMap.put(id, currentCase);
                 }
@@ -104,15 +99,15 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
         return new ArrayList<>(ilmsCaseMap.values());
     }
 
-    @SuppressWarnings ("unused")
+    @SuppressWarnings("unused")
     private void addChildrenToProperty(ResultSet rs, Case aCase) throws SQLException {
         // TODO add all the child data petitioner, respondant, act, advocate
         AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("act_createdBy")).createdTime(rs.getLong("act_createdTime"))
-                                                .lastModifiedBy(rs.getString("act_lastModifiedBy"))
-                                                .lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
+                .lastModifiedBy(rs.getString("act_lastModifiedBy"))
+                .lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
 
         Act act = Act.builder().id(rs.getString("actId")).actName(rs.getString("actName")).status(Status.valueOf(rs.getString("actStatus")))
-                     .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
+                .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
         aCase.setAct(act);
     }
 

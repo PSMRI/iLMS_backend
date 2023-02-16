@@ -15,11 +15,11 @@ public class JudgementResponse {
     @JsonProperty("responseInfo")
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty ("totalCount")
-    private Integer totalCount =null;
+    @JsonProperty("totalCount")
+    private Integer totalCount = null;
 
     @JsonProperty("judgementList")
-    private List<Judgement> judgementList = null;
+    private List<Order> orderList = null;
 
     @JsonProperty("workflow")
     private Workflow workflow = null;
