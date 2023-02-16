@@ -601,7 +601,7 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.hearing.id
 
-        - query: UPDATE ilms_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, first_hearing_date=?, previous_hearing_date=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE ilms_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: hearing
           jsonMaps:
 
@@ -631,10 +631,6 @@ serviceMaps:
 
             - jsonPath: $.hearing.oathNumber
 
-            - jsonPath: $.hearing.firstHearingDate
-
-            - jsonPath: $.hearing.previousHearingDate
-
             - jsonPath: $.hearing.nextHearingDate
 
             - jsonPath: $.hearing.isPresenceRequired
@@ -656,33 +652,6 @@ serviceMaps:
             - jsonPath: $.hearing.auditDetails.lastModifiedTime
 
             - jsonPath: $.hearing.id
-
-        - query: UPDATE ilms_court SET court_number=?, hearing_id=?, court_name=?, district=?, state=?, bench=?, division=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
-          basePath: hearing.court
-          jsonMaps:
-
-            - jsonPath: $.hearing.court.courtNumber
-
-            - jsonPath: $.hearing.court.hearingId
-
-            - jsonPath: $.hearing.court.courtName
-
-            - jsonPath: $.hearing.court.district
-
-            - jsonPath: $.hearing.court.state
-
-            - jsonPath: $.hearing.court.bench
-
-            - jsonPath: $.hearing.court.division
-
-            - jsonPath: $.hearing.court.status
-
-            - jsonPath: $.hearing.court.auditDetails.lastModifiedBy
-
-            - jsonPath: $.hearing.court.auditDetails.lastModifiedTime
-
-            - jsonPath: $.hearing.court.id
-
 
         - query: UPDATE ilms_advocate SET party_id=?, hearing_id=?, first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
           basePath: hearing.respondent.advocate

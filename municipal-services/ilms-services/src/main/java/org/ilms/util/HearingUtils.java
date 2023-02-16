@@ -42,6 +42,9 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBusinessDate())) {
             oldHearingRequest.setBusinessDate(hearingDetailsRequest.getHearing().getBusinessDate());
         }
+        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBench())) {
+            oldHearingRequest.setBench(hearingDetailsRequest.getHearing().getBench());
+        }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingPurpose())) {
             oldHearingRequest.setHearingPurpose(hearingDetailsRequest.getHearing().getHearingPurpose());
         }
