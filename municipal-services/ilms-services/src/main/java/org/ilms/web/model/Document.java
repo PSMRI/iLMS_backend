@@ -30,6 +30,9 @@ public class Document {
     @JsonProperty ("status")
     private Status status ;
 
+    @JsonProperty ("remarks")
+    private String remarks ;
+
     @JsonProperty ("auditDetails")
     private AuditDetails auditDetails ;
 

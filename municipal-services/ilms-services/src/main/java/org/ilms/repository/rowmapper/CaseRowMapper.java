@@ -55,10 +55,6 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String parentCaseId = rs.getString("ilms_parentCaseId");
                 String caseCategory = rs.getString("ilms_caseCategory");
                 String caseNumber = rs.getString("ilms_caseNumber");
-                String state = rs.getString("ilms_state");
-                String district = rs.getString("ilms_district");
-                String division = rs.getString("ilms_division");
-                String courtName = rs.getString("ilms_courtName");
                 String filingNumber = rs.getString("ilms_filingNumber");
                 Long filingDate = rs.getLong("ilms_filingDate");
                 Long registrationDate = rs.getLong("ilms_registrationDate");
@@ -87,8 +83,8 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                             .remarks(remarks).filingDate(filingDate).registrationDate(registrationDate)
                             .summary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
                             .policyOrNonPolicyMatter(matter).priority(priority)
-                            .caseStatus(caseStatus).state(state).courtName(courtName)
-                            .stage(caseStage).subStage(caseSubStage).district(district).division(division)
+                            .caseStatus(caseStatus)
+                            .stage(caseStage).subStage(caseSubStage)
                             .recommendOIC(recommendOic).auditDetails(auditDetails).build();
 
                     ilmsCaseMap.put(id, currentCase);
@@ -102,6 +98,13 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
     @SuppressWarnings("unused")
     private void addChildrenToProperty(ResultSet rs, Case aCase) throws SQLException {
         // TODO add all the child data petitioner, respondant, act, advocate
+
+        if (Status.valueOf(rs.getString("court_status")) == Status.ACTIVE) {
+            AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
+                    .lastModifiedBy(rs.getString("court_lastmodifiedby"))
+                    .lastModifiedTime(rs.getLong("court_lastmodifiedtime")).build();
+
+        }
         AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("act_createdBy")).createdTime(rs.getLong("act_createdTime"))
                 .lastModifiedBy(rs.getString("act_lastModifiedBy"))
                 .lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
@@ -109,6 +112,8 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
         Act act = Act.builder().id(rs.getString("actId")).actName(rs.getString("actName")).status(Status.valueOf(rs.getString("actStatus")))
                 .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
         aCase.setAct(act);
+
+
     }
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {

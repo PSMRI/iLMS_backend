@@ -1,6 +1,7 @@
 package org.ilms.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.Status;
@@ -30,18 +31,6 @@ public class Case {
 
     @JsonProperty("parentCaseId")
     private String parentCaseId;
-
-    @JsonProperty("state")
-    private String state;
-
-    @JsonProperty("district")
-    private String district;
-
-    @JsonProperty("division")
-    private String division;
-
-    @JsonProperty("courtName")
-    private String courtName;
 
     @JsonProperty("type")
     private String type;
@@ -92,7 +81,7 @@ public class Case {
     private String remarks;
 
     @JsonProperty("additionalDetails")
-    private Object additionalDetails;
+    private JsonNode additionalDetails;
 
     @JsonProperty("status")
     private Status status;
@@ -105,6 +94,9 @@ public class Case {
 
     @JsonProperty("act")
     private Act act;
+
+    @JsonProperty("court")
+    private Court court;
 
     @JsonProperty("documents")
     private List<Document> documents;

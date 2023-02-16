@@ -256,6 +256,9 @@ public class CaseUtils {
                         if (!StringUtils.isEmpty(document.getCaseId())) {
                             oldDocData.setCaseId(document.getCaseId());
                         }
+                        if (!StringUtils.isEmpty(document.getRemarks())) {
+                            oldDocData.setRemarks(document.getRemarks());
+                        }
                         if (!StringUtils.isEmpty(document.getDocumentType())) {
                             oldDocData.setDocumentType(document.getDocumentType());
                         }
@@ -270,6 +273,7 @@ public class CaseUtils {
             }
         }
         request.setCaseObj(oldData);
+        request.setRequestInfo(caseRequest.getRequestInfo());
         caseEnrichmentService.enrichCaseUpdateRequest(request);
         return request;
     }

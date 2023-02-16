@@ -37,6 +37,10 @@ public class CaseEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUserName(), true);
         caseRequest.getCaseObj().setAuditDetails(auditDetails);
         aCase.setAuditDetails(auditDetails);
+        if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
+            caseRequest.getCaseObj().getCourt().setAuditDetails(auditDetails);
+            aCase.getCourt().setAuditDetails(auditDetails);
+        }
         if (caseRequest.getCaseObj().getRespondent() != null) {
             caseRequest.getCaseObj().getRespondent().setAuditDetails(auditDetails);
             aCase.getRespondent().setAuditDetails(auditDetails);
@@ -71,10 +75,6 @@ public class CaseEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(request.getHearing().getId(), false);
         request.getHearing().setAuditDetails(auditDetails);
         ilmsCase.setAuditDetails(auditDetails);
-//        if (request.getHearing().getCourt() != null) {
-//            request.getHearing().getCourt().setAuditDetails(auditDetails);
-//            ilmsCase.getCourt().setAuditDetails(auditDetails);
-//        }
         if (request.getHearing().getRespondent() != null) {
             request.getHearing().getRespondent().setAuditDetails(auditDetails);
             ilmsCase.getRespondent().setAuditDetails(auditDetails);
@@ -119,11 +119,17 @@ public class CaseEnrichmentService {
         List<String> respondentId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentIdgenName(),
                 ilmsConfiguration.getRespondentIdgenFormat(), 1);
         ListIterator<String> respondentItr = respondentId.listIterator();
+        List<String> courtId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCourtIdgenName(),
+                ilmsConfiguration.getCourtIdgenFormat(), 1);
+        ListIterator<String> courtItr = courtId.listIterator();
         Map<String, String> errorMap = new HashMap<>();
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
         caseObj.setId(caseItr.next());
+        if(Objects.nonNull(caseObj.getCourt())){
+            caseObj.getCourt().setId(courtItr.next());
+        }
         if (Objects.nonNull(caseObj.getAct())) {
             caseObj.getAct().setId(actItr.next());
         } else {
@@ -195,6 +201,10 @@ public class CaseEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUserName(), false);
         caseRequest.getCaseObj().setAuditDetails(auditDetails);
         aCase.setAuditDetails(auditDetails);
+        if (caseRequest.getCaseObj().getCourt() != null) {
+            caseRequest.getCaseObj().getCourt().setAuditDetails(auditDetails);
+            aCase.getCourt().setAuditDetails(auditDetails);
+        }
         if (caseRequest.getCaseObj().getRespondent() != null) {
             caseRequest.getCaseObj().getRespondent().setAuditDetails(auditDetails);
             aCase.getRespondent().setAuditDetails(auditDetails);

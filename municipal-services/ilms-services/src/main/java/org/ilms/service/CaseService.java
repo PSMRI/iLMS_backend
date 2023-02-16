@@ -184,6 +184,9 @@ public class CaseService {
 //                }
 //            }
 //        }
+        if(Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
+            caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
+        }
         if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
             caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
             caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
