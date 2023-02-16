@@ -352,7 +352,7 @@ serviceMaps:
 
     - version: 1.0
       description: Add cases in ilms_case table
-      fromTopic: save-judgement-case-application
+      fromTopic: save-order-case-application
       isTransaction: true
       queryMaps:
         - query: INSERT INTO ilms_judgement(id, case_id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, revised_complaince_reason,compliance_status, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -761,7 +761,7 @@ serviceMaps:
 
     - version: 1.0
       description: Update judgement in ilms_judgement table
-      fromTopic: update-judgement-case-application
+      fromTopic: update-order-case-application
       isTransaction: true
       queryMaps:
         - query: INSERT INTO ilms_judgement_auditlog SELECT * FROM ilms_judgement where id = ? AND case_id = ? ;
