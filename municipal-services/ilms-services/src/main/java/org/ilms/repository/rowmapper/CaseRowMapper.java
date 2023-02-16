@@ -6,6 +6,7 @@ import org.egov.tracer.model.CustomException;
 import org.ilms.web.model.Act;
 import org.ilms.web.model.AuditDetails;
 import org.ilms.web.model.Case;
+import org.ilms.web.model.Court;
 import org.ilms.web.model.enums.Status;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +114,8 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
         aCase.setAct(act);
 
-
+        Court court = Court.builder().id(rs.getString("court_id")).caseId(rs.getString("court_caseId")).courtName(rs.getString("court_name")).district(rs.getString("court_district")).state(rs.getString("court_state")).division(rs.getString("court_division")).status(Status.valueOf(rs.getString("court_status"))).auditDetails(auditDetails).build();
+        aCase.setCourt(court);
     }
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
