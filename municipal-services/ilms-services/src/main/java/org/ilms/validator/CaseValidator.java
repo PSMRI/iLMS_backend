@@ -26,7 +26,7 @@ public class CaseValidator {
     CaseRepository caseRepository;
 
     private static Map<String, String> validateCodes(Case cases, Map<String, List<String>> codes, Map<String, String> errorMap) {
-                if (Objects.nonNull(cases.getCourt())) {
+        if (Objects.nonNull(cases.getCourt())) {
             if (Objects.nonNull(cases.getCourt().getCourtName()) && !codes.get(ILMSConstants.MDMS_ILMS_COURT_NAME).contains(cases.getCourt().getCourtName())) {
                 errorMap.put("Invalid CourtName", "The CourtName '" + cases.getCourt().getCourtName() + "' does not exists");
             }
@@ -112,7 +112,7 @@ public class CaseValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterData(caseRequest.getCaseObj(), caseRequest, errorMap);
+//        validateMasterData(caseRequest.getCaseObj(), caseRequest, errorMap);
     }
 
     public void validateUpdate(Case aCase, CaseRequest caseRequest) {
@@ -120,7 +120,7 @@ public class CaseValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterData(aCase, caseRequest, errorMap);
+//        validateMasterData(aCase, caseRequest, errorMap);
     }
 
     private void validateMasterData(Case aCase, CaseRequest request, Map<String, String> errorMap) {
@@ -131,7 +131,7 @@ public class CaseValidator {
                 Arrays.asList(ILMSConstants.MDMS_ILMS_CASE_TYPE, ILMSConstants.MDMS_ILMS_CASE_STATUS, ILMSConstants.MDMS_ILMS_CASE_CATEGORY,
                         ILMSConstants.MDMS_ILMS_CASE_STAGE, ILMSConstants.MDMS_ILMS_SUB_STAGE, ILMSConstants.MDMS_ILMS_GENDER_TYPE,
                         ILMSConstants.MDMS_ILMS_PETITIONER_TYPE, ILMSConstants.MDMS_ILMS_DEPARTMENT_NAME, ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY,
-                        ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC, ILMSConstants.CASE_FLAG,ILMSConstants.MDMS_ILMS_COURT_NAME, ILMSConstants.MDMS_ILMS_DISTRICT, ILMSConstants.MDMS_ILMS_STATE,
+                        ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC, ILMSConstants.CASE_FLAG, ILMSConstants.MDMS_ILMS_COURT_NAME, ILMSConstants.MDMS_ILMS_DISTRICT, ILMSConstants.MDMS_ILMS_STATE,
                         ILMSConstants.MDMS_ILMS_DIVISION));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",

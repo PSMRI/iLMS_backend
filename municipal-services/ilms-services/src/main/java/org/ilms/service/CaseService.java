@@ -184,7 +184,7 @@ public class CaseService {
 //                }
 //            }
 //        }
-        if(Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
             caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
         if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
@@ -207,6 +207,16 @@ public class CaseService {
             caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
         }
         if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner())) {
+            if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getDepartmentName())) {
+                caseRequest.getCaseObj().getPetitioner().setFirstName(null);
+                caseRequest.getCaseObj().getPetitioner().setLastName(null);
+                caseRequest.getCaseObj().getPetitioner().setGender(null);
+                caseRequest.getCaseObj().getPetitioner().setPetitionerType(null);
+                caseRequest.getCaseObj().getPetitioner().setAddress(null);
+                caseRequest.getCaseObj().getPetitioner().setContactNumber(null);
+            } else {
+                caseRequest.getCaseObj().getPetitioner().setDepartmentName(null);
+            }
             caseRequest.getCaseObj().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
             caseRequest.getCaseObj().getPetitioner().setStatus(Status.ACTIVE);
             if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
