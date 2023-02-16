@@ -39,7 +39,7 @@ public class DocumentMapper implements ResultSetExtractor<List<Document>> {
 
                 Document currentDocument = Document.builder().id(rs.getString("id")).caseId(rs.getString("case_id"))
                         .documentType(rs.getString("document_type")).status(Status.valueOf(rs.getString("status")))
-                        .fileStoreId(rs.getString("file_store_id")).auditDetails(auditDetails).build();
+                        .remarks(rs.getString("remarks")).fileStoreId(rs.getString("file_store_id")).auditDetails(auditDetails).build();
 
                 documentList.add(currentDocument);
             }

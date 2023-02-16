@@ -18,11 +18,8 @@ public class Court {
     @JsonProperty ("id")
     private String id ;
 
-    @JsonProperty("hearingId")
-    private String hearingId;
-
-    @JsonProperty ("courtNumber")
-    private String courtNumber;
+    @JsonProperty("caseId")
+    private String caseId;
 
     @JsonProperty ("courtName")
     private String courtName ;
@@ -33,9 +30,6 @@ public class Court {
     @JsonProperty ("state")
     private String state ;
 
-    @JsonProperty ("bench")
-    private String bench ;
-
     @JsonProperty ("division")
     private String division ;
 
@@ -44,7 +38,5 @@ public class Court {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
-
-
 
 }

@@ -18,10 +18,6 @@ CREATE TABLE IF NOT EXISTS  ilms_case(
 	case_number character varying(64) UNIQUE,
 	cnr_number character varying(32) UNIQUE,
 parent_case_id character varying(32) DEFAULT NULL,
-	state character varying(32) DEFAULT NULL,
-    district character varying(32) DEFAULT NULL,
-division character varying(32) DEFAULT NULL,
-    court_name character varying(32) DEFAULT NULL,
     case_type character varying(32) DEFAULT NULL,
     case_category character varying(64) DEFAULT NULL,
 	filing_number character varying(64) DEFAULT NULL,
@@ -67,10 +63,6 @@ CREATE TABLE IF NOT EXISTS  ilms_case_auditlog(
 	case_number character varying(64) UNIQUE,
 	cnr_number character varying(32) UNIQUE,
 parent_case_id character varying(32) DEFAULT NULL,
-	state character varying(32) DEFAULT NULL,
-    district character varying(32) DEFAULT NULL,
-division character varying(32) DEFAULT NULL,
-    court_name character varying(32) DEFAULT NULL,
     case_type character varying(32) DEFAULT NULL,
     case_category character varying(64) DEFAULT NULL,
 	filing_number character varying(64) DEFAULT NULL,
@@ -263,21 +255,19 @@ CREATE INDEX  IF NOT EXISTS  index_id_ilms_hearing_auditlog  ON ilms_hearing_aud
 
 
 CREATE TABLE IF NOT EXISTS  ilms_court(
-   id character varying(32) NOT NULL,
-   court_number character varying(32) DEFAULT NULL,
-   hearing_id character varying(32) NOT NULL,
+    id character varying(32) NOT NULL,
+    case_id character varying(32) NOT NULL,
     court_name character varying(32) DEFAULT NULL,
     district character varying(32) DEFAULT NULL,
-   state character varying(32) DEFAULT NULL,
-   bench character varying(32) DEFAULT NULL,
-   division character varying(32) DEFAULT NULL,
+    state character varying(32) DEFAULT NULL,
+    division character varying(32) DEFAULT NULL,
     status character varying(16) DEFAULT NULL,
     createdby character varying(64),
     createdtime bigint,
     lastmodifiedby character varying(64),
     lastmodifiedtime bigint,
     CONSTRAINT pk_court_id PRIMARY KEY (id),
-   CONSTRAINT fk_hearing_court_id FOREIGN KEY (hearing_id) REFERENCES ilms_hearing (id)
+    CONSTRAINT fk_ilms_court_case_id FOREIGN KEY (case_id) REFERENCES ilms_case (id)
 );
 
 CREATE INDEX  IF NOT EXISTS  index_id_ilms_court  ON ilms_court
@@ -285,9 +275,9 @@ CREATE INDEX  IF NOT EXISTS  index_id_ilms_court  ON ilms_court
    id
 );
 
-CREATE INDEX  IF NOT EXISTS  index_hearing_id_ilms_court  ON ilms_court
+CREATE INDEX  IF NOT EXISTS  index_case_id_ilms_court  ON ilms_court
 (
-   hearing_id
+   case_id
 );
 
 CREATE TABLE IF NOT EXISTS  ilms_payment(
@@ -403,6 +393,7 @@ CREATE TABLE IF NOT EXISTS  ilms_document(
 	case_id character varying(32) NOT NULL,
 	document_type character varying(64) NOT NULL,
 	file_store_id character varying(64) NOT NULL,
+	remarks character varying(64) DEFAULT NULL,
     status character varying(32) NOT NULL,
     createdby character varying(64),
     createdtime bigint,

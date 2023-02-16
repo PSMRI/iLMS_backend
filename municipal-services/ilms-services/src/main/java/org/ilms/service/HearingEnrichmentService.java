@@ -45,10 +45,6 @@ public class HearingEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(hearingRequest.getRequestInfo().getUserInfo().getUserName(), true);
         hearingRequest.getHearing().setAuditDetails(auditDetails);
         hearing.setAuditDetails(auditDetails);
-//        if (Objects.nonNull(hearingRequest.getHearing().getCourt())) {
-//            hearingRequest.getHearing().getCourt().setAuditDetails(auditDetails);
-//            hearing.getCourt().setAuditDetails(auditDetails);
-//        }
         if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
             hearingRequest.getHearing().getRespondent().setAuditDetails(auditDetails);
             hearing.getRespondent().setAuditDetails(auditDetails);
@@ -86,8 +82,6 @@ public class HearingEnrichmentService {
         List<String> applicationNumbers = getIdList(requestInfo, tenantId, ilmsConfiguration.getHearingIdgenName(),
                 ilmsConfiguration.getHearingIdgenFormat(), 1);
         ListIterator<String> itr = applicationNumbers.listIterator();
-        List<String> courtId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCourtIdgenName(), ilmsConfiguration.getCourtIdgenFormat(), 1);
-        ListIterator<String> courtItr = courtId.listIterator();
         List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
                 ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
         ListIterator<String> padvocateItr = padvocateId.listIterator();

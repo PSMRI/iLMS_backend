@@ -103,12 +103,6 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
     private void addChildrenToHearingDetails(ResultSet rs, Hearing hearing) throws SQLException {
         // TODO add all the child data petitioner, respondant, court, advocate
 
-//        if (Status.valueOf(rs.getString("court_status")) == Status.ACTIVE) {
-//            AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
-//                    .lastModifiedBy(rs.getString("court_lastmodifiedby"))
-//                    .lastModifiedTime(rs.getLong("court_lastmodifiedtime")).build();
-//
-//        }
         if (Status.valueOf(rs.getString("payment_status")) == Status.ACTIVE) {
             AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("payment_createdtime"))
                     .createdBy(rs.getString("payment_createdby"))
