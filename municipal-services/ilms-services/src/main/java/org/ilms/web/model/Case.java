@@ -31,13 +31,15 @@ public class Case {
     @JsonProperty("parentCaseId")
     private String parentCaseId;
 
-
     @JsonProperty("state")
     private String state;
+
     @JsonProperty("district")
     private String district;
+
     @JsonProperty("division")
     private String division;
+
     @JsonProperty("courtName")
     private String courtName;
 
@@ -67,7 +69,6 @@ public class Case {
 
     @JsonProperty("policyOrNonPolicyMatter")
     private String policyOrNonPolicyMatter;
-
 
     @JsonProperty("caseStatus")
     private String caseStatus;

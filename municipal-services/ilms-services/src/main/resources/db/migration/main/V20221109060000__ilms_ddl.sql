@@ -1,3 +1,17 @@
+DROP TABLE IF EXISTS ilms_case;
+DROP TABLE IF EXISTS ilms_case_auditlog;
+DROP TABLE IF EXISTS ilms_act;
+DROP TABLE IF EXISTS ilms_case_party;
+DROP TABLE IF EXISTS ilms_advocate;
+DROP TABLE IF EXISTS ilms_hearing;
+DROP TABLE IF EXISTS ilms_hearing_auditlog;
+DROP TABLE IF EXISTS ilms_judgement;
+DROP TABLE IF EXISTS ilms_judgement_auditlog;
+DROP TABLE IF EXISTS ilms_court;
+DROP TABLE IF EXISTS ilms_document;
+DROP TABLE IF EXISTS ilms_payment;
+DROP TABLE IF EXISTS ilms_payment_auditlog;
+
 CREATE TABLE IF NOT EXISTS  ilms_case(
 	id character varying(64) NOT NULL,
 	tenant_id character varying(64),
@@ -79,7 +93,7 @@ division character varying(32) DEFAULT NULL,
     createdby character varying(64),
     createdtime bigint,
     lastmodifiedby character varying(64),
-    lastmodifiedtime bigint,
+    lastmodifiedtime bigint
 );
 
 CREATE INDEX  IF NOT EXISTS  index_id_ilms_case_auditlog  ON ilms_case_auditlog
