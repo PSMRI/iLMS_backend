@@ -6,7 +6,7 @@ serviceMaps:
       fromTopic: save-ilms-case-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ilms_case(id,tenant_id, case_number, cnr_number, parent_case_id, state, district, division, court_name, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, application_no, case_status, case_stage, case_sub_stage, priority, department_name, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ilms_case(id,tenant_id, case_number, cnr_number, parent_case_id, state, district, division, court_name, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, application_no, case_status, case_stage, case_sub_stage, priority, department_name, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
@@ -218,7 +218,7 @@ serviceMaps:
       fromTopic: save-hearing-details-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ilms_hearing(id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, first_hearing_date, previous_hearing_date, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ilms_hearing(id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, first_hearing_date, previous_hearing_date, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing
           jsonMaps:
             - jsonPath: $.hearing.id
