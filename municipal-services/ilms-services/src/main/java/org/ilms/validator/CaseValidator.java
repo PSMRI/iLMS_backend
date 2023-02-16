@@ -26,20 +26,20 @@ public class CaseValidator {
     CaseRepository caseRepository;
 
     private static Map<String, String> validateCodes(Case cases, Map<String, List<String>> codes, Map<String, String> errorMap) {
-        if (Objects.nonNull(cases.getCaseType()) && !codes.get(ILMSConstants.MDMS_ILMS_CASE_TYPE).contains(cases.getCaseType())) {
-            errorMap.put("Invalid CASE TYPE", "The CaseType '" + cases.getCaseType() + "' does not exists");
+        if (Objects.nonNull(cases.getType()) && !codes.get(ILMSConstants.MDMS_ILMS_CASE_TYPE).contains(cases.getType())) {
+            errorMap.put("Invalid CASE TYPE", "The CaseType '" + cases.getType() + "' does not exists");
         }
         if (Objects.nonNull(cases.getCaseStatus()) && !codes.get(ILMSConstants.MDMS_ILMS_CASE_STATUS).contains(cases.getCaseStatus())) {
             errorMap.put("Invalid CASE Status", "The CaseStatus '" + cases.getCaseStatus() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getCaseCategory()) && !codes.get(ILMSConstants.MDMS_ILMS_CASE_CATEGORY).contains(cases.getCaseCategory())) {
-            errorMap.put("Invalid CaseCategory", "The CaseCategory '" + cases.getCaseCategory() + "' does not exists");
+        if (Objects.nonNull(cases.getCategory()) && !codes.get(ILMSConstants.MDMS_ILMS_CASE_CATEGORY).contains(cases.getCategory())) {
+            errorMap.put("Invalid CaseCategory", "The CaseCategory '" + cases.getCategory() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getCaseStage()) && !codes.get(ILMSConstants.MDMS_ILMS_CASE_STAGE).contains(cases.getCaseStage())) {
-            errorMap.put("Invalid CaseStage", "The CaseStage '" + cases.getCaseStage() + "' does not exists");
+        if (Objects.nonNull(cases.getStage()) && !codes.get(ILMSConstants.MDMS_ILMS_CASE_STAGE).contains(cases.getStage())) {
+            errorMap.put("Invalid CaseStage", "The CaseStage '" + cases.getStage() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getCaseSubStage()) && !codes.get(ILMSConstants.MDMS_ILMS_SUB_STAGE).contains(cases.getCaseSubStage())) {
-            errorMap.put("Invalid CaseSubStage", "The CaseSubStage '" + cases.getCaseSubStage() + "' does not exists");
+        if (Objects.nonNull(cases.getSubStage()) && !codes.get(ILMSConstants.MDMS_ILMS_SUB_STAGE).contains(cases.getSubStage())) {
+            errorMap.put("Invalid CaseSubStage", "The CaseSubStage '" + cases.getSubStage() + "' does not exists");
         }
         if (Objects.nonNull(cases.getPetitioner())) {
             if (Objects.nonNull(cases.getPetitioner().getGender()) && !codes.get(ILMSConstants.MDMS_ILMS_GENDER_TYPE)
@@ -84,9 +84,9 @@ public class CaseValidator {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "TenantId is mandatory [ " + caseRequest.getCaseObj().getTenantId() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseNumber())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getNumber())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "caseNumber is mandatory [ " + caseRequest.getCaseObj().getCaseNumber() + " ]");
+                    "caseNumber is mandatory [ " + caseRequest.getCaseObj().getNumber() + " ]");
         }
         if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCnrNumber())) {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
@@ -146,12 +146,12 @@ public class CaseValidator {
     }
 
     public void caseNumberDuplicacyCheck(CaseRequest caseRequest) {
-        CaseSearchCriteria criteria = CaseSearchCriteria.builder().caseNumber(Collections.singletonList(caseRequest.getCaseObj().getCaseNumber()))
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().caseNumber(Collections.singletonList(caseRequest.getCaseObj().getNumber()))
                 .build();
         Integer count = caseRepository.getCaseCount(criteria);
         if (count >= 1) {
             throw new CustomException(ILMSErrorConstants.DUPLICATE_VALUE_ERROR,
-                    "Already Exists In System, case number should be unique [ " + caseRequest.getCaseObj().getCaseNumber() + " ]");
+                    "Already Exists In System, case number should be unique [ " + caseRequest.getCaseObj().getNumber() + " ]");
         }
     }
 

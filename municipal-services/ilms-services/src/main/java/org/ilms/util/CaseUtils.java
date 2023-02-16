@@ -43,8 +43,8 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getTenantId())) {
             oldData.setTenantId(caseRequest.getCaseObj().getTenantId());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseNumber())) {
-            oldData.setCaseNumber(caseRequest.getCaseObj().getCaseNumber());
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getNumber())) {
+            oldData.setNumber(caseRequest.getCaseObj().getNumber());
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCnrNumber())) {
             oldData.setCnrNumber(caseRequest.getCaseObj().getCnrNumber());
@@ -55,11 +55,11 @@ public class CaseUtils {
 //        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseHierarchy())) {
 //            oldData.setCaseHierarchy(caseRequest.getCaseObj().getCaseHierarchy());
 //        }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseType())) {
-            oldData.setCaseType(caseRequest.getCaseObj().getCaseType());
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getType())) {
+            oldData.setType(caseRequest.getCaseObj().getType());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseCategory())) {
-            oldData.setCaseCategory(caseRequest.getCaseObj().getCaseCategory());
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCategory())) {
+            oldData.setCategory(caseRequest.getCaseObj().getCategory());
         }
 
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFilingNumber())) {
@@ -71,8 +71,8 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRegistrationDate())) {
             oldData.setRegistrationDate(caseRequest.getCaseObj().getRegistrationDate());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseSummary())) {
-            oldData.setCaseSummary(caseRequest.getCaseObj().getCaseSummary());
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getSummary())) {
+            oldData.setSummary(caseRequest.getCaseObj().getSummary());
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getArisingDetails())) {
             oldData.setArisingDetails(caseRequest.getCaseObj().getArisingDetails());
@@ -86,11 +86,11 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseStatus())) {
             oldData.setCaseStatus(caseRequest.getCaseObj().getCaseStatus());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseStage())) {
-            oldData.setCaseStage(caseRequest.getCaseObj().getCaseStage());
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getStage())) {
+            oldData.setStage(caseRequest.getCaseObj().getStage());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseSubStage())) {
-            oldData.setCaseSubStage(caseRequest.getCaseObj().getCaseSubStage());
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getSubStage())) {
+            oldData.setSubStage(caseRequest.getCaseObj().getSubStage());
         }
         if (Objects.nonNull(caseRequest.getCaseObj().getPriority())) {
             if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPriority())) {

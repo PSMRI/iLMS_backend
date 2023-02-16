@@ -13,7 +13,7 @@ serviceMaps:
 
             - jsonPath: $.case.tenantId
 
-            - jsonPath: $.case.caseNumber
+            - jsonPath: $.case.number
 
             - jsonPath: $.case.cnrNumber
 
@@ -27,9 +27,9 @@ serviceMaps:
 
             - jsonPath: $.case.courtName
 
-            - jsonPath: $.case.caseType
+            - jsonPath: $.case.type
 
-            - jsonPath: $.case.caseCategory
+            - jsonPath: $.case.category
 
             - jsonPath: $.case.filingNumber
 
@@ -37,7 +37,7 @@ serviceMaps:
 
             - jsonPath: $.case.registrationDate
 
-            - jsonPath: $.case.caseSummary
+            - jsonPath: $.case.summary
 
             - jsonPath: $.case.arisingDetails
 
@@ -45,9 +45,9 @@ serviceMaps:
 
             - jsonPath: $.case.caseStatus
 
-            - jsonPath: $.case.caseStage
+            - jsonPath: $.case.stage
 
-            - jsonPath: $.case.caseSubStage
+            - jsonPath: $.case.subStage
 
             - jsonPath: $.case.priority
 
@@ -227,7 +227,9 @@ serviceMaps:
 
             - jsonPath: $.hearing.caseId
 
-            - jsonPath: $.hearing.judgeName.*
+            - jsonPath: $.hearing.judgeName
+              type: JSON
+              dbType: JSONB
 
             - jsonPath: $.hearing.hearingDate
 
@@ -393,7 +395,7 @@ serviceMaps:
 
             - jsonPath: $.case.tenantId
 
-            - jsonPath: $.case.caseNumber
+            - jsonPath: $.case.number
 
             - jsonPath: $.case.cnrNumber
 
@@ -407,9 +409,9 @@ serviceMaps:
 
             - jsonPath: $.case.courtName
 
-            - jsonPath: $.case.caseType
+            - jsonPath: $.case.type
 
-            - jsonPath: $.case.caseCategory
+            - jsonPath: $.case.category
 
             - jsonPath: $.case.filingNumber
 
@@ -417,7 +419,7 @@ serviceMaps:
 
             - jsonPath: $.case.registrationDate
 
-            - jsonPath: $.case.caseSummary
+            - jsonPath: $.case.summary
 
             - jsonPath: $.case.arisingDetails
 
@@ -425,9 +427,9 @@ serviceMaps:
 
             - jsonPath: $.case.caseStatus
 
-            - jsonPath: $.case.caseStage
+            - jsonPath: $.case.stage
 
-            - jsonPath: $.case.caseSubStage
+            - jsonPath: $.case.subStage
 
             - jsonPath: $.case.priority
 
@@ -613,7 +615,9 @@ serviceMaps:
 
             - jsonPath: $.hearing.bench
 
-            - jsonPath: $.hearing.judgeName.*
+            - jsonPath: $.hearing.judgeName
+              type: JSON
+              dbType: JSONB
 
             - jsonPath: $.hearing.hearingDate
 

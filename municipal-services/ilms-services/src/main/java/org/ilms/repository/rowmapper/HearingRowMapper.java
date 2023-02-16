@@ -61,7 +61,8 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 String caseId = rs.getString("hearing_case_id");
                 currentHearing = ilmsHearingMap.get(id);
                 String courtNumber = rs.getString("hearing_court_number");
-                List<String> judgeName = Collections.singletonList(rs.getString("hearing_judge_name"));
+                String bench = rs.getString("hearing_bench");
+                JsonNode judgeName = getJudgeNames("hearing_judge_name", rs);
                 Long hearingDate = rs.getLong("hearing_date");
                 Long businessDate = rs.getLong("hearing_business_date");
                 String hearingPurpose = rs.getString("hearing_purpose");
@@ -83,7 +84,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 if (currentHearing == null) {
                     currentHearing = Hearing.builder().id(id).hearingNumber(hearingNumber).additionalDetails(additionalDetails).caseId(caseId)
                             .judgeName(judgeName).hearingDate(hearingDate).courtNumber(courtNumber).firstHearingDate(firstHearingDate)
-                            .previousHearingDate(previousHearingDate).nextHearingDate(nextHearingDate)
+                            .previousHearingDate(previousHearingDate).nextHearingDate(nextHearingDate).bench(bench)
                             .isPresenceRequired(isPresenceRequired).hearingType(hearingType).departmentOfficer(departmentOfficer)
                             .remarks(remarks).status(Status.valueOf(status)).businessDate(businessDate).hearingPurpose(hearingPurpose)
                             .requiredOfficer(requiredOfficer).auditDetails(auditDetails).affidavitFilingDate(affidavitFilingDate)
@@ -101,12 +102,12 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
     private void addChildrenToHearingDetails(ResultSet rs, Hearing hearing) throws SQLException {
         // TODO add all the child data petitioner, respondant, court, advocate
 
-        if (Status.valueOf(rs.getString("court_status")) == Status.ACTIVE) {
-            AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
-                    .lastModifiedBy(rs.getString("court_lastmodifiedby"))
-                    .lastModifiedTime(rs.getLong("court_lastmodifiedtime")).build();
-
-        }
+//        if (Status.valueOf(rs.getString("court_status")) == Status.ACTIVE) {
+//            AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
+//                    .lastModifiedBy(rs.getString("court_lastmodifiedby"))
+//                    .lastModifiedTime(rs.getLong("court_lastmodifiedtime")).build();
+//
+//        }
         if (Status.valueOf(rs.getString("payment_status")) == Status.ACTIVE) {
             AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("payment_createdtime"))
                     .createdBy(rs.getString("payment_createdby"))
@@ -135,6 +136,19 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
         }
         return additionalDetail;
     }
+    private JsonNode getJudgeNames(String columnName, ResultSet rs) {
 
+        JsonNode judgeNames = null;
+        try {
+            PGobject pgObj = (PGobject) rs.getObject(columnName);
+            if (pgObj != null) {
+                judgeNames = mapper.readTree(pgObj.getValue());
+            }
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+            throw new CustomException("PARSING_ERROR", "Failed to parse Judge Names");
+        }
+        return judgeNames;
+    }
 }
 

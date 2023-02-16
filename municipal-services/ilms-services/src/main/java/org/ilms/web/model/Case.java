@@ -22,8 +22,8 @@ public class Case {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("caseNumber")
-    private String caseNumber;
+    @JsonProperty("number")
+    private String number;
 
     @JsonProperty("cnrNumber")
     private String cnrNumber;
@@ -43,11 +43,11 @@ public class Case {
     @JsonProperty("courtName")
     private String courtName;
 
-    @JsonProperty("caseType")
-    private String caseType;
+    @JsonProperty("type")
+    private String type;
 
-    @JsonProperty("caseCategory")
-    private String caseCategory;
+    @JsonProperty("category")
+    private String category;
 
     @JsonProperty("filingNumber")
     private String filingNumber;
@@ -58,8 +58,8 @@ public class Case {
     @JsonProperty("registrationDate")
     private Long registrationDate;
 
-    @JsonProperty("caseSummary")
-    private String caseSummary;
+    @JsonProperty("summary")
+    private String summary;
 
     @JsonProperty("arisingDetails")
     private String arisingDetails;
@@ -73,11 +73,11 @@ public class Case {
     @JsonProperty("caseStatus")
     private String caseStatus;
 
-    @JsonProperty("caseStage")
-    private String caseStage;
+    @JsonProperty("stage")
+    private String stage;
 
-    @JsonProperty("caseSubStage")
-    private String caseSubStage;
+    @JsonProperty("subStage")
+    private String subStage;
 
     @JsonProperty("priority")
     private String priority;

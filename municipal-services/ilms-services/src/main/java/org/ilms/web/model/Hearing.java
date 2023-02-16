@@ -1,10 +1,9 @@
 package org.ilms.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.ilms.web.model.enums.Status;
-
-import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -28,7 +27,7 @@ public class Hearing {
     private String caseId;
 
     @JsonProperty("judgeName")
-    private List<String> judgeName;
+    private JsonNode judgeName;
 
     @JsonProperty("hearingDate")
     private Long hearingDate;

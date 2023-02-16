@@ -82,13 +82,13 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
 
                 if (currentCase == null) {
                     currentCase = Case.builder().id(id).cnrNumber(cnrNumber).tenantId(tenantId).additionalDetails(additionalDetails)
-                            .caseType(caseType).caseCategory(caseCategory)
-                            .parentCaseId(parentCaseId).caseNumber(caseNumber).filingNumber(filingNumber)
+                            .type(caseType).category(caseCategory)
+                            .parentCaseId(parentCaseId).number(caseNumber).filingNumber(filingNumber)
                             .remarks(remarks).filingDate(filingDate).registrationDate(registrationDate)
-                            .caseSummary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
+                            .summary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
                             .policyOrNonPolicyMatter(matter).priority(priority)
                             .caseStatus(caseStatus).state(state).courtName(courtName)
-                            .caseStage(caseStage).caseSubStage(caseSubStage).district(district).division(division)
+                            .stage(caseStage).subStage(caseSubStage).district(district).division(division)
                             .recommendOIC(recommendOic).auditDetails(auditDetails).build();
 
                     ilmsCaseMap.put(id, currentCase);
