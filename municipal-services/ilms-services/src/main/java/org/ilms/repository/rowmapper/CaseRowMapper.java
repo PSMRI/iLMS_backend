@@ -58,14 +58,13 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String state = rs.getString("ilms_state");
                 String district = rs.getString("ilms_district");
                 String division = rs.getString("ilms_division");
-                String courtName = rs.getString("ilms_court_name");
+                String courtName = rs.getString("ilms_courtName");
                 String filingNumber = rs.getString("ilms_filingNumber");
                 Long filingDate = rs.getLong("ilms_filingDate");
                 Long registrationDate = rs.getLong("ilms_registrationDate");
                 String caseSummary = rs.getString("ilms_caseSummary");
                 String arisingDetails = rs.getString("ilms_arisingDetails");
                 String matter = rs.getString("ilms_matter");
-                String uniqueId = rs.getString("ilms_uniqueId");
                 this.setFullCount((rs.getInt("full_count")));
                 String caseStatus = rs.getString("ilms_caseStatus");
                 String caseStage = rs.getString("ilms_caseStage");
@@ -87,7 +86,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                             .parentCaseId(parentCaseId).caseNumber(caseNumber).filingNumber(filingNumber)
                             .remarks(remarks).filingDate(filingDate).registrationDate(registrationDate)
                             .caseSummary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
-                            .policyOrNonPolicyMatter(matter).priority(priority).applicationNumber(uniqueId)
+                            .policyOrNonPolicyMatter(matter).priority(priority)
                             .caseStatus(caseStatus).state(state).courtName(courtName)
                             .caseStage(caseStage).caseSubStage(caseSubStage).district(district).division(division)
                             .recommendOIC(recommendOic).auditDetails(auditDetails).build();

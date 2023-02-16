@@ -412,7 +412,7 @@ serviceMaps:
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
-        - query: UPDATE ilms_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, state=?, district=?, division=?, court_name=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, department_name=?, recommend_oic=?, remarks=?, additional_details=?, status=?, createdby=?, createdtime=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE public.ilms_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, state=?, district=?, division=?, court_name=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, department_name=?, recommend_oic=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
           jsonMaps:
 
@@ -435,8 +435,6 @@ serviceMaps:
             - jsonPath: $.case.caseType
 
             - jsonPath: $.case.caseCategory
-
-            - jsonPath: $.case.caseYear
 
             - jsonPath: $.case.filingNumber
 
