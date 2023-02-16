@@ -99,23 +99,25 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
     @SuppressWarnings("unused")
     private void addChildrenToProperty(ResultSet rs, Case aCase) throws SQLException {
         // TODO add all the child data petitioner, respondant, act, advocate
+        if (Status.valueOf(rs.getString("actStatus")) == Status.ACTIVE) {
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("act_createdBy")).createdTime(rs.getLong("act_createdTime"))
+                    .lastModifiedBy(rs.getString("act_lastModifiedBy"))
+                    .lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
 
-        AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("act_createdBy")).createdTime(rs.getLong("act_createdTime"))
-                .lastModifiedBy(rs.getString("act_lastModifiedBy"))
-                .lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
+            Act act = Act.builder().id(rs.getString("actId")).actName(rs.getString("actName")).status(Status.valueOf(rs.getString("actStatus")))
+                    .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
+            aCase.setAct(act);
+        }
+        if (Status.valueOf(rs.getString("court_status")) == Status.ACTIVE) {
+            AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
+                    .lastModifiedBy(rs.getString("court_lastmodifiedby"))
+                    .lastModifiedTime(rs.getLong("court_lastmodifiedtime")).build();
 
-        Act act = Act.builder().id(rs.getString("actId")).actName(rs.getString("actName")).status(Status.valueOf(rs.getString("actStatus")))
-                .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
-        aCase.setAct(act);
-
-        Court court = Court.builder().id(rs.getString("court_id")).caseId(rs.getString("court_caseId")).courtName(rs.getString("court_name")).district(rs.getString("court_district")).state(rs.getString("court_state")).division(rs.getString("court_division")).status(Status.valueOf(rs.getString("court_status"))).auditDetails(auditDetails).build();
-        aCase.setCourt(court);
-//        if (Status.valueOf(rs.getString("court_status")) == Status.ACTIVE) {
-//            AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
-//                    .lastModifiedBy(rs.getString("court_lastmodifiedby"))
-//                    .lastModifiedTime(rs.getLong("court_lastmodifiedtime")).build();
-//
-//        }
+            Court court = Court.builder().id(rs.getString("court_id")).caseId(rs.getString("court_caseId")).courtName(rs.getString("court_name"))
+                    .district(rs.getString("court_district")).state(rs.getString("court_state")).division(rs.getString("court_division"))
+                    .status(Status.valueOf(rs.getString("court_status"))).auditDetails(auditDetails).build();
+            aCase.setCourt(court);
+        }
     }
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) {
