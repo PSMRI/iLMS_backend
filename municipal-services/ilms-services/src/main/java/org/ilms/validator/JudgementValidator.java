@@ -75,7 +75,7 @@ public class JudgementValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterData(request.getOrder(), request, errorMap);
+//        validateMasterData(request.getOrder(), request, errorMap);
     }
 
     public void updateValidator(Order order, JudgementRequest request) {
@@ -83,7 +83,7 @@ public class JudgementValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterDataForUpdate(order, request, errorMap);
+//        validateMasterDataForUpdate(order, request, errorMap);
     }
 
     private void validateMasterData(Order order, JudgementRequest request, Map<String, String> errorMap) {
