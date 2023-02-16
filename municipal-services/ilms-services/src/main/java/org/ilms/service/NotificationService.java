@@ -75,9 +75,9 @@ public class NotificationService {
 
         String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
         String message = getCustomizedMsg(topicName, cases, localizationMessages);
-//        String officerId=request.getCaseObj().getAssignedOfficerId();
+        String officerId=request.getCaseObj().getWorkflow().getAssignes().get(0).getUuid();
         List<String> ids = new ArrayList<>();
-//        ids.add(officerId);
+        ids.add(officerId);
         Map<String, String> mobileNumberToOwner = fetchUsersByOfficerId(ids, tenantId);
         if (message == null)
             return Collections.emptyList();
