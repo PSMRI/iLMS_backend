@@ -29,8 +29,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @Service
 public class CaseService {
@@ -91,22 +91,19 @@ public class CaseService {
         if (userRole.equals("DEC")) {
             dec = caseRepository.getCountOfUser("DEC");
             finalResult.setDEC(dec);
-        }
-        else if (userRole.equals("RO")) {
+        } else if (userRole.equals("RO")) {
             dec = caseRepository.getCountOfUser("DEC");
             ro = caseRepository.getCountOfUser("RO");
             finalResult.setDEC(dec);
             finalResult.setRO(ro);
-        }
-        else if (userRole.equals("OICA")) {
+        } else if (userRole.equals("OICA")) {
             dec = caseRepository.getCountOfUser("DEC");
             ro = caseRepository.getCountOfUser("RO");
             oica = caseRepository.getCountOfUser("OICA");
             finalResult.setDEC(dec);
             finalResult.setRO(ro);
             finalResult.setOICA(oica);
-        }
-        else if (userRole.equals("AO")) {
+        } else if (userRole.equals("AO")) {
             dec = caseRepository.getCountOfUser("DEC");
             ro = caseRepository.getCountOfUser("RO");
             oica = caseRepository.getCountOfUser("OICA");
@@ -115,8 +112,7 @@ public class CaseService {
             finalResult.setRO(ro);
             finalResult.setOICA(oica);
             finalResult.setAO(ao);
-        }
-        else if (userRole.equals("OIC")) {
+        } else if (userRole.equals("OIC")) {
             dec = caseRepository.getCountOfUser("DEC");
             ro = caseRepository.getCountOfUser("RO");
             oica = caseRepository.getCountOfUser("OICA");
@@ -138,7 +134,7 @@ public class CaseService {
         CaseDetailsResponse downloadResponse = new CaseDetailsResponse();
         List<Case> caseList = new ArrayList<>();
         List<Hearing> hearingList = new ArrayList<>();
-        List<Judgement> judgementList = new ArrayList<>();
+        List<Order> orderList = new ArrayList<>();
         CaseResponse caseResponse = null;
         HearingResponse hearingResponse = null;
         JudgementResponse judgementResponse = null;
@@ -160,14 +156,14 @@ public class CaseService {
                 hearingList.add(hearing);
             }
         });
-        judgementResponse.getJudgementList().forEach(judgement -> {
+        judgementResponse.getOrderList().forEach(judgement -> {
             if (judgement.getStatus() == Status.ACTIVE) {
-                judgementList.add(judgement);
+                orderList.add(judgement);
             }
         });
         downloadResponse.setCaseList(caseList);
         downloadResponse.setHearingList(hearingList);
-        downloadResponse.setJudgementList(judgementList);
+        downloadResponse.setOrderList(orderList);
         downloadResponse.setTotalCount(caseResponse.getTotalCount());
         downloadResponse.setResponseInfo(caseResponse.getResponseInfo());
         return downloadResponse;
@@ -317,7 +313,7 @@ public class CaseService {
         CaseDetailsResponse caseResponse = caseDetailsSearch(criteria, requestInfo);
         List<Case> caseList = caseResponse.getCaseList();
         List<Hearing> hearingList = caseResponse.getHearingList();
-        List<Judgement> judgementList = caseResponse.getJudgementList();
+        List<Order> orderList = caseResponse.getOrderList();
         com.itextpdf.text.Document pdfDoc = new com.itextpdf.text.Document(PageSize.A4);
         ByteArrayInputStream bis = null;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1377,7 +1373,7 @@ public class CaseService {
                 }
             });
 
-            judgementList.forEach(judgement -> {
+            orderList.forEach(judgement -> {
                 Font font1 = new Font(Font.FontFamily.HELVETICA, 20.0f, Font.BOLD, BaseColor.BLACK);
                 Chunk chunk1 = new Chunk("\nJUDGEMENT DETAILS : ", font1);
                 Paragraph detail = new Paragraph(chunk1);
