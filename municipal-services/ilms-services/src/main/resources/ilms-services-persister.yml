@@ -269,31 +269,6 @@ serviceMaps:
 
             - jsonPath: $.hearing.auditDetails.createdTime
 
-        - query: INSERT INTO ilms_court( id, court_number, hearing_id, court_name, district, state, bench, division, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: hearing.court
-          jsonMaps:
-            - jsonPath: $.hearing.court.id
-
-            - jsonPath: $.hearing.court.courtNumber
-
-            - jsonPath: $.hearing.id
-
-            - jsonPath: $.hearing.court.courtName
-
-            - jsonPath: $.hearing.court.district
-
-            - jsonPath: $.hearing.court.state
-
-            - jsonPath: $.hearing.court.bench
-
-            - jsonPath: $.hearing.court.division
-
-            - jsonPath: $.hearing.court.status
-
-            - jsonPath: $.hearing.court.auditDetails.createdBy
-
-            - jsonPath: $.hearing.court.auditDetails.createdTime
-
         - query: INSERT INTO ilms_advocate(id, party_id, hearing_id, first_name, last_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.respondent.advocate
           jsonMaps:
