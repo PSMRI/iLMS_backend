@@ -53,12 +53,6 @@ public class Hearing {
     @JsonProperty("oathNumber")
     private String oathNumber;
 
-    @JsonProperty("firstHearingDate")
-    private Long firstHearingDate;
-
-    @JsonProperty("previousHearingDate")
-    private Long previousHearingDate;
-
     @JsonProperty("nextHearingDate")
     private Long nextHearingDate;
 

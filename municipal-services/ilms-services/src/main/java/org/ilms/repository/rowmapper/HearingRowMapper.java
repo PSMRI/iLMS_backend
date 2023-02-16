@@ -17,7 +17,10 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
@@ -71,8 +74,6 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 Long affidavitFilingDueDate = rs.getLong("affidavit_filing_due_date");
                 String caseNumber = rs.getString("hearing_case_number");
                 String oathNumber = rs.getString("hearing_oath_number");
-                Long firstHearingDate = rs.getLong("first_hearing_date");
-                Long previousHearingDate = rs.getLong("previous_hearing_date");
                 Long nextHearingDate = rs.getLong("next_hearing_date");
                 Boolean isPresenceRequired = rs.getBoolean("hearing_is_presence_required");
                 String hearingType = rs.getString("hearing_type");
@@ -83,8 +84,8 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 this.setFullCount((rs.getInt("full_count")));
                 if (currentHearing == null) {
                     currentHearing = Hearing.builder().id(id).hearingNumber(hearingNumber).additionalDetails(additionalDetails).caseId(caseId)
-                            .judgeName(judgeName).hearingDate(hearingDate).courtNumber(courtNumber).firstHearingDate(firstHearingDate)
-                            .previousHearingDate(previousHearingDate).nextHearingDate(nextHearingDate).bench(bench)
+                            .judgeName(judgeName).hearingDate(hearingDate).courtNumber(courtNumber)
+                            .nextHearingDate(nextHearingDate).bench(bench)
                             .isPresenceRequired(isPresenceRequired).hearingType(hearingType).departmentOfficer(departmentOfficer)
                             .remarks(remarks).status(Status.valueOf(status)).businessDate(businessDate).hearingPurpose(hearingPurpose)
                             .requiredOfficer(requiredOfficer).auditDetails(auditDetails).affidavitFilingDate(affidavitFilingDate)
@@ -136,6 +137,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
         }
         return additionalDetail;
     }
+
     private JsonNode getJudgeNames(String columnName, ResultSet rs) {
 
         JsonNode judgeNames = null;

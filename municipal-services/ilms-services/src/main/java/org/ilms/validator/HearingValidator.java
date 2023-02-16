@@ -37,9 +37,9 @@ public class HearingValidator {
 //            if (Objects.nonNull(hearing.getCourt().getState()) && !codes.get(ILMSConstants.MDMS_ILMS_STATE).contains(hearing.getCourt().getState())) {
 //                errorMap.put("Invalid State", "The State '" + hearing.getCourt().getState() + "' does not exists");
 //            }
-//            if (Objects.nonNull(hearing.getCourt().getBench()) && !codes.get(ILMSConstants.MDMS_ILMS_BENCH).contains(hearing.getCourt().getBench())) {
-//                errorMap.put("Invalid Bench", "The Bench '" + hearing.getCourt().getBench() + "' does not exists");
-//            }
+        if (Objects.nonNull(hearing.getBench()) && !codes.get(ILMSConstants.MDMS_ILMS_BENCH).contains(hearing.getBench())) {
+            errorMap.put("Invalid Bench", "The Bench '" + hearing.getBench() + "' does not exists");
+        }
 //            if (Objects.nonNull(hearing.getCourt().getDivision()) && !codes.get(ILMSConstants.MDMS_ILMS_DIVISION).contains(hearing.getCourt().getDivision())) {
 //                errorMap.put("Invalid Division", "The Division '" + hearing.getCourt().getDivision() + "' does not exists");
 //            }

@@ -61,13 +61,13 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseNumber())) {
             oldHearingRequest.setCaseNumber(hearingDetailsRequest.getHearing().getCaseNumber());
         }
-        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPreviousHearingDate())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "PreviousHearingDate")) {
-                oldHearingRequest.setPreviousHearingDate(hearingDetailsRequest.getHearing().getPreviousHearingDate());
-            }
-        }
+//        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPreviousHearingDate())) {
+//            List<String> uuids = new ArrayList<>();
+//            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+//            if (commonUtils.isUserOIC(uuids, tenantId, "PreviousHearingDate")) {
+//                oldHearingRequest.setPreviousHearingDate(hearingDetailsRequest.getHearing().getPreviousHearingDate());
+//            }
+//        }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getOathNumber())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
@@ -83,13 +83,13 @@ public class HearingUtils {
 
             }
         }
-        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getFirstHearingDate())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "FirstHearingDate")) {
-                oldHearingRequest.setFirstHearingDate(hearingDetailsRequest.getHearing().getFirstHearingDate());
-            }
-        }
+//        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getFirstHearingDate())) {
+//            List<String> uuids = new ArrayList<>();
+//            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+//            if (commonUtils.isUserOIC(uuids, tenantId, "FirstHearingDate")) {
+//                oldHearingRequest.setFirstHearingDate(hearingDetailsRequest.getHearing().getFirstHearingDate());
+//            }
+        //}
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getIsPresenceRequired())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
