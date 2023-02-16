@@ -6,7 +6,7 @@ serviceMaps:
       fromTopic: save-ilms-case-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ilms_case(id,tenant_id, case_number, cnr_number, parent_case_id, state, district, division, court_name, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, application_no, case_status, case_stage, case_sub_stage, priority, department_name, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO public.ilms_case(id, tenant_id, case_number, cnr_number, parent_case_id, state, district, division, court_name, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, department_name, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
@@ -18,8 +18,6 @@ serviceMaps:
             - jsonPath: $.case.cnrNumber
 
             - jsonPath: $.case.parentCaseId
-
-            - jsonPath: $.case.state
 
             - jsonPath: $.case.state
 
@@ -45,8 +43,6 @@ serviceMaps:
 
             - jsonPath: $.case.policyOrNonPolicyMatter
 
-            - jsonPath: $.case.applicationNo
-
             - jsonPath: $.case.caseStatus
 
             - jsonPath: $.case.caseStage
@@ -70,6 +66,7 @@ serviceMaps:
             - jsonPath: $.case.auditDetails.createdBy
 
             - jsonPath: $.case.auditDetails.createdTime
+
 
 
         - query: INSERT INTO ilms_case_party(id, case_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -100,6 +97,7 @@ serviceMaps:
             - jsonPath: $.case.petitioner.auditDetails.createdBy
 
             - jsonPath: $.case.petitioner.auditDetails.createdTime
+
 
         - query: INSERT INTO ilms_case_party(id, case_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.respondent
@@ -414,7 +412,7 @@ serviceMaps:
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
-        - query: UPDATE ilms_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, application_no=?, state=?, district=?, division=?, court_name=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, department_name=?, recommend_oic=?, remarks=?, additional_details=?, status=?, createdby=?, createdtime=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE ilms_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, state=?, district=?, division=?, court_name=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, department_name=?, recommend_oic=?, remarks=?, additional_details=?, status=?, createdby=?, createdtime=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
           jsonMaps:
 
@@ -425,8 +423,6 @@ serviceMaps:
             - jsonPath: $.case.cnrNumber
 
             - jsonPath: $.case.parentCaseId
-
-            - jsonPath: $.case.applicationNo
 
             - jsonPath: $.case.state
 
