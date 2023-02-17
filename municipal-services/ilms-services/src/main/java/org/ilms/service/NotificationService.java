@@ -77,7 +77,7 @@ public class NotificationService {
         String message = getCustomizedMsg(topicName, cases, localizationMessages);
         String officerId;
         List<String> ids = new ArrayList<>();
-        if(Objects.nonNull(request.getCaseObj().getWorkflow().getAssignes().get(0).getUuid())) {
+        if(!(request.getCaseObj().getWorkflow().getAssignes()).isEmpty()){
             officerId = request.getCaseObj().getWorkflow().getAssignes().get(0).getUuid();
             ids.add(officerId);
         } else {
