@@ -214,6 +214,7 @@ public class CaseService {
                 caseRequest.getCaseObj().getPetitioner().setPetitionerType(null);
                 caseRequest.getCaseObj().getPetitioner().setAddress(null);
                 caseRequest.getCaseObj().getPetitioner().setContactNumber(null);
+                caseRequest.getCaseObj().getPetitioner().setDepartmentName(caseRequest.getCaseObj().getDepartmentName());
             } else {
                 caseRequest.getCaseObj().getPetitioner().setDepartmentName(null);
             }
