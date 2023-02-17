@@ -84,7 +84,7 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getNextHearingDate())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "NextHearingDate")) {
+            if (!commonUtils.isUserAO(uuids, tenantId, "NextHearingDate")) {
                 oldHearingRequest.setNextHearingDate(hearingDetailsRequest.getHearing().getNextHearingDate());
 
             }
