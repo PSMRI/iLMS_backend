@@ -255,7 +255,11 @@ public class NotificationUtil {
         }
         List<Event> events = new ArrayList<>();
         List<String> toUsers = new ArrayList<>();
-        toUsers.add(cases.getWorkflow().getAssignes().get(0).getUuid());
+        if(!(cases.getWorkflow().getAssignes()).isEmpty()){
+            toUsers.add(cases.getWorkflow().getAssignes().get(0).getUuid());
+        } else {
+            toUsers.add(requestInfo.getUserInfo().getUuid());
+        }
         Action action = null;
 
         Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
