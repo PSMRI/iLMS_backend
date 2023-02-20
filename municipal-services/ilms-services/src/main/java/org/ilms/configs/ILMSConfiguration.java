@@ -163,6 +163,9 @@ public class ILMSConfiguration {
     @Value ("${persister.save.document.topic}")
     private String createDocumentTopic;
 
+    @Value ("${persister.save.document.topic}")
+    private String updateDocumentTopic;
+
     @Value ("${persister.update.order.details.topic}")
     private String updateJudgementTopic;
 

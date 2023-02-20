@@ -9,7 +9,7 @@ import org.springframework.util.CollectionUtils;
 
 @Component
 public class DocumentQueryBuilder {
-    private static final String Query = "select count(*) OVER() AS document_full_count, id, case_id, document_type, file_store_id, status, remarks, createdby, createdtime, lastmodifiedby, lastmodifiedtime " + " from ilms_document ";
+    private static final String Query = "select count(*) OVER() AS document_full_count, id, case_id, document_type, file_store_id, status, remarks,document_id, createdby, createdtime, lastmodifiedby, lastmodifiedtime " + " from ilms_document ";
 
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 

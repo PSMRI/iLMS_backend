@@ -12,6 +12,8 @@ import org.ilms.repository.CaseRepository;
 import org.ilms.util.CommonUtils;
 import org.ilms.util.ILMSConstants;
 import org.ilms.util.ILMSErrorConstants;
+import org.ilms.web.model.Case;
+import org.ilms.web.model.CaseRequest;
 import org.ilms.web.model.CaseResponse;
 import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.Document;
@@ -112,5 +114,32 @@ public class DocumentValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
+    }
+
+    public DocumentRequest prepareObjectMapperForUpdate(Document oldData, DocumentRequest documentRequest) {
+        final DocumentRequest request = new DocumentRequest();
+
+        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getDocumentType())) {
+            oldData.setDocumentType(documentRequest.getDocument().get(0).getDocumentType());
+        }
+        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getCaseId())) {
+            oldData.setCaseId(documentRequest.getDocument().get(0).getCaseId());
+        }
+        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getRemarks())) {
+            oldData.setRemarks(documentRequest.getDocument().get(0).getRemarks());
+        }
+        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getFileStoreId())) {
+            oldData.setFileStoreId(documentRequest.getDocument().get(0).getFileStoreId());
+        }
+        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getStatus().toString())) {
+            oldData.setStatus(documentRequest.getDocument().get(0).getStatus());
+        }
+        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getDocumentId())) {
+            oldData.setDocumentId(documentRequest.getDocument().get(0).getDocumentId());
+        }
+        List<Document> documentList=new ArrayList<>();
+        documentList.add(oldData);
+        request.setDocument(documentList);
+        return request;
     }
 }

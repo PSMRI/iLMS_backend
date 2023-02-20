@@ -43,9 +43,18 @@ public class DocumentController {
     }
 
     @PostMapping (value = "/_create")
-    public ResponseEntity<DocumentResponse> createDocumet(@Valid @RequestBody DocumentRequest request,
+    public ResponseEntity<DocumentResponse> create(@Valid @RequestBody DocumentRequest request,
             @Valid @ModelAttribute CaseSearchCriteria criteria) {
         List<Document> document = documentService.createDocument(request, criteria);
+        DocumentResponse response = DocumentResponse.builder().documents(document).build();
+        log.info("DocumentController :: search() : END With Response [ " + response + " ]");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping (value = "/_update")
+    public ResponseEntity<DocumentResponse> update(@Valid @RequestBody DocumentRequest request,
+            @Valid @ModelAttribute DocumentSearchCriteria criteria) {
+        List<Document> document = documentService.updateDocument(request, criteria);
         DocumentResponse response = DocumentResponse.builder().documents(document).build();
         log.info("DocumentController :: search() : END With Response [ " + response + " ]");
         return new ResponseEntity<>(response, HttpStatus.OK);

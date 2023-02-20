@@ -74,4 +74,33 @@ public class DocumentService {
         producer.push(ilmsConfiguration.getCreateDocumentTopic(), request);
         return request.getDocument();
     }
+
+    public List<Document> updateDocument(DocumentRequest request, DocumentSearchCriteria criteria) {
+//        documentValidator.createDocumentValidator(request);
+//        request.getDocument().forEach(document -> {
+//            List<String> ids = new ArrayList<>();
+//            ids.add(document.getCaseId());
+//            CaseSearchCriteria criteria1 = CaseSearchCriteria.builder().id(ids).build();
+//            CaseResponse caseResponse = caseRepository.getILMSCaseData(criteria1);
+//            if (!caseResponse.getCaseList().isEmpty()) {
+//                caseResponse.getCaseList().forEach(ilmsCase -> {
+//                    if (!document.getCaseId().equalsIgnoreCase(ilmsCase.getId())) {
+//                        throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
+//                                "Case Not Found For The CaseId  [ " + document.getCaseId() + " ]");
+//                    }
+//                    document.setStatus(Status.ACTIVE);
+//                    documentEnrichmentService.enrichmentDocumentCreateRequest(request);
+//                });
+//            } else {
+//                throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE,
+//                        "CaseList Not Found In The System [ " + caseResponse.getCaseList() + " ]");
+//            }
+//        });
+        DocumentResponse documentResponse = null;
+        documentValidator.validDocSearch(criteria);
+        documentResponse = documentRepository.getDocumentsData(criteria);
+        DocumentRequest updateDocument=documentValidator.prepareObjectMapperForUpdate(documentResponse.getDocuments().get(0),request);
+        producer.push(ilmsConfiguration.getUpdateDocumentTopic(), updateDocument);
+        return updateDocument.getDocument();
+    }
 }

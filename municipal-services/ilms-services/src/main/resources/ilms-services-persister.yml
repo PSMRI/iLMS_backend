@@ -809,7 +809,7 @@ serviceMaps:
       fromTopic: save-document-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ilms_document(id, case_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ilms_document(id, case_id, document_type, file_store_id, document_id, status, remarks, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?);
           basePath: document.*
           jsonMaps:
             - jsonPath: $.document.*.id
@@ -819,6 +819,8 @@ serviceMaps:
             - jsonPath: $.document.*.documentType
 
             - jsonPath: $.document.*.fileStoreId
+
+            - jsonPath: $.document.*.documentId
 
             - jsonPath: $.document.*.status
 
@@ -841,3 +843,29 @@ serviceMaps:
             - jsonPath: $.childCase.caseHierarchy
 
             - jsonPath: $.childCase.caseIds.*.id
+
+    - version: 1.0
+      description: create document in ilms_document table
+      fromTopic: update-document-application
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE public.ilms_document SET case_id=?, document_type=?, file_store_id=?, document_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
+          basePath: document.*
+          jsonMaps:
+            - jsonPath: $.document.*.caseId
+
+            - jsonPath: $.document.*.documentType
+
+            - jsonPath: $.document.*.fileStoreId
+
+            - jsonPath: $.document.*.documentId
+
+            - jsonPath: $.document.*.status
+
+            - jsonPath: $.case.documents.*.remarks
+
+            - jsonPath: $.document.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.document.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.document.*.id
