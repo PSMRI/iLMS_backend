@@ -203,12 +203,14 @@ serviceMaps:
 
             - jsonPath: $.case.act.auditDetails.createdTime
 
-        - query: INSERT INTO ilms_document(id, case_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ilms_document(id, case_id, document_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.documents.*
           jsonMaps:
             - jsonPath: $.case.documents.*.id
 
             - jsonPath: $.case.id
+
+            - jsonPath: $.case.documents.*.documentId
 
             - jsonPath: $.case.documents.*.documentType
 
@@ -599,11 +601,13 @@ serviceMaps:
 
             - jsonPath: $.case.act.id
 
-        - query: UPDATE ilms_document SET case_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
+        - query: UPDATE ilms_document SET case_id=?, document_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
           basePath: case.documents.*
           jsonMaps:
 
             - jsonPath: $.case.id
+
+            - jsonPath: $.case.documents.*.documentId
 
             - jsonPath: $.case.documents.*.documentType
 
@@ -824,7 +828,7 @@ serviceMaps:
 
             - jsonPath: $.document.*.status
 
-            - jsonPath: $.case.documents.*.remarks
+            - jsonPath: $.case.document.*.remarks
 
             - jsonPath: $.document.*.auditDetails.createdBy
 
@@ -862,7 +866,7 @@ serviceMaps:
 
             - jsonPath: $.document.*.status
 
-            - jsonPath: $.case.documents.*.remarks
+            - jsonPath: $.case.document.*.remarks
 
             - jsonPath: $.document.*.auditDetails.lastModifiedBy
 
