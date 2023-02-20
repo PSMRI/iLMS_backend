@@ -101,9 +101,6 @@ public class CaseUtils {
                 }
             }
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getDepartmentName())) {
-            oldData.setDepartmentName(caseRequest.getCaseObj().getDepartmentName());
-        }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRecommendOIC())) {
             oldData.setRecommendOIC(caseRequest.getCaseObj().getRecommendOIC());
         }
@@ -118,96 +115,189 @@ public class CaseUtils {
         }
         //        Setting Petitioner Details
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner())) {
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getCaseId())) {
-                oldData.getPetitioner().setCaseId(caseRequest.getCaseObj().getPetitioner().getCaseId());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getFirstName())) {
-                oldData.getPetitioner().setFirstName(caseRequest.getCaseObj().getPetitioner().getFirstName());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getLastName())) {
-                oldData.getPetitioner().setLastName(caseRequest.getCaseObj().getPetitioner().getLastName());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getGender())) {
-                oldData.getPetitioner().setGender(caseRequest.getCaseObj().getPetitioner().getGender());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getPetitionerType())) {
-                oldData.getPetitioner().setPetitionerType(caseRequest.getCaseObj().getPetitioner().getPetitionerType());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAddress())) {
-                oldData.getPetitioner().setAddress(caseRequest.getCaseObj().getPetitioner().getAddress());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getDepartmentName())) {
-                oldData.getPetitioner().setDepartmentName(caseRequest.getCaseObj().getPetitioner().getDepartmentName());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getContactNumber())) {
-                oldData.getPetitioner().setContactNumber(caseRequest.getCaseObj().getPetitioner().getContactNumber());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getPartyType())) {
-                oldData.getPetitioner().setPartyType(caseRequest.getCaseObj().getPetitioner().getPartyType());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getStatus())) {
-                oldData.getPetitioner().setStatus(caseRequest.getCaseObj().getPetitioner().getStatus());
-            }
-            //Setting Data For Petitioner Advocate
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyId())) {
-                    oldData.getPetitioner().getAdvocate().setPartyId(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyId());
+            if (Objects.nonNull(caseRequest.getCaseObj().getPetitioner().getDepartmentName())) {
+
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getCaseId())) {
+                    oldData.getPetitioner().setCaseId(caseRequest.getCaseObj().getPetitioner().getCaseId());
                 }
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getHearingId())) {
-                    oldData.getPetitioner().getAdvocate().setHearingId(caseRequest.getCaseObj().getPetitioner().getAdvocate().getHearingId());
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getFirstName())) {
+                    oldData.getPetitioner().setFirstName(null);
                 }
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getFirstName())) {
-                    oldData.getPetitioner().getAdvocate().setFirstName(caseRequest.getCaseObj().getPetitioner().getAdvocate().getFirstName());
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getLastName())) {
+                    oldData.getPetitioner().setLastName(null);
                 }
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getLastName())) {
-                    oldData.getPetitioner().getAdvocate().setLastName(caseRequest.getCaseObj().getPetitioner().getAdvocate().getLastName());
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getGender())) {
+                    oldData.getPetitioner().setGender(null);
                 }
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getContactNumber())) {
-                    oldData.getPetitioner().getAdvocate().setContactNumber(caseRequest.getCaseObj().getPetitioner().getAdvocate().getContactNumber());
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getPetitionerType())) {
+                    oldData.getPetitioner().setPetitionerType(null);
                 }
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyType())) {
-                    oldData.getPetitioner().getAdvocate().setPartyType(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyType());
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAddress())) {
+                    oldData.getPetitioner().setAddress(null);
                 }
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getStatus())) {
-                    oldData.getPetitioner().getAdvocate().setStatus(caseRequest.getCaseObj().getPetitioner().getAdvocate().getStatus());
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getDepartmentName())) {
+                    oldData.getPetitioner().setDepartmentName(caseRequest.getCaseObj().getPetitioner().getDepartmentName());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getContactNumber())) {
+                    oldData.getPetitioner().setContactNumber(null);
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getPartyType())) {
+                    oldData.getPetitioner().setPartyType(caseRequest.getCaseObj().getPetitioner().getPartyType());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getStatus())) {
+                    oldData.getPetitioner().setStatus(caseRequest.getCaseObj().getPetitioner().getStatus());
+                }
+                //Setting Data For Petitioner Advocate
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyId())) {
+                        oldData.getPetitioner().getAdvocate().setPartyId(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyId());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getHearingId())) {
+                        oldData.getPetitioner().getAdvocate().setHearingId(caseRequest.getCaseObj().getPetitioner().getAdvocate().getHearingId());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getFirstName())) {
+                        oldData.getPetitioner().getAdvocate().setFirstName(caseRequest.getCaseObj().getPetitioner().getAdvocate().getFirstName());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getLastName())) {
+                        oldData.getPetitioner().getAdvocate().setLastName(caseRequest.getCaseObj().getPetitioner().getAdvocate().getLastName());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getContactNumber())) {
+                        oldData.getPetitioner().getAdvocate().setContactNumber(caseRequest.getCaseObj().getPetitioner().getAdvocate().getContactNumber());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyType())) {
+                        oldData.getPetitioner().getAdvocate().setPartyType(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyType());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getStatus())) {
+                        oldData.getPetitioner().getAdvocate().setStatus(caseRequest.getCaseObj().getPetitioner().getAdvocate().getStatus());
+                    }
+                }
+
+            } else {
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getCaseId())) {
+                    oldData.getPetitioner().setCaseId(caseRequest.getCaseObj().getPetitioner().getCaseId());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getFirstName())) {
+                    oldData.getPetitioner().setFirstName(caseRequest.getCaseObj().getPetitioner().getFirstName());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getLastName())) {
+                    oldData.getPetitioner().setLastName(caseRequest.getCaseObj().getPetitioner().getLastName());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getGender())) {
+                    oldData.getPetitioner().setGender(caseRequest.getCaseObj().getPetitioner().getGender());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getPetitionerType())) {
+                    oldData.getPetitioner().setPetitionerType(caseRequest.getCaseObj().getPetitioner().getPetitionerType());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAddress())) {
+                    oldData.getPetitioner().setAddress(caseRequest.getCaseObj().getPetitioner().getAddress());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getDepartmentName())) {
+                    oldData.getPetitioner().setDepartmentName(null);
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getContactNumber())) {
+                    oldData.getPetitioner().setContactNumber(caseRequest.getCaseObj().getPetitioner().getContactNumber());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getPartyType())) {
+                    oldData.getPetitioner().setPartyType(caseRequest.getCaseObj().getPetitioner().getPartyType());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getStatus())) {
+                    oldData.getPetitioner().setStatus(caseRequest.getCaseObj().getPetitioner().getStatus());
+                }
+                //Setting Data For Petitioner Advocate
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate())) {
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyId())) {
+                        oldData.getPetitioner().getAdvocate().setPartyId(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyId());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getHearingId())) {
+                        oldData.getPetitioner().getAdvocate().setHearingId(caseRequest.getCaseObj().getPetitioner().getAdvocate().getHearingId());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getFirstName())) {
+                        oldData.getPetitioner().getAdvocate().setFirstName(caseRequest.getCaseObj().getPetitioner().getAdvocate().getFirstName());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getLastName())) {
+                        oldData.getPetitioner().getAdvocate().setLastName(caseRequest.getCaseObj().getPetitioner().getAdvocate().getLastName());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getContactNumber())) {
+                        oldData.getPetitioner().getAdvocate().setContactNumber(caseRequest.getCaseObj().getPetitioner().getAdvocate().getContactNumber());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyType())) {
+                        oldData.getPetitioner().getAdvocate().setPartyType(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyType());
+                    }
+                    if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getStatus())) {
+                        oldData.getPetitioner().getAdvocate().setStatus(caseRequest.getCaseObj().getPetitioner().getAdvocate().getStatus());
+                    }
                 }
             }
         }
         //       Setting Respondent details
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent())) {
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getCaseId())) {
-                oldData.getRespondent().setCaseId(caseRequest.getCaseObj().getRespondent().getCaseId());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getFirstName())) {
-                oldData.getRespondent().setFirstName(caseRequest.getCaseObj().getRespondent().getFirstName());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getLastName())) {
-                oldData.getRespondent().setLastName(caseRequest.getCaseObj().getRespondent().getLastName());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getGender())) {
-                oldData.getRespondent().setGender(caseRequest.getCaseObj().getRespondent().getGender());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getPetitionerType())) {
-                oldData.getRespondent().setPetitionerType(caseRequest.getCaseObj().getRespondent().getPetitionerType());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getAddress())) {
-                oldData.getRespondent().setAddress(caseRequest.getCaseObj().getRespondent().getAddress());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getDepartmentName())) {
-                oldData.getRespondent().setDepartmentName(caseRequest.getCaseObj().getRespondent().getDepartmentName());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getContactNumber())) {
-                oldData.getRespondent().setContactNumber(caseRequest.getCaseObj().getRespondent().getContactNumber());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getPartyType())) {
-                oldData.getRespondent().setPartyType(caseRequest.getCaseObj().getRespondent().getPartyType());
-            }
-            if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getStatus())) {
-                oldData.getRespondent().setStatus(caseRequest.getCaseObj().getRespondent().getStatus());
+            if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getDepartmentName())) {
+
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getCaseId())) {
+                    oldData.getRespondent().setCaseId(caseRequest.getCaseObj().getRespondent().getCaseId());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getFirstName())) {
+                    oldData.getRespondent().setFirstName(null);
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getLastName())) {
+                    oldData.getRespondent().setLastName(null);
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getGender())) {
+                    oldData.getRespondent().setGender(null);
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getPetitionerType())) {
+                    oldData.getRespondent().setPetitionerType(null);
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getAddress())) {
+                    oldData.getRespondent().setAddress(null);
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getDepartmentName())) {
+                    oldData.getRespondent().setDepartmentName(caseRequest.getCaseObj().getRespondent().getDepartmentName());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getContactNumber())) {
+                    oldData.getRespondent().setContactNumber(null);
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getPartyType())) {
+                    oldData.getRespondent().setPartyType(caseRequest.getCaseObj().getRespondent().getPartyType());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getStatus())) {
+                    oldData.getRespondent().setStatus(caseRequest.getCaseObj().getRespondent().getStatus());
+                }
+            }else {
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getCaseId())) {
+                    oldData.getRespondent().setCaseId(caseRequest.getCaseObj().getRespondent().getCaseId());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getFirstName())) {
+                    oldData.getRespondent().setFirstName(caseRequest.getCaseObj().getRespondent().getFirstName());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getLastName())) {
+                    oldData.getRespondent().setLastName(caseRequest.getCaseObj().getRespondent().getLastName());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getGender())) {
+                    oldData.getRespondent().setGender(caseRequest.getCaseObj().getRespondent().getGender());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getPetitionerType())) {
+                    oldData.getRespondent().setPetitionerType(caseRequest.getCaseObj().getRespondent().getPetitionerType());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getAddress())) {
+                    oldData.getRespondent().setAddress(caseRequest.getCaseObj().getRespondent().getAddress());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getDepartmentName())) {
+                    oldData.getRespondent().setDepartmentName(null);
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getContactNumber())) {
+                    oldData.getRespondent().setContactNumber(caseRequest.getCaseObj().getRespondent().getContactNumber());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getPartyType())) {
+                    oldData.getRespondent().setPartyType(caseRequest.getCaseObj().getRespondent().getPartyType());
+                }
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getStatus())) {
+                    oldData.getRespondent().setStatus(caseRequest.getCaseObj().getRespondent().getStatus());
+                }
             }
             //Setting Data For Respondent Advocate
             if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getAdvocate())) {
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAdvocate().getPartyId())) {
+                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getAdvocate().getPartyId())) {
                     oldData.getRespondent().getAdvocate().setPartyId(caseRequest.getCaseObj().getRespondent().getAdvocate().getPartyId());
                 }
                 if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getAdvocate().getHearingId())) {

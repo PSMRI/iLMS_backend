@@ -71,9 +71,6 @@ public class Case {
     @JsonProperty("priority")
     private String priority;
 
-    @JsonProperty("departmentName")
-    private String departmentName;
-
     @JsonProperty("recommendOic")
     private String recommendOIC;
 
