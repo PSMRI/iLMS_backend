@@ -214,7 +214,7 @@ public class CaseService {
                 caseRequest.getCaseObj().getPetitioner().setPetitionerType(null);
                 caseRequest.getCaseObj().getPetitioner().setAddress(null);
                 caseRequest.getCaseObj().getPetitioner().setContactNumber(null);
-                caseRequest.getCaseObj().getPetitioner().setDepartmentName(caseRequest.getCaseObj().getDepartmentName());
+                caseRequest.getCaseObj().getPetitioner().setDepartmentName(caseRequest.getCaseObj().getPetitioner().getDepartmentName());
             } else {
                 caseRequest.getCaseObj().getPetitioner().setDepartmentName(null);
             }
@@ -291,6 +291,7 @@ public class CaseService {
                     processCaseUpdate(caseRequest, updatedCaseRequest.getCaseObj());
                     notificationService.process(ilmsConfiguration.getUpdateCaseTopic(), caseRequest);
                 }
+                caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
             } else {
                 throw new CustomException(ILMSErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
             }

@@ -97,12 +97,12 @@ public class HearingUtils {
 //            }
         //}
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getIsPresenceRequired())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "IsPresenceRequired")) {
+//            List<String> uuids = new ArrayList<>();
+//            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+//            if (commonUtils.isUserOIC(uuids, tenantId, "IsPresenceRequired")) {
                 oldHearingRequest.setIsPresenceRequired(hearingDetailsRequest.getHearing().getIsPresenceRequired());
             }
-        }
+//        }
 
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingType())) {
             oldHearingRequest.setHearingType(hearingDetailsRequest.getHearing().getHearingType());

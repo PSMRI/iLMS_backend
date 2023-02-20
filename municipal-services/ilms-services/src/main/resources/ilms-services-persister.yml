@@ -6,7 +6,7 @@ serviceMaps:
       fromTopic: save-ilms-case-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ilms_case(id, tenant_id, case_number, cnr_number, parent_case_id, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, department_name, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ilms_case(id, tenant_id, case_number, cnr_number, parent_case_id, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
@@ -42,8 +42,6 @@ serviceMaps:
             - jsonPath: $.case.subStage
 
             - jsonPath: $.case.priority
-
-            - jsonPath: $.case.departmentName
 
             - jsonPath: $.case.recommendOic
 
@@ -400,7 +398,7 @@ serviceMaps:
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
-        - query: UPDATE ilms_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, department_name=?, recommend_oic=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE ilms_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, recommend_oic=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
           jsonMaps:
 
@@ -435,8 +433,6 @@ serviceMaps:
             - jsonPath: $.case.subStage
 
             - jsonPath: $.case.priority
-
-            - jsonPath: $.case.departmentName
 
             - jsonPath: $.case.recommendOic
 

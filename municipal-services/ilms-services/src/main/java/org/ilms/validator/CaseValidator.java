@@ -72,9 +72,6 @@ public class CaseValidator {
                 errorMap.put("Invalid Gender", "The Gender '" + cases.getRespondent().getGender() + "' does not exists");
             }
         }
-        if (Objects.nonNull(cases.getDepartmentName()) && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_NAME).contains(cases.getDepartmentName())) {
-            errorMap.put("Invalid DepartmentName", "The DepartmentName '" + cases.getDepartmentName() + "' does not exists");
-        }
         if (Objects.nonNull(cases.getRecommendOIC()) && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
             errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + cases.getRecommendOIC() + "' does not exists");
         }
