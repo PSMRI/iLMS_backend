@@ -52,9 +52,8 @@ public class DocumentController {
     }
 
     @PostMapping (value = "/_update")
-    public ResponseEntity<DocumentResponse> update(@Valid @RequestBody DocumentRequest request,
-            @Valid @ModelAttribute DocumentSearchCriteria criteria) {
-        List<Document> document = documentService.updateDocument(request, criteria);
+    public ResponseEntity<DocumentResponse> update(@Valid @RequestBody DocumentRequest request) {
+        List<Document> document = documentService.updateDocument(request);
         DocumentResponse response = DocumentResponse.builder().documents(document).build();
         log.info("DocumentController :: search() : END With Response [ " + response + " ]");
         return new ResponseEntity<>(response, HttpStatus.OK);

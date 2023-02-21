@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.apache.commons.lang3.StringUtils;
+
 import org.egov.tracer.model.CustomException;
 import org.ilms.repository.CaseRepository;
 import org.ilms.util.CommonUtils;
@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 @Component
 @Slf4j
@@ -62,13 +63,13 @@ public class DocumentValidator {
 
     public void createDocumentValidator(DocumentRequest request) {
         request.getDocument().forEach(document -> {
-            if (!StringUtils.isNotBlank(document.getCaseId())) {
+            if (!StringUtils.isEmpty(document.getCaseId())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "caseId is mandatory [ " + document.getCaseId() + " ]");
             }
-            if (!StringUtils.isNotBlank(document.getDocumentType())) {
+            if (!StringUtils.isEmpty(document.getDocumentType())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "documentType is mandatory [ " + document.getDocumentType() + " ]");
             }
-            if (!StringUtils.isNotBlank(document.getFileStoreId())) {
+            if (!StringUtils.isEmpty(document.getFileStoreId())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fileStoreId is mandatory [ " + document.getFileStoreId() + " ]");
             }
         });
@@ -117,29 +118,41 @@ public class DocumentValidator {
     }
 
     public DocumentRequest prepareObjectMapperForUpdate(Document oldData, DocumentRequest documentRequest) {
-        final DocumentRequest request = new DocumentRequest();
+//        final DocumentRequest request = new DocumentRequest();
+        if (!StringUtils.isEmpty(documentRequest.getDocument())) {
+            List<Document> documentList = documentRequest.getDocument();
+            for (Document document : documentList) {
+//                for (Document oldDocData : oldData.getDocument()) {
+                    //                    oldData.getDocuments().forEach(oldDocData -> {
+                    if (oldData.getId().equalsIgnoreCase(document.getId())) {
+                        if (!StringUtils.isEmpty(document.getCaseId())) {
+                            oldData.setCaseId(document.getCaseId());
+                        }
+                        if (!StringUtils.isEmpty(document.getRemarks())) {
+                            oldData.setRemarks(document.getRemarks());
+                        }
+                        if (!StringUtils.isEmpty(document.getCaseId())) {
+                            oldData.setCaseId(document.getCaseId());
+                        }
+                        if (!StringUtils.isEmpty(document.getDocumentType())) {
+                            oldData.setDocumentType(document.getDocumentType());
+                        }
+                        if (!StringUtils.isEmpty(document.getFileStoreId())) {
+                            oldData.setFileStoreId(document.getFileStoreId());
+                        }
+                        if (!StringUtils.isEmpty(document.getStatus())) {
+                            oldData.setStatus(document.getStatus());
+                        }
+                    }
+                }
+            documentList.add(oldData);
+            documentRequest.setDocument(documentList);
 
-        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getDocumentType())) {
-            oldData.setDocumentType(documentRequest.getDocument().get(0).getDocumentType());
+            }
+//        }
+        //    newDoc.add(oldData);\
+        return documentRequest;
+
         }
-        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getCaseId())) {
-            oldData.setCaseId(documentRequest.getDocument().get(0).getCaseId());
-        }
-        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getRemarks())) {
-            oldData.setRemarks(documentRequest.getDocument().get(0).getRemarks());
-        }
-        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getFileStoreId())) {
-            oldData.setFileStoreId(documentRequest.getDocument().get(0).getFileStoreId());
-        }
-        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getStatus().toString())) {
-            oldData.setStatus(documentRequest.getDocument().get(0).getStatus());
-        }
-        if (!StringUtils.isEmpty(documentRequest.getDocument().get(0).getDocumentId())) {
-            oldData.setDocumentId(documentRequest.getDocument().get(0).getDocumentId());
-        }
-        List<Document> documentList=new ArrayList<>();
-        documentList.add(oldData);
-        request.setDocument(documentList);
-        return request;
-    }
+
 }

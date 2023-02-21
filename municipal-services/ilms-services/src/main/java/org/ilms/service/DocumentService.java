@@ -1,6 +1,7 @@
 package org.ilms.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -75,7 +76,7 @@ public class DocumentService {
         return request.getDocument();
     }
 
-    public List<Document> updateDocument(DocumentRequest request, DocumentSearchCriteria criteria) {
+    public List<Document> updateDocument(DocumentRequest request) {
 //        documentValidator.createDocumentValidator(request);
 //        request.getDocument().forEach(document -> {
 //            List<String> ids = new ArrayList<>();
@@ -97,7 +98,8 @@ public class DocumentService {
 //            }
 //        });
         DocumentResponse documentResponse = null;
-        documentValidator.validDocSearch(criteria);
+        DocumentSearchCriteria criteria=DocumentSearchCriteria.builder().id(Collections.singletonList(request.getDocument().get(0).getId())).build();
+//        documentValidator.validDocSearch(criteria);
         documentResponse = documentRepository.getDocumentsData(criteria);
         DocumentRequest updateDocument=documentValidator.prepareObjectMapperForUpdate(documentResponse.getDocuments().get(0),request);
         producer.push(ilmsConfiguration.getUpdateDocumentTopic(), updateDocument);
