@@ -109,7 +109,7 @@ public class CaseValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterData(caseRequest.getCaseObj(), caseRequest, errorMap);
+//        validateMasterData(caseRequest.getCaseObj(), caseRequest, errorMap);
     }
 
     public void validateUpdate(Case aCase, CaseRequest caseRequest) {
@@ -117,7 +117,7 @@ public class CaseValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterData(aCase, caseRequest, errorMap);
+//        validateMasterData(aCase, caseRequest, errorMap);
     }
 
     private void validateMasterData(Case aCase, CaseRequest request, Map<String, String> errorMap) {

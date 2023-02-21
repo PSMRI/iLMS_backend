@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class CaseUtils {
@@ -55,6 +52,9 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getParentCaseId())) {
             oldData.setParentCaseId(caseRequest.getCaseObj().getParentCaseId());
         }
+//        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseHierarchy())) {
+//            oldData.setCaseHierarchy(caseRequest.getCaseObj().getCaseHierarchy());
+//        }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getType())) {
             oldData.setType(caseRequest.getCaseObj().getType());
         }
@@ -263,7 +263,7 @@ public class CaseUtils {
                 if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getStatus())) {
                     oldData.getRespondent().setStatus(caseRequest.getCaseObj().getRespondent().getStatus());
                 }
-            } else {
+            }else {
                 if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getCaseId())) {
                     oldData.getRespondent().setCaseId(caseRequest.getCaseObj().getRespondent().getCaseId());
                 }
