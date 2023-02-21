@@ -349,6 +349,9 @@ public class CaseUtils {
                         if (!StringUtils.isEmpty(document.getRemarks())) {
                             oldDocData.setRemarks(document.getRemarks());
                         }
+                        if (!StringUtils.isEmpty(document.getDocumentId())) {
+                            oldDocData.setDocumentId(document.getDocumentId());
+                        }
                         if (!StringUtils.isEmpty(document.getDocumentType())) {
                             oldDocData.setDocumentType(document.getDocumentType());
                         }
