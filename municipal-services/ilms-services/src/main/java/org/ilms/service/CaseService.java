@@ -226,6 +226,17 @@ public class CaseService {
             }
         }
         if (Objects.nonNull(caseRequest.getCaseObj().getRespondent())) {
+            if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getDepartmentName())) {
+                caseRequest.getCaseObj().getRespondent().setFirstName(null);
+                caseRequest.getCaseObj().getRespondent().setLastName(null);
+                caseRequest.getCaseObj().getRespondent().setGender(null);
+                caseRequest.getCaseObj().getRespondent().setPetitionerType(null);
+                caseRequest.getCaseObj().getRespondent().setAddress(null);
+                caseRequest.getCaseObj().getRespondent().setContactNumber(null);
+                caseRequest.getCaseObj().getRespondent().setDepartmentName(caseRequest.getCaseObj().getRespondent().getDepartmentName());
+            } else {
+                caseRequest.getCaseObj().getRespondent().setDepartmentName(null);
+            }
             caseRequest.getCaseObj().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
             caseRequest.getCaseObj().getRespondent().setStatus(Status.ACTIVE);
             if (Objects.nonNull(caseRequest.getCaseObj().getRespondent().getAdvocate())) {

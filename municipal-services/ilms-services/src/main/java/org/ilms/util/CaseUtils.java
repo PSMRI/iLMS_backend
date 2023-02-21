@@ -191,7 +191,7 @@ public class CaseUtils {
                 if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getAddress())) {
                     oldData.getPetitioner().setAddress(caseRequest.getCaseObj().getPetitioner().getAddress());
                 }
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getDepartmentName())) {
+                if (StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getDepartmentName())) {
                     oldData.getPetitioner().setDepartmentName(null);
                 }
                 if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPetitioner().getContactNumber())) {
@@ -282,7 +282,7 @@ public class CaseUtils {
                 if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getAddress())) {
                     oldData.getRespondent().setAddress(caseRequest.getCaseObj().getRespondent().getAddress());
                 }
-                if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getDepartmentName())) {
+                if (StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getDepartmentName())) {
                     oldData.getRespondent().setDepartmentName(null);
                 }
                 if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRespondent().getContactNumber())) {

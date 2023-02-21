@@ -55,11 +55,11 @@ public class HearingUtils {
             oldHearingRequest.setRequiredOfficer(hearingDetailsRequest.getHearing().getRequiredOfficer());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAffidavitFilingDate())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "AffidavitFilingDate")) {
+//            List<String> uuids = new ArrayList<>();
+//            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+//            if (commonUtils.isUserOIC(uuids, tenantId, "AffidavitFilingDate")) {
                 oldHearingRequest.setAffidavitFilingDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate());
-            }
+//            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate())) {
             oldHearingRequest.setAffidavitFilingDueDate(hearingDetailsRequest.getHearing().getAffidavitFilingDueDate());
@@ -108,11 +108,11 @@ public class HearingUtils {
             oldHearingRequest.setHearingType(hearingDetailsRequest.getHearing().getHearingType());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getDepartmentOfficer())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "DepartmentOfficer")) {
+//            List<String> uuids = new ArrayList<>();
+//            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
+//            if (commonUtils.isUserOIC(uuids, tenantId, "DepartmentOfficer")) {
                 oldHearingRequest.setDepartmentOfficer(hearingDetailsRequest.getHearing().getDepartmentOfficer());
-            }
+//            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRemarks())) {
             oldHearingRequest.setRemarks(hearingDetailsRequest.getHearing().getRemarks());
