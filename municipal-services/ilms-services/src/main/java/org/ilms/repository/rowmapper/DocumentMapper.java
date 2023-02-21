@@ -34,6 +34,7 @@ public class DocumentMapper implements ResultSetExtractor<List<Document>> {
         while (rs.next()) {
             String id = rs.getString("id");
             if (Status.valueOf(rs.getString("status")) == Status.ACTIVE) {
+                this.setFullCount((rs.getInt("document_full_count")));
                 AuditDetails auditDetails = AuditDetails.builder()
                         .createdBy(rs.getString("createdby")).createdTime(rs.getLong("createdtime"))
                         .lastModifiedBy(rs.getString("lastmodifiedby")).lastModifiedTime(rs.getLong("lastmodifiedtime"))
