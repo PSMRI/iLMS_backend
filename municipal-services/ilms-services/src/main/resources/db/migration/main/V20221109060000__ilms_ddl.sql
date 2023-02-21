@@ -389,7 +389,7 @@ CREATE INDEX  IF NOT EXISTS  index_id_ilms_judgement_auditlog  ON ilms_judgement
 CREATE TABLE IF NOT EXISTS  ilms_document(
 	id character varying(32) NOT NULL,
 	case_id character varying(32) NOT NULL,
-	document_id character varying(64) default NULL,
+	document_id character varying(64) DEFAULT NULL,
 	document_type character varying(64) NOT NULL,
 	file_store_id character varying(64) NOT NULL,
 	remarks character varying(64) DEFAULT NULL,
