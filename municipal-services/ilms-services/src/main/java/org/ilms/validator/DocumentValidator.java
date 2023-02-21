@@ -1,35 +1,28 @@
 package org.ilms.validator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
+import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.ilms.repository.CaseRepository;
+import org.ilms.service.CaseEnrichmentService;
 import org.ilms.util.CommonUtils;
 import org.ilms.util.ILMSConstants;
 import org.ilms.util.ILMSErrorConstants;
-import org.ilms.web.model.Case;
-import org.ilms.web.model.CaseRequest;
-import org.ilms.web.model.CaseResponse;
-import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.Document;
-import org.ilms.web.model.DocumentRequest;
-import org.ilms.web.model.DocumentSearchCriteria;
+import org.ilms.web.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
+
+import java.util.*;
 
 @Component
 @Slf4j
 public class DocumentValidator {
     @Autowired
     CommonUtils commonUtils;
+
+    @Autowired
+    CaseEnrichmentService caseEnrichmentService;
 
     @Autowired
     private CaseRepository caseRepository;
@@ -63,13 +56,13 @@ public class DocumentValidator {
 
     public void createDocumentValidator(DocumentRequest request) {
         request.getDocument().forEach(document -> {
-            if (!StringUtils.isEmpty(document.getCaseId())) {
+            if (StringUtils.isEmpty(document.getCaseId())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "caseId is mandatory [ " + document.getCaseId() + " ]");
             }
-            if (!StringUtils.isEmpty(document.getDocumentType())) {
+            if (StringUtils.isEmpty(document.getDocumentType())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "documentType is mandatory [ " + document.getDocumentType() + " ]");
             }
-            if (!StringUtils.isEmpty(document.getFileStoreId())) {
+            if (StringUtils.isEmpty(document.getFileStoreId())) {
                 throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "fileStoreId is mandatory [ " + document.getFileStoreId() + " ]");
             }
         });
@@ -123,36 +116,37 @@ public class DocumentValidator {
             List<Document> documentList = documentRequest.getDocument();
             for (Document document : documentList) {
 //                for (Document oldDocData : oldData.getDocument()) {
-                    //                    oldData.getDocuments().forEach(oldDocData -> {
-                    if (oldData.getId().equalsIgnoreCase(document.getId())) {
-                        if (!StringUtils.isEmpty(document.getCaseId())) {
-                            oldData.setCaseId(document.getCaseId());
-                        }
-                        if (!StringUtils.isEmpty(document.getRemarks())) {
-                            oldData.setRemarks(document.getRemarks());
-                        }
-                        if (!StringUtils.isEmpty(document.getCaseId())) {
-                            oldData.setCaseId(document.getCaseId());
-                        }
-                        if (!StringUtils.isEmpty(document.getDocumentType())) {
-                            oldData.setDocumentType(document.getDocumentType());
-                        }
-                        if (!StringUtils.isEmpty(document.getFileStoreId())) {
-                            oldData.setFileStoreId(document.getFileStoreId());
-                        }
-                        if (!StringUtils.isEmpty(document.getStatus())) {
-                            oldData.setStatus(document.getStatus());
-                        }
+                //                    oldData.getDocuments().forEach(oldDocData -> {
+                if (oldData.getId().equalsIgnoreCase(document.getId())) {
+                    if (!StringUtils.isEmpty(document.getCaseId())) {
+                        oldData.setCaseId(document.getCaseId());
+                    }
+                    if (!StringUtils.isEmpty(document.getRemarks())) {
+                        oldData.setRemarks(document.getRemarks());
+                    }
+                    if (!StringUtils.isEmpty(document.getCaseId())) {
+                        oldData.setCaseId(document.getCaseId());
+                    }
+                    if (!StringUtils.isEmpty(document.getDocumentType())) {
+                        oldData.setDocumentType(document.getDocumentType());
+                    }
+                    if (!StringUtils.isEmpty(document.getFileStoreId())) {
+                        oldData.setFileStoreId(document.getFileStoreId());
+                    }
+                    if (!StringUtils.isEmpty(document.getStatus())) {
+                        oldData.setStatus(document.getStatus());
                     }
                 }
-            documentList.add(oldData);
-            documentRequest.setDocument(documentList);
-
             }
+//            documentList.add(oldData);
+            documentRequest.setDocument(documentList);
+            caseEnrichmentService.enrichDocumentUpdateRequest(documentRequest);
+
+        }
 //        }
         //    newDoc.add(oldData);\
         return documentRequest;
 
-        }
+    }
 
 }

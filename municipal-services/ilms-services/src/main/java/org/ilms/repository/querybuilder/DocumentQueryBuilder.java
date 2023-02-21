@@ -1,15 +1,16 @@
 package org.ilms.repository.querybuilder;
 
-import java.util.List;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.web.model.DocumentSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.List;
+
 @Component
 public class DocumentQueryBuilder {
-    private static final String Query = "select count(*) OVER() AS document_full_count, id, case_id, document_type, file_store_id, status, remarks,document_id, createdby, createdtime, lastmodifiedby, lastmodifiedtime " + " from ilms_document ";
+    private static final String Query = "select * from ilms_document ";
 
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
@@ -64,9 +65,9 @@ public class DocumentQueryBuilder {
     }
 
     /**
-     * @param query prepared Query
+     * @param query            prepared Query
      * @param preparedStmtList values to be replased on the query
-     * @param criteria document search criteria
+     * @param criteria         document search criteria
      * @return the query by replacing the placeholders with preparedStmtList
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, DocumentSearchCriteria criteria) {

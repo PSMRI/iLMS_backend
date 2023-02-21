@@ -10,7 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class DocumentMapper implements ResultSetExtractor<List<Document>> {
@@ -27,11 +29,11 @@ public class DocumentMapper implements ResultSetExtractor<List<Document>> {
 
     @Override
     public List<Document> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        List<Document> documentList = new ArrayList<Document>();
+        Map<String, Document> documentList = new LinkedHashMap<String, Document>();
         this.setFullCount(0);
         while (rs.next()) {
-            if(Status.valueOf(rs.getString("status"))==Status.ACTIVE){
-                this.setFullCount((rs.getInt("document_full_count")));
+            String id = rs.getString("id");
+            if (Status.valueOf(rs.getString("status")) == Status.ACTIVE) {
                 AuditDetails auditDetails = AuditDetails.builder()
                         .createdBy(rs.getString("createdby")).createdTime(rs.getLong("createdtime"))
                         .lastModifiedBy(rs.getString("lastmodifiedby")).lastModifiedTime(rs.getLong("lastmodifiedtime"))
@@ -41,9 +43,9 @@ public class DocumentMapper implements ResultSetExtractor<List<Document>> {
                         .documentType(rs.getString("document_type")).status(Status.valueOf(rs.getString("status")))
                         .remarks(rs.getString("remarks")).fileStoreId(rs.getString("file_store_id")).documentId(rs.getString("document_id")).auditDetails(auditDetails).build();
 
-                documentList.add(currentDocument);
+                documentList.put(id, currentDocument);
             }
         }
-        return documentList;
+        return new ArrayList<>(documentList.values());
     }
 }

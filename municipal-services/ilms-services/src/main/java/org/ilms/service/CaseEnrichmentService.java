@@ -127,7 +127,7 @@ public class CaseEnrichmentService {
             throw new CustomException(errorMap);
         }
         caseObj.setId(caseItr.next());
-        if(Objects.nonNull(caseObj.getCourt())){
+        if (Objects.nonNull(caseObj.getCourt())) {
             caseObj.getCourt().setId(courtItr.next());
         }
         if (Objects.nonNull(caseObj.getAct())) {
@@ -231,6 +231,17 @@ public class CaseEnrichmentService {
                 doc.setAuditDetails(auditDetails);
                 doc.setStatus(Status.ACTIVE);
             });
+        }
+    }
+
+    public void enrichDocumentUpdateRequest(DocumentRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<Document> document = request.getDocument();
+        for (Document documents : document) {
+            AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUserName(), false);
+            documents.setAuditDetails(auditDetails);
+            documents.setAuditDetails(auditDetails);
+
         }
     }
 }
