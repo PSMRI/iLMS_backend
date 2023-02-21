@@ -1,8 +1,5 @@
 package org.ilms.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
@@ -11,15 +8,13 @@ import org.ilms.repository.CaseRepository;
 import org.ilms.repository.DocumentRepository;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.validator.DocumentValidator;
-import org.ilms.web.model.CaseResponse;
-import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.Document;
-import org.ilms.web.model.DocumentRequest;
-import org.ilms.web.model.DocumentResponse;
-import org.ilms.web.model.DocumentSearchCriteria;
+import org.ilms.web.model.*;
 import org.ilms.web.model.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DocumentService {
@@ -76,7 +71,7 @@ public class DocumentService {
         return request.getDocument();
     }
 
-    public List<Document> updateDocument(DocumentRequest request) {
+    public List<Document> updateDocument(DocumentRequest request, DocumentSearchCriteria criteria) {
 //        documentValidator.createDocumentValidator(request);
 //        request.getDocument().forEach(document -> {
 //            List<String> ids = new ArrayList<>();
@@ -97,12 +92,16 @@ public class DocumentService {
 //                        "CaseList Not Found In The System [ " + caseResponse.getCaseList() + " ]");
 //            }
 //        });
-        DocumentResponse documentResponse = null;
-        DocumentSearchCriteria criteria=DocumentSearchCriteria.builder().id(Collections.singletonList(request.getDocument().get(0).getId())).build();
+//        DocumentSearchCriteria criteria=DocumentSearchCriteria.builder().id(Collections.singletonList(request.getDocument().get(0).getId())).build();
 //        documentValidator.validDocSearch(criteria);
-        documentResponse = documentRepository.getDocumentsData(criteria);
-        DocumentRequest updateDocument=documentValidator.prepareObjectMapperForUpdate(documentResponse.getDocuments().get(0),request);
+        DocumentRequest updateDocument = null;
+        DocumentResponse documentResponse = documentRepository.getDocumentsData(criteria);
+        List<Document> documentList = documentResponse.getDocuments();
+        for (Document documents : documentList) {
+            updateDocument = documentValidator.prepareObjectMapperForUpdate(documents, request);
+        }
         producer.push(ilmsConfiguration.getUpdateDocumentTopic(), updateDocument);
         return updateDocument.getDocument();
     }
+
 }
