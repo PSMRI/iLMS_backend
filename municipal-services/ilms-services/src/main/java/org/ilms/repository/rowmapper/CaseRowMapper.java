@@ -54,6 +54,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 currentCase = ilmsCaseMap.get(id);
                 String tenantId = rs.getString("ilms_tenandId");
                 String parentCaseId = rs.getString("ilms_parentCaseId");
+                JsonNode linkedCases = getLinkedCases("ilms_linkedCases", rs);
                 String caseCategory = rs.getString("ilms_caseCategory");
                 String caseNumber = rs.getString("ilms_caseNumber");
                 String filingNumber = rs.getString("ilms_filingNumber");
@@ -84,9 +85,8 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                             .remarks(remarks).filingDate(filingDate).registrationDate(registrationDate)
                             .summary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
                             .policyOrNonPolicyMatter(matter).priority(priority)
-                            .caseStatus(caseStatus)
-                            .stage(caseStage).subStage(caseSubStage)
-                            .recommendOIC(recommendOic).auditDetails(auditDetails).build();
+                            .caseStatus(caseStatus).stage(caseStage).subStage(caseSubStage)
+                            .recommendOIC(recommendOic).auditDetails(auditDetails).linkedCases(linkedCases).build();
 
                     ilmsCaseMap.put(id, currentCase);
                 }
@@ -133,6 +133,21 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
             throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
         }
         return additionalDetail;
+    }
+
+    private JsonNode getLinkedCases(String columnName, ResultSet rs) {
+
+        JsonNode linkedCases = null;
+        try {
+            PGobject pgObj = (PGobject) rs.getObject(columnName);
+            if (pgObj != null) {
+                linkedCases = mapper.readTree(pgObj.getValue());
+            }
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+            throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
+        }
+        return linkedCases;
     }
 
 }

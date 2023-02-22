@@ -55,6 +55,11 @@ public class CaseUtils {
 //        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseHierarchy())) {
 //            oldData.setCaseHierarchy(caseRequest.getCaseObj().getCaseHierarchy());
 //        }
+
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getLinkedCases())) {
+            oldData.setLinkedCases(caseRequest.getCaseObj().getLinkedCases());
+        }
+
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getType())) {
             oldData.setType(caseRequest.getCaseObj().getType());
         }

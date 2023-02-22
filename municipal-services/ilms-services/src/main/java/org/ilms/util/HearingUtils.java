@@ -98,33 +98,6 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getStatus())) {
             oldHearingRequest.setStatus(hearingDetailsRequest.getHearing().getStatus());
         }
-        //check court details
-//        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt())) {
-//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getCourtNumber())) {
-//                oldHearingRequest.getCourt().setCourtNumber(hearingDetailsRequest.getHearing().getCourt().getCourtNumber());
-//            }
-//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getState())) {
-//                oldHearingRequest.getCourt().setState(hearingDetailsRequest.getHearing().getCourt().getState());
-//            }
-//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getDistrict())) {
-//                oldHearingRequest.getCourt().setDistrict(hearingDetailsRequest.getHearing().getCourt().getDistrict());
-//            }
-//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getBench())) {
-//                oldHearingRequest.getCourt().setBench(hearingDetailsRequest.getHearing().getCourt().getBench());
-//            }
-//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getStatus())) {
-//                oldHearingRequest.getCourt().setStatus(hearingDetailsRequest.getHearing().getCourt().getStatus());
-//            }
-//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getHearingId())) {
-//                oldHearingRequest.getCourt().setHearingId(hearingDetailsRequest.getHearing().getCourt().getHearingId());
-//            }
-//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getCourtName())) {
-//                oldHearingRequest.getCourt().setCourtName(hearingDetailsRequest.getHearing().getCourt().getCourtName());
-//            }
-//            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourt().getDivision())) {
-//                oldHearingRequest.getCourt().setDivision(hearingDetailsRequest.getHearing().getCourt().getDivision());
-//            }
-//        }
         //checking respondent details
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent())) {
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRespondent().getCaseId())) {

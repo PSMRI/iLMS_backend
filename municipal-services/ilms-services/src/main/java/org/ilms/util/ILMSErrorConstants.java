@@ -15,6 +15,7 @@ public class ILMSErrorConstants {
     public static final String UNABLE_TO_FETCH = "UNABLE_TO_FETCH_DETAILS";
 
     public static final String PARENT_CASE_NOT_FOUND = "PARENT_CASE_NOT_FOUND";
+    public static final String HIERARCHY_CAN_NOT_BE_CHANGED = "HIERARCHY_CAN_NOT_BE_CHANGED";
 
     public static final String NOT_NULL_VALUE = "NOT_NULL_VALUE";
 

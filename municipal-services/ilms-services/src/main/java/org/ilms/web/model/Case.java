@@ -32,6 +32,12 @@ public class Case {
     @JsonProperty("parentCaseId")
     private String parentCaseId;
 
+    @JsonProperty("caseHierarchy")
+    private String caseHierarchy;
+
+    @JsonProperty("linkedCases")
+    private JsonNode linkedCases;
+
     @JsonProperty("type")
     private String type;
 
