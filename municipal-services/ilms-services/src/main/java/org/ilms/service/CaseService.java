@@ -1,5 +1,6 @@
 package org.ilms.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
@@ -11,6 +12,7 @@ import org.ilms.util.CaseUtils;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.validator.CaseValidator;
 import org.ilms.web.model.*;
+import org.ilms.web.model.enums.CaseHierarchy;
 import org.ilms.web.model.enums.CreationReason;
 import org.ilms.web.model.enums.PartyType;
 import org.ilms.web.model.enums.Status;
@@ -159,31 +161,31 @@ public class CaseService {
     }
 
     public Case create(CaseRequest caseRequest) {
-//        if (Objects.nonNull(caseRequest.getCaseObj().getCaseHierarchy())) {
-//            if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
-//                if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
-//                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-//                            "ParentCaseId must be null to create " + CaseHierarchy.INDEPENDENT + " Case");
-//                }
-//            } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
-//                if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
-//                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-//                            "ParentCaseId must be null to create " + CaseHierarchy.PARENT + " Case");
-//                }
-//            } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
-//                if (StringUtils.isBlank(caseRequest.getCaseObj().getParentCaseId())) {
-//                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-//                            "ParentCaseId is mandatory to create " + CaseHierarchy.CHILD + " Case");
-//                }
-//                List<String> caseIds = new ArrayList<>();
-//                caseIds.add(caseRequest.getCaseObj().getParentCaseId());
-//                CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(caseIds).build();
-//                CaseResponse response = caseRepository.getILMSCaseData(criteria);
-//                if (response.getCaseList().size() != 1) {
-//                    throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
-//                }
-//            }
-//        }
+        if (Objects.nonNull(caseRequest.getCaseObj().getCaseHierarchy())) {
+            if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
+                if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                            "ParentCaseId must be null to create " + CaseHierarchy.INDEPENDENT + " Case");
+                }
+            } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
+                if (StringUtils.isNotBlank(caseRequest.getCaseObj().getParentCaseId())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                            "ParentCaseId must be null to create " + CaseHierarchy.PARENT + " Case");
+                }
+            } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
+                if (StringUtils.isBlank(caseRequest.getCaseObj().getParentCaseId())) {
+                    throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
+                            "ParentCaseId is mandatory to create " + CaseHierarchy.CHILD + " Case");
+                }
+                List<String> caseIds = new ArrayList<>();
+                caseIds.add(caseRequest.getCaseObj().getParentCaseId());
+                CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(caseIds).build();
+                CaseResponse response = caseRepository.getILMSCaseData(criteria);
+                if (response.getCaseList().size() != 1) {
+                    throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
+                }
+            }
+        }
         if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
             caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
@@ -275,27 +277,27 @@ public class CaseService {
                 CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCaseList().get(0), caseRequest);
                 Case cases = caseResponse.getCaseList().get(0);
                 caseValidator.validateUpdate(cases, caseRequest);
-//                if (Objects.nonNull(caseRequest.getCaseObj().getCaseHierarchy())) {
-//                    if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
-//                        updatedCaseRequest.getCaseObj().setParentCaseId(null);
-//                        if (Objects.nonNull(caseRequest.getCaseObj().getParentCaseId())) {
-//                            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Independent Case does not exist Parent Case");
-//                        }
-//                    } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
-//                        updatedCaseRequest.getCaseObj().setParentCaseId(null);
-//                        if (Objects.nonNull(caseRequest.getCaseObj().getParentCaseId())) {
-//                            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Parent Case does not exist Parent Case");
-//                        }
-//                    } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
-//                        List<String> caseIds = new ArrayList<>();
-//                        caseIds.add(caseRequest.getCaseObj().getParentCaseId());
-//                        CaseSearchCriteria criteria1 = CaseSearchCriteria.builder().id(caseIds).build();
-//                        CaseResponse response = caseRepository.getILMSCaseData(criteria1);
-//                        if (response.getCaseList().size() != 1) {
-//                            throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
-//                        }
-//                    }
-//                }
+                if (Objects.nonNull(caseRequest.getCaseObj().getCaseHierarchy())) {
+                    if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.INDEPENDENT)) {
+                        updatedCaseRequest.getCaseObj().setParentCaseId(null);
+                        if (Objects.nonNull(caseRequest.getCaseObj().getParentCaseId())) {
+                            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Independent Case does not exist Parent Case");
+                        }
+                    } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.PARENT)) {
+                        updatedCaseRequest.getCaseObj().setParentCaseId(null);
+                        if (Objects.nonNull(caseRequest.getCaseObj().getParentCaseId())) {
+                            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Parent Case does not exist Parent Case");
+                        }
+                    } else if (caseRequest.getCaseObj().getCaseHierarchy().equals(CaseHierarchy.CHILD)) {
+                        List<String> caseIds = new ArrayList<>();
+                        caseIds.add(caseRequest.getCaseObj().getParentCaseId());
+                        CaseSearchCriteria criteria1 = CaseSearchCriteria.builder().id(caseIds).build();
+                        CaseResponse response = caseRepository.getILMSCaseData(criteria1);
+                        if (response.getCaseList().size() != 1) {
+                            throw new CustomException(ILMSErrorConstants.PARENT_CASE_NOT_FOUND, "Parent Case does not exist");
+                        }
+                    }
+                }
                 producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
                 //                todo : notification has send to all the officers who has worked on this case.
                 if (Objects.nonNull(caseRequest.getCaseObj().getWorkflow())) {
