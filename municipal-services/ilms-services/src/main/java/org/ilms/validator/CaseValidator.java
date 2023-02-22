@@ -30,16 +30,16 @@ public class CaseValidator {
             if (Objects.nonNull(cases.getCourt().getCourtName()) && !codes.get(ILMSConstants.MDMS_ILMS_COURT_NAME).contains(cases.getCourt().getCourtName())) {
                 errorMap.put("Invalid CourtName", "The CourtName '" + cases.getCourt().getCourtName() + "' does not exists");
             }
-            if (Objects.nonNull(cases.getCourt().getDistrict()) && !codes.get(ILMSConstants.MDMS_ILMS_DISTRICT).contains(cases.getCourt().getDistrict())) {
-                errorMap.put("Invalid District", "The District '" + cases.getCourt().getDistrict() + "' does not exists");
-            }
-            if (Objects.nonNull(cases.getCourt().getState()) && !codes.get(ILMSConstants.MDMS_ILMS_STATE).contains(cases.getCourt().getState())) {
-                errorMap.put("Invalid State", "The State '" + cases.getCourt().getState() + "' does not exists");
-            }
+//            if (Objects.nonNull(cases.getCourt().getDistrict()) && !codes.get(ILMSConstants.MDMS_ILMS_DISTRICT).contains(cases.getCourt().getDistrict())) {
+//                errorMap.put("Invalid District", "The District '" + cases.getCourt().getDistrict() + "' does not exists");
+//            }
+//            if (Objects.nonNull(cases.getCourt().getState()) && !codes.get(ILMSConstants.MDMS_ILMS_STATE).contains(cases.getCourt().getState())) {
+//                errorMap.put("Invalid State", "The State '" + cases.getCourt().getState() + "' does not exists");
+//            }
 
-            if (Objects.nonNull(cases.getCourt().getDivision()) && !codes.get(ILMSConstants.MDMS_ILMS_DIVISION).contains(cases.getCourt().getDivision())) {
-                errorMap.put("Invalid Division", "The Division '" + cases.getCourt().getDivision() + "' does not exists");
-            }
+//            if (Objects.nonNull(cases.getCourt().getDivision()) && !codes.get(ILMSConstants.MDMS_ILMS_DIVISION).contains(cases.getCourt().getDivision())) {
+//                errorMap.put("Invalid Division", "The Division '" + cases.getCourt().getDivision() + "' does not exists");
+//            }
         }
         if (Objects.nonNull(cases.getType()) && !codes.get(ILMSConstants.MDMS_ILMS_CASE_TYPE).contains(cases.getType())) {
             errorMap.put("Invalid CASE TYPE", "The CaseType '" + cases.getType() + "' does not exists");
@@ -128,8 +128,7 @@ public class CaseValidator {
                 Arrays.asList(ILMSConstants.MDMS_ILMS_CASE_TYPE, ILMSConstants.MDMS_ILMS_CASE_STATUS, ILMSConstants.MDMS_ILMS_CASE_CATEGORY,
                         ILMSConstants.MDMS_ILMS_CASE_STAGE, ILMSConstants.MDMS_ILMS_SUB_STAGE, ILMSConstants.MDMS_ILMS_GENDER_TYPE,
                         ILMSConstants.MDMS_ILMS_PETITIONER_TYPE, ILMSConstants.MDMS_ILMS_DEPARTMENT_NAME, ILMSConstants.MDMS_ILMS_DOCUMENT_CATEGORY,
-                        ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC, ILMSConstants.CASE_FLAG, ILMSConstants.MDMS_ILMS_COURT_NAME, ILMSConstants.MDMS_ILMS_DISTRICT, ILMSConstants.MDMS_ILMS_STATE,
-                        ILMSConstants.MDMS_ILMS_DIVISION));
+                        ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC, ILMSConstants.CASE_FLAG, ILMSConstants.MDMS_ILMS_COURT_NAME));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, ILMSConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",
                 ILMSConstants.JSONPATH_CODES, request.getRequestInfo());
