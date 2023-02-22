@@ -62,7 +62,7 @@ public class HearingValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-//        validateMasterData(hearingRequest.getHearing(), hearingRequest, errorMap);
+        validateMasterData(hearingRequest.getHearing(), hearingRequest, errorMap);
     }
 
     public void updateValidator(Hearing hearing, HearingRequest hearingRequest) {
@@ -70,7 +70,7 @@ public class HearingValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-//        validateMasterData(hearing, hearingRequest, errorMap);
+        validateMasterData(hearing, hearingRequest, errorMap);
     }
 
     private void validateMasterData(Hearing hearing, HearingRequest request, Map<String, String> errorMap) {
