@@ -81,39 +81,39 @@ public class CaseService {
 
         if (userRole.equals("DEC")) {
             dec = caseRepository.getCountOfUser("DEC");
-            finalResult.getOfficersCount().setDEC(dec);
+            finalResult.setDEC(dec);
         } else if (userRole.equals("RO")) {
             dec = caseRepository.getCountOfUser("DEC");
             ro = caseRepository.getCountOfUser("RO");
-            finalResult.getOfficersCount().setDEC(dec);
-            finalResult.getOfficersCount().setRO(ro);
+            finalResult.setDEC(dec);
+            finalResult.setRO(ro);
         } else if (userRole.equals("OICA")) {
             dec = caseRepository.getCountOfUser("DEC");
             ro = caseRepository.getCountOfUser("RO");
             oica = caseRepository.getCountOfUser("OICA");
-            finalResult.getOfficersCount().setDEC(dec);
-            finalResult.getOfficersCount().setRO(ro);
-            finalResult.getOfficersCount().setOICA(oica);
+            finalResult.setDEC(dec);
+            finalResult.setRO(ro);
+            finalResult.setOICA(oica);
         } else if (userRole.equals("AO")) {
             dec = caseRepository.getCountOfUser("DEC");
             ro = caseRepository.getCountOfUser("RO");
             oica = caseRepository.getCountOfUser("OICA");
             ao = caseRepository.getCountOfUser("AO");
-            finalResult.getOfficersCount().setDEC(dec);
-            finalResult.getOfficersCount().setRO(ro);
-            finalResult.getOfficersCount().setOICA(oica);
-            finalResult.getOfficersCount().setAO(ao);
+            finalResult.setDEC(dec);
+            finalResult.setRO(ro);
+            finalResult.setOICA(oica);
+            finalResult.setAO(ao);
         } else if (userRole.equals("OIC")) {
             dec = caseRepository.getCountOfUser("DEC");
             ro = caseRepository.getCountOfUser("RO");
             oica = caseRepository.getCountOfUser("OICA");
             ao = caseRepository.getCountOfUser("AO");
             oic = caseRepository.getCountOfUser("OIC");
-            finalResult.getOfficersCount().setDEC(dec);
-            finalResult.getOfficersCount().setRO(ro);
-            finalResult.getOfficersCount().setOICA(oica);
-            finalResult.getOfficersCount().setAO(ao);
-            finalResult.getOfficersCount().setOIC(oic);
+            finalResult.setDEC(dec);
+            finalResult.setRO(ro);
+            finalResult.setOICA(oica);
+            finalResult.setAO(ao);
+            finalResult.setOIC(oic);
         }
         finalResult.setTotalCount(caseResponse.getTotalCount());
         finalResult.setCaseList(caseList);
