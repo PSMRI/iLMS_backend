@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.ilms.web.model.workflow.OfficersCount;
 import org.springframework.stereotype.Service;
 
 @Builder
@@ -20,23 +21,8 @@ public class CaseResponse {
     @JsonProperty ("responseInfo")
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("DEC")
-    private Integer DEC = null;
-
-    @JsonProperty("RO")
-    private Integer RO = null;
-
-    @JsonProperty("OICA")
-    private Integer OICA = null;
-
-    @JsonProperty("AO")
-    private Integer AO = null;
-
-    @JsonProperty("OIC")
-    private Integer OIC = null;
-
-    @JsonProperty("MO")
-    private Integer MO = null;
+    @JsonProperty ("officersCount")
+    private OfficersCount officersCount = null;
 
     @JsonProperty ("totalCount")
     private Integer totalCount = null;
