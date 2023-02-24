@@ -25,6 +25,4 @@ public class OfficersCount {
     @JsonProperty("OIC")
     private Integer OIC = null;
 
-    @JsonProperty("MO")
-    private Integer MO = null;
 }
