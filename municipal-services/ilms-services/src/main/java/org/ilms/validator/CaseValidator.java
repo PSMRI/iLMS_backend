@@ -158,7 +158,7 @@ public class CaseValidator {
     }
 
     public void caseNumberDuplicacyCheck(CaseRequest caseRequest) {
-        CaseSearchCriteria criteria = CaseSearchCriteria.builder().caseNumber(Collections.singletonList(caseRequest.getCaseObj().getNumber()))
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().number(Collections.singletonList(caseRequest.getCaseObj().getNumber()))
                 .build();
         Integer count = caseRepository.getCaseCount(criteria);
         if (count >= 1) {

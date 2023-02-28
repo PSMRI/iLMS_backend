@@ -1,12 +1,9 @@
 package org.ilms.web.model;
 
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,28 +11,28 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class CaseSearchCriteria {
-    @JsonProperty ("offset")
+    @JsonProperty("offset")
     private Integer offset;
 
-    @JsonProperty ("limit")
+    @JsonProperty("limit")
     private Integer limit;
 
-    @JsonProperty ("caseNumber")
-    private List<String> caseNumber;
+    @JsonProperty("number")
+    private List<String> number;
 
-    @JsonProperty ("cnrNumber")
+    @JsonProperty("cnrNumber")
     private String cnrNumber;
 
-    @JsonProperty ("id")
+    @JsonProperty("id")
     private List<String> id;
 
-    @JsonProperty ("parentCaseId")
+    @JsonProperty("parentCaseId")
     private List<String> parentCaseId;
 
-    @JsonProperty ("sortBy")
+    @JsonProperty("sortBy")
     private SortBy sortBy;
 
-    @JsonProperty ("sortOrder")
+    @JsonProperty("sortOrder")
     private SortOrder sortOrder;
 
     public enum SortOrder {

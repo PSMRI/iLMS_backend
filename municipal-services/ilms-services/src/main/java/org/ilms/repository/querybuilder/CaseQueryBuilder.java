@@ -1,8 +1,5 @@
 package org.ilms.repository.querybuilder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.web.model.CaseSearchCriteria;
@@ -10,6 +7,10 @@ import org.ilms.web.model.CountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 public class CaseQueryBuilder {
@@ -43,7 +44,7 @@ public class CaseQueryBuilder {
             }
         }
 
-        List<String> caseNumber = criteria.getCaseNumber();
+        List<String> caseNumber = criteria.getNumber();
         try {
             if (!CollectionUtils.isEmpty(caseNumber)) {
                 addClauseIfRequired(preparedStmtList, builder);
@@ -77,9 +78,9 @@ public class CaseQueryBuilder {
     }
 
     /**
-     * @param query prepared Query
+     * @param query            prepared Query
      * @param preparedStmtList values to be replased on the query
-     * @param criteria ilms case search criteria
+     * @param criteria         ilms case search criteria
      * @return the query by replacing the placeholders with preparedStmtList
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, CaseSearchCriteria criteria) {
@@ -160,8 +161,7 @@ public class CaseQueryBuilder {
     }
 
     public String getChildCaseIds(String parentCaseId, List<Object> preparedStmtList) {
-        StringBuilder builder = new StringBuilder(ChildCaseQuery);
-        return builder.toString();
+        return ChildCaseQuery;
     }
 
     public CountRequest getTotalCount(CaseSearchCriteria criteria) {
@@ -172,9 +172,9 @@ public class CaseQueryBuilder {
         if (StringUtils.isNotBlank(criteria.getCnrNumber())) {
             builder.append("cnr_number= ?");
             preparedStmtList.add(criteria.getCnrNumber());
-        } else if (Objects.nonNull(criteria.getCaseNumber())) {
+        } else if (Objects.nonNull(criteria.getNumber())) {
             builder.append("case_number= ?");
-            preparedStmtList.add(criteria.getCaseNumber().get(0));
+            preparedStmtList.add(criteria.getNumber().get(0));
         }
         finalRequest.setQuery(builder.toString());
         finalRequest.setPreparedStatement(preparedStmtList);
