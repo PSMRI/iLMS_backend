@@ -22,7 +22,10 @@ public class CaseQueryBuilder {
 
     private static final String ChildCaseQuery = "SELECT id FROM ilms_case where id= ? or parent_case_id= ? ";
 
-    private static final String TOTALCOUNTQUERY = "select count(*) from ilms_case WHERE  ";
+    private static final String TOTALCOUNTQUERY = "select count(*) from ilms_case WHERE  status = 'ACTIVE'";
+
+    private static final String CaseQuery1 = "select DISTINCT(cases.id)from ilms_case as cases INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = cases.id LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid ";
+    private static final String CaseQuery2 = " AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = cases.id GROUP BY wf.businessid)";
 
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
@@ -179,5 +182,9 @@ public class CaseQueryBuilder {
         finalRequest.setQuery(builder.toString());
         finalRequest.setPreparedStatement(preparedStmtList);
         return finalRequest;
+    }
+
+    public String getAssignedCases(String uuid) {
+        return CaseQuery1 + "where " + "assg.assignee = " + "'" + uuid + "'" + CaseQuery2;
     }
 }

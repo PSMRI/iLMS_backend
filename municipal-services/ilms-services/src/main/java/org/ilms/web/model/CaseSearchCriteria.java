@@ -35,6 +35,9 @@ public class CaseSearchCriteria {
     @JsonProperty("sortOrder")
     private SortOrder sortOrder;
 
+    @JsonProperty("uuid")
+    private String uuid;
+
     public enum SortOrder {
         ASC,
         DESC

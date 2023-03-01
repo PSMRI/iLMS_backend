@@ -61,6 +61,7 @@ public class CaseService {
     public CaseResponse ilmsCaseSearch(CaseSearchCriteria criteria, RequestInfo requestInfo, ProcessInstanceSearchCriteria processInstanceSearchCriteria) {
         List<Case> caseList = new ArrayList<>();
         CaseResponse caseResponse = null;
+        criteria = CaseSearchCriteria.builder().uuid(requestInfo.getUserInfo().getUuid()).build();
         List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
         caseResponse = caseRepository.getILMSCaseData(criteria);
         if (!caseResponse.getCaseList().isEmpty()) {
@@ -72,14 +73,16 @@ public class CaseService {
         }
         CaseResponse finalResult = new CaseResponse();
         String userRole = requestInfo.getUserInfo().getRoles().get(0).getCode();
-
+        Integer total = null;
         Integer dec = null;
         Integer ro = null;
         Integer oica = null;
         Integer ao = null;
         Integer oic = null;
 
-        OfficersCount officersCount=new OfficersCount();
+        OfficersCount officersCount = new OfficersCount();
+        total = caseRepository.getCaseCount(criteria);
+        officersCount.setTOTAL(total);
 
         if (userRole.equals("DEC")) {
             dec = caseRepository.getCountOfUser("DEC");
@@ -105,7 +108,8 @@ public class CaseService {
             officersCount.setRO(ro);
             officersCount.setOICA(oica);
             officersCount.setAO(ao);
-        } else if (userRole.equals("OIC")||userRole.equals("MO")) {
+        } else if (userRole.equals("OIC") || userRole.equals("MO")) {
+
             dec = caseRepository.getCountOfUser("DEC");
             ro = caseRepository.getCountOfUser("RO");
             oica = caseRepository.getCountOfUser("OICA");
@@ -132,6 +136,7 @@ public class CaseService {
         CaseResponse caseResponse = null;
         HearingResponse hearingResponse = null;
         JudgementResponse judgementResponse = null;
+        criteria = CaseSearchCriteria.builder().uuid(requestInfo.getUserInfo().getUuid()).build();
         caseResponse = caseRepository.getILMSCaseData(criteria);
         HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
                 .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))

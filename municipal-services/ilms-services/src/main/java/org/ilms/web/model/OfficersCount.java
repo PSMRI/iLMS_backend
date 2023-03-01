@@ -9,6 +9,8 @@ import lombok.*;
 @Getter
 @Setter
 public class OfficersCount {
+    @JsonProperty("TOTAL")
+    private Integer TOTAL = null;
 
     @JsonProperty("DEC")
     private Integer DEC = null;

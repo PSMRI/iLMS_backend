@@ -1,23 +1,19 @@
 package org.ilms.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.ilms.repository.querybuilder.CaseQueryBuilder;
 import org.ilms.repository.querybuilder.CountQueryBuilder;
 import org.ilms.repository.rowmapper.CaseRowMapper;
 import org.ilms.repository.rowmapper.DocumentMapper;
 import org.ilms.repository.rowmapper.PartyRowMapper;
-import org.ilms.web.model.Case;
-import org.ilms.web.model.CaseResponse;
-import org.ilms.web.model.CaseSearchCriteria;
-import org.ilms.web.model.CountRequest;
-import org.ilms.web.model.Document;
-import org.ilms.web.model.Party;
+import org.ilms.web.model.*;
 import org.ilms.web.model.enums.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 @Slf4j
@@ -42,6 +38,8 @@ public class CaseRepository {
 
     public CaseResponse getILMSCaseData(CaseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
+        List<String> ids = getUUID(criteria);
+        criteria = CaseSearchCriteria.builder().id(ids).build();
         String query = caseQueryBuilder.getILMSCaseSearchQuery(criteria, preparedStmtList);
         List<Case> caseList = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);
         for (Case singleCase : caseList) {
@@ -88,10 +86,19 @@ public class CaseRepository {
         return Integer.parseInt(count);
     }
 
-    public Integer getCountOfUser(String user){
+    public Integer getCountOfUser(String user) {
         List<Object> preparedStmtList = new ArrayList<>();
         preparedStmtList.add(user);
-        String count = jdbcTemplate.queryForObject(countQueryBuilder.getCountQuery(), preparedStmtList.toArray() ,String.class);
+        String count = jdbcTemplate.queryForObject(countQueryBuilder.getCountQuery(), preparedStmtList.toArray(), String.class);
         return Integer.parseInt(count);
+    }
+
+    public List<String> getUUID(CaseSearchCriteria criteria) {
+        String uuid = criteria.getUuid();
+        List<Object> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(uuid);
+        String query = caseQueryBuilder.getAssignedCases(uuid);
+        List<String> ids = jdbcTemplate.queryForList(query, String.class);
+        return ids;
     }
 }
