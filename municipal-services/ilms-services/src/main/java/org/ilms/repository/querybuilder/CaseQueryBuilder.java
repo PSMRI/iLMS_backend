@@ -22,7 +22,7 @@ public class CaseQueryBuilder {
 
     private static final String ChildCaseQuery = "SELECT id FROM ilms_case where id= ? or parent_case_id= ? ";
 
-    private static final String TOTALCOUNTQUERY = "select count(*) from ilms_case where status = 'ACTIVE' ";
+    private static final String TOTALCOUNTQUERY = "select count(*) from ilms_case ";
 
     private static final String CaseQuery1 = "select DISTINCT(cases.id)from ilms_case as cases INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = cases.id LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid ";
     private static final String CaseQuery2 = " AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = cases.id GROUP BY wf.businessid)";
@@ -173,11 +173,11 @@ public class CaseQueryBuilder {
         StringBuilder builder = new StringBuilder(TOTALCOUNTQUERY);
         //        if (!CollectionUtils.isEmpty(Collections.singleton(criteria.getCnrNumber()))) {
         if (StringUtils.isNotBlank(criteria.getCnrNumber())) {
-            builder.append("AND ");
+            addClauseIfRequired(preparedStmtList, builder);
             builder.append("cnr_number= ?");
             preparedStmtList.add(criteria.getCnrNumber());
         } else if (Objects.nonNull(criteria.getNumber())) {
-            builder.append("AND ");
+            addClauseIfRequired(preparedStmtList, builder);
             builder.append("case_number= ?");
             preparedStmtList.add(criteria.getNumber().get(0));
         }
