@@ -41,14 +41,14 @@ public class CaseRepository {
     public CaseResponse getILMSCaseData(CaseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         List<String> ids = getUUID(criteria);
-        if (Objects.nonNull(criteria.getId())) {
+        if (Objects.nonNull(criteria.getNumber())) {
             for (String id : ids) {
-                if (id.equals(criteria.getId())) {
-                    criteria = CaseSearchCriteria.builder().id(Collections.singletonList(id)).build();
+                if (id.equals(criteria.getNumber())) {
+                    criteria = CaseSearchCriteria.builder().number(Collections.singletonList(id)).build();
                 }
             }
         } else {
-            criteria = CaseSearchCriteria.builder().id(ids).build();
+            criteria = CaseSearchCriteria.builder().number(ids).build();
         }
 
 

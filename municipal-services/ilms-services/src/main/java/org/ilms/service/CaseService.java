@@ -82,7 +82,9 @@ public class CaseService {
         Integer oic = null;
 
         OfficersCount officersCount = new OfficersCount();
-        total = caseRepository.getCaseCount(criteria);
+        CaseSearchCriteria criteria1 = new CaseSearchCriteria();
+        criteria1.setUuid(criteria.getUuid());
+        total = caseRepository.getCaseCount(criteria1);
         officersCount.setTOTAL(total);
 
         if (userRole.equals("DEC")) {
