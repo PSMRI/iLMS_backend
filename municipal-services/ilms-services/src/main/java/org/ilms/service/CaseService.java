@@ -61,7 +61,8 @@ public class CaseService {
     public CaseResponse ilmsCaseSearch(CaseSearchCriteria criteria, RequestInfo requestInfo, ProcessInstanceSearchCriteria processInstanceSearchCriteria) {
         List<Case> caseList = new ArrayList<>();
         CaseResponse caseResponse = null;
-        criteria = CaseSearchCriteria.builder().uuid(requestInfo.getUserInfo().getUuid()).build();
+        criteria.setUuid(requestInfo.getUserInfo().getUuid());
+//        criteria = CaseSearchCriteria.builder().uuid(requestInfo.getUserInfo().getUuid()).build();
         List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
         caseResponse = caseRepository.getILMSCaseData(criteria);
         if (!caseResponse.getCaseList().isEmpty()) {
@@ -136,7 +137,8 @@ public class CaseService {
         CaseResponse caseResponse = null;
         HearingResponse hearingResponse = null;
         JudgementResponse judgementResponse = null;
-        criteria = CaseSearchCriteria.builder().uuid(requestInfo.getUserInfo().getUuid()).build();
+        criteria.setUuid(requestInfo.getUserInfo().getUuid());
+//        criteria = CaseSearchCriteria.builder().uuid(requestInfo.getUserInfo().getUuid()).build();
         caseResponse = caseRepository.getILMSCaseData(criteria);
         HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
                 .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))

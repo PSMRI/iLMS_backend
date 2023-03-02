@@ -13,7 +13,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @Slf4j
@@ -39,7 +41,17 @@ public class CaseRepository {
     public CaseResponse getILMSCaseData(CaseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         List<String> ids = getUUID(criteria);
-        criteria = CaseSearchCriteria.builder().id(ids).build();
+        if (Objects.nonNull(criteria.getId())) {
+            for (String id : ids) {
+                if (id.equals(criteria.getId())) {
+                    criteria = CaseSearchCriteria.builder().id(Collections.singletonList(id)).build();
+                }
+            }
+        } else {
+            criteria = CaseSearchCriteria.builder().id(ids).build();
+        }
+
+
         String query = caseQueryBuilder.getILMSCaseSearchQuery(criteria, preparedStmtList);
         List<Case> caseList = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);
         for (Case singleCase : caseList) {
