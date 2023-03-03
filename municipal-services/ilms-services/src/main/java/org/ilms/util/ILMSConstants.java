@@ -20,6 +20,8 @@ public class ILMSConstants {
 
     public static final String MDMS_ILMS_SUB_STAGE = "SubStage";
 
+    public static final String MDMS_ILMS_HEARING_TYPE = "HearingType";
+
     public static final String MDMS_ILMS_GENDER_TYPE = "GenderType";
 
     public static final String MDMS_ILMS_PETITIONER_TYPE = "PetitionerType";
@@ -77,7 +79,7 @@ public class ILMSConstants {
 
     public static final String PT_BUSINESSSERVICE = "iLMS-services";
 
-    public static final String ACTION_FOR_ASSESSMENT =  "CREATE";
+    public static final String ACTION_FOR_ASSESSMENT = "CREATE";
 
     public static final String NOTIFICATION_CASEID = "{id}";
 
