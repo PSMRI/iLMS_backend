@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS  ilms_case(
 	id character varying(64) NOT NULL,
 	tenant_id character varying(64),
 	case_number character varying(64) UNIQUE,
-	cnr_number character varying(32) DEFAULT,
+	cnr_number character varying(32) DEFAULT NULL,
     parent_case_id character varying(32) DEFAULT NULL,
     linked_cases jsonb,
     case_type character varying(32) DEFAULT NULL,

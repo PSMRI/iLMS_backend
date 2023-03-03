@@ -264,7 +264,7 @@ public class CaseService {
         caseRequest.getCaseObj().setStatus(Status.ACTIVE);
 
         caseValidator.validateCreate(caseRequest);
-        caseValidator.cnrDuplicacyCheck(caseRequest);
+//        caseValidator.cnrDuplicacyCheck(caseRequest);
         caseValidator.caseNumberDuplicacyCheck(caseRequest);
         caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
         if (ilmsConfiguration.getIsWorkflowEnabled()) {
