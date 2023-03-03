@@ -100,10 +100,6 @@ public class CaseValidator {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
                     "caseNumber is mandatory [ " + caseRequest.getCaseObj().getNumber() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCnrNumber())) {
-            throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR,
-                    "CNRNumber is mandatory [ " + caseRequest.getCaseObj().getCnrNumber() + " ]");
-        }
 
         Map<String, String> errorMap = new HashMap<>();
         if (!errorMap.isEmpty()) {
