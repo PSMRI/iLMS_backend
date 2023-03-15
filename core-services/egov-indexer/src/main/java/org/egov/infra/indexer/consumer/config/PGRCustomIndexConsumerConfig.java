@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.egov.infra.indexer.consumer.PGRCustomIndexMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -66,8 +65,7 @@ public class PGRCustomIndexConsumerConfig implements ApplicationRunner {
 	@Autowired
     private StoppingErrorHandler stoppingErrorHandler;
     
-    @Autowired
-    private PGRCustomIndexMessageListener indexerMessageListener;
+
     
     public String[] topics = {};
     
@@ -133,7 +131,7 @@ public class PGRCustomIndexConsumerConfig implements ApplicationRunner {
     	 ContainerProperties properties = new ContainerProperties(this.topics); // set more properties
 //    	 properties.setPauseEnabled(true);
 //    	 properties.setPauseAfter(0);
-    	 properties.setMessageListener(indexerMessageListener);
+//    	 properties.setMessageListener(indexerMessageListener);
     	 
          log.info("PGR KafkaListenerContainer built...");
 
