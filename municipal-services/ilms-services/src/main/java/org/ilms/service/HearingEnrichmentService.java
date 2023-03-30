@@ -42,7 +42,7 @@ public class HearingEnrichmentService {
         RequestInfo requestInfo = hearingRequest.getRequestInfo();
         Hearing hearing = hearingRequest.getHearing();
         setIdgenIds(hearingRequest);
-        AuditDetails auditDetails = caseUtils.getAuditDetails(hearingRequest.getRequestInfo().getUserInfo().getUserName(), true);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(hearingRequest.getRequestInfo().getUserInfo().getUuid(), true);
         hearingRequest.getHearing().setAuditDetails(auditDetails);
         hearing.setAuditDetails(auditDetails);
         if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {

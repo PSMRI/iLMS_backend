@@ -58,8 +58,10 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
             // TODO fill the ILMSCase object with data in the result set record
             if (!duplicacyCheck.equals(rs.getString("hearing_id"))) {
                 String id = rs.getString("hearing_id");
+                String tenantId = rs.getString("tenant_id");
                 duplicacyCheck = id;
                 String hearingNumber = rs.getString("hearing_number");
+
                 currentHearing = ilmsHearingMap.get(id);
                 String caseId = rs.getString("hearing_case_id");
                 currentHearing = ilmsHearingMap.get(id);
@@ -85,7 +87,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 if (currentHearing == null) {
                     currentHearing = Hearing.builder().id(id).hearingNumber(hearingNumber).additionalDetails(additionalDetails).caseId(caseId)
                             .judgeName(judgeName).hearingDate(hearingDate).courtNumber(courtNumber)
-                            .nextHearingDate(nextHearingDate).bench(bench)
+                            .nextHearingDate(nextHearingDate).bench(bench).tenantId(tenantId)
                             .isPresenceRequired(isPresenceRequired).hearingType(hearingType).departmentOfficer(departmentOfficer)
                             .remarks(remarks).status(Status.valueOf(status)).businessDate(businessDate).hearingPurpose(hearingPurpose)
                             .requiredOfficer(requiredOfficer).auditDetails(auditDetails).affidavitFilingDate(affidavitFilingDate)

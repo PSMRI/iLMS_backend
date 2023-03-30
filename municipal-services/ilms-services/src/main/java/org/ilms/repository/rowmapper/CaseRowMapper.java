@@ -52,7 +52,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String cnrNumber = rs.getString("ilms_cnrNumber");
                 String caseType = rs.getString("ilms_caseType");
                 currentCase = ilmsCaseMap.get(id);
-                String tenantId = rs.getString("ilms_tenandId");
+                String tenantId = rs.getString("ilms_tenantId");
                 String parentCaseId = rs.getString("ilms_parentCaseId");
                 JsonNode linkedCases = getLinkedCases("ilms_linkedCases", rs);
                 String caseCategory = rs.getString("ilms_caseCategory");

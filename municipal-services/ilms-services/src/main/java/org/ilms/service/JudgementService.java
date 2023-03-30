@@ -42,6 +42,8 @@ public class JudgementService {
         HearingSearchCriteria criteria = HearingSearchCriteria.builder()
                 .caseId(Collections.singletonList(judgementRequest.getOrder().getCaseId())).build();
         hearingResponse = hearingRepository.getHearingDetails(criteria);
+        String tenantId = hearingResponse.getHearingList().get(0).getTenantId();
+        judgementRequest.getOrder().setTenantId(tenantId);
         if (!hearingResponse.getHearingList().isEmpty()) {
             judgementRequest.getOrder().setStatus(Status.ACTIVE);
             judgementValidator.createValidator(judgementRequest);

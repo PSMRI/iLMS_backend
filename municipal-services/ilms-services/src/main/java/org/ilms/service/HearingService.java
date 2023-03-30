@@ -53,6 +53,8 @@ public class HearingService {
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(hearingRequest.getHearing().getCaseId())).build();
 //        criteria.setUuid(hearingRequest.getRequestInfo().getUserInfo().getUuid());
         caseResponse = caseRepository.getILMSCaseData(criteria);
+        String tenantId = caseResponse.getCaseList().get(0).getTenantId();
+        hearingRequest.getHearing().setTenantId(tenantId);
         List<Party> partyList = hearingDetailsRepository.getGetFromPartyQuery(hearingRequest.getHearing().getCaseId());
         for (Party party : partyList) {
             if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {

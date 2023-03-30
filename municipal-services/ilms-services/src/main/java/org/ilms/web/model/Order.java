@@ -15,6 +15,9 @@ public class Order {
     @JsonProperty("id")
     private String id;
 
+    @JsonProperty("tenantId")
+    private String tenantId;
+
     @JsonProperty("caseId")
     private String caseId;
 

@@ -55,6 +55,9 @@ public class JudgementRepository {
         if (!StringUtils.isEmpty(request.getOrder().getCaseId())) {
             oldOrder.setCaseId(request.getOrder().getCaseId());
         }
+        if (!StringUtils.isEmpty(request.getOrder().getTenantId())) {
+            oldOrder.setTenantId(request.getOrder().getTenantId());
+        }
         if (!StringUtils.isEmpty(request.getOrder().getOrderType())) {
             oldOrder.setOrderType(request.getOrder().getOrderType());
         }

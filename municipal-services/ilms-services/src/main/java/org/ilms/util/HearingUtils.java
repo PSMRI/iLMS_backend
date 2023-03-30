@@ -30,6 +30,9 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseId())) {
             oldHearingRequest.setCaseId(hearingDetailsRequest.getHearing().getCaseId());
         }
+        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getTenantId())) {
+            oldHearingRequest.setTenantId(hearingDetailsRequest.getHearing().getTenantId());
+        }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getHearingNumber())) {
             oldHearingRequest.setHearingNumber(hearingDetailsRequest.getHearing().getHearingNumber());
         }

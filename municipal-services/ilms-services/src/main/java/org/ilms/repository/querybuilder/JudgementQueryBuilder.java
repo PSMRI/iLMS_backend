@@ -1,17 +1,18 @@
 package org.ilms.repository.querybuilder;
 
-import java.util.List;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.web.model.CaseSearchCriteria;
 import org.ilms.web.model.JudgementSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class JudgementQueryBuilder {
 
     private static final String getTenantIdQuery = "SELECT tenant_id FROM ilms_case WHERE ID=(select case_id FROM ilms_judgement WHERE id=?)";
-    private static final String Query = "SELECT count(*) OVER() AS full_count, id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, case_id, revised_complaince_reason, compliance_status," + "remarks, additional_details, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime" + " FROM ilms_judgement";
+    private static final String Query = "SELECT count(*) OVER() AS full_count, id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, case_id, revised_complaince_reason, compliance_status," + "tenant_id," + "remarks, additional_details, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime" + " FROM ilms_judgement";
 
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
@@ -42,9 +43,9 @@ public class JudgementQueryBuilder {
     }
 
     /**
-     * @param query prepared Query
+     * @param query            prepared Query
      * @param preparedStmtList values to be replased on the query
-     * @param criteria judgement search criteria
+     * @param criteria         judgement search criteria
      * @return the query by replacing the placeholders with preparedStmtList
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, JudgementSearchCriteria criteria) {
@@ -95,6 +96,7 @@ public class JudgementQueryBuilder {
             builder.append("DESC");
         }
     }
+
     public String getTenantIdFromHearingQuery() {
         return getTenantIdQuery;
     }

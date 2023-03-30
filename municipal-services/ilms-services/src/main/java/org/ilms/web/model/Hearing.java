@@ -14,6 +14,9 @@ public class Hearing {
     @JsonProperty("id")
     private String id;
 
+    @JsonProperty("tenantId")
+    private String tenantId;
+
     @JsonProperty("hearingNumber")
     private String hearingNumber;
 

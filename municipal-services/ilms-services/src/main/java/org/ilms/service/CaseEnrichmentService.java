@@ -34,7 +34,7 @@ public class CaseEnrichmentService {
         RequestInfo requestInfo = caseRequest.getRequestInfo();
         Case aCase = caseRequest.getCaseObj();
         setIdgenIds(caseRequest);
-        AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUserName(), true);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
         caseRequest.getCaseObj().setAuditDetails(auditDetails);
         aCase.setAuditDetails(auditDetails);
         if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
@@ -72,7 +72,7 @@ public class CaseEnrichmentService {
     public void enrichmentForHearingUpdateRequest(HearingRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         Hearing ilmsCase = request.getHearing();
-        AuditDetails auditDetails = caseUtils.getAuditDetails(request.getHearing().getId(), false);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
         request.getHearing().setAuditDetails(auditDetails);
         ilmsCase.setAuditDetails(auditDetails);
         if (request.getHearing().getRespondent() != null) {
@@ -198,7 +198,7 @@ public class CaseEnrichmentService {
     public void enrichCaseUpdateRequest(CaseRequest caseRequest) {
         RequestInfo requestInfo = caseRequest.getRequestInfo();
         Case aCase = caseRequest.getCaseObj();
-        AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUserName(), false);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
         caseRequest.getCaseObj().setAuditDetails(auditDetails);
         aCase.setAuditDetails(auditDetails);
         if (caseRequest.getCaseObj().getCourt() != null) {
@@ -238,7 +238,7 @@ public class CaseEnrichmentService {
         RequestInfo requestInfo = request.getRequestInfo();
         List<Document> document = request.getDocument();
         for (Document documents : document) {
-            AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUserName(), false);
+            AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
             documents.setAuditDetails(auditDetails);
             documents.setAuditDetails(auditDetails);
 

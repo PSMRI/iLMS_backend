@@ -36,7 +36,7 @@ public class JudgementEnrichmentService {
         RequestInfo requestInfo = judgementRequest.getRequestInfo();
         Order order = judgementRequest.getOrder();
         setIdgenIds(judgementRequest);
-        AuditDetails auditDetails = caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUserName(), true);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), true);
         judgementRequest.getOrder().setAuditDetails(auditDetails);
         order.setAuditDetails(auditDetails);
     }
@@ -44,7 +44,7 @@ public class JudgementEnrichmentService {
     public void enrichJugmentUpdateRequest(JudgementRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         Order order = request.getOrder();
-        AuditDetails auditDetails = caseUtils.getAuditDetails(request.getOrder().getId(), false);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
         request.getOrder().setAuditDetails(auditDetails);
         order.setAuditDetails(auditDetails);
     }

@@ -42,6 +42,7 @@ public class JudgementRowMapper implements ResultSetExtractor<List<Order>> {
         while (rs.next()) {
             Order currentjudgement = null;
             String id = rs.getString("id");
+            String tenantId = rs.getString("tenant_id");
             String orderType = rs.getString("order_type");
             Long orderDate = rs.getLong("order_date");
             String decisionStatus = rs.getString("decision_status");
@@ -59,7 +60,7 @@ public class JudgementRowMapper implements ResultSetExtractor<List<Order>> {
                     .lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
             this.setFull_count(rs.getInt("full_count"));
             if (currentjudgement == null) {
-                currentjudgement = Order.builder().id(id).orderType(orderType).orderDate(orderDate).decisionStatus(decisionStatus)
+                currentjudgement = Order.builder().id(id).orderType(orderType).orderDate(orderDate).decisionStatus(decisionStatus).tenantId(tenantId)
                         .complianceDate(complianceDate).revisedComplianceDate(revisedComplianceDate)
                         .orderNoOverride(orderNoOverride).caseId(cadeId).revisedComplainceReason(revisedComplainceReason)
                         .complianceStatus(complianceStatus).remarks(remarks).additionalDetails(additionalDetails)
