@@ -177,13 +177,11 @@ public class CaseService {
             if (parties.getPartyType().equals(PartyType.PETITIONER.toString())) {
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
-                    parties.getAdvocate().setPartyType(PartyType.PETITIONER);
                     parties.getAdvocate().setStatus(Status.ACTIVE);
                 }
             } else if (parties.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
-                    parties.getAdvocate().setPartyType(PartyType.RESPONDENT);
                     parties.getAdvocate().setStatus(Status.ACTIVE);
                 }
             }
@@ -205,7 +203,6 @@ public class CaseService {
                 parties.setPartyType(PartyType.PETITIONER.toString());
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
-                    parties.getAdvocate().setPartyType(PartyType.PETITIONER);
                     parties.getAdvocate().setStatus(Status.ACTIVE);
                 }
             } else {
@@ -223,7 +220,6 @@ public class CaseService {
                 parties.setPartyType(PartyType.RESPONDENT.toString());
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
-                    parties.getAdvocate().setPartyType(PartyType.RESPONDENT);
                     parties.getAdvocate().setStatus(Status.ACTIVE);
                 }
             }

@@ -156,12 +156,7 @@ public class CaseUtils {
                         }
                         //Setting Data For Petitioner Advocate
                         if (!StringUtils.isEmpty(party.getAdvocate())) {
-                            if (!StringUtils.isEmpty(party.getAdvocate().getPartyId())) {
-                                oldParty.getAdvocate().setPartyId(party.getAdvocate().getPartyId());
-                            }
-                            if (!StringUtils.isEmpty(party.getAdvocate().getHearingId())) {
-                                oldParty.getAdvocate().setHearingId(party.getAdvocate().getHearingId());
-                            }
+                            
                             if (!StringUtils.isEmpty(party.getAdvocate().getFirstName())) {
                                 oldParty.getAdvocate().setFirstName(party.getAdvocate().getFirstName());
                             }
@@ -171,9 +166,7 @@ public class CaseUtils {
                             if (!StringUtils.isEmpty(party.getAdvocate().getContactNumber())) {
                                 oldParty.getAdvocate().setContactNumber(party.getAdvocate().getContactNumber());
                             }
-                            if (!StringUtils.isEmpty(party.getAdvocate().getPartyType())) {
-                                oldParty.getAdvocate().setPartyType(party.getAdvocate().getPartyType());
-                            }
+
                             if (!StringUtils.isEmpty(party.getAdvocate().getStatus())) {
                                 oldParty.getAdvocate().setStatus(party.getAdvocate().getStatus());
                             }
@@ -212,12 +205,7 @@ public class CaseUtils {
                         }
                         //Setting Data For Petitioner Advocate
                         if (!StringUtils.isEmpty(party.getAdvocate())) {
-                            if (!StringUtils.isEmpty(party.getAdvocate().getPartyId())) {
-                                oldParty.getAdvocate().setPartyId(party.getAdvocate().getPartyId());
-                            }
-                            if (!StringUtils.isEmpty(party.getAdvocate().getHearingId())) {
-                                oldParty.getAdvocate().setHearingId(party.getAdvocate().getHearingId());
-                            }
+
                             if (!StringUtils.isEmpty(party.getAdvocate().getFirstName())) {
                                 oldParty.getAdvocate().setFirstName(party.getAdvocate().getFirstName());
                             }
@@ -226,9 +214,6 @@ public class CaseUtils {
                             }
                             if (!StringUtils.isEmpty(party.getAdvocate().getContactNumber())) {
                                 oldParty.getAdvocate().setContactNumber(party.getAdvocate().getContactNumber());
-                            }
-                            if (!StringUtils.isEmpty(party.getAdvocate().getPartyType())) {
-                                oldParty.getAdvocate().setPartyType(party.getAdvocate().getPartyType());
                             }
                             if (!StringUtils.isEmpty(party.getAdvocate().getStatus())) {
                                 oldParty.getAdvocate().setStatus(party.getAdvocate().getStatus());
@@ -304,12 +289,7 @@ public class CaseUtils {
                     }
                     //Setting Data For Respondent Advocate
                     if (!StringUtils.isEmpty(party.getAdvocate())) {
-                        if (!StringUtils.isEmpty(party.getAdvocate().getPartyId())) {
-                            oldParty.getAdvocate().setPartyId(party.getAdvocate().getPartyId());
-                        }
-                        if (!StringUtils.isEmpty(party.getAdvocate().getHearingId())) {
-                            oldParty.getAdvocate().setHearingId(party.getAdvocate().getHearingId());
-                        }
+
                         if (!StringUtils.isEmpty(party.getAdvocate().getFirstName())) {
                             oldParty.getAdvocate().setFirstName(party.getAdvocate().getFirstName());
                         }
@@ -319,9 +299,6 @@ public class CaseUtils {
 
                         if (!StringUtils.isEmpty(party.getAdvocate().getContactNumber())) {
                             oldParty.getAdvocate().setContactNumber(party.getAdvocate().getContactNumber());
-                        }
-                        if (!StringUtils.isEmpty(party.getAdvocate().getPartyType())) {
-                            oldParty.getAdvocate().setPartyType(party.getAdvocate().getPartyType());
                         }
                         if (!StringUtils.isEmpty(party.getAdvocate().getStatus())) {
                             oldParty.getAdvocate().setStatus(party.getAdvocate().getStatus());

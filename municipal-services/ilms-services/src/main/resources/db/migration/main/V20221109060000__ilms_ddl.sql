@@ -116,10 +116,28 @@ CREATE INDEX  IF NOT EXISTS  index_case_id_ilms_act  ON ilms_act
 );
 
 ---- To store the petioner and respondent information which can be identified using party_type column
+CREATE TABLE IF NOT EXISTS  ilms_advocate(
+	id character varying(32) NOT NULL,
+    first_name character varying(32) DEFAULT NULL,
+    last_name character varying(32) DEFAULT NULL,
+	contact_number character varying(64) DEFAULT NULL,
+	status character varying(64) DEFAULT NULL,
+    createdby character varying(64),
+    createdtime bigint,
+    lastmodifiedby character varying(64),
+    lastmodifiedtime bigint,
+    CONSTRAINT pk_advocate_id PRIMARY KEY (id)
 
+);
+
+CREATE INDEX  IF NOT EXISTS  index_id_ilms_advocate  ON ilms_advocate
+(
+  id
+);
 CREATE TABLE IF NOT EXISTS  ilms_case_party(
 	id character varying(32) NOT NULL,
 	case_id character varying(64) NOT NULL,
+	advocate_id character varying(64) NOT NULL,
     first_name character varying(32) DEFAULT NULL,
     last_name character varying(32) DEFAULT NULL,
     gender character varying(32) DEFAULT NULL,
@@ -134,7 +152,8 @@ CREATE TABLE IF NOT EXISTS  ilms_case_party(
     lastmodifiedby character varying(64),
     lastmodifiedtime bigint,
     CONSTRAINT pk_party_id PRIMARY KEY (id),
-	CONSTRAINT fk_party_case_id FOREIGN KEY (case_id) REFERENCES ilms_case (id)
+	CONSTRAINT fk_party_case_id FOREIGN KEY (case_id) REFERENCES ilms_case (id),
+	CONSTRAINT fk_party_advocate_id FOREIGN KEY(advocate_id) REFERENCES ilms_advocate(id)
 );
 
 CREATE INDEX  IF NOT EXISTS  index_id_ilms_case_party  ON ilms_case_party
@@ -147,32 +166,8 @@ CREATE INDEX  IF NOT EXISTS  index_case_id_ilms_case_party  ON ilms_case_party
   case_id
 );
 
-CREATE TABLE IF NOT EXISTS  ilms_advocate(
-	id character varying(32) NOT NULL,
-	party_id character varying(64) NOT NULL,
-    hearing_id character varying(64) DEFAULT NULL,
-    first_name character varying(32) DEFAULT NULL,
-    last_name character varying(32) DEFAULT NULL,
-	contact_number character varying(64) DEFAULT NULL,
-    party_type character varying(32) DEFAULT NULL,
-	status character varying(64) DEFAULT NULL,
-    createdby character varying(64),
-    createdtime bigint,
-    lastmodifiedby character varying(64),
-    lastmodifiedtime bigint,
-    CONSTRAINT pk_advocate_id PRIMARY KEY (id),
-	CONSTRAINT fk_advocate_party_id FOREIGN KEY (party_id) REFERENCES ilms_case_party (id)
-);
 
-CREATE INDEX  IF NOT EXISTS  index_id_ilms_advocate  ON ilms_advocate
-(
-  id
-);
 
-CREATE INDEX  IF NOT EXISTS  index_party_id_ilms_advocate  ON ilms_advocate
-(
-   party_id
-);
 
 
 CREATE TABLE IF NOT EXISTS  ilms_hearing(

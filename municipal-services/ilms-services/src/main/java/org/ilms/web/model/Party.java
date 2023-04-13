@@ -1,11 +1,7 @@
 package org.ilms.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.ilms.web.model.enums.Status;
 
 @Builder
@@ -14,42 +10,45 @@ import org.ilms.web.model.enums.Status;
 @Getter
 @Setter
 public class Party {
-    @JsonProperty ("id")
+    @JsonProperty("id")
     private String id;
 
-    @JsonProperty ("caseId")
+    @JsonProperty("caseId")
     private String caseId;
 
-    @JsonProperty ("firstName")
+    @JsonProperty("advocateId")
+    private String advocateId;
+
+    @JsonProperty("firstName")
     private String firstName;
 
-    @JsonProperty ("lastName")
+    @JsonProperty("lastName")
     private String lastName;
 
-    @JsonProperty ("gender")
+    @JsonProperty("gender")
     private String gender;
 
-    @JsonProperty ("petitionerType")
+    @JsonProperty("petitionerType")
     private String petitionerType;
 
-    @JsonProperty ("address")
+    @JsonProperty("address")
     private String address;
 
-    @JsonProperty ("departmentName")
+    @JsonProperty("departmentName")
     private String departmentName;
 
-    @JsonProperty ("contactNumber")
+    @JsonProperty("contactNumber")
     private String contactNumber;
 
-    @JsonProperty ("partyType")
+    @JsonProperty("partyType")
     private String partyType;
 
-    @JsonProperty ("advocate")
+    @JsonProperty("advocate")
     private Advocate advocate;
 
-    @JsonProperty ("status")
+    @JsonProperty("status")
     private Status status;
 
-    @JsonProperty ("auditDetails")
+    @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }
