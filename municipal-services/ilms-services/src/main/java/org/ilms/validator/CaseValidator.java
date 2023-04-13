@@ -56,22 +56,22 @@ public class CaseValidator {
         if (Objects.nonNull(cases.getSubStage()) && !codes.get(ILMSConstants.MDMS_ILMS_SUB_STAGE).contains(cases.getSubStage())) {
             errorMap.put("Invalid CaseSubStage", "The CaseSubStage '" + cases.getSubStage() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getPetitioner())) {
-            if (Objects.nonNull(cases.getPetitioner().getGender()) && !codes.get(ILMSConstants.MDMS_ILMS_GENDER_TYPE)
-                    .contains(cases.getPetitioner().getGender())) {
-                errorMap.put("Invalid Gender", "The Gender '" + cases.getPetitioner().getGender() + "' does not exists");
-            }
-            if (cases.getPetitioner().getPetitionerType() != null && !codes.get(ILMSConstants.MDMS_ILMS_PETITIONER_TYPE)
-                    .contains(cases.getPetitioner().getPetitionerType())) {
-                errorMap.put("Invalid PetitionerType", "The PetitionerType '" + cases.getPetitioner().getPetitionerType() + "' does not exists");
-            }
-        }
-        if (Objects.nonNull(cases.getRespondent())) {
-            if (Objects.nonNull(cases.getRespondent().getGender()) && !codes.get(ILMSConstants.MDMS_ILMS_GENDER_TYPE)
-                    .contains(cases.getRespondent().getGender())) {
-                errorMap.put("Invalid Gender", "The Gender '" + cases.getRespondent().getGender() + "' does not exists");
-            }
-        }
+//        if (Objects.nonNull(cases.getPetitioner())) {
+//            if (Objects.nonNull(cases.getPetitioner().getGender()) && !codes.get(ILMSConstants.MDMS_ILMS_GENDER_TYPE)
+//                    .contains(cases.getPetitioner().getGender())) {
+//                errorMap.put("Invalid Gender", "The Gender '" + cases.getPetitioner().getGender() + "' does not exists");
+//            }
+//            if (cases.getPetitioner().getPetitionerType() != null && !codes.get(ILMSConstants.MDMS_ILMS_PETITIONER_TYPE)
+//                    .contains(cases.getPetitioner().getPetitionerType())) {
+//                errorMap.put("Invalid PetitionerType", "The PetitionerType '" + cases.getPetitioner().getPetitionerType() + "' does not exists");
+//            }
+//        }
+//        if (Objects.nonNull(cases.getRespondent())) {
+//            if (Objects.nonNull(cases.getRespondent().getGender()) && !codes.get(ILMSConstants.MDMS_ILMS_GENDER_TYPE)
+//                    .contains(cases.getRespondent().getGender())) {
+//                errorMap.put("Invalid Gender", "The Gender '" + cases.getRespondent().getGender() + "' does not exists");
+//            }
+//        }
         if (Objects.nonNull(cases.getRecommendOIC()) && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
             errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + cases.getRecommendOIC() + "' does not exists");
         }

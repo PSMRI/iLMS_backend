@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.ilms.web.model.enums.Status;
 
+import java.util.List;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -74,11 +76,13 @@ public class Hearing {
     @JsonProperty("status")
     private Status status;
 
-    @JsonProperty("petitioner")
-    private Party petitioner;
-
-    @JsonProperty("respondent")
-    private Party respondent;
+    //    @JsonProperty("petitioner")
+//    private Party petitioner;
+//
+//    @JsonProperty("respondent")
+//    private Party respondent;
+    @JsonProperty("parties")
+    private List<Party> parties;
 
     @JsonProperty("payment")
     private Payment payment;

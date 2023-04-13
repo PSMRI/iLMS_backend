@@ -45,26 +45,30 @@ public class HearingEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(hearingRequest.getRequestInfo().getUserInfo().getUuid(), true);
         hearingRequest.getHearing().setAuditDetails(auditDetails);
         hearing.setAuditDetails(auditDetails);
-        if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
-            hearingRequest.getHearing().getRespondent().setAuditDetails(auditDetails);
-            hearing.getRespondent().setAuditDetails(auditDetails);
+        for (Party party : hearingRequest.getHearing().getParties()) {
+            party.setAuditDetails(auditDetails);
+            party.getAdvocate().setAuditDetails(auditDetails);
         }
-        if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
-            if (Objects.nonNull(hearingRequest.getHearing().getRespondent().getAdvocate())) {
-                hearingRequest.getHearing().getRespondent().getAdvocate().setAuditDetails(auditDetails);
-                hearing.getRespondent().getAdvocate().setAuditDetails(auditDetails);
-            }
-        }
-        if (Objects.nonNull(hearingRequest.getHearing().getPetitioner())) {
-            hearingRequest.getHearing().getPetitioner().setAuditDetails(auditDetails);
-            hearing.getPetitioner().setAuditDetails(auditDetails);
-        }
-        if (Objects.nonNull(hearingRequest.getHearing().getPetitioner())) {
-            if (Objects.nonNull(hearingRequest.getHearing().getPetitioner().getAdvocate())) {
-                hearingRequest.getHearing().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-                hearing.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-            }
-        }
+//        if (Objects.nonNull(party)) {
+//            party.setAuditDetails(auditDetails);
+//            hearing.getRespondent().setAuditDetails(auditDetails);
+//        }
+//        if (Objects.nonNull(party)) {
+//            if (Objects.nonNull(party.getAdvocate())) {
+//                party.getAdvocate().setAuditDetails(auditDetails);
+//                hearing.getRespondent().getAdvocate().setAuditDetails(auditDetails);
+//            }
+//        }
+//        if (Objects.nonNull(party)) {
+//            party.setAuditDetails(auditDetails);
+//            hearing.getPetitioner().setAuditDetails(auditDetails);
+//        }
+//        if (Objects.nonNull(party)) {
+//            if (Objects.nonNull(party.getAdvocate())) {
+//                party.getAdvocate().setAuditDetails(auditDetails);
+//                hearing.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+//            }
+//        }
         if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
             hearingRequest.getHearing().getPayment().setAuditDetails(auditDetails);
             hearing.getPayment().setAuditDetails(auditDetails);
@@ -116,34 +120,41 @@ public class HearingEnrichmentService {
 //            court.setId(courtItr.next());
 //            hearing.setCourt(court);
 //        }
-        if (Objects.nonNull(hearing.getRespondent())) {
-            if (Objects.nonNull(hearing.getRespondent().getAdvocate())) {
-                hearing.getRespondent().getAdvocate().setId(radvocateItr.next());
+//        if (Objects.nonNull(hearing.getRespondent())) {
+//            if (Objects.nonNull(hearing.getRespondent().getAdvocate())) {
+//
+//            }
+//        }
+//        else {
+//            Party party = new Party();
+//            Advocate advocate = new Advocate();
+//            advocate.setId(radvocateItr.next());
+//            advocate.setStatus(Status.ACTIVE);
+//            advocate.setPartyType(PartyType.RESPONDENT);
+//            advocate.setPartyId(respondentId);
+//            party.setAdvocate(advocate);
+//            hearing.setRespondent(party);
+//        }
+        for (Party party : hearing.getParties()) {
+            if (Objects.nonNull(party.getPartyType().equals(PartyType.PETITIONER.toString()))) {
+                if (Objects.nonNull(party.getAdvocate())) {
+                    party.getAdvocate().setId(padvocateItr.next());
+                }
+            } else {
+                party.getAdvocate().setId(radvocateItr.next());
             }
-        } else {
-            Party party = new Party();
-            Advocate advocate = new Advocate();
-            advocate.setId(radvocateItr.next());
-            advocate.setStatus(Status.ACTIVE);
-            advocate.setPartyType(PartyType.RESPONDENT);
-            advocate.setPartyId(respondentId);
-            party.setAdvocate(advocate);
-            hearing.setRespondent(party);
         }
-        if (Objects.nonNull(hearing.getPetitioner())) {
-            if (Objects.nonNull(hearing.getPetitioner().getAdvocate())) {
-                hearing.getPetitioner().getAdvocate().setId(padvocateItr.next());
-            }
-        } else {
-            Party party = new Party();
-            Advocate advocate = new Advocate();
-            advocate.setId(padvocateItr.next());
-            advocate.setStatus(Status.ACTIVE);
-            advocate.setPartyType(PartyType.PETITIONER);
-            advocate.setPartyId(petitionerId);
-            party.setAdvocate(advocate);
-            hearing.setPetitioner(party);
-        }
+
+//        else {
+//            Party party = new Party();
+//            Advocate advocate = new Advocate();
+//            advocate.setId(padvocateItr.next());
+//            advocate.setStatus(Status.ACTIVE);
+//            advocate.setPartyType(PartyType.PETITIONER);
+//            advocate.setPartyId(petitionerId);
+//            party.setAdvocate(advocate);
+//            hearing.setPetitioner(party);
+//        }
         if (Objects.nonNull(hearing.getPayment())) {
             hearing.getPayment().setId(paymentItr.next());
         } else {

@@ -41,22 +41,26 @@ public class CaseEnrichmentService {
             caseRequest.getCaseObj().getCourt().setAuditDetails(auditDetails);
             aCase.getCourt().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCaseObj().getRespondent() != null) {
-            caseRequest.getCaseObj().getRespondent().setAuditDetails(auditDetails);
-            aCase.getRespondent().setAuditDetails(auditDetails);
+        for (Party party : aCase.getParties()) {
+            party.setAuditDetails(auditDetails);
+            party.getAdvocate().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCaseObj().getRespondent().getAdvocate() != null) {
-            caseRequest.getCaseObj().getRespondent().getAdvocate().setAuditDetails(auditDetails);
-            aCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
-        }
-        if (caseRequest.getCaseObj().getPetitioner() != null) {
-            caseRequest.getCaseObj().getPetitioner().setAuditDetails(auditDetails);
-            aCase.getPetitioner().setAuditDetails(auditDetails);
-        }
-        if (caseRequest.getCaseObj().getPetitioner().getAdvocate() != null) {
-            caseRequest.getCaseObj().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-            aCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-        }
+//        if (party != null) {
+//            party.setAuditDetails(auditDetails);
+//            aCase.getRespondent().setAuditDetails(auditDetails);
+//        }
+//        if (party.getAdvocate() != null) {
+//            party.getAdvocate().setAuditDetails(auditDetails);
+//            aCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
+//        }
+//        if (party != null) {
+//            party.setAuditDetails(auditDetails);
+//            aCase.getPetitioner().setAuditDetails(auditDetails);
+//        }
+//        if (party.getAdvocate() != null) {
+//            party.getAdvocate().setAuditDetails(auditDetails);
+//            aCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+//        }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
             aCase.getDocuments().forEach(doc -> {
                 doc.setAuditDetails(auditDetails);
@@ -75,23 +79,27 @@ public class CaseEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
         request.getHearing().setAuditDetails(auditDetails);
         ilmsCase.setAuditDetails(auditDetails);
-        if (request.getHearing().getRespondent() != null) {
-            request.getHearing().getRespondent().setAuditDetails(auditDetails);
-            ilmsCase.getRespondent().setAuditDetails(auditDetails);
-            if (request.getHearing().getRespondent().getAdvocate() != null) {
-                request.getHearing().getRespondent().getAdvocate().setAuditDetails(auditDetails);
-                ilmsCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
-            }
+        for (Party party : ilmsCase.getParties()) {
+            party.setAuditDetails(auditDetails);
+            party.getAdvocate().setAuditDetails(auditDetails);
         }
-
-        if (request.getHearing().getPetitioner() != null) {
-            request.getHearing().getPetitioner().setAuditDetails(auditDetails);
-            ilmsCase.getPetitioner().setAuditDetails(auditDetails);
-            if (request.getHearing().getPetitioner().getAdvocate() != null) {
-                request.getHearing().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-                ilmsCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-            }
-        }
+//        if (request.getHearing().getRespondent() != null) {
+//            request.getHearing().getRespondent().setAuditDetails(auditDetails);
+//            ilmsCase.getRespondent().setAuditDetails(auditDetails);
+//            if (request.getHearing().getRespondent().getAdvocate() != null) {
+//                request.getHearing().getRespondent().getAdvocate().setAuditDetails(auditDetails);
+//                ilmsCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
+//            }
+//        }
+//
+//        if (request.getHearing().getPetitioner() != null) {
+//            request.getHearing().getPetitioner().setAuditDetails(auditDetails);
+//            ilmsCase.getPetitioner().setAuditDetails(auditDetails);
+//            if (request.getHearing().getPetitioner().getAdvocate() != null) {
+//                request.getHearing().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+//                ilmsCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+//            }
+//        }
 
         if (request.getHearing().getPayment() != null) {
             request.getHearing().getPayment().setAuditDetails(auditDetails);
@@ -107,22 +115,11 @@ public class CaseEnrichmentService {
         ListIterator<String> caseItr = caseId.listIterator();
         List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
         ListIterator<String> actItr = actId.listIterator();
-        List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
-                ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
-        ListIterator<String> padvocateItr = padvocateId.listIterator();
-        List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
-                ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
-        ListIterator<String> radvocateItr = radvocateId.listIterator();
-        List<String> petitionerId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerIdgenName(),
-                ilmsConfiguration.getPetitionerIdgenFormat(), 1);
-        ListIterator<String> petitionerItr = petitionerId.listIterator();
-        List<String> respondentId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentIdgenName(),
-                ilmsConfiguration.getRespondentIdgenFormat(), 1);
-        ListIterator<String> respondentItr = respondentId.listIterator();
         List<String> courtId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCourtIdgenName(),
                 ilmsConfiguration.getCourtIdgenFormat(), 1);
         ListIterator<String> courtItr = courtId.listIterator();
         Map<String, String> errorMap = new HashMap<>();
+
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
@@ -138,41 +135,31 @@ public class CaseEnrichmentService {
             act.setStatus(Status.DRAFTED);
             caseObj.setAct(act);
         }
-        if (Objects.nonNull(caseObj.getPetitioner())) {
-            caseObj.getPetitioner().setId(petitionerItr.next());
-        } else {
-            Party party = new Party();
-            party.setId(petitionerItr.next());
-            party.setStatus(Status.DRAFTED);
-            party.setPartyType(PartyType.PETITIONER.toString());
-            caseObj.setPetitioner(party);
-        }
-        if (Objects.nonNull(caseObj.getRespondent())) {
-            caseObj.getRespondent().setId(respondentItr.next());
-        } else {
-            Party party = new Party();
-            party.setId(respondentItr.next());
-            party.setStatus(Status.DRAFTED);
-            party.setPartyType(PartyType.RESPONDENT.toString());
-            caseObj.setRespondent(party);
-        }
-        if (Objects.nonNull(caseObj.getRespondent().getAdvocate())) {
-            caseObj.getRespondent().getAdvocate().setId(radvocateItr.next());
-        } else {
-            Advocate advocate = new Advocate();
-            advocate.setId(radvocateItr.next());
-            advocate.setStatus(Status.DRAFTED);
-            advocate.setPartyType(PartyType.RESPONDENT);
-            caseObj.getRespondent().setAdvocate(advocate);
-        }
-        if (Objects.nonNull(caseObj.getPetitioner().getAdvocate())) {
-            caseObj.getPetitioner().getAdvocate().setId(padvocateItr.next());
-        } else {
-            Advocate advocate = new Advocate();
-            advocate.setId(padvocateItr.next());
-            advocate.setStatus(Status.DRAFTED);
-            advocate.setPartyType(PartyType.PETITIONER);
-            caseObj.getPetitioner().setAdvocate(advocate);
+        for (Party party : caseObj.getParties()) {
+            if (party.equals(PartyType.PETITIONER.toString())) {
+                List<String> petitionerId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerIdgenName(),
+                        ilmsConfiguration.getPetitionerIdgenFormat(), 1);
+                ListIterator<String> petitionerItr = petitionerId.listIterator();
+
+                party.setId(petitionerItr.next());
+                if (Objects.nonNull(party.getAdvocate())) {
+                    List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
+                            ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
+                    ListIterator<String> padvocateItr = padvocateId.listIterator();
+                    party.getAdvocate().setId(padvocateItr.next());
+                }
+            } else {
+                List<String> respondentId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentIdgenName(),
+                        ilmsConfiguration.getRespondentIdgenFormat(), 1);
+                ListIterator<String> respondentItr = respondentId.listIterator();
+                party.setId(respondentItr.next());
+                if (Objects.nonNull(party.getAdvocate())) {
+                    List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
+                            ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
+                    ListIterator<String> radvocateItr = radvocateId.listIterator();
+                    party.getAdvocate().setId(radvocateItr.next());
+                }
+            }
         }
         if (Objects.nonNull(caseObj.getDocuments())) {
             caseObj.getDocuments().forEach((doc -> {
@@ -181,10 +168,6 @@ public class CaseEnrichmentService {
                 doc.setId(docId.get(0));
             }));
         }
-        //        else {
-        //            Document document = new Document();
-        //            document.setStatus(Status.DRAFTED);
-        //        }
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {
@@ -205,23 +188,27 @@ public class CaseEnrichmentService {
             caseRequest.getCaseObj().getCourt().setAuditDetails(auditDetails);
             aCase.getCourt().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCaseObj().getRespondent() != null) {
-            caseRequest.getCaseObj().getRespondent().setAuditDetails(auditDetails);
-            aCase.getRespondent().setAuditDetails(auditDetails);
+        for (Party party : aCase.getParties()) {
+            party.setAuditDetails(auditDetails);
+            party.getAdvocate().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCaseObj().getRespondent().getAdvocate() != null) {
-            caseRequest.getCaseObj().getRespondent().getAdvocate().setAuditDetails(auditDetails);
-            aCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
-        }
+//        if (party != null) {
+//            party.setAuditDetails(auditDetails);
+//            aCase.getRespondent().setAuditDetails(auditDetails);
+//        }
+//        if (party.getAdvocate() != null) {
+//            party.getAdvocate().setAuditDetails(auditDetails);
+//            aCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
+//        }
 
-        if (caseRequest.getCaseObj().getPetitioner() != null) {
-            caseRequest.getCaseObj().getPetitioner().setAuditDetails(auditDetails);
-            aCase.getPetitioner().setAuditDetails(auditDetails);
-        }
-        if (caseRequest.getCaseObj().getPetitioner().getAdvocate() != null) {
-            caseRequest.getCaseObj().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-            aCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-        }
+//        if (party != null) {
+//            party.setAuditDetails(auditDetails);
+//            aCase.getPetitioner().setAuditDetails(auditDetails);
+//        }
+//        if (party.getAdvocate() != null) {
+//            party.getAdvocate().setAuditDetails(auditDetails);
+//            aCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
+//        }
         if (caseRequest.getCaseObj().getAct() != null) {
             caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
             aCase.getAct().setAuditDetails(auditDetails);

@@ -7,7 +7,6 @@ import org.ilms.repository.rowmapper.CaseRowMapper;
 import org.ilms.repository.rowmapper.DocumentMapper;
 import org.ilms.repository.rowmapper.PartyRowMapper;
 import org.ilms.web.model.*;
-import org.ilms.web.model.enums.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -57,12 +56,10 @@ public class CaseRepository {
         for (Case singleCase : caseList) {
             singleCase.setDocuments(getDocumentList(singleCase.getId()));
             List<Party> partyList = getParty(singleCase.getId());
+            List<Party> party1 = new ArrayList<>();
             for (Party party : partyList) {
-                if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                    singleCase.setRespondent(party);
-                } else {
-                    singleCase.setPetitioner(party);
-                }
+                party1.add(party);
+                singleCase.setParties(party1);
             }
         }
         CaseResponse caseResponse = CaseResponse.builder().caseList(caseList).totalCount(caseRowMapper.getFullCount()).build();

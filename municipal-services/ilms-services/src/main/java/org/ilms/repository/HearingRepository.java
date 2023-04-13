@@ -9,7 +9,6 @@ import org.ilms.web.model.Hearing;
 import org.ilms.web.model.HearingResponse;
 import org.ilms.web.model.HearingSearchCriteria;
 import org.ilms.web.model.Party;
-import org.ilms.web.model.enums.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -45,12 +44,10 @@ public class HearingRepository {
         List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
         for (Hearing singleHearing : hearingDetails) {
             List<Party> partyList = getHearing(singleHearing.getCaseId());
+            List<Party> party1 = new ArrayList<>();
             for (Party party : partyList) {
-                if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                    singleHearing.setRespondent(party);
-                } else {
-                    singleHearing.setPetitioner(party);
-                }
+                party1.add(party);
+                singleHearing.setParties(party1);
             }
         }
         HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount())

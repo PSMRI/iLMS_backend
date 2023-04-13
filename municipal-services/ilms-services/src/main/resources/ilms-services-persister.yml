@@ -61,113 +61,58 @@ serviceMaps:
 
             - jsonPath: $.case.auditDetails.createdTime
 
-
-
         - query: INSERT INTO ilms_case_party(id, case_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: case.petitioner
+          basePath: case.parties.*
           jsonMaps:
-            - jsonPath: $.case.petitioner.id
+            - jsonPath: $.case.parties.*.id
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.petitioner.firstName
+            - jsonPath: $.case.parties.*.firstName
 
-            - jsonPath: $.case.petitioner.lastName
+            - jsonPath: $.case.parties.*.lastName
 
-            - jsonPath: $.case.petitioner.gender
+            - jsonPath: $.case.parties.*.gender
 
-            - jsonPath: $.case.petitioner.petitionerType
+            - jsonPath: $.case.parties.*.petitionerType
 
-            - jsonPath: $.case.petitioner.address
+            - jsonPath: $.case.parties.*.address
 
-            - jsonPath: $.case.petitioner.departmentName
+            - jsonPath: $.case.parties.*.departmentName
 
-            - jsonPath: $.case.petitioner.contactNumber
+            - jsonPath: $.case.parties.*.contactNumber
 
-            - jsonPath: $.case.petitioner.partyType
+            - jsonPath: $.case.parties.*.partyType
 
-            - jsonPath: $.case.petitioner.status
+            - jsonPath: $.case.parties.*.status
 
-            - jsonPath: $.case.petitioner.auditDetails.createdBy
+            - jsonPath: $.case.parties.*.auditDetails.createdBy
 
-            - jsonPath: $.case.petitioner.auditDetails.createdTime
-
-
-        - query: INSERT INTO ilms_case_party(id, case_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: case.respondent
-          jsonMaps:
-            - jsonPath: $.case.respondent.id
-
-            - jsonPath: $.case.id
-
-            - jsonPath: $.case.respondent.firstName
-
-            - jsonPath: $.case.respondent.lastName
-
-            - jsonPath: $.case.respondent.gender
-
-            - jsonPath: $.case.respondent.petitionerType
-
-            - jsonPath: $.case.respondent.address
-
-            - jsonPath: $.case.respondent.departmentName
-
-            - jsonPath: $.case.respondent.contactNumber
-
-            - jsonPath: $.case.respondent.partyType
-
-            - jsonPath: $.case.respondent.status
-
-            - jsonPath: $.case.respondent.auditDetails.createdBy
-
-            - jsonPath: $.case.respondent.auditDetails.createdTime
+            - jsonPath: $.case.parties.*.auditDetails.createdTime
 
         - query: INSERT INTO ilms_advocate(id, party_id, hearing_id, first_name, last_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: case.respondent.advocate
+          basePath: case.parties.*.advocate
           jsonMaps:
-            - jsonPath: $.case.respondent.advocate.id
+            - jsonPath: $.case.parties.*.advocate.id
 
-            - jsonPath: $.case.respondent.id
+            - jsonPath: $.case.parties.*.id
 
-            - jsonPath: $.case.respondent.advocate.hearingId
+            - jsonPath: $.case.parties.*.advocate.hearingId
 
-            - jsonPath: $.case.respondent.advocate.firstName
+            - jsonPath: $.case.parties.*.advocate.firstName
 
-            - jsonPath: $.case.respondent.advocate.lastName
+            - jsonPath: $.case.parties.*.advocate.lastName
 
-            - jsonPath: $.case.respondent.advocate.contactNumber
+            - jsonPath: $.case.parties.*.advocate.contactNumber
 
-            - jsonPath: $.case.respondent.advocate.partyType
+            - jsonPath: $.case.parties.*.advocate.partyType
 
-            - jsonPath: $.case.respondent.advocate.status
+            - jsonPath: $.case.parties.*.advocate.status
 
-            - jsonPath: $.case.respondent.advocate.auditDetails.createdBy
+            - jsonPath: $.case.parties.*.advocate.auditDetails.createdBy
 
-            - jsonPath: $.case.respondent.advocate.auditDetails.createdTime
+            - jsonPath: $.case.parties.*.advocate.auditDetails.createdTime
 
-
-        - query: INSERT INTO ilms_advocate(id, party_id, hearing_id, first_name, last_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: case.petitioner.advocate
-          jsonMaps:
-            - jsonPath: $.case.petitioner.advocate.id
-
-            - jsonPath: $.case.petitioner.id
-
-            - jsonPath: $.case.petitioner.advocate.hearingId
-
-            - jsonPath: $.case.petitioner.advocate.firstName
-
-            - jsonPath: $.case.petitioner.advocate.lastName
-
-            - jsonPath: $.case.petitioner.advocate.contactNumber
-
-            - jsonPath: $.case.petitioner.advocate.partyType
-
-            - jsonPath: $.case.petitioner.advocate.status
-
-            - jsonPath: $.case.petitioner.advocate.auditDetails.createdBy
-
-            - jsonPath: $.case.petitioner.advocate.auditDetails.createdTime
 
         - query: INSERT INTO ilms_act(id, case_id, name, section_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
           basePath: case.act
@@ -289,51 +234,27 @@ serviceMaps:
             - jsonPath: $.hearing.auditDetails.createdTime
 
         - query: INSERT INTO ilms_advocate(id, party_id, hearing_id, first_name, last_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: hearing.respondent.advocate
+          basePath: hearing.parties.*.advocate
           jsonMaps:
-            - jsonPath: $.hearing.respondent.advocate.id
+            - jsonPath: $.hearing.parties.*.advocate.id
 
-            - jsonPath: $.hearing.respondent.advocate.partyId
+            - jsonPath: $.hearing.parties.*.advocate.partyId
 
             - jsonPath: $.hearing.id
 
-            - jsonPath: $.hearing.respondent.advocate.firstName
+            - jsonPath: $.hearing.parties.*.advocate.firstName
 
-            - jsonPath: $.hearing.respondent.advocate.lastName
+            - jsonPath: $.hearing.parties.*.advocate.lastName
 
-            - jsonPath: $.hearing.respondent.advocate.contactNumber
+            - jsonPath: $.hearing.parties.*.advocate.contactNumber
 
-            - jsonPath: $.hearing.respondent.advocate.partyType
+            - jsonPath: $.hearing.parties.*.advocate.partyType
 
-            - jsonPath: $.hearing.respondent.advocate.status
+            - jsonPath: $.hearing.parties.*.advocate.status
 
-            - jsonPath: $.hearing.respondent.advocate.auditDetails.createdBy
+            - jsonPath: $.hearing.parties.*.advocate.auditDetails.createdBy
 
-            - jsonPath: $.hearing.respondent.advocate.auditDetails.createdTime
-
-
-        - query: INSERT INTO ilms_advocate(id, party_id, hearing_id, first_name, last_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: hearing.petitioner.advocate
-          jsonMaps:
-            - jsonPath: $.hearing.petitioner.advocate.id
-
-            - jsonPath: $.hearing.petitioner.advocate.partyId
-
-            - jsonPath: $.hearing.id
-
-            - jsonPath: $.hearing.petitioner.advocate.firstName
-
-            - jsonPath: $.hearing.petitioner.advocate.lastName
-
-            - jsonPath: $.hearing.petitioner.advocate.contactNumber
-
-            - jsonPath: $.hearing.petitioner.advocate.partyType
-
-            - jsonPath: $.hearing.petitioner.advocate.status
-
-            - jsonPath: $.hearing.petitioner.advocate.auditDetails.createdBy
-
-            - jsonPath: $.hearing.petitioner.advocate.auditDetails.createdTime
+            - jsonPath: $.hearing.parties.*.advocate.auditDetails.createdTime
 
         - query: INSERT INTO ilms_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.payment
@@ -465,112 +386,58 @@ serviceMaps:
             - jsonPath: $.case.id
 
         - query: UPDATE ilms_case_party SET case_id=?, first_name=?, last_name=?, gender=?, petitioner_type=?, address=?, department_name=?, contact_number=?, party_type=?, status=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
-          basePath: case.petitioner
+          basePath: case.parties.*
           jsonMaps:
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.petitioner.firstName
+            - jsonPath: $.case.parties.*.firstName
 
-            - jsonPath: $.case.petitioner.lastName
+            - jsonPath: $.case.parties.*.lastName
 
-            - jsonPath: $.case.petitioner.gender
+            - jsonPath: $.case.parties.*.gender
 
-            - jsonPath: $.case.petitioner.petitionerType
+            - jsonPath: $.case.parties.*.petitionerType
 
-            - jsonPath: $.case.petitioner.address
+            - jsonPath: $.case.parties.*.address
 
-            - jsonPath: $.case.petitioner.departmentName
+            - jsonPath: $.case.parties.*.departmentName
 
-            - jsonPath: $.case.petitioner.contactNumber
+            - jsonPath: $.case.parties.*.contactNumber
 
-            - jsonPath: $.case.petitioner.partyType
+            - jsonPath: $.case.parties.*.partyType
 
-            - jsonPath: $.case.petitioner.status
+            - jsonPath: $.case.parties.*.status
 
-            - jsonPath: $.case.petitioner.auditDetails.lastModifiedBy
+            - jsonPath: $.case.parties.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.case.petitioner.auditDetails.lastModifiedTime
+            - jsonPath: $.case.parties.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.case.petitioner.id
-
-        - query: UPDATE ilms_case_party SET case_id=?, first_name=?, last_name=?, gender=?, petitioner_type=?, address=?, department_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
-          basePath: case.respondent
-          jsonMaps:
-
-            - jsonPath: $.case.id
-
-            - jsonPath: $.case.respondent.firstName
-
-            - jsonPath: $.case.respondent.lastName
-
-            - jsonPath: $.case.respondent.gender
-
-            - jsonPath: $.case.respondent.petitionerType
-
-            - jsonPath: $.case.respondent.address
-
-            - jsonPath: $.case.respondent.departmentName
-
-            - jsonPath: $.case.respondent.contactNumber
-
-            - jsonPath: $.case.respondent.partyType
-
-            - jsonPath: $.case.respondent.status
-
-            - jsonPath: $.case.respondent.auditDetails.lastModifiedBy
-
-            - jsonPath: $.case.respondent.auditDetails.lastModifiedTime
-
-            - jsonPath: $.case.respondent.id
+            - jsonPath: $.case.parties.*.id
 
         - query: UPDATE ilms_advocate SET party_id=?, hearing_id=?, first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
-          basePath: case.respondent.advocate
+          basePath: case.parties.*.advocate
           jsonMaps:
 
-            - jsonPath: $.case.respondent.id
+            - jsonPath: $.case.parties.*.id
 
-            - jsonPath: $.case.respondent.advocate.hearingId
+            - jsonPath: $.case.parties.*.advocate.hearingId
 
-            - jsonPath: $.case.respondent.advocate.firstName
+            - jsonPath: $.case.parties.*.advocate.firstName
 
-            - jsonPath: $.case.respondent.advocate.lastName
+            - jsonPath: $.case.parties.*.advocate.lastName
 
-            - jsonPath: $.case.respondent.advocate.contactNumber
+            - jsonPath: $.case.parties.*.advocate.contactNumber
 
-            - jsonPath: $.case.respondent.advocate.partyType
+            - jsonPath: $.case.parties.*.advocate.partyType
 
-            - jsonPath: $.case.respondent.advocate.status
+            - jsonPath: $.case.parties.*.advocate.status
 
-            - jsonPath: $.case.respondent.advocate.auditDetails.lastModifiedBy
+            - jsonPath: $.case.parties.*.advocate.auditDetails.lastModifiedBy
 
-            - jsonPath: $.case.respondent.advocate.auditDetails.lastModifiedTime
+            - jsonPath: $.case.parties.*.advocate.auditDetails.lastModifiedTime
 
-            - jsonPath: $.case.respondent.advocate.id
-
-        - query: UPDATE ilms_advocate SET party_id=?, hearing_id=?, first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
-          basePath: case.petitioner.advocate
-          jsonMaps:
-
-            - jsonPath: $.case.petitioner.id
-
-            - jsonPath: $.case.petitioner.advocate.hearingId
-
-            - jsonPath: $.case.petitioner.advocate.firstName
-
-            - jsonPath: $.case.petitioner.advocate.lastName
-
-            - jsonPath: $.case.petitioner.advocate.contactNumber
-
-            - jsonPath: $.case.petitioner.advocate.partyType
-
-            - jsonPath: $.case.petitioner.advocate.status
-
-            - jsonPath: $.case.petitioner.advocate.auditDetails.lastModifiedBy
-
-            - jsonPath: $.case.petitioner.advocate.auditDetails.lastModifiedTime
-
-            - jsonPath: $.case.petitioner.advocate.id
+            - jsonPath: $.case.parties.*.advocate.id
 
         - query: UPDATE ilms_court SET case_id=?, court_name=?, district=?, state=?, division=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case.court
@@ -699,52 +566,28 @@ serviceMaps:
 
 
         - query: UPDATE ilms_advocate SET party_id=?, hearing_id=?, first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
-          basePath: hearing.respondent.advocate
+          basePath: hearing.parties.*.advocate
           jsonMaps:
 
-            - jsonPath: $.hearing.respondent.id
+            - jsonPath: $.hearing.parties.*.id
 
-            - jsonPath: $.hearing.respondent.advocate.hearingId
+            - jsonPath: $.hearing.parties.*.advocate.hearingId
 
-            - jsonPath: $.hearing.respondent.advocate.firstName
+            - jsonPath: $.hearing.parties.*.advocate.firstName
 
-            - jsonPath: $.hearing.respondent.advocate.lastName
+            - jsonPath: $.hearing.parties.*.advocate.lastName
 
-            - jsonPath: $.hearing.respondent.advocate.contactNumber
+            - jsonPath: $.hearing.parties.*.advocate.contactNumber
 
-            - jsonPath: $.hearing.respondent.advocate.partyType
+            - jsonPath: $.hearing.parties.*.advocate.partyType
 
-            - jsonPath: $.hearing.respondent.advocate.status
+            - jsonPath: $.hearing.parties.*.advocate.status
 
-            - jsonPath: $.hearing.respondent.advocate.auditDetails.lastModifiedBy
+            - jsonPath: $.hearing.parties.*.advocate.auditDetails.lastModifiedBy
 
-            - jsonPath: $.hearing.respondent.advocate.auditDetails.lastModifiedTime
+            - jsonPath: $.hearing.parties.*.advocate.auditDetails.lastModifiedTime
 
-            - jsonPath: $.hearing.respondent.advocate.id
-
-        - query: UPDATE ilms_advocate SET party_id=?, hearing_id=?, first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
-          basePath: hearing.petitioner.advocate
-          jsonMaps:
-
-            - jsonPath: $.hearing.petitioner.id
-
-            - jsonPath: $.hearing.petitioner.advocate.hearingId
-
-            - jsonPath: $.hearing.petitioner.advocate.firstName
-
-            - jsonPath: $.hearing.petitioner.advocate.lastName
-
-            - jsonPath: $.hearing.petitioner.advocate.contactNumber
-
-            - jsonPath: $.hearing.petitioner.advocate.partyType
-
-            - jsonPath: $.hearing.petitioner.advocate.status
-
-            - jsonPath: $.hearing.petitioner.advocate.auditDetails.lastModifiedBy
-
-            - jsonPath: $.hearing.petitioner.advocate.auditDetails.lastModifiedTime
-
-            - jsonPath: $.hearing.petitioner.advocate.id
+            - jsonPath: $.hearing.parties.*.advocate.id
 
         - query: INSERT INTO ilms_payment_auditlog SELECT * FROM ilms_payment WHERE id = ?;
 

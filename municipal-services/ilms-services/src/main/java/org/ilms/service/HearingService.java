@@ -66,24 +66,25 @@ public class HearingService {
         if (Objects.nonNull(caseResponse.getCaseList())) {
             if (caseResponse.getCaseList().get(0).getNumber().equals(hearingRequest.getHearing().getCaseNumber())) {
                 hearingRequest.getHearing().setStatus(Status.ACTIVE);
-                if (Objects.nonNull(hearingRequest.getHearing().getPetitioner())) {
-                    hearingRequest.getHearing().getPetitioner().setStatus(Status.ACTIVE);
-                    hearingRequest.getHearing().getPetitioner().setPartyType(PartyType.PETITIONER.toString());
-                    hearingRequest.getHearing().getPetitioner().setCaseId(hearingRequest.getHearing().getCaseId());
-                    if (Objects.nonNull(hearingRequest.getHearing().getPetitioner().getAdvocate())) {
-                        hearingRequest.getHearing().getPetitioner().getAdvocate().setStatus(Status.ACTIVE);
-                        hearingRequest.getHearing().getPetitioner().getAdvocate().setPartyType(PartyType.PETITIONER);
-                        hearingRequest.getHearing().getPetitioner().getAdvocate().setPartyId(petitionerId);
-                    }
-                }
-                if (Objects.nonNull(hearingRequest.getHearing().getRespondent())) {
-                    hearingRequest.getHearing().getRespondent().setStatus(Status.ACTIVE);
-                    hearingRequest.getHearing().getRespondent().setPartyType(PartyType.RESPONDENT.toString());
-                    hearingRequest.getHearing().getRespondent().setCaseId(hearingRequest.getHearing().getCaseId());
-                    if (Objects.nonNull(hearingRequest.getHearing().getRespondent().getAdvocate())) {
-                        hearingRequest.getHearing().getRespondent().getAdvocate().setStatus(Status.ACTIVE);
-                        hearingRequest.getHearing().getRespondent().getAdvocate().setPartyType(PartyType.RESPONDENT);
-                        hearingRequest.getHearing().getRespondent().getAdvocate().setPartyId(respondentId);
+                for (Party party : hearingRequest.getHearing().getParties()) {
+                    if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
+                        party.setStatus(Status.ACTIVE);
+                        party.setPartyType(PartyType.PETITIONER.toString());
+                        party.setCaseId(hearingRequest.getHearing().getCaseId());
+                        if (Objects.nonNull(party.getAdvocate())) {
+                            party.getAdvocate().setStatus(Status.ACTIVE);
+                            party.getAdvocate().setPartyType(PartyType.PETITIONER);
+                            party.getAdvocate().setPartyId(petitionerId);
+                        }
+                    } else if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
+                        party.setStatus(Status.ACTIVE);
+                        party.setPartyType(PartyType.RESPONDENT.toString());
+                        party.setCaseId(hearingRequest.getHearing().getCaseId());
+                        if (Objects.nonNull(party.getAdvocate())) {
+                            party.getAdvocate().setStatus(Status.ACTIVE);
+                            party.getAdvocate().setPartyType(PartyType.RESPONDENT);
+                            party.getAdvocate().setPartyId(respondentId);
+                        }
                     }
                 }
                 if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
