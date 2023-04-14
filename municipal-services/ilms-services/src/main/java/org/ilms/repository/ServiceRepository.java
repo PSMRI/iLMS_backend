@@ -1,17 +1,18 @@
 package org.ilms.repository;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @Slf4j
@@ -67,15 +68,11 @@ public class ServiceRepository {
 
     public List fetchListResult(StringBuilder uri, Object request) {
         List response = null;
-        //log.debug("URI: " + uri.toString());
         try {
-            //log.debug("Request: " + mapper.writeValueAsString(request));
             response = restTemplate.postForObject(uri.toString(), request, List.class);
         } catch (HttpClientErrorException e) {
-            //log.error("External Service threw an Exception: ", e);
             throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {
-            //log.error("Exception while fetching from searcher: ", e);
             throw new ServiceCallException(e.getMessage());
         }
 

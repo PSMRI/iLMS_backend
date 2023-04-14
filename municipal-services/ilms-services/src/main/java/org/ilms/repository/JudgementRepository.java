@@ -8,7 +8,7 @@ import org.ilms.util.CommonUtils;
 import org.ilms.web.model.JudgementRequest;
 import org.ilms.web.model.JudgementResponse;
 import org.ilms.web.model.JudgementSearchCriteria;
-import org.ilms.web.model.Order;
+import org.ilms.web.model.judgement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -41,65 +41,65 @@ public class JudgementRepository {
     public JudgementResponse getJudgementData(JudgementSearchCriteria judgementSearchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = judgementQueryBuilder.getFSMSearchQuery(judgementSearchCriteria, preparedStmtList);
-        List<Order> orders = jdbcTemplate.query(query, preparedStmtList.toArray(), judgementRowMapper);
-        JudgementResponse judgementResponse = JudgementResponse.builder().orderList(orders).totalCount(judgementRowMapper.getFull_count())
+        List<judgement> judgements = jdbcTemplate.query(query, preparedStmtList.toArray(), judgementRowMapper);
+        JudgementResponse judgementResponse = JudgementResponse.builder().judgementList(judgements).totalCount(judgementRowMapper.getFull_count())
                 .build();
         return judgementResponse;
     }
 
-    public JudgementRequest getMappedData(JudgementRequest request, Order oldOrder) {
-        final String tenantId = getTenantIdFromJudgement(request.getOrder().getId());
+    public JudgementRequest getMappedData(JudgementRequest request, judgement oldJudgement) {
+        final String tenantId = getTenantIdFromJudgement(request.getJudgement().getId());
         JudgementRequest updatedJudgementRequest = new JudgementRequest();
         updatedJudgementRequest.setRequestInfo(request.getRequestInfo());
         updatedJudgementRequest.setWorkflow(request.getWorkflow());
-        if (!StringUtils.isEmpty(request.getOrder().getCaseId())) {
-            oldOrder.setCaseId(request.getOrder().getCaseId());
+        if (!StringUtils.isEmpty(request.getJudgement().getCaseId())) {
+            oldJudgement.setCaseId(request.getJudgement().getCaseId());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getTenantId())) {
-            oldOrder.setTenantId(request.getOrder().getTenantId());
+        if (!StringUtils.isEmpty(request.getJudgement().getTenantId())) {
+            oldJudgement.setTenantId(request.getJudgement().getTenantId());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getOrderType())) {
-            oldOrder.setOrderType(request.getOrder().getOrderType());
+        if (!StringUtils.isEmpty(request.getJudgement().getOrderType())) {
+            oldJudgement.setOrderType(request.getJudgement().getOrderType());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getOrderDate())) {
-            oldOrder.setOrderDate(request.getOrder().getOrderDate());
+        if (!StringUtils.isEmpty(request.getJudgement().getOrderDate())) {
+            oldJudgement.setOrderDate(request.getJudgement().getOrderDate());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getDecisionStatus())) {
+        if (!StringUtils.isEmpty(request.getJudgement().getDecisionStatus())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(request.getRequestInfo().getUserInfo().getUuid());
             if (commonUtils.isUserOIC(uuids, tenantId, "DecisionStatus")) {
-                oldOrder.setDecisionStatus(request.getOrder().getDecisionStatus());
+                oldJudgement.setDecisionStatus(request.getJudgement().getDecisionStatus());
             }
         }
-        if (!StringUtils.isEmpty(request.getOrder().getComplianceDate())) {
-            oldOrder.setComplianceDate(request.getOrder().getComplianceDate());
+        if (!StringUtils.isEmpty(request.getJudgement().getComplianceDate())) {
+            oldJudgement.setComplianceDate(request.getJudgement().getComplianceDate());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getRevisedComplianceDate())) {
-            oldOrder.setRevisedComplianceDate(request.getOrder().getRevisedComplianceDate());
+        if (!StringUtils.isEmpty(request.getJudgement().getRevisedComplianceDate())) {
+            oldJudgement.setRevisedComplianceDate(request.getJudgement().getRevisedComplianceDate());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getOrderNoOverride())) {
-            oldOrder.setOrderNoOverride(request.getOrder().getOrderNoOverride());
+        if (!StringUtils.isEmpty(request.getJudgement().getOrderNoOverride())) {
+            oldJudgement.setOrderNoOverride(request.getJudgement().getOrderNoOverride());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getRevisedComplainceReason())) {
-            oldOrder.setRevisedComplainceReason(request.getOrder().getRevisedComplainceReason());
+        if (!StringUtils.isEmpty(request.getJudgement().getRevisedComplainceReason())) {
+            oldJudgement.setRevisedComplainceReason(request.getJudgement().getRevisedComplainceReason());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getComplianceStatus())) {
+        if (!StringUtils.isEmpty(request.getJudgement().getComplianceStatus())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(request.getRequestInfo().getUserInfo().getUuid());
             if (commonUtils.isUserOIC(uuids, tenantId, "ComplianceStatus")) {
-                oldOrder.setComplianceStatus(request.getOrder().getComplianceStatus());
+                oldJudgement.setComplianceStatus(request.getJudgement().getComplianceStatus());
             }
         }
-        if (!StringUtils.isEmpty(request.getOrder().getRemarks())) {
-            oldOrder.setRemarks(request.getOrder().getRemarks());
+        if (!StringUtils.isEmpty(request.getJudgement().getRemarks())) {
+            oldJudgement.setRemarks(request.getJudgement().getRemarks());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getAdditionalDetails())) {
-            oldOrder.setAdditionalDetails(request.getOrder().getAdditionalDetails());
+        if (!StringUtils.isEmpty(request.getJudgement().getAdditionalDetails())) {
+            oldJudgement.setAdditionalDetails(request.getJudgement().getAdditionalDetails());
         }
-        if (!StringUtils.isEmpty(request.getOrder().getStatus())) {
-            oldOrder.setStatus(request.getOrder().getStatus());
+        if (!StringUtils.isEmpty(request.getJudgement().getStatus())) {
+            oldJudgement.setStatus(request.getJudgement().getStatus());
         }
-        updatedJudgementRequest.setOrder(oldOrder);
+        updatedJudgementRequest.setJudgement(oldJudgement);
         judgementEnrichmentService.enrichJugmentUpdateRequest(updatedJudgementRequest);
         return updatedJudgementRequest;
     }

@@ -37,30 +37,30 @@ public class JudgementService {
     @Autowired
     HearingRepository hearingRepository;
 
-    public Order create(JudgementRequest judgementRequest) {
+    public judgement create(JudgementRequest judgementRequest) {
         HearingResponse hearingResponse = null;
         HearingSearchCriteria criteria = HearingSearchCriteria.builder()
-                .caseId(Collections.singletonList(judgementRequest.getOrder().getCaseId())).build();
+                .caseId(Collections.singletonList(judgementRequest.getJudgement().getCaseId())).build();
         hearingResponse = hearingRepository.getHearingDetails(criteria);
         String tenantId = hearingResponse.getHearingList().get(0).getTenantId();
-        judgementRequest.getOrder().setTenantId(tenantId);
+        judgementRequest.getJudgement().setTenantId(tenantId);
         if (!hearingResponse.getHearingList().isEmpty()) {
-            judgementRequest.getOrder().setStatus(Status.ACTIVE);
+            judgementRequest.getJudgement().setStatus(Status.ACTIVE);
             judgementValidator.createValidator(judgementRequest);
             judgementEnrichmentService.enrichJudgementCreateRequest(judgementRequest);
             producer.push(ilmsConfiguration.getCreateJudgementTopic(), judgementRequest);
         } else {
             throw new CustomException(ILMSErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement");
         }
-        return judgementRequest.getOrder();
+        return judgementRequest.getJudgement();
     }
 
     public JudgementResponse JudgementSearch(JudgementSearchCriteria criteria, RequestInfo requestInfo) {
-        List<Order> orders = new LinkedList<>();
+        List<judgement> judgements = new LinkedList<>();
         JudgementResponse judgementResponse = null;
         judgementResponse = judgementRepository.getJudgementData(criteria);
-        orders = judgementResponse.getOrderList();
-        if (!orders.isEmpty()) {
+        judgements = judgementResponse.getJudgementList();
+        if (!judgements.isEmpty()) {
             judgementEnrichmentService.enrichJudgementSearch();
         } else {
             throw new CustomException(ILMSErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
@@ -68,16 +68,16 @@ public class JudgementService {
         return judgementResponse;
     }
 
-    public Order updateJudgement(JudgementRequest judgementRequest) {
-        if (judgementRequest.getOrder().getId() != null) {
+    public judgement updateJudgement(JudgementRequest judgementRequest) {
+        if (judgementRequest.getJudgement().getId() != null) {
             JudgementSearchCriteria criteria = JudgementSearchCriteria.builder()
-                    .id(Collections.singletonList(judgementRequest.getOrder().getId())).build();
+                    .id(Collections.singletonList(judgementRequest.getJudgement().getId())).build();
             JudgementResponse judgementResponse = judgementRepository.getJudgementData(criteria);
-            if (!judgementResponse.getOrderList().isEmpty()) {
-                List<Order> orders = judgementResponse.getOrderList();
-                Order oldOrder = orders.get(0);
-                JudgementRequest finalRequest = judgementRepository.getMappedData(judgementRequest, oldOrder);
-                judgementValidator.updateValidator(finalRequest.getOrder(), judgementRequest);
+            if (!judgementResponse.getJudgementList().isEmpty()) {
+                List<judgement> judgements = judgementResponse.getJudgementList();
+                judgement oldJudgement = judgements.get(0);
+                JudgementRequest finalRequest = judgementRepository.getMappedData(judgementRequest, oldJudgement);
+                judgementValidator.updateValidator(finalRequest.getJudgement(), judgementRequest);
                 producer.push(ilmsConfiguration.getUpdateJudgementTopic(), finalRequest);
             } else {
                 throw new CustomException(ILMSErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
@@ -85,6 +85,6 @@ public class JudgementService {
         } else {
             throw new CustomException(ILMSErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
         }
-        return judgementRequest.getOrder();
+        return judgementRequest.getJudgement();
     }
 }

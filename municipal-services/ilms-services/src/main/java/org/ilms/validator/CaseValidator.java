@@ -30,16 +30,6 @@ public class CaseValidator {
             if (Objects.nonNull(cases.getCourt().getCourtName()) && !codes.get(ILMSConstants.MDMS_ILMS_COURT_NAME).contains(cases.getCourt().getCourtName())) {
                 errorMap.put("Invalid CourtName", "The CourtName '" + cases.getCourt().getCourtName() + "' does not exists");
             }
-//            if (Objects.nonNull(cases.getCourt().getDistrict()) && !codes.get(ILMSConstants.MDMS_ILMS_DISTRICT).contains(cases.getCourt().getDistrict())) {
-//                errorMap.put("Invalid District", "The District '" + cases.getCourt().getDistrict() + "' does not exists");
-//            }
-//            if (Objects.nonNull(cases.getCourt().getState()) && !codes.get(ILMSConstants.MDMS_ILMS_STATE).contains(cases.getCourt().getState())) {
-//                errorMap.put("Invalid State", "The State '" + cases.getCourt().getState() + "' does not exists");
-//            }
-
-//            if (Objects.nonNull(cases.getCourt().getDivision()) && !codes.get(ILMSConstants.MDMS_ILMS_DIVISION).contains(cases.getCourt().getDivision())) {
-//                errorMap.put("Invalid Division", "The Division '" + cases.getCourt().getDivision() + "' does not exists");
-//            }
         }
         if (Objects.nonNull(cases.getType()) && !codes.get(ILMSConstants.MDMS_ILMS_CASE_TYPE).contains(cases.getType())) {
             errorMap.put("Invalid CASE TYPE", "The CaseType '" + cases.getType() + "' does not exists");
@@ -56,22 +46,6 @@ public class CaseValidator {
         if (Objects.nonNull(cases.getSubStage()) && !codes.get(ILMSConstants.MDMS_ILMS_SUB_STAGE).contains(cases.getSubStage())) {
             errorMap.put("Invalid CaseSubStage", "The CaseSubStage '" + cases.getSubStage() + "' does not exists");
         }
-//        if (Objects.nonNull(cases.getPetitioner())) {
-//            if (Objects.nonNull(cases.getPetitioner().getGender()) && !codes.get(ILMSConstants.MDMS_ILMS_GENDER_TYPE)
-//                    .contains(cases.getPetitioner().getGender())) {
-//                errorMap.put("Invalid Gender", "The Gender '" + cases.getPetitioner().getGender() + "' does not exists");
-//            }
-//            if (cases.getPetitioner().getPetitionerType() != null && !codes.get(ILMSConstants.MDMS_ILMS_PETITIONER_TYPE)
-//                    .contains(cases.getPetitioner().getPetitionerType())) {
-//                errorMap.put("Invalid PetitionerType", "The PetitionerType '" + cases.getPetitioner().getPetitionerType() + "' does not exists");
-//            }
-//        }
-//        if (Objects.nonNull(cases.getRespondent())) {
-//            if (Objects.nonNull(cases.getRespondent().getGender()) && !codes.get(ILMSConstants.MDMS_ILMS_GENDER_TYPE)
-//                    .contains(cases.getRespondent().getGender())) {
-//                errorMap.put("Invalid Gender", "The Gender '" + cases.getRespondent().getGender() + "' does not exists");
-//            }
-//        }
         if (Objects.nonNull(cases.getRecommendOIC()) && !codes.get(ILMSConstants.MDMS_ILMS_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
             errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + cases.getRecommendOIC() + "' does not exists");
         }
@@ -163,12 +137,4 @@ public class CaseValidator {
         }
     }
 
-    public void cnrDuplicacyCheck(CaseRequest caseRequest) {
-        CaseSearchCriteria criteria = CaseSearchCriteria.builder().cnrNumber(caseRequest.getCaseObj().getCnrNumber()).build();
-        Integer count = caseRepository.getCaseCount(criteria);
-        if (count >= 1) {
-            throw new CustomException(ILMSErrorConstants.DUPLICATE_VALUE_ERROR,
-                    "Already Exists In System, CNR number should be unique [ " + caseRequest.getCaseObj().getCnrNumber() + " ]");
-        }
-    }
 }

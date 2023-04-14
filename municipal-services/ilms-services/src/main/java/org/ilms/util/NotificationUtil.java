@@ -13,8 +13,10 @@ import org.egov.tracer.model.CustomException;
 import org.ilms.configs.ILMSConfiguration;
 import org.ilms.producer.Producer;
 import org.ilms.repository.ServiceRepository;
-import org.ilms.web.model.*;
+import org.ilms.web.model.Case;
+import org.ilms.web.model.Recepient;
 import org.ilms.web.model.enums.Source;
+import org.ilms.web.model.notification.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -255,7 +257,7 @@ public class NotificationUtil {
         }
         List<Event> events = new ArrayList<>();
         List<String> toUsers = new ArrayList<>();
-        if(!(cases.getWorkflow().getAssignes()).isEmpty()){
+        if (!(cases.getWorkflow().getAssignes()).isEmpty()) {
             toUsers.add(cases.getWorkflow().getAssignes().get(0).getUuid());
         } else {
             toUsers.add(requestInfo.getUserInfo().getUuid());

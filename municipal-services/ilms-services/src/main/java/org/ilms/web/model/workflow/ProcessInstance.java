@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.egov.common.contract.request.User;
-import org.ilms.web.model.Document;
-
-import org.springframework.validation.annotation.Validated;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.ilms.web.model.Document;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -27,70 +26,70 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(of = { "id" })
+@EqualsAndHashCode(of = {"id"})
 @ToString
 public class ProcessInstance {
 
-	@Size(max = 64)
-	@SafeHtml
-	@JsonProperty("id")
-	private String id;
+    @Size(max = 64)
+    @SafeHtml
+    @JsonProperty("id")
+    private String id;
 
-	@NotNull
-	@SafeHtml
-	@Size(max = 128)
-	@JsonProperty("tenantId")
-	private String tenantId;
+    @NotNull
+    @SafeHtml
+    @Size(max = 128)
+    @JsonProperty("tenantId")
+    private String tenantId;
 
-	@NotNull
-	@SafeHtml
-	@Size(max = 128)
-	@JsonProperty("businessService")
-	private String businessService;
+    @NotNull
+    @SafeHtml
+    @Size(max = 128)
+    @JsonProperty("businessService")
+    private String businessService;
 
-	@NotNull
-	@SafeHtml
-	@Size(max = 128)
-	@JsonProperty("businessId")
-	private String businessId;
+    @NotNull
+    @SafeHtml
+    @Size(max = 128)
+    @JsonProperty("businessId")
+    private String businessId;
 
-	@NotNull
-	@SafeHtml
-	@Size(max = 128)
-	@JsonProperty("action")
-	private String action;
+    @NotNull
+    @SafeHtml
+    @Size(max = 128)
+    @JsonProperty("action")
+    private String action;
 
-	@NotNull
-	@SafeHtml
-	@Size(max = 64)
-	@JsonProperty("moduleName")
-	private String moduleName;
+    @NotNull
+    @SafeHtml
+    @Size(max = 64)
+    @JsonProperty("moduleName")
+    private String moduleName;
 
-	@JsonProperty("state")
-	private State state;
-	
-	/* for use of notification service in property*/
-	private String notificationAction;
+    @JsonProperty("state")
+    private State state;
 
-	@SafeHtml
-	@JsonProperty("comment")
-	private String comment;
+    /* for use of notification service in property*/
+    private String notificationAction;
 
-	@JsonProperty("documents")
-	@Valid
-	private List<Document> documents;
+    @SafeHtml
+    @JsonProperty("comment")
+    private String comment;
 
-	@JsonProperty("assignes")
-	private List<User> assignes;
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents;
 
-	public ProcessInstance addDocumentsItem(Document documentsItem) {
-		if (this.documents == null) {
-			this.documents = new ArrayList<>();
-		}
-		if (!this.documents.contains(documentsItem))
-			this.documents.add(documentsItem);
+    @JsonProperty("assignes")
+    private List<User> assignes;
 
-		return this;
-	}
+    public ProcessInstance addDocumentsItem(Document documentsItem) {
+        if (this.documents == null) {
+            this.documents = new ArrayList<>();
+        }
+        if (!this.documents.contains(documentsItem))
+            this.documents.add(documentsItem);
+
+        return this;
+    }
 
 }

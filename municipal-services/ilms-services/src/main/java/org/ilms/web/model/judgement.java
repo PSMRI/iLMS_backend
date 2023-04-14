@@ -9,7 +9,7 @@ import org.ilms.web.model.enums.Status;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Order {
+public class judgement {
 
 
     @JsonProperty("id")

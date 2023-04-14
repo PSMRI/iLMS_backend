@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.ilms.repository.querybuilder.CaseQueryBuilder;
 import org.ilms.repository.querybuilder.CountQueryBuilder;
 import org.ilms.repository.rowmapper.CaseRowMapper;
-import org.ilms.repository.rowmapper.DocumentMapper;
 import org.ilms.repository.rowmapper.PartyRowMapper;
 import org.ilms.web.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +28,6 @@ public class CaseRepository {
     private CaseRowMapper caseRowMapper;
 
     @Autowired
-    private DocumentMapper documentMapper;
-
-    @Autowired
     private PartyRowMapper partyRowMapper;
 
     @Autowired
@@ -54,7 +50,6 @@ public class CaseRepository {
         String query = caseQueryBuilder.getILMSCaseSearchQuery(criteria, preparedStmtList);
         List<Case> caseList = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);
         for (Case singleCase : caseList) {
-            singleCase.setDocuments(getDocumentList(singleCase.getId()));
             List<Party> partyList = getParty(singleCase.getId());
             List<Party> party1 = new ArrayList<>();
             for (Party party : partyList) {
@@ -66,27 +61,12 @@ public class CaseRepository {
         return caseResponse;
     }
 
-    public List<Document> getDocumentList(String caseId) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        preparedStmtList.add(caseId);
-        List<Document> documentList = jdbcTemplate.query(caseQueryBuilder.getDocQuery(), preparedStmtList.toArray(), documentMapper);
-        return documentList;
-    }
 
     public List<Party> getParty(String caseId) {
         List<Object> preparedStmtList = new ArrayList<>();
         preparedStmtList.add(caseId);
         List<Party> parties = jdbcTemplate.query(caseQueryBuilder.getPartyQuery(), preparedStmtList.toArray(), partyRowMapper);
         return parties;
-    }
-
-    public List<String> getCaseIdsByParentCaseId(String parentCaseId) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        preparedStmtList.add(parentCaseId);
-        preparedStmtList.add(parentCaseId);
-        String query = caseQueryBuilder.getChildCaseIds(parentCaseId, preparedStmtList);
-        List<String> caseIdsList = jdbcTemplate.queryForList(query, preparedStmtList.toArray(), String.class);
-        return caseIdsList;
     }
 
     public Integer getCaseCount(CaseSearchCriteria criteria) {

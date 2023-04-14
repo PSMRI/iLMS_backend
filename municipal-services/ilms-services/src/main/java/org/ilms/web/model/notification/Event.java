@@ -1,17 +1,14 @@
-package org.ilms.web.model;
+package org.ilms.web.model.notification;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import lombok.*;
+import org.ilms.web.model.Recepient;
 import org.ilms.web.model.enums.Source;
 import org.ilms.web.model.enums.Status;
 import org.springframework.validation.annotation.Validated;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 @Validated
 @AllArgsConstructor
 @EqualsAndHashCode

@@ -6,7 +6,7 @@ import org.ilms.util.ResponseInfoFactory;
 import org.ilms.web.model.JudgementRequest;
 import org.ilms.web.model.JudgementResponse;
 import org.ilms.web.model.JudgementSearchCriteria;
-import org.ilms.web.model.Order;
+import org.ilms.web.model.judgement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,10 +29,10 @@ public class JudgementController {
 
     @PostMapping(value = "/_create")
     public ResponseEntity<JudgementResponse> create(@Valid @RequestBody JudgementRequest judgementRequest) {
-        Order order = judgementService.create(judgementRequest);
-        List<Order> orders = new ArrayList<Order>();
-        orders.add(order);
-        JudgementResponse response = JudgementResponse.builder().orderList(orders).responseInfo(
+        judgement judgement = judgementService.create(judgementRequest);
+        List<judgement> judgements = new ArrayList<judgement>();
+        judgements.add(judgement);
+        JudgementResponse response = JudgementResponse.builder().judgementList(judgements).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -48,9 +47,9 @@ public class JudgementController {
 
     @PostMapping(value = "/_update")
     public ResponseEntity<JudgementResponse> update(@Valid @RequestBody JudgementRequest judgementRequest) {
-        Order order = judgementService.updateJudgement(judgementRequest);
+        judgement judgement = judgementService.updateJudgement(judgementRequest);
         ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true);
-        JudgementResponse response = JudgementResponse.builder().orderList(Collections.singletonList(order)).responseInfo(resInfo).build();
+        JudgementResponse response = JudgementResponse.builder().judgementList(Collections.singletonList(judgement)).responseInfo(resInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

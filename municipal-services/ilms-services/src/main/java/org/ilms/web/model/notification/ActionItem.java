@@ -1,14 +1,9 @@
-package org.ilms.web.model;
+package org.ilms.web.model.notification;
+
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import org.springframework.validation.annotation.Validated;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Validated
 @AllArgsConstructor

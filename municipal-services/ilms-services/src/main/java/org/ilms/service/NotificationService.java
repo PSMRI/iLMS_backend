@@ -9,7 +9,14 @@ import org.ilms.repository.CaseRepository;
 import org.ilms.repository.ServiceRepository;
 import org.ilms.util.ILMSErrorConstants;
 import org.ilms.util.NotificationUtil;
-import org.ilms.web.model.*;
+import org.ilms.web.model.Case;
+import org.ilms.web.model.CaseRequest;
+import org.ilms.web.model.CaseResponse;
+import org.ilms.web.model.CaseSearchCriteria;
+import org.ilms.web.model.notification.EmailRequest;
+import org.ilms.web.model.notification.Event;
+import org.ilms.web.model.notification.EventRequest;
+import org.ilms.web.model.notification.SMSRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -77,7 +84,7 @@ public class NotificationService {
         String message = getCustomizedMsg(topicName, cases, localizationMessages);
         String officerId;
         List<String> ids = new ArrayList<>();
-        if(!(request.getCaseObj().getWorkflow().getAssignes()).isEmpty()){
+        if (!(request.getCaseObj().getWorkflow().getAssignes()).isEmpty()) {
             officerId = request.getCaseObj().getWorkflow().getAssignes().get(0).getUuid();
             ids.add(officerId);
         } else {

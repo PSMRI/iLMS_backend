@@ -60,7 +60,6 @@ public class CaseService {
         List<Case> caseList = new ArrayList<>();
         CaseResponse caseResponse = null;
         criteria.setUuid(requestInfo.getUserInfo().getUuid());
-//        criteria = CaseSearchCriteria.builder().uuid(requestInfo.getUserInfo().getUuid()).build();
         List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
         caseResponse = caseRepository.getILMSCaseData(criteria);
         if (!caseResponse.getCaseList().isEmpty()) {
@@ -133,7 +132,7 @@ public class CaseService {
         CaseDetailsResponse downloadResponse = new CaseDetailsResponse();
         List<Case> caseList = new ArrayList<>();
         List<Hearing> hearingList = new ArrayList<>();
-        List<Order> orderList = new ArrayList<>();
+        List<judgement> judgementList = new ArrayList<>();
         CaseResponse caseResponse = null;
         HearingResponse hearingResponse = null;
         JudgementResponse judgementResponse = null;
@@ -156,14 +155,14 @@ public class CaseService {
                 hearingList.add(hearing);
             }
         });
-        judgementResponse.getOrderList().forEach(judgement -> {
+        judgementResponse.getJudgementList().forEach(judgement -> {
             if (judgement.getStatus() == Status.ACTIVE) {
-                orderList.add(judgement);
+                judgementList.add(judgement);
             }
         });
         downloadResponse.setCaseList(caseList);
         downloadResponse.setHearingList(hearingList);
-        downloadResponse.setOrderList(orderList);
+        downloadResponse.setJudgementList(judgementList);
         downloadResponse.setTotalCount(caseResponse.getTotalCount());
         downloadResponse.setResponseInfo(caseResponse.getResponseInfo());
         return downloadResponse;

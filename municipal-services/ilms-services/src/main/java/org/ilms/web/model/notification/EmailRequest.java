@@ -1,11 +1,7 @@
-package org.ilms.web.model;
+package org.ilms.web.model.notification;
 
+import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor

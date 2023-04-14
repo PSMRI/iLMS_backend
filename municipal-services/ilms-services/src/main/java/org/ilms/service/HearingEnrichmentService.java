@@ -49,26 +49,6 @@ public class HearingEnrichmentService {
             party.setAuditDetails(auditDetails);
             party.getAdvocate().setAuditDetails(auditDetails);
         }
-//        if (Objects.nonNull(party)) {
-//            party.setAuditDetails(auditDetails);
-//            hearing.getRespondent().setAuditDetails(auditDetails);
-//        }
-//        if (Objects.nonNull(party)) {
-//            if (Objects.nonNull(party.getAdvocate())) {
-//                party.getAdvocate().setAuditDetails(auditDetails);
-//                hearing.getRespondent().getAdvocate().setAuditDetails(auditDetails);
-//            }
-//        }
-//        if (Objects.nonNull(party)) {
-//            party.setAuditDetails(auditDetails);
-//            hearing.getPetitioner().setAuditDetails(auditDetails);
-//        }
-//        if (Objects.nonNull(party)) {
-//            if (Objects.nonNull(party.getAdvocate())) {
-//                party.getAdvocate().setAuditDetails(auditDetails);
-//                hearing.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-//            }
-//        }
         if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
             hearingRequest.getHearing().getPayment().setAuditDetails(auditDetails);
             hearing.getPayment().setAuditDetails(auditDetails);
@@ -112,29 +92,6 @@ public class HearingEnrichmentService {
         }
 
         hearing.setId(itr.next());
-//        if (Objects.nonNull(hearing.getCourt())) {
-//            hearing.getCourt().setId(courtItr.next());
-//        } else {
-//            Court court = new Court();
-//            court.setStatus(Status.ACTIVE);
-//            court.setId(courtItr.next());
-//            hearing.setCourt(court);
-//        }
-//        if (Objects.nonNull(hearing.getRespondent())) {
-//            if (Objects.nonNull(hearing.getRespondent().getAdvocate())) {
-//
-//            }
-//        }
-//        else {
-//            Party party = new Party();
-//            Advocate advocate = new Advocate();
-//            advocate.setId(radvocateItr.next());
-//            advocate.setStatus(Status.ACTIVE);
-//            advocate.setPartyType(PartyType.RESPONDENT);
-//            advocate.setPartyId(respondentId);
-//            party.setAdvocate(advocate);
-//            hearing.setRespondent(party);
-//        }
         for (Party party : hearing.getParties()) {
             if (Objects.nonNull(party.getPartyType().equals(PartyType.PETITIONER.toString()))) {
                 if (Objects.nonNull(party.getAdvocate())) {
@@ -144,17 +101,6 @@ public class HearingEnrichmentService {
                 party.getAdvocate().setId(radvocateItr.next());
             }
         }
-
-//        else {
-//            Party party = new Party();
-//            Advocate advocate = new Advocate();
-//            advocate.setId(padvocateItr.next());
-//            advocate.setStatus(Status.ACTIVE);
-//            advocate.setPartyType(PartyType.PETITIONER);
-//            advocate.setPartyId(petitionerId);
-//            party.setAdvocate(advocate);
-//            hearing.setPetitioner(party);
-//        }
         if (Objects.nonNull(hearing.getPayment())) {
             hearing.getPayment().setId(paymentItr.next());
         } else {

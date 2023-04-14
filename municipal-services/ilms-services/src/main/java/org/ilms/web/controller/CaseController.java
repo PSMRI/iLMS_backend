@@ -64,19 +64,4 @@ public class CaseController {
         log.info("ILMSCaseController :: search() : END With Response [ " + downloadResponse + " ]");
         return new ResponseEntity<>(downloadResponse, HttpStatus.OK);
     }
-
-//    @RequestMapping (value = "/_generatePDF", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
-//    public ResponseEntity<Resource> generatePDF(@ModelAttribute final CaseSearchCriteria criteria) throws FileNotFoundException {
-//        log.info("Genreate PDF : START : " + criteria);
-//        ByteArrayInputStream bis = caseService.generatePDF(criteria);
-//        String pdfName = criteria.getId() + ".pdf";
-//        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + pdfName).contentType(MediaType.APPLICATION_PDF)
-//                             .body(new InputStreamResource(bis));
-//    }
-
-//    @PostMapping (value = "/_addChildCases")
-//    public ChildCase addChildCases(@Valid @RequestBody ChildCaseRequest ilmschildCaseRequest) {
-//        ChildCase ilmsCaseIds = caseService.addChildCases(ilmschildCaseRequest);
-//        return ilmsCaseIds;
-//    }
 }

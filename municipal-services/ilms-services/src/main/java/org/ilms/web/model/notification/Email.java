@@ -1,13 +1,9 @@
-package org.ilms.web.model;
+package org.ilms.web.model.notification;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import java.util.Set;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Setter
 @Getter
@@ -23,7 +19,7 @@ public class Email {
 
     private String body;
 
-    @JsonProperty ("isHTML")
+    @JsonProperty("isHTML")
     private boolean isHTML;
 
 }

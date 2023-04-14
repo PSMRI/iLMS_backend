@@ -45,22 +45,6 @@ public class CaseEnrichmentService {
             party.setAuditDetails(auditDetails);
             party.getAdvocate().setAuditDetails(auditDetails);
         }
-//        if (party != null) {
-//            party.setAuditDetails(auditDetails);
-//            aCase.getRespondent().setAuditDetails(auditDetails);
-//        }
-//        if (party.getAdvocate() != null) {
-//            party.getAdvocate().setAuditDetails(auditDetails);
-//            aCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
-//        }
-//        if (party != null) {
-//            party.setAuditDetails(auditDetails);
-//            aCase.getPetitioner().setAuditDetails(auditDetails);
-//        }
-//        if (party.getAdvocate() != null) {
-//            party.getAdvocate().setAuditDetails(auditDetails);
-//            aCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-//        }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
             aCase.getDocuments().forEach(doc -> {
                 doc.setAuditDetails(auditDetails);
@@ -83,24 +67,6 @@ public class CaseEnrichmentService {
             party.setAuditDetails(auditDetails);
             party.getAdvocate().setAuditDetails(auditDetails);
         }
-//        if (request.getHearing().getRespondent() != null) {
-//            request.getHearing().getRespondent().setAuditDetails(auditDetails);
-//            ilmsCase.getRespondent().setAuditDetails(auditDetails);
-//            if (request.getHearing().getRespondent().getAdvocate() != null) {
-//                request.getHearing().getRespondent().getAdvocate().setAuditDetails(auditDetails);
-//                ilmsCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
-//            }
-//        }
-//
-//        if (request.getHearing().getPetitioner() != null) {
-//            request.getHearing().getPetitioner().setAuditDetails(auditDetails);
-//            ilmsCase.getPetitioner().setAuditDetails(auditDetails);
-//            if (request.getHearing().getPetitioner().getAdvocate() != null) {
-//                request.getHearing().getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-//                ilmsCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-//            }
-//        }
-
         if (request.getHearing().getPayment() != null) {
             request.getHearing().getPayment().setAuditDetails(auditDetails);
             ilmsCase.getPayment().setAuditDetails(auditDetails);
@@ -192,23 +158,6 @@ public class CaseEnrichmentService {
             party.setAuditDetails(auditDetails);
             party.getAdvocate().setAuditDetails(auditDetails);
         }
-//        if (party != null) {
-//            party.setAuditDetails(auditDetails);
-//            aCase.getRespondent().setAuditDetails(auditDetails);
-//        }
-//        if (party.getAdvocate() != null) {
-//            party.getAdvocate().setAuditDetails(auditDetails);
-//            aCase.getRespondent().getAdvocate().setAuditDetails(auditDetails);
-//        }
-
-//        if (party != null) {
-//            party.setAuditDetails(auditDetails);
-//            aCase.getPetitioner().setAuditDetails(auditDetails);
-//        }
-//        if (party.getAdvocate() != null) {
-//            party.getAdvocate().setAuditDetails(auditDetails);
-//            aCase.getPetitioner().getAdvocate().setAuditDetails(auditDetails);
-//        }
         if (caseRequest.getCaseObj().getAct() != null) {
             caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
             aCase.getAct().setAuditDetails(auditDetails);
@@ -221,14 +170,5 @@ public class CaseEnrichmentService {
         }
     }
 
-    public void enrichDocumentUpdateRequest(DocumentRequest request) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        List<Document> document = request.getDocument();
-        for (Document documents : document) {
-            AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
-            documents.setAuditDetails(auditDetails);
-            documents.setAuditDetails(auditDetails);
-
-        }
-    }
+    
 }

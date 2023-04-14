@@ -1,14 +1,9 @@
-package org.ilms.web.model;
+package org.ilms.web.model.notification;
+
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import org.springframework.validation.annotation.Validated;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Validated
 @AllArgsConstructor
@@ -36,10 +31,7 @@ public class EventDetails {
 
 
     public boolean isEmpty(EventDetails details) {
-        if(null == details.getFromDate() || null == details.getToDate() || null == details.getLatitude() || null == details.getLongitude()) {
-            return true;
-        }
-        return false;
+        return null == details.getFromDate() || null == details.getToDate() || null == details.getLatitude() || null == details.getLongitude();
     }
 
 }

@@ -32,8 +32,6 @@ public class Case {
     @JsonProperty("parentCaseId")
     private String parentCaseId;
 
-//    @JsonProperty("caseHierarchy")
-//    private String caseHierarchy;
 
     @JsonProperty("linkedCases")
     private JsonNode linkedCases;
@@ -92,11 +90,6 @@ public class Case {
     @JsonProperty("parties")
     private List<Party> parties;
 
-//    @JsonProperty("petitioner")
-//    private Party petitioner;
-//
-//    @JsonProperty("respondent")
-//    private Party respondent;
 
     @JsonProperty("act")
     private Act act;
