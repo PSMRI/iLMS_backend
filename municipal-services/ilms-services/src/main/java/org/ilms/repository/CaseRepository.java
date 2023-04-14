@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ilms.repository.querybuilder.CaseQueryBuilder;
 import org.ilms.repository.querybuilder.CountQueryBuilder;
 import org.ilms.repository.rowmapper.CaseRowMapper;
+import org.ilms.repository.rowmapper.DocumentMapper;
 import org.ilms.repository.rowmapper.PartyRowMapper;
 import org.ilms.web.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class CaseRepository {
     @Autowired
     private CountQueryBuilder countQueryBuilder;
 
+    @Autowired
+    private DocumentMapper documentMapper;
+
     public CaseResponse getILMSCaseData(CaseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         List<String> ids = getUUID(criteria);
@@ -50,6 +54,7 @@ public class CaseRepository {
         String query = caseQueryBuilder.getILMSCaseSearchQuery(criteria, preparedStmtList);
         List<Case> caseList = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);
         for (Case singleCase : caseList) {
+            singleCase.setDocuments(getDocumentList(singleCase.getId()));
             List<Party> partyList = getParty(singleCase.getId());
             List<Party> party1 = new ArrayList<>();
             for (Party party : partyList) {
@@ -89,5 +94,12 @@ public class CaseRepository {
         String query = caseQueryBuilder.getAssignedCases(uuid);
         List<String> ids = jdbcTemplate.queryForList(query, String.class);
         return ids;
+    }
+
+    public List<Document> getDocumentList(String caseId) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(caseId);
+        List<Document> documentList = jdbcTemplate.query(caseQueryBuilder.getDocQuery(), preparedStmtList.toArray(), documentMapper);
+        return documentList;
     }
 }
