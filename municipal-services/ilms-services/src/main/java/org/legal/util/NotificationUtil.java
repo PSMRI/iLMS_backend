@@ -35,13 +35,10 @@ import static org.legal.util.LEGALConstants.*;
 public class NotificationUtil {
     @Autowired
     LEGALConfiguration ilmsConfiguration;
-
     @Autowired
     RestTemplate restTemplate;
-
     @Autowired
     Producer producer;
-
     @Autowired
     ServiceRepository serviceRepository;
 
