@@ -2,8 +2,8 @@ serviceMaps:
   serviceName: ilms
   mappings:
     - version: 1.0
-      description: Add cases in ilms_case table
-      fromTopic: save-ilms-case-application
+      description: Add cases in eg_lg_case table
+      fromTopic: save-legal-case-application
       isTransaction: true
       isAuditEnabled: true
       module: iLMS-services
@@ -12,7 +12,7 @@ serviceMaps:
       transactionCodeJsonPath: $.transactionCode
       auditAttributeBasePath: $.case
       queryMaps:
-        - query: INSERT INTO ilms_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
@@ -67,7 +67,7 @@ serviceMaps:
 
             - jsonPath: $.case.auditDetails.createdTime
 
-        - query: INSERT INTO ilms_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
           basePath: case.parties.*.advocate
           jsonMaps:
             - jsonPath: $.case.parties.*.advocate.id
@@ -84,7 +84,7 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.advocate.auditDetails.createdTime
 
-        - query: INSERT INTO ilms_case_party(id,  case_id, advocate_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_case_party(id,  case_id, advocate_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.parties.*
           jsonMaps:
             - jsonPath: $.case.parties.*.id
@@ -117,7 +117,7 @@ serviceMaps:
 
 
 
-        - query: INSERT INTO ilms_act(id, case_id, name, section_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_act(id, case_id, name, section_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
           basePath: case.act
           jsonMaps:
             - jsonPath: $.case.act.id
@@ -134,7 +134,7 @@ serviceMaps:
 
             - jsonPath: $.case.act.auditDetails.createdTime
 
-        - query: INSERT INTO ilms_court(id, case_id, court_name, district, state, division, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_court(id, case_id, court_name, district, state, division, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.court
           jsonMaps:
             - jsonPath: $.case.court.id
@@ -155,7 +155,7 @@ serviceMaps:
 
             - jsonPath: $.case.act.auditDetails.createdTime
 
-        - query: INSERT INTO ilms_document(id, case_id, document_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_document(id, case_id, document_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.documents.*
           jsonMaps:
             - jsonPath: $.case.documents.*.id
@@ -177,7 +177,7 @@ serviceMaps:
             - jsonPath: $.case.documents.*.auditDetails.createdTime
 
     - version: 1.0
-      description: Add hearing details in ilms_hearing table
+      description: Add hearing details in eg_lg_hearing table
       fromTopic: save-hearing-details-application
       isTransaction: true
       isAuditEnabled: true
@@ -187,7 +187,7 @@ serviceMaps:
       transactionCodeJsonPath: $.transactionCode
       auditAttributeBasePath: $.hearing
       queryMaps:
-        - query: INSERT INTO ilms_hearing(id, tenant_id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_hearing(id, tenant_id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing
           jsonMaps:
             - jsonPath: $.hearing.id
@@ -242,7 +242,7 @@ serviceMaps:
 
             - jsonPath: $.hearing.auditDetails.createdTime
 
-        - query: INSERT INTO ilms_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES ( ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES ( ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.parties.*.advocate
           jsonMaps:
             - jsonPath: $.hearing.parties.*.advocate.id
@@ -259,7 +259,7 @@ serviceMaps:
 
             - jsonPath: $.hearing.parties.*.advocate.auditDetails.createdTime
 
-        - query: INSERT INTO ilms_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.payment
           jsonMaps:
             - jsonPath: $.hearing.payment.id
@@ -281,7 +281,7 @@ serviceMaps:
             - jsonPath: $.hearing.payment.auditDetails.createdTime
 
     - version: 1.0
-      description: Add cases in ilms_case table
+      description: Add cases in eg_lg_case table
       fromTopic: save-judgement-case-application
       isTransaction: true
       isAuditEnabled: true
@@ -291,7 +291,7 @@ serviceMaps:
       transactionCodeJsonPath: $.transactionCode
       auditAttributeBasePath: $.judgement
       queryMaps:
-        - query: INSERT INTO ilms_judgement(id,tenant_id, case_id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, revised_complaince_reason,compliance_status, remarks, additional_details, status, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_judgement(id,tenant_id, case_id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, revised_complaince_reason,compliance_status, remarks, additional_details, status, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: judgement
           jsonMaps:
 
@@ -330,8 +330,8 @@ serviceMaps:
             - jsonPath: $.judgement.auditDetails.createdTime
 
     - version: 1.0
-      description: update cases in ilms_case table
-      fromTopic: update-ilms-case-application
+      description: update cases in eg_lg_case table
+      fromTopic: update-legal-case-application
       isTransaction: true
       isAuditEnabled: true
       module: iLMS-services
@@ -340,11 +340,7 @@ serviceMaps:
       transactionCodeJsonPath: $.transactionCode
       auditAttributeBasePath: $.case
       queryMaps:
-        - query: INSERT INTO ilms_case_auditlog SELECT * FROM ilms_case WHERE id =?
-          basePath: case
-          jsonMaps:
-            - jsonPath: $.case.id
-        - query: UPDATE ilms_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, linked_cases=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, recommend_oic=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, linked_cases=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, recommend_oic=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
           jsonMaps:
 
@@ -400,7 +396,7 @@ serviceMaps:
 
             - jsonPath: $.case.id
 
-        - query: UPDATE ilms_case_party SET case_id=?, advocate_id=?, first_name=?, last_name=?, gender=?, petitioner_type=?, address=?, department_name=?, contact_number=?, party_type=?, status=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_case_party SET case_id=?, advocate_id=?, first_name=?, last_name=?, gender=?, petitioner_type=?, address=?, department_name=?, contact_number=?, party_type=?, status=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case.parties.*
           jsonMaps:
 
@@ -432,7 +428,7 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.id
 
-        - query: UPDATE ilms_advocate SET first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
+        - query: UPDATE eg_lg_advocate SET first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
           basePath: case.parties.*.advocate
           jsonMaps:
 
@@ -450,7 +446,7 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.advocate.id
 
-        - query: UPDATE ilms_court SET case_id=?, court_name=?, district=?, state=?, division=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_court SET case_id=?, court_name=?, district=?, state=?, division=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case.court
           jsonMaps:
 
@@ -473,7 +469,7 @@ serviceMaps:
             - jsonPath: $.case.court.id
 
 
-        - query: UPDATE ilms_act SET case_id=?, name=?, section_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
+        - query: UPDATE eg_lg_act SET case_id=?, name=?, section_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
           basePath: case.act
           jsonMaps:
 
@@ -491,7 +487,7 @@ serviceMaps:
 
             - jsonPath: $.case.act.id
 
-        - query: UPDATE ilms_document SET case_id=?, document_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
+        - query: UPDATE eg_lg_document SET case_id=?, document_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
           basePath: case.documents.*
           jsonMaps:
 
@@ -524,12 +520,8 @@ serviceMaps:
       transactionCodeJsonPath: $.transactionCode
       auditAttributeBasePath: $.hearing
       queryMaps:
-        - query: INSERT INTO ilms_hearing_auditlog SELECT * FROM ilms_hearing WHERE id =?
-          basePath: hearing
-          jsonMaps:
-            - jsonPath: $.hearing.id
 
-        - query: UPDATE ilms_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: hearing
           jsonMaps:
 
@@ -582,7 +574,7 @@ serviceMaps:
             - jsonPath: $.hearing.id
 
 
-        - query: UPDATE ilms_advocate SET  hearing_id=?, first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
+        - query: UPDATE eg_lg_advocate SET  hearing_id=?, first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
           basePath: hearing.parties.*.advocate
           jsonMaps:
 
@@ -606,13 +598,8 @@ serviceMaps:
 
             - jsonPath: $.hearing.parties.*.advocate.id
 
-        - query: INSERT INTO ilms_payment_auditlog SELECT * FROM ilms_payment WHERE id = ?;
 
-          basePath: hearing.payment
-          jsonMaps:
-            - jsonPath: $.hearing.payment.id
-
-        - query: UPDATE ilms_payment SET fine_imposed_date=?, fine_due_date=?, fine_amount=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_payment SET fine_imposed_date=?, fine_due_date=?, fine_amount=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: hearing.payment
           jsonMaps:
 
@@ -632,7 +619,7 @@ serviceMaps:
 
 
     - version: 1.0
-      description: Update judgement in ilms_judgement table
+      description: Update judgement in eg_lg_judgement table
       fromTopic: update-order-case-application
       isTransaction: true
       isAuditEnabled: true
@@ -642,7 +629,7 @@ serviceMaps:
       transactionCodeJsonPath: $.transactionCode
       auditAttributeBasePath: $.judgement
       queryMaps:
-        - query: INSERT INTO ilms_judgement_auditlog SELECT * FROM ilms_judgement where id = ? AND case_id = ? ;
+        - query: INSERT INTO eg_lg_judgement_auditlog SELECT * FROM eg_lg_judgement where id = ? AND case_id = ? ;
           basePath: judgement
           jsonMaps:
 
@@ -650,7 +637,7 @@ serviceMaps:
 
             - jsonPath: $.judgement.caseId
 
-        - query: Update ilms_judgement  SET case_id=?, order_type=?, order_date=?, decision_status=?, compliance_date=?, revised_compliance_date=?, order_no_override=?, revised_complaince_reason=?, compliance_status=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=?  WHERE id=? ;
+        - query: Update eg_lg_judgement  SET case_id=?, order_type=?, order_date=?, decision_status=?, compliance_date=?, revised_compliance_date=?, order_no_override=?, revised_complaince_reason=?, compliance_status=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=?  WHERE id=? ;
           basePath: judgement
           jsonMaps:
 
@@ -687,11 +674,11 @@ serviceMaps:
             - jsonPath: $.judgement.id
 
     - version: 1.0
-      description: create document in ilms_document table
+      description: create document in eg_lg_document table
       fromTopic: save-document-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ilms_document(id, case_id, document_type, file_store_id, document_id, status, remarks, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_document(id, case_id, document_type, file_store_id, document_id, status, remarks, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?);
           basePath: document.*
           jsonMaps:
             - jsonPath: $.document.*.id
@@ -713,11 +700,11 @@ serviceMaps:
             - jsonPath: $.document.*.auditDetails.createdTime
 
     - version: 1.0
-      description: create child case in ilms_case table
+      description: create child case in eg_lg_case table
       fromTopic: update-child-case-application
       isTransaction: true
       queryMaps:
-        - query: update ilms_case set parent_case_id = ? , case_hierarchy= ? where id IN (?);
+        - query: update eg_lg_case set parent_case_id = ? , case_hierarchy= ? where id IN (?);
           basePath: childCase.caseIds.*
           jsonMaps:
             - jsonPath: $.childCase.parentCaseId
@@ -727,11 +714,11 @@ serviceMaps:
             - jsonPath: $.childCase.caseIds.*.id
 
     - version: 1.0
-      description: create document in ilms_document table
+      description: create document in eg_lg_document table
       fromTopic: update-document-application
       isTransaction: true
       queryMaps:
-        - query: UPDATE public.ilms_document SET case_id=?, document_type=?, file_store_id=?, document_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
+        - query: UPDATE public.eg_lg_document SET case_id=?, document_type=?, file_store_id=?, document_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
           basePath: document.*
           jsonMaps:
             - jsonPath: $.document.*.caseId
