@@ -65,8 +65,8 @@ CREATE TABLE IF NOT EXISTS  eg_lg_act(
     createdtime bigint,
     lastmodifiedby character varying(64),
     lastmodifiedtime bigint,
-	CONSTRAINT pk_act_id PRIMARY KEY (id),
-	CONSTRAINT fk_act_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id)
+	CONSTRAINT pk_eg_lg_act_id PRIMARY KEY (id),
+	CONSTRAINT fk_eg_lg_act_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id)
 );
 
 CREATE INDEX  IF NOT EXISTS  index_id_eg_lg_act  ON eg_lg_act
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS  eg_lg_advocate(
     createdtime bigint,
     lastmodifiedby character varying(64),
     lastmodifiedtime bigint,
-    CONSTRAINT pk_advocate_id PRIMARY KEY (id)
+    CONSTRAINT pk_eg_lg_advocate_id PRIMARY KEY (id)
 
 );
 
@@ -114,9 +114,9 @@ CREATE TABLE IF NOT EXISTS  eg_lg_case_party(
     createdtime bigint,
     lastmodifiedby character varying(64),
     lastmodifiedtime bigint,
-    CONSTRAINT pk_party_id PRIMARY KEY (id),
-	CONSTRAINT fk_party_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id),
-	CONSTRAINT fk_party_advocate_id FOREIGN KEY(advocate_id) REFERENCES eg_lg_advocate(id)
+    CONSTRAINT pk_eg_lg_case_party_id PRIMARY KEY (id),
+	CONSTRAINT fk_eg_lg_case_party_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id),
+	CONSTRAINT fk_eg_lg_case_party_advocate_id FOREIGN KEY(advocate_id) REFERENCES eg_lg_advocate(id)
 );
 
 CREATE INDEX  IF NOT EXISTS  index_id_eg_lg_case_party  ON eg_lg_case_party
@@ -161,8 +161,8 @@ bench character varying(32) DEFAULT NULL,
     createdtime bigint,
     lastmodifiedby character varying(64),
     lastmodifiedtime bigint,
-    CONSTRAINT pk_hearing_id PRIMARY KEY (id),
-   CONSTRAINT fk_hearing_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id)
+    CONSTRAINT pk_eg_lg_hearing_id PRIMARY KEY (id),
+   CONSTRAINT fk_eg_lg_hearing_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id)
 );
 
 CREATE INDEX  IF NOT EXISTS  index_id_eg_lg_hearing  ON eg_lg_hearing
@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS  eg_lg_court(
     createdtime bigint,
     lastmodifiedby character varying(64),
     lastmodifiedtime bigint,
-    CONSTRAINT pk_court_id PRIMARY KEY (id),
+    CONSTRAINT pk_eg_lg_court_id PRIMARY KEY (id),
     CONSTRAINT fk_eg_lg_court_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id)
 );
 
@@ -215,9 +215,9 @@ CREATE TABLE IF NOT EXISTS  eg_lg_payment(
     createdtime bigint,
     lastmodifiedby character varying(64),
     lastmodifiedtime bigint,
-    CONSTRAINT pk_payment_id PRIMARY KEY (id),
-   CONSTRAINT fk_hearing_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id),
-   CONSTRAINT fk_payment_hearing_id FOREIGN KEY (hearing_id) REFERENCES eg_lg_hearing (id)
+    CONSTRAINT pk_eg_lg_payment_id PRIMARY KEY (id),
+   CONSTRAINT fk_eg_lg_hearing_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id),
+   CONSTRAINT fk_eg_lg_payment_hearing_id FOREIGN KEY (hearing_id) REFERENCES eg_lg_hearing (id)
 );
 
 CREATE INDEX  IF NOT EXISTS  index_id_eg_lg_payment ON eg_lg_payment
@@ -253,8 +253,8 @@ CREATE TABLE IF NOT EXISTS  eg_lg_judgement(
     createdtime bigint,
     lastmodifiedby character varying(64),
     lastmodifiedtime bigint,
-    CONSTRAINT pk_judgement_id PRIMARY KEY (id),
-	CONSTRAINT fk_judgement_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id)
+    CONSTRAINT pk_eg_lg_judgement_id PRIMARY KEY (id),
+	CONSTRAINT fk_eg_lg_judgement_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id)
 );
 
 CREATE INDEX  IF NOT EXISTS  index_id_eg_lg_judgement  ON eg_lg_judgement
