@@ -3,7 +3,7 @@ package org.legal.service;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.legal.configs.ILMSConfiguration;
+import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.IdGenRepository;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class HearingEnrichmentService {
     @Autowired
-    private ILMSConfiguration ilmsConfiguration;
+    private LEGALConfiguration ilmsConfiguration;
 
     @Autowired
     private CaseUtils caseUtils;

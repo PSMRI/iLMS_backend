@@ -4,7 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.legal.configs.ILMSConfiguration;
+import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.CaseRepository;
 import org.legal.repository.ServiceRepository;
 import org.legal.util.LegalErrorConstants;
@@ -32,7 +32,7 @@ public class NotificationService {
     NotificationUtil notificationUtil;
 
     @Autowired
-    ILMSConfiguration ilmsConfiguration;
+    LEGALConfiguration ilmsConfiguration;
 
     @Autowired
     CaseRepository caseRepository;

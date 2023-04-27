@@ -2,7 +2,7 @@ package org.legal.service;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.legal.configs.ILMSConfiguration;
+import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
 import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
@@ -32,7 +32,7 @@ public class HearingService {
     private HearingEnrichmentService hearingEnrichmentService;
 
     @Autowired
-    private ILMSConfiguration ilmsConfiguration;
+    private LEGALConfiguration ilmsConfiguration;
 
     @Autowired
     private HearingRepository hearingDetailsRepository;

@@ -2,7 +2,7 @@ package org.legal.service;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.legal.configs.ILMSConfiguration;
+import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.JudgementRepository;
@@ -26,7 +26,7 @@ public class JudgementService {
     Producer producer;
 
     @Autowired
-    ILMSConfiguration ilmsConfiguration;
+    LEGALConfiguration ilmsConfiguration;
 
     @Autowired
     JudgementRepository judgementRepository;

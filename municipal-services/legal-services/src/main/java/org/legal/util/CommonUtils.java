@@ -8,7 +8,7 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
-import org.legal.configs.ILMSConfiguration;
+import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.ServiceRepository;
 import org.legal.web.model.idGen.IdGenerationRequest;
 import org.legal.web.model.idGen.IdGenerationResponse;
@@ -27,7 +27,7 @@ public class CommonUtils {
     private ObjectMapper mapper;
 
     @Autowired
-    private ILMSConfiguration configs;
+    private LEGALConfiguration configs;
 
     @Autowired
     private ServiceRepository restRepo;

@@ -1,7 +1,7 @@
 package org.legal.util;
 
 import org.egov.common.contract.request.User;
-import org.legal.configs.ILMSConfiguration;
+import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.CaseRepository;
 import org.legal.service.CaseEnrichmentService;
 import org.legal.web.model.*;
@@ -24,7 +24,7 @@ public class CaseUtils {
     private CaseEnrichmentService caseEnrichmentService;
 
     @Autowired
-    private ILMSConfiguration ilmsConfiguration;
+    private LEGALConfiguration ilmsConfiguration;
 
     @Autowired
     private CaseRepository caseRepository;

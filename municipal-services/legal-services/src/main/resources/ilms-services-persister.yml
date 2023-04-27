@@ -1,12 +1,12 @@
 serviceMaps:
-  serviceName: ilms
+  serviceName: legal-services
   mappings:
     - version: 1.0
       description: Add cases in eg_lg_case table
       fromTopic: save-legal-case-application
       isTransaction: true
       isAuditEnabled: true
-      module: iLMS-services
+      module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.transactionCode
@@ -181,7 +181,7 @@ serviceMaps:
       fromTopic: save-hearing-details-application
       isTransaction: true
       isAuditEnabled: true
-      module: iLMS-services
+      module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.transactionCode
@@ -285,7 +285,7 @@ serviceMaps:
       fromTopic: save-judgement-case-application
       isTransaction: true
       isAuditEnabled: true
-      module: iLMS-services
+      module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.transactionCode
@@ -334,7 +334,7 @@ serviceMaps:
       fromTopic: update-legal-case-application
       isTransaction: true
       isAuditEnabled: true
-      module: iLMS-services
+      module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.transactionCode
@@ -514,7 +514,7 @@ serviceMaps:
       fromTopic: update-hearing-details-application
       isTransaction: true
       isAuditEnabled: true
-      module: iLMS-services
+      module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.transactionCode
@@ -623,7 +623,7 @@ serviceMaps:
       fromTopic: update-order-case-application
       isTransaction: true
       isAuditEnabled: true
-      module: iLMS-services
+      module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.transactionCode

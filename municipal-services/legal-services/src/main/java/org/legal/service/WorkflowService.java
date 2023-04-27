@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
-import org.legal.configs.ILMSConfiguration;
+import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.ServiceRepository;
 import org.legal.util.CaseUtils;
 import org.legal.util.CommonUtils;
@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
 @Service
 public class WorkflowService {
     @Autowired
-    private ILMSConfiguration ilmsConfiguration;
+    private LEGALConfiguration ilmsConfiguration;
 
     @Autowired
     private ObjectMapper mapper;

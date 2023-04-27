@@ -8,7 +8,7 @@ import java.util.Map;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
-import org.legal.configs.ILMSConfiguration;
+import org.legal.configs.LEGALConfiguration;
 import org.legal.web.model.idGen.IdGenerationRequest;
 import org.legal.web.model.idGen.IdGenerationResponse;
 import org.legal.web.model.idGen.IdRequest;
@@ -21,12 +21,12 @@ import org.springframework.web.client.RestTemplate;
 public class IdGenRepository {
     private final RestTemplate restTemplate;
 
-    private final ILMSConfiguration ilmsConfiguration;
+    private final LEGALConfiguration legalConfiguration;
 
     @Autowired
-    public IdGenRepository(RestTemplate restTemplate, ILMSConfiguration ilmsConfiguration) {
+    public IdGenRepository(RestTemplate restTemplate, LEGALConfiguration legalConfiguration) {
         this.restTemplate = restTemplate;
-        this.ilmsConfiguration = ilmsConfiguration;
+        this.legalConfiguration = legalConfiguration;
     }
 
     public IdGenerationResponse getId(RequestInfo requestInfo, String tenantId, String name, String format, int count) {
@@ -36,7 +36,7 @@ public class IdGenRepository {
         IdGenerationRequest req = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
         IdGenerationResponse response = null;
         try {
-            response = restTemplate.postForObject(ilmsConfiguration.getIdGenHost() + ilmsConfiguration.getIdGenPath(), req,
+            response = restTemplate.postForObject(legalConfiguration.getIdGenHost() + legalConfiguration.getIdGenPath(), req,
                     IdGenerationResponse.class);
         } catch (HttpClientErrorException e) {
             throw new ServiceCallException(e.getResponseBodyAsString());
