@@ -44,6 +44,7 @@ public class CaseEnrichmentService {
         }
         for (Party party : aCase.getParties()) {
             party.setAuditDetails(auditDetails);
+            if(Objects.nonNull(party.getAdvocate()))
             party.getAdvocate().setAuditDetails(auditDetails);
         }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
@@ -127,6 +128,7 @@ public class CaseEnrichmentService {
                                 ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
                         ListIterator<String> radvocateItr = radvocateId.listIterator();
                         party.getAdvocate().setId(radvocateItr.next());
+                        party.setAdvocateId(party.getAdvocate().getId());
                     }
                 }
             }

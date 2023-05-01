@@ -91,7 +91,7 @@ serviceMaps:
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.parties.*.advocate.id
+            - jsonPath: $.case.parties.*.advocateId
 
             - jsonPath: $.case.parties.*.firstName
 

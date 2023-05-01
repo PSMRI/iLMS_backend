@@ -181,24 +181,22 @@ public class CaseService {
                     for (Advocate advocate: advocates){
                         if(parties.getAdvocate().getId().equals(advocate.getId())){
                             parties.setAdvocateId(parties.getAdvocate().getId());
-
+                            parties.setAdvocate(null);
                         }
-
                     }
-                    parties.getAdvocate().setStatus(Status.ACTIVE);
+//                    /parties.getAdvocate().setStatus(Status.ACTIVE);
                 }
             } else if (parties.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
                     List<Advocate> advocates=caseRepository.getAdvocateId(parties.getAdvocate().getId());
                     for (Advocate advocate: advocates){
-                        if(parties.getAdvocate().getId().equals(advocate.getId().toString())){
+                        if(parties.getAdvocate().getId().equals(advocate.getId())){
                             parties.setAdvocateId(parties.getAdvocate().getId());
+                            parties.setAdvocate(null);
                         }
-
                     }
-                    parties.getAdvocate().setStatus(Status.ACTIVE);
-
+//                    parties.getAdvocate().setStatus(Status.ACTIVE);
                 }
             }
             if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
