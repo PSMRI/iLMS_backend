@@ -27,7 +27,9 @@ public class CaseQueryBuilder {
     private static final String CaseQuery1 = "select DISTINCT(cases.id) from eg_lg_case as cases INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = cases.id LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid ";
     private static final String CaseQuery2 = " AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = cases.id GROUP BY wf.businessid)";
 
+    private static final String advocateQuery="select * from eg_lg_advocate ";
     private final String paginationWrapper = "{} {orderBy} {pagination}";
+
 
     @Autowired
     private LEGALConfiguration ilmsConfiguration;
@@ -191,5 +193,8 @@ public class CaseQueryBuilder {
 
     public String getAssignedCases(String uuid) {
         return CaseQuery1 + "where " + "assg.assignee = " + "'" + uuid + "'" + CaseQuery2;
+    }
+    public String getAdvocateQuery(String id){
+        return advocateQuery+"where id ='"+id+"';";
     }
 }

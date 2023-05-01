@@ -3,6 +3,7 @@ package org.legal.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.legal.repository.querybuilder.CaseQueryBuilder;
 import org.legal.repository.querybuilder.CountQueryBuilder;
+import org.legal.repository.rowmapper.AdvocateMapper;
 import org.legal.repository.rowmapper.CaseRowMapper;
 import org.legal.repository.rowmapper.DocumentMapper;
 import org.legal.repository.rowmapper.PartyRowMapper;
@@ -36,6 +37,9 @@ public class CaseRepository {
 
     @Autowired
     private DocumentMapper documentMapper;
+
+    @Autowired
+    private AdvocateMapper advocateMapper;
 
     public CaseResponse getLegalCaseData(CaseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
@@ -102,4 +106,10 @@ public class CaseRepository {
         List<Document> documentList = jdbcTemplate.query(caseQueryBuilder.getDocQuery(), preparedStmtList.toArray(), documentMapper);
         return documentList;
     }
+
+    public List<Advocate> getAdvocateId(String id){
+        List<Advocate> advocateList = jdbcTemplate.query(caseQueryBuilder.getAdvocateQuery(id),advocateMapper);
+    return advocateList;
+    }
 }
+
