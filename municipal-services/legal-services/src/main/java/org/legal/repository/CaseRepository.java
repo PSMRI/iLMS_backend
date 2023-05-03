@@ -51,10 +51,8 @@ public class CaseRepository {
                 }
             }
         } else {
-            criteria = CaseSearchCriteria.builder().id(ids).number(criteria.getNumber()).build();
+            criteria = CaseSearchCriteria.builder().id(ids).number(criteria.getNumber()).limit(criteria.getLimit()).offset(criteria.getOffset()).build();
         }
-
-
         String query = caseQueryBuilder.getLegalCaseSearchQuery(criteria, preparedStmtList);
         List<Case> caseList = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);
         for (Case singleCase : caseList) {
