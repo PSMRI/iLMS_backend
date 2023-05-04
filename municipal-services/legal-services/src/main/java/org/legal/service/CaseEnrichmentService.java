@@ -110,7 +110,7 @@ public class CaseEnrichmentService {
                 ListIterator<String> petitionerItr = petitionerId.listIterator();
                 party.setId(petitionerItr.next());
                 if (Objects.nonNull(party.getAdvocate())) {
-                    if (!party.getAdvocate().getId().equals(party.getAdvocateId())) {
+                    if ( StringUtils.isEmpty(party.getAdvocate().getId()) || !party.getAdvocate().getId().equals(party.getAdvocateId())) {
                         List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
                                 ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
                         ListIterator<String> padvocateItr = padvocateId.listIterator();

@@ -9,8 +9,8 @@ serviceMaps:
       module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
-      transactionCodeJsonPath: $.transactionCode
-      auditAttributeBasePath: $.case
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: case
       queryMaps:
         - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
@@ -184,8 +184,8 @@ serviceMaps:
       module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
-      transactionCodeJsonPath: $.transactionCode
-      auditAttributeBasePath: $.hearing
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: hearing
       queryMaps:
         - query: INSERT INTO eg_lg_hearing(id, tenant_id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing
@@ -288,8 +288,8 @@ serviceMaps:
       module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
-      transactionCodeJsonPath: $.transactionCode
-      auditAttributeBasePath: $.judgement
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: judgement
       queryMaps:
         - query: INSERT INTO eg_lg_judgement(id,tenant_id, case_id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, revised_complaince_reason,compliance_status, remarks, additional_details, status, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: judgement
@@ -337,8 +337,8 @@ serviceMaps:
       module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
-      transactionCodeJsonPath: $.transactionCode
-      auditAttributeBasePath: $.case
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: case
       queryMaps:
         - query: UPDATE eg_lg_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, linked_cases=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, recommend_oic=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
@@ -428,7 +428,7 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.id
 
-        - query: UPDATE eg_lg_advocate SET first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
+        - query: UPDATE eg_lg_advocate SET first_name=?, last_name=?, contact_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
           basePath: case.parties.*.advocate
           jsonMaps:
 
@@ -512,13 +512,12 @@ serviceMaps:
     - version: 1.0
       description: update Hearing Details in hearing_details table
       fromTopic: update-hearing-details-application
-      isTransaction: true
       isAuditEnabled: true
       module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
-      transactionCodeJsonPath: $.transactionCode
-      auditAttributeBasePath: $.hearing
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: hearing
       queryMaps:
 
         - query: UPDATE eg_lg_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
@@ -574,7 +573,7 @@ serviceMaps:
             - jsonPath: $.hearing.id
 
 
-        - query: UPDATE eg_lg_advocate SET  hearing_id=?, first_name=?, last_name=?, contact_number=?, party_type=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
+        - query: UPDATE eg_lg_advocate SET  hearing_id=?, first_name=?, last_name=?, contact_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
           basePath: hearing.parties.*.advocate
           jsonMaps:
 
@@ -587,8 +586,6 @@ serviceMaps:
             - jsonPath: $.hearing.parties.*.advocate.lastName
 
             - jsonPath: $.hearing.parties.*.advocate.contactNumber
-
-            - jsonPath: $.hearing.parties.*.advocate.partyType
 
             - jsonPath: $.hearing.parties.*.advocate.status
 
@@ -626,8 +623,8 @@ serviceMaps:
       module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
-      transactionCodeJsonPath: $.transactionCode
-      auditAttributeBasePath: $.judgement
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: judgement
       queryMaps:
         - query: INSERT INTO eg_lg_judgement_auditlog SELECT * FROM eg_lg_judgement where id = ? AND case_id = ? ;
           basePath: judgement
@@ -717,6 +714,12 @@ serviceMaps:
       description: create document in eg_lg_document table
       fromTopic: update-document-application
       isTransaction: true
+      isAuditEnabled: true
+      module: legal-services
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: document.*
       queryMaps:
         - query: UPDATE public.eg_lg_document SET case_id=?, document_type=?, file_store_id=?, document_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
           basePath: document.*
