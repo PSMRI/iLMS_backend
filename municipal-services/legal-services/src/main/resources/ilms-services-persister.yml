@@ -9,7 +9,7 @@ serviceMaps:
       module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
-      transactionCodeJsonPath: $.transactionCode
+      transactionCodeJsonPath: $.id
       auditAttributeBasePath: case
       queryMaps:
         - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, recommend_oic, remarks, first_hearing_date, additional_details, status, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
