@@ -81,6 +81,9 @@ public class Case {
     @JsonProperty("remarks")
     private String remarks;
 
+    @JsonProperty("firstHearingDate")
+    private Long firstHearingDate;
+
     @JsonProperty("additionalDetails")
     private JsonNode additionalDetails;
 
@@ -99,6 +102,9 @@ public class Case {
 
     @JsonProperty("documents")
     private List<Document> documents;
+
+    @JsonProperty("transactionCode")
+    private String transactionCode;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

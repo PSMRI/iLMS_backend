@@ -70,6 +70,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String priority = rs.getString("ilms_priority");
                 String recommendOic = rs.getString("ilms_recommendOic");
                 String remarks = rs.getString("ilms_remarks");
+                Long firstHearingDate = rs.getLong("ilms_firstHearingDate");
                 JsonNode additionalDetails = getAdditionalDetail("ilms_additionalDetails", rs);
                 String status = rs.getString("ilms_status");
 
@@ -84,7 +85,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                             .parentCaseId(parentCaseId).number(caseNumber).filingNumber(filingNumber)
                             .remarks(remarks).filingDate(filingDate).registrationDate(registrationDate)
                             .summary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
-                            .policyOrNonPolicyMatter(matter).priority(priority)
+                            .policyOrNonPolicyMatter(matter).priority(priority).firstHearingDate(firstHearingDate)
                             .caseStatus(caseStatus).stage(caseStage).subStage(caseSubStage)
                             .recommendOIC(recommendOic).auditDetails(auditDetails).linkedCases(linkedCases).build();
 

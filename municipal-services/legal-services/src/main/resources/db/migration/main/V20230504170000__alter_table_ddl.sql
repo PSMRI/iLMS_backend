@@ -1,0 +1,1 @@
+ALTER TABLE eg_lg_case ADD COLUMN first_hearing_date bigint;

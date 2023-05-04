@@ -9,10 +9,10 @@ serviceMaps:
       module: legal-services
       objecIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
-      transactionCodeJsonPath: $.id
+      transactionCodeJsonPath: $.transactionCode
       auditAttributeBasePath: case
       queryMaps:
-        - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, recommend_oic, remarks, first_hearing_date, additional_details, status, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
@@ -56,6 +56,8 @@ serviceMaps:
             - jsonPath: $.case.recommendOic
 
             - jsonPath: $.case.remarks
+
+            - jsonPath: $.case.firstHearingDate
 
             - jsonPath: $.case.additionalDetails
               type: JSON
@@ -187,7 +189,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: hearing
       queryMaps:
-        - query: INSERT INTO eg_lg_hearing(id, tenant_id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_hearing(id, tenant_id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks,first_hearing_date, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing
           jsonMaps:
             - jsonPath: $.hearing.id
@@ -231,6 +233,8 @@ serviceMaps:
             - jsonPath: $.hearing.departmentOfficer
 
             - jsonPath: $.hearing.remarks
+
+            - jsonPath: $.hearing.firstHearingDate
 
             - jsonPath: $.hearing.additionalDetails
               type: JSON
@@ -340,7 +344,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: case
       queryMaps:
-        - query: UPDATE eg_lg_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, linked_cases=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, recommend_oic=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, linked_cases=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, recommend_oic=?, remarks=?, first_hearing_date=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
           jsonMaps:
 
@@ -383,6 +387,8 @@ serviceMaps:
             - jsonPath: $.case.recommendOic
 
             - jsonPath: $.case.remarks
+
+            - jsonPath: $.case.firstHearingDate
 
             - jsonPath: $.case.additionalDetails
               type: JSON
@@ -520,7 +526,7 @@ serviceMaps:
       auditAttributeBasePath: hearing
       queryMaps:
 
-        - query: UPDATE eg_lg_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?,first_hearing_date=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: hearing
           jsonMaps:
 
@@ -559,6 +565,8 @@ serviceMaps:
             - jsonPath: $.hearing.departmentOfficer
 
             - jsonPath: $.hearing.remarks
+
+            - jsonPath: $.hearing.firstHearingDate
 
             - jsonPath: $.hearing.additionalDetails
               type: JSON

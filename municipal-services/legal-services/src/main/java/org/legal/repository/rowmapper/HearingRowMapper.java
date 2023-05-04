@@ -77,6 +77,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 String caseNumber = rs.getString("hearing_case_number");
                 String oathNumber = rs.getString("hearing_oath_number");
                 Long nextHearingDate = rs.getLong("next_hearing_date");
+                Long firstHearingDate = rs.getLong("first_hearing_date");
                 Boolean isPresenceRequired = rs.getBoolean("hearing_is_presence_required");
                 String hearingType = rs.getString("hearing_type");
                 String departmentOfficer = rs.getString("hearing_department_officer");
@@ -87,7 +88,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 if (currentHearing == null) {
                     currentHearing = Hearing.builder().id(id).hearingNumber(hearingNumber).additionalDetails(additionalDetails).caseId(caseId)
                             .judgeName(judgeName).hearingDate(hearingDate).courtNumber(courtNumber)
-                            .nextHearingDate(nextHearingDate).bench(bench).tenantId(tenantId)
+                            .nextHearingDate(nextHearingDate).bench(bench).tenantId(tenantId).firstHearingDate(firstHearingDate)
                             .isPresenceRequired(isPresenceRequired).hearingType(hearingType).departmentOfficer(departmentOfficer)
                             .remarks(remarks).status(Status.valueOf(status)).businessDate(businessDate).hearingPurpose(hearingPurpose)
                             .requiredOfficer(requiredOfficer).auditDetails(auditDetails).affidavitFilingDate(affidavitFilingDate)

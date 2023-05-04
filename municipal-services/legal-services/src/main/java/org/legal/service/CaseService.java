@@ -250,6 +250,7 @@ public class CaseService {
             workflowService.updateWorkflow(caseRequest, CreationReason.CREATE);
             notificationService.process(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
         }
+        caseRequest.getCaseObj().setTransactionCode("yolo");
         producer.push(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
         return caseRequest.getCaseObj();
     }

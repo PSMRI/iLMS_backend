@@ -61,6 +61,9 @@ public class Hearing {
     @JsonProperty("nextHearingDate")
     private Long nextHearingDate;
 
+    @JsonProperty("firstHearingDate")
+    private Long firstHearingDate;
+
     @JsonProperty("isPresenceRequired")
     private Boolean isPresenceRequired;
 

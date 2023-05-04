@@ -59,6 +59,9 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getLinkedCases())) {
             oldData.setLinkedCases(caseRequest.getCaseObj().getLinkedCases());
         }
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFirstHearingDate())) {
+            oldData.setFirstHearingDate(caseRequest.getCaseObj().getFirstHearingDate());
+        }
 
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getType())) {
             oldData.setType(caseRequest.getCaseObj().getType());
