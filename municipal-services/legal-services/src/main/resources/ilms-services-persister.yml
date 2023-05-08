@@ -625,7 +625,7 @@ serviceMaps:
 
     - version: 1.0
       description: Update judgement in eg_lg_judgement table
-      fromTopic: update-order-case-application
+      fromTopic: update-judgement-case-application
       isTransaction: true
       isAuditEnabled: true
       module: legal-services
