@@ -94,11 +94,7 @@ public class HearingUtils {
             oldHearingRequest.setHearingType(hearingDetailsRequest.getHearing().getHearingType());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getDepartmentOfficer())) {
-//            List<String> uuids = new ArrayList<>();
-//            uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-//            if (commonUtils.isUserOIC(uuids, tenantId, "DepartmentOfficer")) {
             oldHearingRequest.setDepartmentOfficer(hearingDetailsRequest.getHearing().getDepartmentOfficer());
-//            }
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getRemarks())) {
             oldHearingRequest.setRemarks(hearingDetailsRequest.getHearing().getRemarks());
@@ -115,6 +111,9 @@ public class HearingUtils {
                     }
                     if (!StringUtils.isEmpty(party.getFirstName())) {
                         oldParty.setFirstName(party.getFirstName());
+                    }
+                    if (!StringUtils.isEmpty(party.getAdvocateId())) {
+                        oldParty.setAdvocateId(party.getAdvocateId());
                     }
                     if (!StringUtils.isEmpty(party.getLastName())) {
                         oldParty.setLastName(party.getLastName());
@@ -169,6 +168,9 @@ public class HearingUtils {
                     }
                     if (!StringUtils.isEmpty(party.getFirstName())) {
                         oldParty.setFirstName(party.getFirstName());
+                    }
+                    if (!StringUtils.isEmpty(party.getAdvocateId())) {
+                        oldParty.setAdvocateId(party.getAdvocateId());
                     }
                     if (!StringUtils.isEmpty(party.getLastName())) {
                         oldParty.setLastName(party.getLastName());
