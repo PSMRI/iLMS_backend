@@ -184,7 +184,6 @@ public class CaseService {
                             parties.setAdvocate(null);
                         }
                     }
-//                    /parties.getAdvocate().setStatus(Status.ACTIVE);
                 }
             } else if (parties.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                 parties.setStatus(Status.ACTIVE);
@@ -196,7 +195,6 @@ public class CaseService {
                             parties.setAdvocate(null);
                         }
                     }
-//                    parties.getAdvocate().setStatus(Status.ACTIVE);
                 }
             }
             if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {

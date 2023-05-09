@@ -1,6 +1,7 @@
 package org.legal.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
@@ -66,39 +67,40 @@ public class HearingEnrichmentService {
         List<String> applicationNumbers = getIdList(requestInfo, tenantId, ilmsConfiguration.getHearingIdgenName(),
                 ilmsConfiguration.getHearingIdgenFormat(), 1);
         ListIterator<String> itr = applicationNumbers.listIterator();
-        List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
-                ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
-        ListIterator<String> padvocateItr = padvocateId.listIterator();
-
-        List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
-                ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
-        ListIterator<String> radvocateItr = radvocateId.listIterator();
         List<String> paymentIds = getIdList(requestInfo, tenantId, ilmsConfiguration.getPaymentIdgenName(), ilmsConfiguration.getPaymentIdgenFormat(),
                 1);
         ListIterator<String> paymentItr = paymentIds.listIterator();
-
         Map<String, String> errorMap = new HashMap<>();
 
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
         List<Party> partyList = hearingDetailsRepository.getGetFromPartyQuery(request.getHearing().getCaseId());
-        for (Party party : partyList) {
-            if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                respondentId = party.getId();
-            } else {
-                petitionerId = party.getId();
-            }
-        }
-
         hearing.setId(itr.next());
-        for (Party party : hearing.getParties()) {
-            if (Objects.nonNull(party.getPartyType().equals(PartyType.PETITIONER.toString()))) {
-                if (Objects.nonNull(party.getAdvocate())) {
-                    party.getAdvocate().setId(padvocateItr.next());
+        for (Party partyLst:partyList) {
+            for (Party party : hearing.getParties()) {
+                if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
+                    if (Objects.nonNull(party.getAdvocate())) {
+                        if (StringUtils.isEmpty(party.getAdvocate().getId()) || !party.getAdvocate().getId().equals(partyLst.getAdvocateId())) {
+                            List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
+                                    ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
+                            ListIterator<String> padvocateItr = padvocateId.listIterator();
+                            party.getAdvocate().setId(padvocateItr.next());
+
+                        }
+                        party.setAdvocateId(party.getAdvocate().getId());
+                    }
+                } else if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
+                    if (Objects.nonNull(party.getAdvocate())) {
+                        if (StringUtils.isEmpty(party.getAdvocate().getId()) || !party.getAdvocate().getId().equals(partyLst.getAdvocateId())) {
+                            List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
+                                    ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
+                            ListIterator<String> radvocateItr = radvocateId.listIterator();
+                            party.getAdvocate().setId(radvocateItr.next());
+                        }
+                    }
+                    party.setAdvocateId(party.getAdvocate().getId());
                 }
-            } else {
-                party.getAdvocate().setId(radvocateItr.next());
             }
         }
         if (Objects.nonNull(hearing.getPayment())) {
