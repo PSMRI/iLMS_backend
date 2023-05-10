@@ -9,7 +9,7 @@ import org.legal.web.model.enums.Status;
 @NoArgsConstructor
 @Getter
 @Setter
-public class judgement {
+public class Judgement {
 
 
     @JsonProperty("id")

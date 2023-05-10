@@ -121,10 +121,39 @@ public class CaseService {
             officersCount.setAO(ao);
             officersCount.setOIC(oic);
         }
+        List<Hearing> hearingList = new ArrayList<>();
+        List<Judgement> judgementList = new ArrayList<>();
+        HearingResponse hearingResponse=null;
+        JudgementResponse judgementResponse=null;
+        HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
+                                                                     .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
+                                                                     .build();
+        hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
+        JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
+                caseResponse.getCaseList().get(0).getId())).build();
+        judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
+        caseResponse.getCaseList().forEach(caseObj -> {
+            if (caseObj.getStatus() == Status.ACTIVE) {
+                caseList.add(caseObj);
+            }
+        });
+        hearingResponse.getHearingList().forEach(hearing -> {
+            if (hearing.getStatus() == Status.ACTIVE) {
+                hearingList.add(hearing);
+            }
+        });
+        judgementResponse.getJudgementList().forEach(judgement -> {
+            if (judgement.getStatus() == Status.ACTIVE) {
+                judgementList.add(judgement);
+            }
+        });
+
         finalResult.setTotalCount(caseResponse.getTotalCount());
         finalResult.setCaseList(caseList);
         finalResult.setStatusMap(statusCountMap);
         finalResult.setOfficersCount(officersCount);
+        finalResult.setHearingList(hearingList);
+        finalResult.setJudgementList(judgementList);
         return finalResult;
     }
 
@@ -132,7 +161,7 @@ public class CaseService {
         CaseDetailsResponse downloadResponse = new CaseDetailsResponse();
         List<Case> caseList = new ArrayList<>();
         List<Hearing> hearingList = new ArrayList<>();
-        List<judgement> judgementList = new ArrayList<>();
+        List<Judgement> judgementList = new ArrayList<>();
         CaseResponse caseResponse = null;
         HearingResponse hearingResponse = null;
         JudgementResponse judgementResponse = null;
@@ -198,7 +227,9 @@ public class CaseService {
                 }
             }
             if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
-                caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
+                for (Act act : caseRequest.getCaseObj().getAct()) {
+                    act.setStatus(Status.ACTIVE);
+                }
             }
             if (parties.getPartyType().equals(PartyType.PETITIONER.toString())) {
                 if (Objects.nonNull(parties.getDepartmentName())) {
@@ -236,9 +267,6 @@ public class CaseService {
                 }
             }
         }
-        if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
-            caseRequest.getCaseObj().getAct().setStatus(Status.ACTIVE);
-        }
         caseRequest.getCaseObj().setStatus(Status.ACTIVE);
 
         caseValidator.validateCreate(caseRequest);
@@ -248,7 +276,7 @@ public class CaseService {
             workflowService.updateWorkflow(caseRequest, CreationReason.CREATE);
             notificationService.process(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
         }
-        caseRequest.getCaseObj().setTransactionCode("yolo");
+        //caseRequest.getCaseObj().setTransactionCode("yolo");
         producer.push(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
         return caseRequest.getCaseObj();
     }

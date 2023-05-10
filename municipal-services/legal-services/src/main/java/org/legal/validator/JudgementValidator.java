@@ -10,7 +10,7 @@ import org.legal.util.LegalErrorConstants;
 import org.legal.web.model.CaseResponse;
 import org.legal.web.model.CaseSearchCriteria;
 import org.legal.web.model.JudgementRequest;
-import org.legal.web.model.judgement;
+import org.legal.web.model.Judgement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -26,14 +26,14 @@ public class JudgementValidator {
     @Autowired
     private CaseRepository caseRepository;
 
-    private static Map<String, String> validateCode(judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
+    private static Map<String, String> validateCode(Judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
         if (judgement.getOrderType() != null && !codes.get(LEGALConstants.MDMS_ILMS_ORDER_TYPE).contains(judgement.getOrderType())) {
             errorMap.put("Invalid OrderType", "The OrderType '" + judgement.getOrderType() + "' does not exists");
         }
         return errorMap;
     }
 
-    private static Map<String, String> validateCodesForUpdate(judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
+    private static Map<String, String> validateCodesForUpdate(Judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
 
         if (judgement.getComplianceStatus() != null && !codes.get(LEGALConstants.MDMS_ILMS_STATUS_OF_COMPLIANCE)
                 .contains(judgement.getComplianceStatus())) {
@@ -77,14 +77,14 @@ public class JudgementValidator {
         }
     }
 
-    public void updateValidator(judgement judgement, JudgementRequest request) {
+    public void updateValidator(Judgement judgement, JudgementRequest request) {
         Map<String, String> errorMap = new HashMap<>();
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
     }
 
-    private void validateMasterData(judgement judgement, JudgementRequest request, Map<String, String> errorMap) {
+    private void validateMasterData(Judgement judgement, JudgementRequest request, Map<String, String> errorMap) {
 
         String caseId = judgement.getCaseId();
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
@@ -120,7 +120,7 @@ public class JudgementValidator {
         }
     }
 
-    private void validateMasterDataForUpdate(judgement judgement, JudgementRequest request, Map<String, String> errorMap) {
+    private void validateMasterDataForUpdate(Judgement judgement, JudgementRequest request, Map<String, String> errorMap) {
 
         String caseId = judgement.getCaseId();
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();

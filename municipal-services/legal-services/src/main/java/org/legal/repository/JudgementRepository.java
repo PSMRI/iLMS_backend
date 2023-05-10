@@ -8,7 +8,7 @@ import org.legal.util.CommonUtils;
 import org.legal.web.model.JudgementRequest;
 import org.legal.web.model.JudgementResponse;
 import org.legal.web.model.JudgementSearchCriteria;
-import org.legal.web.model.judgement;
+import org.legal.web.model.Judgement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -41,13 +41,13 @@ public class JudgementRepository {
     public JudgementResponse getJudgementData(JudgementSearchCriteria judgementSearchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = judgementQueryBuilder.getFSMSearchQuery(judgementSearchCriteria, preparedStmtList);
-        List<judgement> judgements = jdbcTemplate.query(query, preparedStmtList.toArray(), judgementRowMapper);
+        List<Judgement> judgements = jdbcTemplate.query(query, preparedStmtList.toArray(), judgementRowMapper);
         JudgementResponse judgementResponse = JudgementResponse.builder().judgementList(judgements).totalCount(judgementRowMapper.getFull_count())
                 .build();
         return judgementResponse;
     }
 
-    public JudgementRequest getMappedData(JudgementRequest request, judgement oldJudgement) {
+    public JudgementRequest getMappedData(JudgementRequest request, Judgement oldJudgement) {
         final String tenantId = getTenantIdFromJudgement(request.getJudgement().getId());
         JudgementRequest updatedJudgementRequest = new JudgementRequest();
         updatedJudgementRequest.setRequestInfo(request.getRequestInfo());

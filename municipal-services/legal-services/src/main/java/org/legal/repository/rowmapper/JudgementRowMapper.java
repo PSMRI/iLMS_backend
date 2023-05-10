@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
 import org.legal.web.model.AuditDetails;
 import org.legal.web.model.enums.Status;
-import org.legal.web.model.judgement;
+import org.legal.web.model.Judgement;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class JudgementRowMapper implements ResultSetExtractor<List<judgement>> {
+public class JudgementRowMapper implements ResultSetExtractor<List<Judgement>> {
     @Autowired
     private ObjectMapper mapper;
 
@@ -35,12 +35,12 @@ public class JudgementRowMapper implements ResultSetExtractor<List<judgement>> {
         this.full_count = full_count;
     }
 
-    public List<judgement> extractData(ResultSet rs) throws SQLException, DataAccessException {
+    public List<Judgement> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-        Map<String, judgement> judgementMap = new LinkedHashMap<String, judgement>();
+        Map<String, Judgement> judgementMap = new LinkedHashMap<String, Judgement>();
         this.setFull_count(0);
         while (rs.next()) {
-            judgement currentjudgement = null;
+            Judgement currentjudgement = null;
             String id = rs.getString("id");
             String tenantId = rs.getString("tenant_id");
             String orderType = rs.getString("order_type");
@@ -60,11 +60,11 @@ public class JudgementRowMapper implements ResultSetExtractor<List<judgement>> {
                     .lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
             this.setFull_count(rs.getInt("full_count"));
             if (currentjudgement == null) {
-                currentjudgement = judgement.builder().id(id).orderType(orderType).orderDate(orderDate).decisionStatus(decisionStatus).tenantId(tenantId)
-                        .complianceDate(complianceDate).revisedComplianceDate(revisedComplianceDate)
-                        .orderNoOverride(orderNoOverride).caseId(cadeId).revisedComplainceReason(revisedComplainceReason)
-                        .complianceStatus(complianceStatus).remarks(remarks).additionalDetails(additionalDetails)
-                        .status(Status.valueOf(status)).auditDetails(auditDetails).build();
+                currentjudgement = Judgement.builder().id(id).orderType(orderType).orderDate(orderDate).decisionStatus(decisionStatus).tenantId(tenantId)
+                                            .complianceDate(complianceDate).revisedComplianceDate(revisedComplianceDate)
+                                            .orderNoOverride(orderNoOverride).caseId(cadeId).revisedComplainceReason(revisedComplainceReason)
+                                            .complianceStatus(complianceStatus).remarks(remarks).additionalDetails(additionalDetails)
+                                            .status(Status.valueOf(status)).auditDetails(auditDetails).build();
             }
             judgementMap.put(id, currentjudgement);
         }

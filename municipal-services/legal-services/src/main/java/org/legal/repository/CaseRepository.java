@@ -3,6 +3,7 @@ package org.legal.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.legal.repository.querybuilder.CaseQueryBuilder;
 import org.legal.repository.querybuilder.CountQueryBuilder;
+import org.legal.repository.rowmapper.ActRowMapper;
 import org.legal.repository.rowmapper.AdvocateMapper;
 import org.legal.repository.rowmapper.CaseRowMapper;
 import org.legal.repository.rowmapper.DocumentMapper;
@@ -41,6 +42,9 @@ public class CaseRepository {
     @Autowired
     private AdvocateMapper advocateMapper;
 
+    @Autowired
+    private ActRowMapper actRowMapper;
+
     public CaseResponse getLegalCaseData(CaseSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         List<String> ids = getUUID(criteria);
@@ -63,6 +67,7 @@ public class CaseRepository {
                 party1.add(party);
                 singleCase.setParties(party1);
             }
+           singleCase.setAct(getAct(singleCase.getId()));
         }
         CaseResponse caseResponse = CaseResponse.builder().caseList(caseList).totalCount(caseRowMapper.getFullCount()).build();
         return caseResponse;
@@ -74,6 +79,13 @@ public class CaseRepository {
         preparedStmtList.add(caseId);
         List<Party> parties = jdbcTemplate.query(caseQueryBuilder.getPartyQuery(), preparedStmtList.toArray(), partyRowMapper);
         return parties;
+    }
+
+    public List<Act> getAct(String caseId) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(caseId);
+        List<Act> acts = jdbcTemplate.query(caseQueryBuilder.getActQuery(), preparedStmtList.toArray(), actRowMapper);
+        return acts;
     }
 
     public Integer getCaseCount(CaseSearchCriteria criteria) {

@@ -28,4 +28,11 @@ public class CaseResponse {
     @JsonProperty("caseList")
     private List<Case> caseList = null;
 
+    @JsonProperty("hearingList")
+    private List<Hearing> hearingList = null;
+
+    @JsonProperty("judgementList")
+    private List<Judgement> judgementList = null;
+
+
 }

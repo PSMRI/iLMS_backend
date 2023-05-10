@@ -6,7 +6,7 @@ import org.legal.util.ResponseInfoFactory;
 import org.legal.web.model.JudgementRequest;
 import org.legal.web.model.JudgementResponse;
 import org.legal.web.model.JudgementSearchCriteria;
-import org.legal.web.model.judgement;
+import org.legal.web.model.Judgement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +29,8 @@ public class JudgementController {
 
     @PostMapping(value = "/_create")
     public ResponseEntity<JudgementResponse> create(@Valid @RequestBody JudgementRequest judgementRequest) {
-        judgement judgement = judgementService.create(judgementRequest);
-        List<judgement> judgements = new ArrayList<judgement>();
+        Judgement judgement = judgementService.create(judgementRequest);
+        List<Judgement> judgements = new ArrayList<Judgement>();
         judgements.add(judgement);
         JudgementResponse response = JudgementResponse.builder().judgementList(judgements).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true)).build();
@@ -47,7 +47,7 @@ public class JudgementController {
 
     @PostMapping(value = "/_update")
     public ResponseEntity<JudgementResponse> update(@Valid @RequestBody JudgementRequest judgementRequest) {
-        judgement judgement = judgementService.updateJudgement(judgementRequest);
+        Judgement judgement = judgementService.updateJudgement(judgementRequest);
         ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true);
         JudgementResponse response = JudgementResponse.builder().judgementList(Collections.singletonList(judgement)).responseInfo(resInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);

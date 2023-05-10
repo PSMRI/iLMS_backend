@@ -34,7 +34,7 @@ public class JudgementEnrichmentService {
 
     public void enrichJudgementCreateRequest(JudgementRequest judgementRequest) {
         RequestInfo requestInfo = judgementRequest.getRequestInfo();
-        judgement judgement = judgementRequest.getJudgement();
+        Judgement judgement = judgementRequest.getJudgement();
         setIdgenIds(judgementRequest);
         AuditDetails auditDetails = caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), true);
         judgementRequest.getJudgement().setAuditDetails(auditDetails);
@@ -43,7 +43,7 @@ public class JudgementEnrichmentService {
 
     public void enrichJugmentUpdateRequest(JudgementRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        judgement judgement = request.getJudgement();
+        Judgement judgement = request.getJudgement();
         AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
         request.getJudgement().setAuditDetails(auditDetails);
         judgement.setAuditDetails(auditDetails);
@@ -54,7 +54,7 @@ public class JudgementEnrichmentService {
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(request.getJudgement().getCaseId())).build();
         CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
         String tenantId = caseResponse.getCaseList().get(0).getTenantId();
-        judgement judgement = request.getJudgement();
+        Judgement judgement = request.getJudgement();
         List<String> caseId = getIdList(requestInfo, tenantId, config.getJudgementIdgenName(), config.getJudgementIdgenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();
         Map<String, String> errorMap = new HashMap<>();

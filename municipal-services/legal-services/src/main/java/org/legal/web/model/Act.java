@@ -1,5 +1,6 @@
 package org.legal.web.model;
 
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +26,7 @@ public class Act {
     private String actName;
 
     @JsonProperty("sectionNumber")
-    private String sectionNumber;
+    private List<String> sectionNumber;
 
     @JsonProperty("status")
     private Status status;

@@ -53,9 +53,12 @@ public class CaseEnrichmentService {
                 doc.setStatus(Status.ACTIVE);
             });
         }
-        if (caseRequest.getCaseObj().getAct() != null) {
-            caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
-            aCase.getAct().setAuditDetails(auditDetails);
+//        if (caseRequest.getCaseObj().getAct() != null) {
+//            caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
+//            aCase.getAct().setAuditDetails(auditDetails);
+//        }
+        for (Act act:aCase.getAct()){
+            act.setAuditDetails(auditDetails);
         }
     }
 
@@ -81,8 +84,8 @@ public class CaseEnrichmentService {
         Case caseObj = request.getCaseObj();
         List<String> caseId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCaseIdgenName(), ilmsConfiguration.getCaseIdgenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();
-        List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
-        ListIterator<String> actItr = actId.listIterator();
+//        List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
+//        ListIterator<String> actItr = actId.listIterator();
         List<String> courtId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCourtIdgenName(),
                 ilmsConfiguration.getCourtIdgenFormat(), 1);
         ListIterator<String> courtItr = courtId.listIterator();
@@ -95,13 +98,18 @@ public class CaseEnrichmentService {
         if (Objects.nonNull(caseObj.getCourt())) {
             caseObj.getCourt().setId(courtItr.next());
         }
-        if (Objects.nonNull(caseObj.getAct())) {
-            caseObj.getAct().setId(actItr.next());
-        } else {
-            Act act = new Act();
+//        if (Objects.nonNull(caseObj.getAct())) {
+//            caseObj.getAct().setId(actItr.next());
+//        } else {
+//            Act act = new Act();
+//            act.setId(actItr.next());
+//            act.setStatus(Status.DRAFTED);
+//            caseObj.setAct(act);
+//        }
+        for (Act act:caseObj.getAct()){
+            List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
+            ListIterator<String> actItr = actId.listIterator();
             act.setId(actItr.next());
-            act.setStatus(Status.DRAFTED);
-            caseObj.setAct(act);
         }
         for (Party party : caseObj.getParties()) {
             if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
@@ -164,9 +172,12 @@ public class CaseEnrichmentService {
             party.setAuditDetails(auditDetails);
             party.getAdvocate().setAuditDetails(auditDetails);
         }
-        if (caseRequest.getCaseObj().getAct() != null) {
-            caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
-            aCase.getAct().setAuditDetails(auditDetails);
+//        if (caseRequest.getCaseObj().getAct() != null) {
+//            caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
+//            aCase.getAct().setAuditDetails(auditDetails);
+//        }
+        for (Act act:aCase.getAct()){
+            act.setAuditDetails(auditDetails);
         }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
             aCase.getDocuments().forEach(doc -> {
