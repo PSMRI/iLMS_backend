@@ -96,7 +96,7 @@ public class CaseValidator {
 
         List<String> masterNames = new ArrayList<>(
                 Arrays.asList(LEGALConstants.MDMS_ILMS_CASE_TYPE, LEGALConstants.MDMS_ILMS_CASE_STATUS, LEGALConstants.MDMS_ILMS_CASE_CATEGORY,
-                        LEGALConstants.MDMS_ILMS_CASE_STAGE, LEGALConstants.MDMS_ILMS_SUB_STAGE, LEGALConstants.MDMS_ILMS_GENDER_TYPE,
+                        LEGALConstants.MDMS_ILMS_GENDER_TYPE,
                         LEGALConstants.MDMS_ILMS_PETITIONER_TYPE, LEGALConstants.MDMS_ILMS_DEPARTMENT_NAME, LEGALConstants.MDMS_ILMS_DOCUMENT_CATEGORY,
                         LEGALConstants.MDMS_ILMS_DEPARTMENT_IOC, LEGALConstants.CASE_FLAG, LEGALConstants.MDMS_ILMS_COURT_NAME));
 

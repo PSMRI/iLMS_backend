@@ -59,9 +59,9 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getLinkedCases())) {
             oldData.setLinkedCases(caseRequest.getCaseObj().getLinkedCases());
         }
-//        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFirstHearingDate())) {
-//            oldData.setFirstHearingDate(caseRequest.getCaseObj().getFirstHearingDate());
-//        }
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFirstHearingDate())) {
+            oldData.setFirstHearingDate(caseRequest.getCaseObj().getFirstHearingDate());
+        }
 
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getType())) {
             oldData.setType(caseRequest.getCaseObj().getType());
@@ -91,9 +91,9 @@ public class CaseUtils {
 //        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getApplicationNumber())) {
 //            oldData.setApplicationNumber(caseRequest.getCaseObj().getApplicationNumber());
 //        }
-//        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseStatus())) {
-//            oldData.setCaseStatus(caseRequest.getCaseObj().getCaseStatus());
-//        }
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseStatus())) {
+            oldData.setCaseStatus(caseRequest.getCaseObj().getCaseStatus());
+        }
 //        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getStage())) {
 //            oldData.setStage(caseRequest.getCaseObj().getStage());
 //        }
@@ -313,7 +313,7 @@ public class CaseUtils {
             }
         }
         //setting act details
-        if (!Objects.nonNull(caseRequest.getCaseObj().getAct())) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
             for (Act act: caseRequest.getCaseObj().getAct()) {
                 for (Act oldAct : oldData.getAct()) {
                     if (!StringUtils.isEmpty(act.getCaseId())) {

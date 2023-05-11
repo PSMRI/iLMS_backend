@@ -81,8 +81,8 @@ public class Case {
     @JsonProperty("remarks")
     private String remarks;
 
-//    @JsonProperty("firstHearingDate")
-//    private Long firstHearingDate;
+    @JsonProperty("firstHearingDate")
+    private Long firstHearingDate;
 
     @JsonProperty("additionalDetails")
     private JsonNode additionalDetails;

@@ -12,7 +12,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: case
       queryMaps:
-        - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, case_sub_stage, priority, recommend_oic, remarks, first_hearing_date, additional_details, status, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, registrtion_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, priority, recommend_oic, remarks, first_hearing_date, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
@@ -47,10 +47,6 @@ serviceMaps:
 
             - jsonPath: $.case.caseStatus
 
-            - jsonPath: $.case.stage
-
-            - jsonPath: $.case.subStage
-
             - jsonPath: $.case.priority
 
             - jsonPath: $.case.recommendOic
@@ -68,7 +64,6 @@ serviceMaps:
             - jsonPath: $.case.auditDetails.createdBy
 
             - jsonPath: $.case.auditDetails.createdTime
-
         - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
           basePath: case.parties.*.advocate
           jsonMaps:
@@ -117,24 +112,24 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.auditDetails.createdTime
 
-
-
         - query: INSERT INTO eg_lg_act(id, case_id, name, section_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
-          basePath: case.act
+          basePath: case.act.*
           jsonMaps:
-            - jsonPath: $.case.act.id
+            - jsonPath: $.case.act.*.id
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.act.actName
+            - jsonPath: $.case.act.*.actName
 
-            - jsonPath: $.case.act.sectionNumber
+            - jsonPath: $.case.act.*.sectionNumber
+              type: ARRAY
+              dbType: STRING
 
-            - jsonPath: $.case.act.status
+            - jsonPath: $.case.act.*.status
 
-            - jsonPath: $.case.act.auditDetails.createdBy
+            - jsonPath: $.case.act.*.auditDetails.createdBy
 
-            - jsonPath: $.case.act.auditDetails.createdTime
+            - jsonPath: $.case.act.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_court(id, case_id, court_name, district, state, division, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.court
@@ -153,9 +148,9 @@ serviceMaps:
 
             - jsonPath: $.case.court.status
 
-            - jsonPath: $.case.act.auditDetails.createdBy
+            - jsonPath: $.case.court.auditDetails.createdBy
 
-            - jsonPath: $.case.act.auditDetails.createdTime
+            - jsonPath: $.case.court.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_document(id, case_id, document_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.documents.*
@@ -344,7 +339,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: case
       queryMaps:
-        - query: UPDATE eg_lg_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, linked_cases=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, case_sub_stage=?, priority=?, recommend_oic=?, remarks=?, first_hearing_date=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, linked_cases=?, case_type=?, case_category=?, filing_number=?, filing_date=?, registrtion_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, priority=?, recommend_oic=?, remarks=?, first_hearing_date=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
           jsonMaps:
 
@@ -377,10 +372,6 @@ serviceMaps:
             - jsonPath: $.case.policyOrNonPolicyMatter
 
             - jsonPath: $.case.caseStatus
-
-            - jsonPath: $.case.stage
-
-            - jsonPath: $.case.subStage
 
             - jsonPath: $.case.priority
 
@@ -476,22 +467,24 @@ serviceMaps:
 
 
         - query: UPDATE eg_lg_act SET case_id=?, name=?, section_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
-          basePath: case.act
+          basePath: case.act.*
           jsonMaps:
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.act.actName
+            - jsonPath: $.case.act.*.actName
 
-            - jsonPath: $.case.act.sectionNumber
+            - jsonPath: $.case.act.*.sectionNumber
+              type: ARRAY
+              dbType: STRING
 
-            - jsonPath: $.case.act.status
+            - jsonPath: $.case.act.*.status
 
-            - jsonPath: $.case.act.auditDetails.lastModifiedBy
+            - jsonPath: $.case.act.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.case.act.auditDetails.lastModifiedTime
+            - jsonPath: $.case.act.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.case.act.id
+            - jsonPath: $.case.act.*.id
 
         - query: UPDATE eg_lg_document SET case_id=?, document_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
           basePath: case.documents.*

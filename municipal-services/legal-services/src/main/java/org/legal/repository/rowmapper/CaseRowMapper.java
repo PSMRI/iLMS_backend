@@ -65,8 +65,8 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String matter = rs.getString("ilms_matter");
                 this.setFullCount((rs.getInt("full_count")));
                 String caseStatus = rs.getString("ilms_caseStatus");
-                String caseStage = rs.getString("ilms_caseStage");
-                String caseSubStage = rs.getString("ilms_caseSubStage");
+//                String caseStage = rs.getString("ilms_caseStage");
+//                String caseSubStage = rs.getString("ilms_caseSubStage");
                 String priority = rs.getString("ilms_priority");
                 String recommendOic = rs.getString("ilms_recommendOic");
                 String remarks = rs.getString("ilms_remarks");
@@ -84,6 +84,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                             .type(caseType).category(caseCategory)
                             .parentCaseId(parentCaseId).number(caseNumber).filingNumber(filingNumber)
                             .remarks(remarks).filingDate(filingDate).registrationDate(registrationDate)
+                            .firstHearingDate(firstHearingDate)
                             .summary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
                             .policyOrNonPolicyMatter(matter).priority(priority)
                             .caseStatus(caseStatus)
