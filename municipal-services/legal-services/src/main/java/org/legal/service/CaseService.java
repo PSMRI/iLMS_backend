@@ -206,7 +206,7 @@ public class CaseService {
                 parties.setStatus(Status.ACTIVE);
                 parties.setAdvocateId("");
                 if (Objects.nonNull(parties.getAdvocate())) {
-                   List<Advocate> advocates=caseRepository.getAdvocateId(parties.getAdvocate().getId());
+                   List<Advocate> advocates=caseRepository.getAdvocateById(parties.getAdvocate().getId());
                     for (Advocate advocate: advocates){
                         if(parties.getAdvocate().getId().equals(advocate.getId())){
                             parties.setAdvocateId(parties.getAdvocate().getId());
@@ -217,7 +217,7 @@ public class CaseService {
             } else if (parties.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
-                    List<Advocate> advocates=caseRepository.getAdvocateId(parties.getAdvocate().getId());
+                    List<Advocate> advocates=caseRepository.getAdvocateById(parties.getAdvocate().getId());
                     for (Advocate advocate: advocates){
                         if(parties.getAdvocate().getId().equals(advocate.getId())){
                             parties.setAdvocateId(parties.getAdvocate().getId());

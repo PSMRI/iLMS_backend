@@ -24,8 +24,8 @@ public class LegalErrorConstants {
     public static final String NO_SEARCH_PARAMETERS = "NO_SEARCH_PARAMETERS";
 
     public static final String HEARING_NOT_AVAILABLE = "HEARING_NOT_AVAILABLE";
-
     public static final String CASE_NOT_AVAILABLE = "CASE_NOT_AVAILABLE";
+    public static final String ADVOCATE_NOT_AVAILABLE = "ADVOCATE_NOT_AVAILABLE";
 
     public static final String JUDGEMENT_NOT_AVAILABLE = "JUDGEMENT_NOT_AVAILABLE";
 

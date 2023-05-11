@@ -742,3 +742,59 @@ serviceMaps:
             - jsonPath: $.document.*.auditDetails.lastModifiedTime
 
             - jsonPath: $.document.*.id
+
+    - version: 1.0
+      description: Add advocate in eg_lg_advocate
+      fromTopic: save-legal-advocate-application
+      isTransaction: true
+      isAuditEnabled: true
+      module: legal-services
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: advocate
+      queryMaps:
+        - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
+          basePath: advocate
+          jsonMaps:
+            - jsonPath: $.advocate.id
+
+            - jsonPath: $.advocate.firstName
+
+            - jsonPath: $.advocate.lastName
+
+            - jsonPath: $.advocate.contactNumber
+
+            - jsonPath: $.advocate.status
+
+            - jsonPath: $.advocate.auditDetails.createdBy
+
+            - jsonPath: $.advocate.auditDetails.createdTime
+
+    - version: 1.0
+      description: Update advocate in eg_lg_advocate
+      fromTopic: update-legal-advocate-application
+      isTransaction: true
+      isAuditEnabled: true
+      module: legal-services
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: advocate
+      queryMaps:
+        - query: UPDATE eg_lg_advocate SET first_name=?, last_name=?, contact_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
+          basePath: advocate
+          jsonMaps:
+            - jsonPath: $.advocate.firstName
+
+            - jsonPath: $.advocate.lastName
+
+            - jsonPath: $.advocate.contactNumber
+
+            - jsonPath: $.advocate.status
+
+            - jsonPath: $.advocate.auditDetails.lastModifiedBy
+
+            - jsonPath: $.advocate.auditDetails.lastModifiedTime
+
+            - jsonPath: $.advocate.id

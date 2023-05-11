@@ -137,6 +137,12 @@ public class LEGALConfiguration {
     @Value("${persister.update.legal.case.topic}")
     private String updateCaseTopic;
 
+    @Value("${persister.save.legal.advocate.topic}")
+    private String createAdvocateTopic;
+
+    @Value("${persister.update.legal.advocate.topic}")
+    private String updateAdvocateTopic;
+
     @Value("${persister.update-child-case.topic}")
     private String updateChildCaseTopic;
 
