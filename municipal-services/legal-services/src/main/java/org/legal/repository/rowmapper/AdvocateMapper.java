@@ -15,6 +15,16 @@ import java.util.List;
 
 @Repository
 public class AdvocateMapper implements ResultSetExtractor<List<Advocate>> {
+
+    private int fullCount = 0;
+
+    public int getFullCount() {
+        return fullCount;
+    }
+
+    public void setFullCount(int full_count) {
+        this.fullCount = full_count;
+    }
     @Override
     public List<Advocate> extractData(ResultSet rs) throws SQLException, DataAccessException {
         List<Advocate> advocates = new ArrayList<Advocate>();

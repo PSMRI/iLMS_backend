@@ -28,4 +28,8 @@ public class Advocate {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+
+    @JsonProperty("tenantId")
+    private String tenantId;
+
 }
