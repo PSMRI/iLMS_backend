@@ -180,8 +180,10 @@ public class CaseEnrichmentService {
 //            caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
 //            aCase.getAct().setAuditDetails(auditDetails);
 //        }
-        for (Act act:aCase.getAct()){
-            act.setAuditDetails(auditDetails);
+        if (Objects.nonNull(aCase.getAct())) {
+            for (Act act : aCase.getAct()) {
+                act.setAuditDetails(auditDetails);
+            }
         }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
             aCase.getDocuments().forEach(doc -> {
