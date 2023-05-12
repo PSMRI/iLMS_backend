@@ -57,8 +57,6 @@ public class Case {
     @JsonProperty("arisingDetails")
     private String arisingDetails;
 
-//    @JsonProperty("applicationNo")
-//    private String applicationNumber;
 
     @JsonProperty("policyOrNonPolicyMatter")
     private String policyOrNonPolicyMatter;
@@ -66,11 +64,6 @@ public class Case {
     @JsonProperty("caseStatus")
     private String caseStatus;
 
-//    @JsonProperty("stage")
-//    private String stage;
-//
-//    @JsonProperty("subStage")
-//    private String subStage;
 
     @JsonProperty("priority")
     private String priority;
@@ -103,8 +96,6 @@ public class Case {
     @JsonProperty("documents")
     private List<Document> documents;
 
-//    @JsonProperty("transactionCode")
-//    private String transactionCode;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
