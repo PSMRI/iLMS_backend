@@ -57,8 +57,10 @@ public class CaseEnrichmentService {
 //            caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);
 //            aCase.getAct().setAuditDetails(auditDetails);
 //        }
-        for (Act act:aCase.getAct()){
-            act.setAuditDetails(auditDetails);
+        if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
+            for (Act act : aCase.getAct()) {
+                act.setAuditDetails(auditDetails);
+            }
         }
     }
 
@@ -106,10 +108,12 @@ public class CaseEnrichmentService {
 //            act.setStatus(Status.DRAFTED);
 //            caseObj.setAct(act);
 //        }
-        for (Act act:caseObj.getAct()){
+        if (Objects.nonNull(caseObj.getAct())) {
+        for (Act act:caseObj.getAct()) {
             List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
             ListIterator<String> actItr = actId.listIterator();
             act.setId(actItr.next());
+        }
         }
         for (Party party : caseObj.getParties()) {
             if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
