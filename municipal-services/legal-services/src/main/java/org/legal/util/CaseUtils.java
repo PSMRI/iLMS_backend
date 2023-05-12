@@ -315,21 +315,22 @@ public class CaseUtils {
         //setting act details
         if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
             List<Act> actList=caseRequest.getCaseObj().getAct();
+            List<Act> oldAct = oldData.getAct();
             for (Act act: actList) {
-                for (Act oldAct : oldData.getAct()) {
-                    if (oldAct.getId().equalsIgnoreCase(act.getId())) {
+                for (Act oldActData : oldAct) {
+                    if (oldActData.getId().equalsIgnoreCase(act.getId())) {
 
                         if (!StringUtils.isEmpty(act.getCaseId())) {
-                            oldAct.setCaseId(act.getCaseId());
+                            oldActData.setCaseId(act.getCaseId());
                         }
                         if (!StringUtils.isEmpty(act.getActName())) {
-                            oldAct.setActName(act.getActName());
+                            oldActData.setActName(act.getActName());
                         }
                         if (!StringUtils.isEmpty(act.getSectionNumber())) {
-                            oldAct.setSectionNumber(act.getSectionNumber());
+                            oldActData.setSectionNumber(act.getSectionNumber());
                         }
                         if (!StringUtils.isEmpty(act.getStatus())) {
-                            oldAct.setStatus(act.getStatus());
+                            oldActData.setStatus(act.getStatus());
                         }
                     }
                 }
