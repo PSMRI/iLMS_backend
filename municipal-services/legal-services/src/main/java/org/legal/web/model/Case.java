@@ -48,15 +48,14 @@ public class Case {
     @JsonProperty("filingDate")
     private Long filingDate;
 
-    @JsonProperty("registrationDate")
-    private Long registrationDate;
-
     @JsonProperty("summary")
     private String summary;
 
     @JsonProperty("arisingDetails")
     private String arisingDetails;
 
+    @JsonProperty("stage")
+    private String stage;
 
     @JsonProperty("policyOrNonPolicyMatter")
     private String policyOrNonPolicyMatter;

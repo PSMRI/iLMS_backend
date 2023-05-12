@@ -59,13 +59,13 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String caseNumber = rs.getString("ilms_caseNumber");
                 String filingNumber = rs.getString("ilms_filingNumber");
                 Long filingDate = rs.getLong("ilms_filingDate");
-                Long registrationDate = rs.getLong("ilms_registrationDate");
+               // Long registrationDate = rs.getLong("ilms_registrationDate");
                 String caseSummary = rs.getString("ilms_caseSummary");
                 String arisingDetails = rs.getString("ilms_arisingDetails");
                 String matter = rs.getString("ilms_matter");
                 this.setFullCount((rs.getInt("full_count")));
                 String caseStatus = rs.getString("ilms_caseStatus");
-//                String caseStage = rs.getString("ilms_caseStage");
+               String caseStage = rs.getString("ilms_caseStage");
 //                String caseSubStage = rs.getString("ilms_caseSubStage");
                 String priority = rs.getString("ilms_priority");
                 String recommendOic = rs.getString("ilms_recommendOic");
@@ -83,11 +83,11 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                     currentCase = Case.builder().id(id).cnrNumber(cnrNumber).tenantId(tenantId).additionalDetails(additionalDetails)
                             .type(caseType).category(caseCategory)
                             .parentCaseId(parentCaseId).number(caseNumber).filingNumber(filingNumber)
-                            .remarks(remarks).filingDate(filingDate).registrationDate(registrationDate)
+                            .remarks(remarks).filingDate(filingDate)
                             .firstHearingDate(firstHearingDate)
                             .summary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
                             .policyOrNonPolicyMatter(matter).priority(priority)
-                            .caseStatus(caseStatus)
+                            .caseStatus(caseStatus).stage(caseStage)
                             .recommendOIC(recommendOic).auditDetails(auditDetails).linkedCases(linkedCases).build();
 
                     ilmsCaseMap.put(id, currentCase);
