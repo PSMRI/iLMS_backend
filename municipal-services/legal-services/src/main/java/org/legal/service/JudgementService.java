@@ -11,12 +11,14 @@ import org.legal.validator.JudgementValidator;
 import org.legal.web.model.*;
 import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.Status;
+import org.legal.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class JudgementService {
@@ -85,13 +87,25 @@ public class JudgementService {
                 Judgement oldJudgement = judgements.get(0);
                 JudgementRequest finalRequest = judgementRepository.getMappedData(judgementRequest, oldJudgement);
                 judgementValidator.updateValidator(finalRequest.getJudgement(), judgementRequest);
-                producer.push(ilmsConfiguration.getUpdateJudgementTopic(), finalRequest);
-            } else {
+                if (Objects.nonNull(judgementRequest.getJudgement().getWorkflow())) {
+                    processUpdateForJudgement(judgementRequest, finalRequest.getJudgement());
+                }
+                    producer.push(ilmsConfiguration.getUpdateJudgementTopic(), finalRequest);
+            }else {
                 throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
             }
         } else {
             throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
         }
         return judgementRequest.getJudgement();
+    }
+
+    private void processUpdateForJudgement(JudgementRequest request, Judgement judgement) {
+        if (ilmsConfiguration.getIsWorkflowEnabled()) {
+            State state = workflowService.updateWorkflowForJudgement(request, CreationReason.UPDATE);
+            if (state.getIsStartState() && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !judgement.getStatus()
+                                                                                                                            .equals(Status.ACTIVE)) {
+            }
+        }
     }
 }
