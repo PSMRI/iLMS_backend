@@ -100,14 +100,6 @@ public class CaseEnrichmentService {
         if (Objects.nonNull(caseObj.getCourt())) {
             caseObj.getCourt().setId(courtItr.next());
         }
-//        if (Objects.nonNull(caseObj.getAct())) {
-//            caseObj.getAct().setId(actItr.next());
-//        } else {
-//            Act act = new Act();
-//            act.setId(actItr.next());
-//            act.setStatus(Status.DRAFTED);
-//            caseObj.setAct(act);
-//        }
         if (Objects.nonNull(caseObj.getAct())) {
         for (Act act:caseObj.getAct()) {
             List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
