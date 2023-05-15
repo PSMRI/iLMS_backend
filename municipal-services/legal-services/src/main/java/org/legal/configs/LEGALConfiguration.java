@@ -46,8 +46,14 @@ public class LEGALConfiguration {
     @Value("${is.workflow.enabled}")
     private Boolean isWorkflowEnabled;
 
-    @Value("${legal.create.workflow.name}")
-    private String createPTWfName;
+    @Value("${legal.create.case.workflow.name}")
+    private String createCaseWfName;
+
+    @Value("${legal.create.hearing.workflow.name}")
+    private String createHearingWfName;
+
+    @Value("${legal.create.judgement.workflow.name}")
+    private String createJudgementWfName;
 
     @Value("${legal.legacy.entry.workflow.name}")
     private String legacyIlmsWfName;

@@ -49,7 +49,7 @@ public class JudgementUtils {
 
         switch (creationReasonForWorkflow) {
             case CREATE:
-                wf.setBusinessService(configuration.getCreatePTWfName());
+                wf.setBusinessService(configuration.getCreateJudgementWfName());
                 wf.setModuleName(configuration.getPropertyModuleName());
 
                 wf.setAction("CREATE_JUDGEMENT");

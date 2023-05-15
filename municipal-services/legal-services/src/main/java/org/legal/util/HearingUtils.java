@@ -261,7 +261,7 @@ public class HearingUtils {
 
         switch (creationReasonForWorkflow) {
             case CREATE:
-                wf.setBusinessService(configuration.getCreatePTWfName());
+                wf.setBusinessService(configuration.getCreateHearingWfName());
                 wf.setModuleName(configuration.getPropertyModuleName());
 
                 wf.setAction("CREATE_HEARING");

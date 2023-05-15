@@ -380,7 +380,7 @@ public class CaseUtils {
 
         switch (creationReasonForWorkflow) {
             case CREATE:
-                wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());
+                wf.setBusinessService(ilmsConfiguration.getCreateCaseWfName());
                 wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
 
                 wf.setAction("CREATE_CASE");
