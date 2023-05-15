@@ -2,7 +2,9 @@ package org.legal.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.legal.web.model.enums.Status;
+import org.legal.web.model.workflow.ProcessInstance;
 
 @Builder
 @AllArgsConstructor
@@ -50,6 +52,10 @@ public class Judgement {
 
     @JsonProperty("status")
     private Status status;
+
+    @JsonProperty("workflow")
+    @DiffIgnore
+    private ProcessInstance workflow;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails;

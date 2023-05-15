@@ -18,8 +18,8 @@ public class Document {
     @JsonProperty("id")
     private String id;
 
-//    @JsonProperty("caseId")
-//    private String caseId;
+    @JsonProperty("caseId")
+    private String caseId;
 
     @JsonProperty("documentType")
     private String documentType;

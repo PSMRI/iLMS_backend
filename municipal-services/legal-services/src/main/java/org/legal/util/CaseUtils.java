@@ -76,9 +76,9 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFilingDate())) {
             oldData.setFilingDate(caseRequest.getCaseObj().getFilingDate());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRegistrationDate())) {
-            oldData.setRegistrationDate(caseRequest.getCaseObj().getRegistrationDate());
-        }
+//        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRegistrationDate())) {
+//            oldData.setRegistrationDate(caseRequest.getCaseObj().getRegistrationDate());
+//        }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getSummary())) {
             oldData.setSummary(caseRequest.getCaseObj().getSummary());
         }
@@ -94,9 +94,9 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseStatus())) {
             oldData.setCaseStatus(caseRequest.getCaseObj().getCaseStatus());
         }
-//        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getStage())) {
-//            oldData.setStage(caseRequest.getCaseObj().getStage());
-//        }
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getStage())) {
+            oldData.setStage(caseRequest.getCaseObj().getStage());
+        }
 //        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getSubStage())) {
 //            oldData.setSubStage(caseRequest.getCaseObj().getSubStage());
 //        }
@@ -380,10 +380,10 @@ public class CaseUtils {
 
         switch (creationReasonForWorkflow) {
             case CREATE:
-                wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());
+                wf.setBusinessService(ilmsConfiguration.getCreateCaseWfName());
                 wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
 
-                wf.setAction("CREATE");
+                wf.setAction("CREATE_CASE");
                 wf.setTenantId(request.getCaseObj().getTenantId());
                 List<User> userList = new ArrayList<>();
                 User user = new User();
