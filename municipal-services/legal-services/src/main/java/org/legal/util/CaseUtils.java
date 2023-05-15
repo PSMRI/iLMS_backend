@@ -383,7 +383,7 @@ public class CaseUtils {
                 wf.setBusinessService(ilmsConfiguration.getCreatePTWfName());
                 wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
 
-                wf.setAction("CREATE");
+                wf.setAction("CREATE_CASE");
                 wf.setTenantId(request.getCaseObj().getTenantId());
                 List<User> userList = new ArrayList<>();
                 User user = new User();

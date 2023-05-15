@@ -9,6 +9,7 @@ import org.legal.repository.JudgementRepository;
 import org.legal.util.LegalErrorConstants;
 import org.legal.validator.JudgementValidator;
 import org.legal.web.model.*;
+import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,9 @@ public class JudgementService {
     @Autowired
     HearingRepository hearingRepository;
 
+    @Autowired
+    private WorkflowService workflowService;
+
     public Judgement create(JudgementRequest judgementRequest) {
         HearingResponse hearingResponse = null;
         HearingSearchCriteria criteria = HearingSearchCriteria.builder()
@@ -48,6 +52,9 @@ public class JudgementService {
             judgementRequest.getJudgement().setStatus(Status.ACTIVE);
             judgementValidator.createValidator(judgementRequest);
             judgementEnrichmentService.enrichJudgementCreateRequest(judgementRequest);
+            if (ilmsConfiguration.getIsWorkflowEnabled()) {
+                workflowService.updateWorkflowForJudgement(judgementRequest, CreationReason.CREATE);
+            }
             producer.push(ilmsConfiguration.getCreateJudgementTopic(), judgementRequest);
         } else {
             throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement");

@@ -10,6 +10,7 @@ import org.legal.util.HearingUtils;
 import org.legal.util.LegalErrorConstants;
 import org.legal.validator.HearingValidator;
 import org.legal.web.model.*;
+import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.PartyType;
 import org.legal.web.model.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class HearingService {
 
     @Autowired
     private CaseRepository caseRepository;
+
+    @Autowired
+    private WorkflowService workflowService;
 
     public Hearing create(HearingRequest hearingRequest) {
         String petitionerId = null;
@@ -90,6 +94,9 @@ public class HearingService {
                 hearingRequest.getHearing().setHearingNumber(hearingDetailsRepository.getMaxValueOfHearing(hearingRequest.getHearing().getCaseId()));
                 hearingDetailsValidator.createValidator(hearingRequest);
                 hearingEnrichmentService.enrichHearingCreateRequest(hearingRequest);
+                if (ilmsConfiguration.getIsWorkflowEnabled()) {
+                    workflowService.updateWorkflowForHearing(hearingRequest, CreationReason.CREATE);
+                }
                 producer.push(ilmsConfiguration.getCreateHearingTopic(), hearingRequest);
             } else {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "CaseNumber Invalid");

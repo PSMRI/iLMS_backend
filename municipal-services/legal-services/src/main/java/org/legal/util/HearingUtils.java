@@ -1,16 +1,28 @@
 package org.legal.util;
 
+import org.egov.common.contract.request.User;
+import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.HearingRepository;
 import org.legal.service.CaseEnrichmentService;
+import org.legal.web.model.Case;
+import org.legal.web.model.CaseRequest;
+import org.legal.web.model.CaseResponse;
+import org.legal.web.model.CaseSearchCriteria;
 import org.legal.web.model.Hearing;
 import org.legal.web.model.HearingRequest;
+import org.legal.web.model.HearingResponse;
+import org.legal.web.model.HearingSearchCriteria;
 import org.legal.web.model.Party;
+import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.PartyType;
+import org.legal.web.model.workflow.ProcessInstance;
+import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,6 +36,9 @@ public class HearingUtils {
 
     @Autowired
     private HearingRepository hearingRepository;
+
+    @Autowired
+    private LEGALConfiguration configuration;
 
     public HearingRequest prepareHearingDetailsModalForUpdate(HearingRequest hearingDetailsRequest, Hearing oldHearingRequest) {
         HearingRequest updatedRequest = new HearingRequest();
@@ -236,5 +251,42 @@ public class HearingUtils {
         updatedRequest.setHearing(oldHearingRequest);
         caseEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
         return updatedRequest;
+    }
+
+    public ProcessInstanceRequest getWfForHearingCreate(HearingRequest request, CreationReason creationReasonForWorkflow) {
+
+        Hearing hearing = request.getHearing();
+        ProcessInstance wf = null != hearing.getWorkflow() ? hearing.getWorkflow() : new ProcessInstance();
+        wf.setBusinessId(hearing.getId());
+
+        switch (creationReasonForWorkflow) {
+            case CREATE:
+                wf.setBusinessService(configuration.getCreatePTWfName());
+                wf.setModuleName(configuration.getPropertyModuleName());
+
+                wf.setAction("CREATE_HEARING");
+                wf.setTenantId(request.getHearing().getTenantId());
+                List<User> userList = new ArrayList<>();
+                User user = new User();
+                user.setUuid(request.getRequestInfo().getUserInfo().getUuid());
+                userList.add(user);
+                wf.setAssignes(userList);
+
+                break;
+
+            case UPDATE:
+                String hearingId = request.getHearing().getId();
+                HearingSearchCriteria criteria = HearingSearchCriteria.builder().id(hearingId).build();
+                HearingResponse hearingResponse = hearingRepository.getHearingDetails(criteria);
+                String tenantId = hearingResponse.getHearingList().get(0).getTenantId();
+                wf.setTenantId(tenantId);
+                wf.setAssignes(request.getHearing().getWorkflow().getAssignes());
+                break;
+
+            default:
+                break;
+        }
+        hearing.setWorkflow(wf);
+        return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
     }
 }

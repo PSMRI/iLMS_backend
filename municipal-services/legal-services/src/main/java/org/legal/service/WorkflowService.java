@@ -10,8 +10,14 @@ import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.ServiceRepository;
 import org.legal.util.CaseUtils;
 import org.legal.util.CommonUtils;
+import org.legal.util.HearingUtils;
+import org.legal.util.JudgementUtils;
 import org.legal.web.model.Case;
 import org.legal.web.model.CaseRequest;
+import org.legal.web.model.Hearing;
+import org.legal.web.model.HearingRequest;
+import org.legal.web.model.Judgement;
+import org.legal.web.model.JudgementRequest;
 import org.legal.web.model.RequestInfoWrapper;
 import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.workflow.*;
@@ -34,10 +40,16 @@ public class WorkflowService {
     private CommonUtils commonUtils;
 
     @Autowired
+    private HearingUtils hearingUtils;
+
+    @Autowired
     private ServiceRepository serviceRepository;
 
     @Autowired
     private CaseUtils caseUtils;
+
+    @Autowired
+    private JudgementUtils judgementUtils;
 
     /**
      * Method to integrate with workflow
@@ -242,5 +254,44 @@ public class WorkflowService {
         return url;
     }
 
+    // update workflow for hearing
+
+    public State updateWorkflowForHearing(HearingRequest request, CreationReason creationReasonForWorkflow) {
+
+        Hearing hearing = request.getHearing();
+
+        ProcessInstanceRequest workflowReq = hearingUtils.getWfForHearingCreate(request, creationReasonForWorkflow);
+        State state = callWorkFlow(workflowReq);
+
+        if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && hearing.getId() == null) {
+
+            String pId = commonUtils.getIdList(request.getRequestInfo(), hearing.getTenantId(), ilmsConfiguration.getHearingIdgenName(),
+                    ilmsConfiguration.getHearingIdgenFormat(), 1).get(0);
+            request.getHearing().setId(pId);
+        }
+
+        request.getHearing().getWorkflow().setState(state);
+        return state;
+    }
+
+    // update workflow for judgement
+
+    public State updateWorkflowForJudgement(JudgementRequest request, CreationReason creationReasonForWorkflow) {
+
+        Judgement judgement = request.getJudgement();
+
+        ProcessInstanceRequest workflowReq = judgementUtils.getWfForJudgementCreate(request, creationReasonForWorkflow);
+        State state = callWorkFlow(workflowReq);
+
+        if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && judgement.getId() == null) {
+
+            String pId = commonUtils.getIdList(request.getRequestInfo(), judgement.getTenantId(), ilmsConfiguration.getCaseIdgenName(),
+                    ilmsConfiguration.getCaseIdgenFormat(), 1).get(0);
+            request.getJudgement().setId(pId);
+        }
+
+        request.getJudgement().getWorkflow().setState(state);
+        return state;
+    }
 
 }
