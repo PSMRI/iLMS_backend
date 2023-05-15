@@ -62,13 +62,13 @@ public class CaseService {
         criteria.setUuid(requestInfo.getUserInfo().getUuid());
         List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
         caseResponse = caseRepository.getLegalCaseData(criteria);
-        if (!caseResponse.getCaseList().isEmpty()) {
-            caseResponse.getCaseList().forEach(caseObj -> {
-                caseList.add(caseObj);
-            });
-        } else {
-            throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
-        }
+//        if (!caseResponse.getCaseList().isEmpty()) {
+//            caseResponse.getCaseList().forEach(caseObj -> {
+//                caseList.add(caseObj);
+//            });
+//        } else {
+//            throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
+//        }
         CaseResponse finalResult = new CaseResponse();
         String userRole = requestInfo.getUserInfo().getRoles().get(0).getCode();
         Integer total = null;
