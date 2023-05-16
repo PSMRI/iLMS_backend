@@ -81,16 +81,12 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.advocate.*.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_case_party(id,  case_id, advocate_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_case_party(id,  case_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.parties.*
           jsonMaps:
             - jsonPath: $.case.parties.*.id
 
             - jsonPath: $.case.id
-
-            - jsonPath: $.case.parties.*.advocateId
-              type: ARRAY
-              dbType: STRING
 
             - jsonPath: $.case.parties.*.firstName
 
@@ -113,6 +109,23 @@ serviceMaps:
             - jsonPath: $.case.parties.*.auditDetails.createdBy
 
             - jsonPath: $.case.parties.*.auditDetails.createdTime
+
+        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
+          basePath: PartyAdv.*
+          jsonMaps:
+            - jsonPath: $.PartyAdv.*.id
+
+            - jsonPath: $.case.id
+
+            - jsonPath: $.case.parties.*.id
+
+            - jsonPath: $.PartyAdv.*.partyType
+
+            - jsonPath: $.case.parties.*.advocate.*.id
+
+            - jsonPath: $.PartyAdv.*.auditDetails.createdBy
+
+            - jsonPath: $.PartyAdv.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_act(id, case_id, name, section_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
           basePath: case.act.*
@@ -393,15 +406,11 @@ serviceMaps:
 
             - jsonPath: $.case.id
 
-        - query: UPDATE eg_lg_case_party SET case_id=?, advocate_id=?, first_name=?, last_name=?, gender=?, petitioner_type=?, address=?, department_name=?, contact_number=?, party_type=?, status=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_case_party SET case_id=?, first_name=?, last_name=?, gender=?, petitioner_type=?, address=?, department_name=?, contact_number=?, party_type=?, status=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case.parties.*
           jsonMaps:
 
             - jsonPath: $.case.id
-
-            - jsonPath: $.case.parties.*.advocateId
-              type: ARRAY
-              dbType: STRING
 
             - jsonPath: $.case.parties.*.firstName
 
