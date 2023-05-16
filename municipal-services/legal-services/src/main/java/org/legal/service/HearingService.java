@@ -72,18 +72,20 @@ public class HearingService {
                 hearingRequest.getHearing().setStatus(Status.ACTIVE);
                 for (Party party : hearingRequest.getHearing().getParties()) {
                     if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                        party.setStatus(Status.ACTIVE);
-//                        party.setPartyType(PartyType.PETITIONER.toString());
+                                                party.setStatus(Status.ACTIVE);
                         party.setCaseId(hearingRequest.getHearing().getCaseId());
                         if (Objects.nonNull(party.getAdvocate())) {
-                            party.getAdvocate().setStatus(Status.ACTIVE);
+                            for (Advocate advocate : party.getAdvocate()) {
+                                advocate.setStatus(Status.ACTIVE);
+                            }
                         }
                     } else if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                         party.setStatus(Status.ACTIVE);
-//                        party.setPartyType(PartyType.RESPONDENT.toString());
                         party.setCaseId(hearingRequest.getHearing().getCaseId());
                         if (Objects.nonNull(party.getAdvocate())) {
-                            party.getAdvocate().setStatus(Status.ACTIVE);
+                            for (Advocate advocate : party.getAdvocate()) {
+                                advocate.setStatus(Status.ACTIVE);
+                            }
 
                         }
                     }

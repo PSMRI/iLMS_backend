@@ -161,18 +161,26 @@ public class CaseUtils {
                             //Setting Data For Petitioner Advocate
                             if (!StringUtils.isEmpty(party.getAdvocate())) {
 
-                                if (!StringUtils.isEmpty(party.getAdvocate().getFirstName())) {
-                                    oldParty.getAdvocate().setFirstName(party.getAdvocate().getFirstName());
-                                }
-                                if (!StringUtils.isEmpty(party.getAdvocate().getLastName())) {
-                                    oldParty.getAdvocate().setLastName(party.getAdvocate().getLastName());
-                                }
-                                if (!StringUtils.isEmpty(party.getAdvocate().getContactNumber())) {
-                                    oldParty.getAdvocate().setContactNumber(party.getAdvocate().getContactNumber());
-                                }
+                                for (Advocate advocate : party.getAdvocate()) {
+                                    for (Advocate oldAdvocate : oldParty.getAdvocate()) {
+                                        if (!StringUtils.isEmpty(advocate.getFirstName())) {
+                                            oldAdvocate
+                                                    .setFirstName(advocate.getFirstName());
+                                        }
+                                        if (!StringUtils.isEmpty(advocate.getLastName())) {
+                                            oldAdvocate
+                                                    .setLastName(advocate.getLastName());
+                                        }
+                                        if (!StringUtils.isEmpty(advocate.getContactNumber())) {
+                                            oldAdvocate
+                                                    .setContactNumber(advocate.getContactNumber());
+                                        }
 
-                                if (!StringUtils.isEmpty(party.getAdvocate().getStatus())) {
-                                    oldParty.getAdvocate().setStatus(party.getAdvocate().getStatus());
+                                        if (!StringUtils.isEmpty(advocate.getStatus())) {
+                                            oldAdvocate
+                                                    .setStatus(advocate.getStatus());
+                                        }
+                                    }
                                 }
                             }
 
@@ -210,17 +218,26 @@ public class CaseUtils {
                             //Setting Data For Petitioner Advocate
                             if (!StringUtils.isEmpty(party.getAdvocate())) {
 
-                                if (!StringUtils.isEmpty(party.getAdvocate().getFirstName())) {
-                                    oldParty.getAdvocate().setFirstName(party.getAdvocate().getFirstName());
-                                }
-                                if (!StringUtils.isEmpty(party.getAdvocate().getLastName())) {
-                                    oldParty.getAdvocate().setLastName(party.getAdvocate().getLastName());
-                                }
-                                if (!StringUtils.isEmpty(party.getAdvocate().getContactNumber())) {
-                                    oldParty.getAdvocate().setContactNumber(party.getAdvocate().getContactNumber());
-                                }
-                                if (!StringUtils.isEmpty(party.getAdvocate().getStatus())) {
-                                    oldParty.getAdvocate().setStatus(party.getAdvocate().getStatus());
+                                for (Advocate advocate : party.getAdvocate()) {
+                                    for (Advocate oldAdvocate : oldParty.getAdvocate()) {
+                                        if (!StringUtils.isEmpty(advocate.getFirstName())) {
+                                            oldAdvocate
+                                                    .setFirstName(advocate.getFirstName());
+                                        }
+                                        if (!StringUtils.isEmpty(advocate.getLastName())) {
+                                            oldAdvocate
+                                                    .setLastName(advocate.getLastName());
+                                        }
+                                        if (!StringUtils.isEmpty(advocate.getContactNumber())) {
+                                            oldAdvocate
+                                                    .setContactNumber(advocate.getContactNumber());
+                                        }
+
+                                        if (!StringUtils.isEmpty(advocate.getStatus())) {
+                                            oldAdvocate
+                                                    .setStatus(advocate.getStatus());
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -294,18 +311,26 @@ public class CaseUtils {
                         //Setting Data For Respondent Advocate
                         if (!StringUtils.isEmpty(party.getAdvocate())) {
 
-                            if (!StringUtils.isEmpty(party.getAdvocate().getFirstName())) {
-                                oldParty.getAdvocate().setFirstName(party.getAdvocate().getFirstName());
-                            }
-                            if (!StringUtils.isEmpty(party.getAdvocate().getLastName())) {
-                                oldParty.getAdvocate().setLastName(party.getAdvocate().getLastName());
-                            }
+                            for (Advocate advocate : party.getAdvocate()) {
+                                for (Advocate oldAdvocate : oldParty.getAdvocate()) {
+                                    if (!StringUtils.isEmpty(advocate.getFirstName())) {
+                                        oldAdvocate
+                                                .setFirstName(advocate.getFirstName());
+                                    }
+                                    if (!StringUtils.isEmpty(advocate.getLastName())) {
+                                        oldAdvocate
+                                                .setLastName(advocate.getLastName());
+                                    }
+                                    if (!StringUtils.isEmpty(advocate.getContactNumber())) {
+                                        oldAdvocate
+                                                .setContactNumber(advocate.getContactNumber());
+                                    }
 
-                            if (!StringUtils.isEmpty(party.getAdvocate().getContactNumber())) {
-                                oldParty.getAdvocate().setContactNumber(party.getAdvocate().getContactNumber());
-                            }
-                            if (!StringUtils.isEmpty(party.getAdvocate().getStatus())) {
-                                oldParty.getAdvocate().setStatus(party.getAdvocate().getStatus());
+                                    if (!StringUtils.isEmpty(advocate.getStatus())) {
+                                        oldAdvocate
+                                                .setStatus(advocate.getStatus());
+                                    }
+                                }
                             }
                         }
                     }

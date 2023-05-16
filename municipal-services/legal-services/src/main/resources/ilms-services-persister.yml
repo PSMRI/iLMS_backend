@@ -65,21 +65,21 @@ serviceMaps:
 
             - jsonPath: $.case.auditDetails.createdTime
         - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
-          basePath: case.parties.*.advocate
+          basePath: case.parties.*.advocate.*
           jsonMaps:
-            - jsonPath: $.case.parties.*.advocate.id
+            - jsonPath: $.case.parties.*.advocate.*.id
 
-            - jsonPath: $.case.parties.*.advocate.firstName
+            - jsonPath: $.case.parties.*.advocate.*.firstName
 
-            - jsonPath: $.case.parties.*.advocate.lastName
+            - jsonPath: $.case.parties.*.advocate.*.lastName
 
-            - jsonPath: $.case.parties.*.advocate.contactNumber
+            - jsonPath: $.case.parties.*.advocate.*.contactNumber
 
-            - jsonPath: $.case.parties.*.advocate.status
+            - jsonPath: $.case.parties.*.advocate.*.status
 
-            - jsonPath: $.case.parties.*.advocate.auditDetails.createdBy
+            - jsonPath: $.case.parties.*.advocate.*.auditDetails.createdBy
 
-            - jsonPath: $.case.parties.*.advocate.auditDetails.createdTime
+            - jsonPath: $.case.parties.*.advocate.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_case_party(id,  case_id, advocate_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.parties.*
@@ -89,6 +89,8 @@ serviceMaps:
             - jsonPath: $.case.id
 
             - jsonPath: $.case.parties.*.advocateId
+              type: ARRAY
+              dbType: STRING
 
             - jsonPath: $.case.parties.*.firstName
 
@@ -240,21 +242,21 @@ serviceMaps:
             - jsonPath: $.hearing.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES ( ?, ?, ?, ?, ?, ?, ?);
-          basePath: hearing.parties.*.advocate
+          basePath: hearing.parties.*.advocate.*
           jsonMaps:
-            - jsonPath: $.hearing.parties.*.advocate.id
+            - jsonPath: $.hearing.parties.*.advocate.*.id
 
-            - jsonPath: $.hearing.parties.*.advocate.firstName
+            - jsonPath: $.hearing.parties.*.advocate.*.firstName
 
-            - jsonPath: $.hearing.parties.*.advocate.lastName
+            - jsonPath: $.hearing.parties.*.advocate.*.lastName
 
-            - jsonPath: $.hearing.parties.*.advocate.contactNumber
+            - jsonPath: $.hearing.parties.*.advocate.*.contactNumber
 
-            - jsonPath: $.hearing.parties.*.advocate.status
+            - jsonPath: $.hearing.parties.*.advocate.*.status
 
-            - jsonPath: $.hearing.parties.*.advocate.auditDetails.createdBy
+            - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.createdBy
 
-            - jsonPath: $.hearing.parties.*.advocate.auditDetails.createdTime
+            - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.payment
@@ -397,7 +399,9 @@ serviceMaps:
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.paties.*.advocateId
+            - jsonPath: $.case.parties.*.advocateId
+              type: ARRAY
+              dbType: STRING
 
             - jsonPath: $.case.parties.*.firstName
 
@@ -424,22 +428,22 @@ serviceMaps:
             - jsonPath: $.case.parties.*.id
 
         - query: UPDATE eg_lg_advocate SET first_name=?, last_name=?, contact_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
-          basePath: case.parties.*.advocate
+          basePath: case.parties.*.advocate.*
           jsonMaps:
 
-            - jsonPath: $.case.parties.*.advocate.firstName
+            - jsonPath: $.case.parties.*.advocate.*.firstName
 
-            - jsonPath: $.case.parties.*.advocate.lastName
+            - jsonPath: $.case.parties.*.advocate.*.lastName
 
-            - jsonPath: $.case.parties.*.advocate.contactNumber
+            - jsonPath: $.case.parties.*.advocate.*.contactNumber
 
-            - jsonPath: $.case.parties.*.advocate.status
+            - jsonPath: $.case.parties.*.advocate.*.status
 
-            - jsonPath: $.case.parties.*.advocate.auditDetails.lastModifiedBy
+            - jsonPath: $.case.parties.*.advocate.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.case.parties.*.advocate.auditDetails.lastModifiedTime
+            - jsonPath: $.case.parties.*.advocate.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.case.parties.*.advocate.id
+            - jsonPath: $.case.parties.*.advocate.*.id
 
         - query: UPDATE eg_lg_court SET case_id=?, court_name=?, district=?, state=?, division=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case.court
@@ -571,26 +575,26 @@ serviceMaps:
 
 
         - query: UPDATE eg_lg_advocate SET  hearing_id=?, first_name=?, last_name=?, contact_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
-          basePath: hearing.parties.*.advocate
+          basePath: hearing.parties.*.advocate.*
           jsonMaps:
 
             - jsonPath: $.hearing.parties.*.id
 
-            - jsonPath: $.hearing.parties.*.advocate.hearingId
+            - jsonPath: $.hearing.parties.*.advocate.*.hearingId
 
-            - jsonPath: $.hearing.parties.*.advocate.firstName
+            - jsonPath: $.hearing.parties.*.advocate.*.firstName
 
-            - jsonPath: $.hearing.parties.*.advocate.lastName
+            - jsonPath: $.hearing.parties.*.advocate.*.lastName
 
-            - jsonPath: $.hearing.parties.*.advocate.contactNumber
+            - jsonPath: $.hearing.parties.*.advocate.*.contactNumber
 
-            - jsonPath: $.hearing.parties.*.advocate.status
+            - jsonPath: $.hearing.parties.*.advocate.*.status
 
-            - jsonPath: $.hearing.parties.*.advocate.auditDetails.lastModifiedBy
+            - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.hearing.parties.*.advocate.auditDetails.lastModifiedTime
+            - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.hearing.parties.*.advocate.id
+            - jsonPath: $.hearing.parties.*.advocate.*.id
 
 
         - query: UPDATE eg_lg_payment SET fine_imposed_date=?, fine_due_date=?, fine_amount=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
@@ -751,21 +755,21 @@ serviceMaps:
       auditAttributeBasePath: advocate
       queryMaps:
         - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
-          basePath: advocate
+          basePath: advocate.*
           jsonMaps:
-            - jsonPath: $.advocate.id
+            - jsonPath: $.advocate.*.id
 
-            - jsonPath: $.advocate.firstName
+            - jsonPath: $.advocate.*.firstName
 
-            - jsonPath: $.advocate.lastName
+            - jsonPath: $.advocate.*.lastName
 
-            - jsonPath: $.advocate.contactNumber
+            - jsonPath: $.advocate.*.contactNumber
 
-            - jsonPath: $.advocate.status
+            - jsonPath: $.advocate.*.status
 
-            - jsonPath: $.advocate.auditDetails.createdBy
+            - jsonPath: $.advocate.*.auditDetails.createdBy
 
-            - jsonPath: $.advocate.auditDetails.createdTime
+            - jsonPath: $.advocate.*.auditDetails.createdTime
 
     - version: 1.0
       description: Update advocate in eg_lg_advocate
@@ -779,18 +783,18 @@ serviceMaps:
       auditAttributeBasePath: advocate
       queryMaps:
         - query: UPDATE eg_lg_advocate SET first_name=?, last_name=?, contact_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
-          basePath: advocate
+          basePath: advocate.*
           jsonMaps:
-            - jsonPath: $.advocate.firstName
+            - jsonPath: $.advocate.*.firstName
 
-            - jsonPath: $.advocate.lastName
+            - jsonPath: $.advocate.*.lastName
 
-            - jsonPath: $.advocate.contactNumber
+            - jsonPath: $.advocate.*.contactNumber
 
-            - jsonPath: $.advocate.status
+            - jsonPath: $.advocate.*.status
 
-            - jsonPath: $.advocate.auditDetails.lastModifiedBy
+            - jsonPath: $.advocate.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.advocate.auditDetails.lastModifiedTime
+            - jsonPath: $.advocate.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.advocate.id
+            - jsonPath: $.advocate.*.id

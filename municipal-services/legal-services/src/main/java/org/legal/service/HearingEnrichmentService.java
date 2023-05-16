@@ -48,7 +48,9 @@ public class HearingEnrichmentService {
         hearing.setAuditDetails(auditDetails);
         for (Party party : hearingRequest.getHearing().getParties()) {
             party.setAuditDetails(auditDetails);
-            party.getAdvocate().setAuditDetails(auditDetails);
+            for (Advocate advocate : party.getAdvocate()) {
+                advocate.setAuditDetails(auditDetails);
+            }
         }
         if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
             hearingRequest.getHearing().getPayment().setAuditDetails(auditDetails);
@@ -77,29 +79,33 @@ public class HearingEnrichmentService {
         }
         List<Party> partyList = hearingDetailsRepository.getGetFromPartyQuery(request.getHearing().getCaseId());
         hearing.setId(itr.next());
-        for (Party partyLst:partyList) {
+        for (Party partyLst : partyList) {
             for (Party party : hearing.getParties()) {
                 if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
                     if (Objects.nonNull(party.getAdvocate())) {
-                        if (StringUtils.isEmpty(party.getAdvocate().getId()) || !party.getAdvocate().getId().equals(partyLst.getAdvocateId())) {
-                            List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
-                                    ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
-                            ListIterator<String> padvocateItr = padvocateId.listIterator();
-                            party.getAdvocate().setId(padvocateItr.next());
+                        for (Advocate advocate : party.getAdvocate()) {
+                            if (StringUtils.isEmpty(advocate.getId()) || !advocate.getId().equals(partyLst.getAdvocateId())) {
+                                List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
+                                        ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
+                                ListIterator<String> padvocateItr = padvocateId.listIterator();
+                                advocate.setId(padvocateItr.next());
 
+                            }
+                            party.setAdvocateId(Collections.singletonList(advocate.getId()));
                         }
-                        party.setAdvocateId(party.getAdvocate().getId());
                     }
                 } else if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                     if (Objects.nonNull(party.getAdvocate())) {
-                        if (StringUtils.isEmpty(party.getAdvocate().getId()) || !party.getAdvocate().getId().equals(partyLst.getAdvocateId())) {
-                            List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
-                                    ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
-                            ListIterator<String> radvocateItr = radvocateId.listIterator();
-                            party.getAdvocate().setId(radvocateItr.next());
+                        for (Advocate advocate : party.getAdvocate()) {
+                            if (StringUtils.isEmpty(advocate.getId()) || !advocate.getId().equals(partyLst.getAdvocateId())) {
+                                List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
+                                        ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
+                                ListIterator<String> radvocateItr = radvocateId.listIterator();
+                                advocate.setId(radvocateItr.next());
+                            }
+                            party.setAdvocateId(Collections.singletonList(advocate.getId()));
                         }
                     }
-                    party.setAdvocateId(party.getAdvocate().getId());
                 }
             }
         }

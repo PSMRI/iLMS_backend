@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.legal.web.model.enums.Status;
 
+import java.util.List;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +19,7 @@ public class Party {
     private String caseId;
 
     @JsonProperty("advocateId")
-    private String advocateId;
+    private List<String> advocateId;
 
     @JsonProperty("firstName")
     private String firstName;
@@ -44,7 +46,7 @@ public class Party {
     private String partyType;
 
     @JsonProperty("advocate")
-    private Advocate advocate;
+    private List<Advocate> advocate;
 
     @JsonProperty("status")
     private Status status;

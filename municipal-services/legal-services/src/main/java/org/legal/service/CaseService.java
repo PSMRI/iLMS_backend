@@ -62,13 +62,6 @@ public class CaseService {
         criteria.setUuid(requestInfo.getUserInfo().getUuid());
         List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
         caseResponse = caseRepository.getLegalCaseData(criteria);
-//        if (!caseResponse.getCaseList().isEmpty()) {
-//            caseResponse.getCaseList().forEach(caseObj -> {
-//                caseList.add(caseObj);
-//            });
-//        } else {
-//            throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
-//        }
         CaseResponse finalResult = new CaseResponse();
         String userRole = requestInfo.getUserInfo().getRoles().get(0).getCode();
         Integer total = null;
@@ -123,11 +116,11 @@ public class CaseService {
         }
         List<Hearing> hearingList = new ArrayList<>();
         List<Judgement> judgementList = new ArrayList<>();
-        HearingResponse hearingResponse=null;
-        JudgementResponse judgementResponse=null;
+        HearingResponse hearingResponse = null;
+        JudgementResponse judgementResponse = null;
         HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
-                                                                     .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
-                                                                     .build();
+                .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
+                .build();
         hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
         JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
                 caseResponse.getCaseList().get(0).getId())).build();
@@ -204,24 +197,32 @@ public class CaseService {
         for (Party parties : caseRequest.getCaseObj().getParties()) {
             if (parties.getPartyType().equals(PartyType.PETITIONER.toString())) {
                 parties.setStatus(Status.ACTIVE);
-                parties.setAdvocateId("");
+//                parties.setAdvocateId(Collections.singletonList(""));
+                List<String> advocateId = new ArrayList<>();
                 if (Objects.nonNull(parties.getAdvocate())) {
-                   List<Advocate> advocates=caseRepository.getAdvocateById(parties.getAdvocate().getId());
-                    for (Advocate advocate: advocates){
-                        if(parties.getAdvocate().getId().equals(advocate.getId())){
-                            parties.setAdvocateId(parties.getAdvocate().getId());
-                            parties.setAdvocate(null);
+                    for (Advocate existingAdvocates : parties.getAdvocate()) {
+                        List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
+                        for (Advocate advocate : advocates) {
+                            if (existingAdvocates.getId().equals(advocate.getId())) {
+                                advocateId.add(existingAdvocates.getId());
+                                parties.setAdvocate(null);
+                            }
+                            parties.setAdvocateId(advocateId);
                         }
                     }
                 }
             } else if (parties.getPartyType().equals(PartyType.RESPONDENT.toString())) {
+                List<String> advocateId = new ArrayList<>();
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
-                    List<Advocate> advocates=caseRepository.getAdvocateById(parties.getAdvocate().getId());
-                    for (Advocate advocate: advocates){
-                        if(parties.getAdvocate().getId().equals(advocate.getId())){
-                            parties.setAdvocateId(parties.getAdvocate().getId());
-                            parties.setAdvocate(null);
+                    for (Advocate existingAdvocates : parties.getAdvocate()) {
+                        List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
+                        for (Advocate advocate : advocates) {
+                            if (existingAdvocates.getId().equals(advocate.getId())) {
+                                advocateId.add(existingAdvocates.getId());
+                                parties.setAdvocate(null);
+                            }
+                            parties.setAdvocateId(advocateId);
                         }
                     }
                 }
@@ -241,7 +242,9 @@ public class CaseService {
                 parties.setPartyType(PartyType.PETITIONER.toString());
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
-                    parties.getAdvocate().setStatus(Status.ACTIVE);
+                    for (Advocate advocate : parties.getAdvocate()) {
+                        advocate.setStatus(Status.ACTIVE);
+                    }
                 }
             } else {
                 if (Objects.nonNull(parties.getDepartmentName())) {
@@ -258,7 +261,9 @@ public class CaseService {
                 parties.setPartyType(PartyType.RESPONDENT.toString());
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
-                    parties.getAdvocate().setStatus(Status.ACTIVE);
+                    for (Advocate advocate : parties.getAdvocate()) {
+                        advocate.setStatus(Status.ACTIVE);
+                    }
                 }
             }
         }
