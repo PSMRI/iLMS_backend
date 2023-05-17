@@ -36,7 +36,7 @@ public class PartyRowMapper implements ResultSetExtractor<List<Party>> {
                     .status(Status.valueOf(rs.getString("status")))
                     .auditDetails(advocateAuditDetails).build();
 
-            Party party = Party.builder().id(rs.getString("id")).advocateId(Collections.singletonList(rs.getString("advocate_id"))).departmentName(rs.getString("department_name")).firstName(rs.getString("first_name"))
+            Party party = Party.builder().id(rs.getString("id")).departmentName(rs.getString("department_name")).firstName(rs.getString("first_name"))
                     .lastName(rs.getString("last_name")).gender(rs.getString("gender")).petitionerType(rs.getString("petitioner_type"))
                     .partyType(rs.getString("party_type")).address(rs.getString("address")).contactNumber(rs.getString("contact_number"))
                     .caseId(rs.getString("case_id")).status(Status.valueOf(rs.getString("status"))).auditDetails(partyAuditDetails)
