@@ -85,6 +85,7 @@ public class CaseEnrichmentService {
     }
 
     private void setIdgenIds(CaseRequest request) {
+        PartyAdv partyAdv = new PartyAdv();
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getCaseObj().getTenantId();
         Case caseObj = request.getCaseObj();
@@ -118,7 +119,7 @@ public class CaseEnrichmentService {
                 ListIterator<String> petitionerItr = petitionerId.listIterator();
                 party.setId(petitionerItr.next());
                 if (Objects.nonNull(party.getAdvocate())) {
-                    List<String> advocateId = new ArrayList<>();
+//                    List<String> advocateId = new ArrayList<>();
                     for (Advocate advocate : party.getAdvocate()) {
                         if (StringUtils.isEmpty(advocate.getId()) || !advocate.getId().equals(party.getAdvocateId())) {
                             List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
@@ -127,10 +128,15 @@ public class CaseEnrichmentService {
                             advocate.setId(padvocateItr.next());
                             while (padvocateItr.hasNext()) {
                                 advocate.setId(padvocateItr.next());
-                                advocateId.add(advocate.getId());
+                                partyAdv.setId("1001");
+                                partyAdv.setCaseId(request.getCaseObj().getId());
+                                partyAdv.setAdvocateId(advocate.getId());
+                                partyAdv.setPartyId(party.getId());
+                                partyAdv.setPartyType(party.getPartyType());
+//                                advocateId.add(advocate.getId());
                             }
                         }
-                        party.setAdvocateId(advocateId);
+//                        party.setAdvocateId(advocateId);
                     }
                 }
             } else {
@@ -139,7 +145,7 @@ public class CaseEnrichmentService {
                 ListIterator<String> respondentItr = respondentId.listIterator();
                 party.setId(respondentItr.next());
                 if (Objects.nonNull(party.getAdvocate())) {
-                    List<String> advocateId = new ArrayList<>();
+//                    List<String> advocateId = new ArrayList<>();
 
                     for (Advocate advocate : party.getAdvocate()) {
                         if (StringUtils.isEmpty(advocate.getId()) || !advocate.getId().equals(party.getAdvocateId())) {
@@ -149,10 +155,15 @@ public class CaseEnrichmentService {
 
                             while (radvocateItr.hasNext()) {
                                 advocate.setId(radvocateItr.next());
-                                advocateId.add(advocate.getId());
+                                partyAdv.setId("1001");
+                                partyAdv.setCaseId(request.getCaseObj().getId());
+                                partyAdv.setAdvocateId(advocate.getId());
+                                partyAdv.setPartyId(party.getId());
+                                partyAdv.setPartyType(party.getPartyType());
+//                                advocateId.add(advocate.getId());
                             }
 
-                            party.setAdvocateId(advocateId);
+//                            party.setAdvocateId(advocateId);
                         }
                     }
                 }

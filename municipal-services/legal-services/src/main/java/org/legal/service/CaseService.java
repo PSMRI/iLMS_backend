@@ -191,6 +191,7 @@ public class CaseService {
     }
 
     public Case create(CaseRequest caseRequest) {
+        PartyAdv partyAdv = new PartyAdv();
         if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
             caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
@@ -198,31 +199,41 @@ public class CaseService {
             if (parties.getPartyType().equals(PartyType.PETITIONER.toString())) {
                 parties.setStatus(Status.ACTIVE);
 //                parties.setAdvocateId(Collections.singletonList(""));
-                List<String> advocateId = new ArrayList<>();
+
                 if (Objects.nonNull(parties.getAdvocate())) {
                     for (Advocate existingAdvocates : parties.getAdvocate()) {
                         List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
                         for (Advocate advocate : advocates) {
                             if (existingAdvocates.getId().equals(advocate.getId())) {
-                                advocateId.add(existingAdvocates.getId());
+                                partyAdv.setId("1001");
+                                partyAdv.setCaseId(caseRequest.getCaseObj().getId());
+                                partyAdv.setAdvocateId(advocate.getId());
+                                partyAdv.setPartyId(parties.getId());
+                                partyAdv.setPartyType(parties.getPartyType());
+//                                advocateId.add(existingAdvocates.getId());
                                 parties.setAdvocate(null);
                             }
-                            parties.setAdvocateId(advocateId);
+//                            parties.setAdvocateId(advocateId);
                         }
                     }
                 }
             } else if (parties.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                List<String> advocateId = new ArrayList<>();
+//                List<String> advocateId = new ArrayList<>();
                 parties.setStatus(Status.ACTIVE);
                 if (Objects.nonNull(parties.getAdvocate())) {
                     for (Advocate existingAdvocates : parties.getAdvocate()) {
                         List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
                         for (Advocate advocate : advocates) {
                             if (existingAdvocates.getId().equals(advocate.getId())) {
-                                advocateId.add(existingAdvocates.getId());
+                                partyAdv.setId("1002");
+                                partyAdv.setCaseId(caseRequest.getCaseObj().getId());
+                                partyAdv.setAdvocateId(advocate.getId());
+                                partyAdv.setPartyId(parties.getId());
+                                partyAdv.setPartyType(parties.getPartyType());
+//                                advocateId.add(existingAdvocates.getId());
                                 parties.setAdvocate(null);
                             }
-                            parties.setAdvocateId(advocateId);
+//                            parties.setAdvocateId(advocateId);
                         }
                     }
                 }

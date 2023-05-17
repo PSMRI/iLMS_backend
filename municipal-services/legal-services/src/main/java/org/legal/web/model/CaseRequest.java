@@ -20,4 +20,6 @@ public class CaseRequest {
     @JsonProperty("case")
     private Case caseObj;
 
+    @JsonProperty("PartyAdv")
+    private PartyAdv partyAdv;
 }
