@@ -191,7 +191,6 @@ public class CaseService {
     }
 
     public Case create(CaseRequest caseRequest) {
-        PartyAdv partyAdv = new PartyAdv();
         if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
             caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
@@ -205,11 +204,12 @@ public class CaseService {
                         List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
                         for (Advocate advocate : advocates) {
                             if (existingAdvocates.getId().equals(advocate.getId())) {
-                                partyAdv.setId("1001");
-                                partyAdv.setCaseId(caseRequest.getCaseObj().getId());
-                                partyAdv.setAdvocateId(advocate.getId());
-                                partyAdv.setPartyId(parties.getId());
-                                partyAdv.setPartyType(parties.getPartyType());
+//                                caseRequest.getCaseObj().getPartyAdv().setId(UUID.randomUUID().toString());
+//                                caseRequest.getCaseObj().getPartyAdv().setCaseId(caseRequest.getCaseObj().getId());
+//                                caseRequest.getCaseObj().getPartyAdv().setAdvocateId(advocate.getId());
+//                                caseRequest.getCaseObj().getPartyAdv().setPartyId(parties.getId());
+//                                caseRequest.getCaseObj().getPartyAdv().setPartyType(parties.getPartyType());
+//                                caseRequest.getCaseObj().getPartyAdv().setAuditDetails(AuditDetails.builder().build());
 //                                advocateId.add(existingAdvocates.getId());
                                 parties.setAdvocate(null);
                             }
@@ -225,11 +225,12 @@ public class CaseService {
                         List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
                         for (Advocate advocate : advocates) {
                             if (existingAdvocates.getId().equals(advocate.getId())) {
-                                partyAdv.setId("1002");
-                                partyAdv.setCaseId(caseRequest.getCaseObj().getId());
-                                partyAdv.setAdvocateId(advocate.getId());
-                                partyAdv.setPartyId(parties.getId());
-                                partyAdv.setPartyType(parties.getPartyType());
+//                                caseRequest.getCaseObj().getPartyAdv().setId(UUID.randomUUID().toString());
+//                                caseRequest.getCaseObj().getPartyAdv().setCaseId(caseRequest.getCaseObj().getId());
+//                                caseRequest.getCaseObj().getPartyAdv().setAdvocateId(advocate.getId());
+//                                caseRequest.getCaseObj().getPartyAdv().setPartyId(parties.getId());
+//                                caseRequest.getCaseObj().getPartyAdv().setPartyType(parties.getPartyType());
+//                                caseRequest.getCaseObj().getPartyAdv().setAuditDetails(AuditDetails.builder().build());
 //                                advocateId.add(existingAdvocates.getId());
                                 parties.setAdvocate(null);
                             }

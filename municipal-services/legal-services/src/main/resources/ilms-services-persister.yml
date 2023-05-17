@@ -111,21 +111,21 @@ serviceMaps:
             - jsonPath: $.case.parties.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
-          basePath: PartyAdv.*
+          basePath: case.PartyAdv.*
           jsonMaps:
-            - jsonPath: $.PartyAdv.*.id
+            - jsonPath: $.case.PartyAdv.*.id
 
             - jsonPath: $.case.id
 
             - jsonPath: $.case.parties.*.id
 
-            - jsonPath: $.PartyAdv.*.partyType
+            - jsonPath: $.case.PartyAdv.*.partyType
 
             - jsonPath: $.case.parties.*.advocate.*.id
 
-            - jsonPath: $.PartyAdv.*.auditDetails.createdBy
+            - jsonPath: $.case.PartyAdv.*.auditDetails.createdBy
 
-            - jsonPath: $.PartyAdv.*.auditDetails.createdTime
+            - jsonPath: $.case.PartyAdv.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_act(id, case_id, name, section_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
           basePath: case.act.*
