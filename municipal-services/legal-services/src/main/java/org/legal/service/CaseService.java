@@ -194,86 +194,86 @@ public class CaseService {
         if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
             caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
-        for (Party parties : caseRequest.getCaseObj().getParties()) {
-            if (parties.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                parties.setStatus(Status.ACTIVE);
-//                parties.setAdvocateId(Collections.singletonList(""));
-
-                if (Objects.nonNull(parties.getAdvocate())) {
-                    for (Advocate existingAdvocates : parties.getAdvocate()) {
+        for (Party party : caseRequest.getCaseObj().getParties()) {
+            List<PartyAdv> partyAdvList = caseRequest.getCaseObj().getPartyAdv();
+            if (partyAdvList == null) {
+                partyAdvList = new ArrayList<>();
+            }
+            if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
+                party.setStatus(Status.ACTIVE);
+                if (Objects.nonNull(party.getAdvocate())) {
+                    for (Advocate existingAdvocates : party.getAdvocate()) {
                         List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
                         for (Advocate advocate : advocates) {
                             if (existingAdvocates.getId().equals(advocate.getId())) {
-//                                caseRequest.getCaseObj().getPartyAdv().setId(UUID.randomUUID().toString());
-//                                caseRequest.getCaseObj().getPartyAdv().setCaseId(caseRequest.getCaseObj().getId());
-//                                caseRequest.getCaseObj().getPartyAdv().setAdvocateId(advocate.getId());
-//                                caseRequest.getCaseObj().getPartyAdv().setPartyId(parties.getId());
-//                                caseRequest.getCaseObj().getPartyAdv().setPartyType(parties.getPartyType());
-//                                caseRequest.getCaseObj().getPartyAdv().setAuditDetails(AuditDetails.builder().build());
-//                                advocateId.add(existingAdvocates.getId());
-                                parties.setAdvocate(null);
+                                PartyAdv partyAdv1 = new PartyAdv();
+                                partyAdv1.setId(UUID.randomUUID().toString());
+                                partyAdv1.setCaseId(party.getCaseId());
+                                partyAdv1.setAdvocateId(advocate.getId());
+                                partyAdv1.setPartyId(party.getId());
+                                partyAdv1.setPartyType(party.getPartyType());
+                                partyAdvList.add(partyAdv1);
+                                party.setAdvocate(null);
                             }
-//                            parties.setAdvocateId(advocateId);
                         }
                     }
                 }
-            } else if (parties.getPartyType().equals(PartyType.RESPONDENT.toString())) {
+            } else if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
 //                List<String> advocateId = new ArrayList<>();
-                parties.setStatus(Status.ACTIVE);
-                if (Objects.nonNull(parties.getAdvocate())) {
-                    for (Advocate existingAdvocates : parties.getAdvocate()) {
+                party.setStatus(Status.ACTIVE);
+                if (Objects.nonNull(party.getAdvocate())) {
+                    for (Advocate existingAdvocates : party.getAdvocate()) {
                         List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
                         for (Advocate advocate : advocates) {
                             if (existingAdvocates.getId().equals(advocate.getId())) {
-//                                caseRequest.getCaseObj().getPartyAdv().setId(UUID.randomUUID().toString());
-//                                caseRequest.getCaseObj().getPartyAdv().setCaseId(caseRequest.getCaseObj().getId());
-//                                caseRequest.getCaseObj().getPartyAdv().setAdvocateId(advocate.getId());
-//                                caseRequest.getCaseObj().getPartyAdv().setPartyId(parties.getId());
-//                                caseRequest.getCaseObj().getPartyAdv().setPartyType(parties.getPartyType());
-//                                caseRequest.getCaseObj().getPartyAdv().setAuditDetails(AuditDetails.builder().build());
-//                                advocateId.add(existingAdvocates.getId());
-                                parties.setAdvocate(null);
+                                PartyAdv partyAdv1 = new PartyAdv();
+                                partyAdv1.setId(UUID.randomUUID().toString());
+                                partyAdv1.setCaseId(party.getCaseId());
+                                partyAdv1.setAdvocateId(advocate.getId());
+                                partyAdv1.setPartyId(party.getId());
+                                partyAdv1.setPartyType(party.getPartyType());
+                                partyAdvList.add(partyAdv1);
+                                party.setAdvocate(null);
                             }
-//                            parties.setAdvocateId(advocateId);
                         }
                     }
                 }
             }
-            if (parties.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                if (Objects.nonNull(parties.getDepartmentName())) {
-                    parties.setFirstName(null);
-                    parties.setLastName(null);
-                    parties.setGender(null);
-                    parties.setPetitionerType(null);
-                    parties.setAddress(null);
-                    parties.setContactNumber(null);
-                    parties.setDepartmentName(parties.getDepartmentName());
+            if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
+                if (Objects.nonNull(party.getDepartmentName())) {
+                    party.setFirstName(null);
+                    party.setLastName(null);
+                    party.setGender(null);
+                    party.setPetitionerType(null);
+                    party.setAddress(null);
+                    party.setContactNumber(null);
+                    party.setDepartmentName(party.getDepartmentName());
                 } else {
-                    parties.setDepartmentName(null);
+                    party.setDepartmentName(null);
                 }
-                parties.setPartyType(PartyType.PETITIONER.toString());
-                parties.setStatus(Status.ACTIVE);
-                if (Objects.nonNull(parties.getAdvocate())) {
-                    for (Advocate advocate : parties.getAdvocate()) {
+                party.setPartyType(PartyType.PETITIONER.toString());
+                party.setStatus(Status.ACTIVE);
+                if (Objects.nonNull(party.getAdvocate())) {
+                    for (Advocate advocate : party.getAdvocate()) {
                         advocate.setStatus(Status.ACTIVE);
                     }
                 }
             } else {
-                if (Objects.nonNull(parties.getDepartmentName())) {
-                    parties.setFirstName(null);
-                    parties.setLastName(null);
-                    parties.setGender(null);
-                    parties.setPetitionerType(null);
-                    parties.setAddress(null);
-                    parties.setContactNumber(null);
-                    parties.setDepartmentName(parties.getDepartmentName());
+                if (Objects.nonNull(party.getDepartmentName())) {
+                    party.setFirstName(null);
+                    party.setLastName(null);
+                    party.setGender(null);
+                    party.setPetitionerType(null);
+                    party.setAddress(null);
+                    party.setContactNumber(null);
+                    party.setDepartmentName(party.getDepartmentName());
                 } else {
-                    parties.setDepartmentName(null);
+                    party.setDepartmentName(null);
                 }
-                parties.setPartyType(PartyType.RESPONDENT.toString());
-                parties.setStatus(Status.ACTIVE);
-                if (Objects.nonNull(parties.getAdvocate())) {
-                    for (Advocate advocate : parties.getAdvocate()) {
+                party.setPartyType(PartyType.RESPONDENT.toString());
+                party.setStatus(Status.ACTIVE);
+                if (Objects.nonNull(party.getAdvocate())) {
+                    for (Advocate advocate : party.getAdvocate()) {
                         advocate.setStatus(Status.ACTIVE);
                     }
                 }
