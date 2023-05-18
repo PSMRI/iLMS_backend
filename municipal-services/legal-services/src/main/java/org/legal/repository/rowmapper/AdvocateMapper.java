@@ -37,7 +37,7 @@ public class AdvocateMapper implements ResultSetExtractor<List<Advocate>> {
                     .lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
 
             Advocate advocate = new Advocate();
-            advocate = Advocate.builder().id(rs.getString("id")).contactNumber(rs.getString("contact_number"))
+            advocate = Advocate.builder().id(rs.getString("adv_id")).contactNumber(rs.getString("contact_number"))
                     .firstName(rs.getString("first_name")).lastName(rs.getString("last_name"))
                     .status(Status.valueOf(rs.getString("status")))
                     .auditDetails(advocateAuditDetails).build();
