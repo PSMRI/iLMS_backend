@@ -6,10 +6,11 @@ case_id character varying(64) NOT NULL,
 party_id character varying(64) NOT NULL,
 party_type character varying(64) NOT NULL,
 advocate_id character varying(64) NOT NULL,
+createdby character varying(64),
+createdtime bigint,
+lastmodifiedby character varying(64),
+lastmodifiedtime bigint;
 CONSTRAINT pk_eg_lg_party_advocate_bridge_id PRIMARY KEY (id),
-CONSTRAINT fk_eg_lg_party_advocate_bridge_case_id FOREIGN KEY (case_id) REFERENCES eg_lg_case (id),
-CONSTRAINT fk_eg_lg_party_advocate_bridge_party_id FOREIGN KEY(party_id) REFERENCES eg_lg_case_party(id),
-CONSTRAINT fk_eg_lg_party_advocate_bridge_advocate_id FOREIGN KEY(advocate_id) REFERENCES eg_lg_advocate(id)
 );
 
 ALTER TABLE eg_lg_case_party DROP COLUMN advocate_id;
