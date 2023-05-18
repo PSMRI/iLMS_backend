@@ -228,13 +228,14 @@ public class CaseService {
                             if (existingAdvocates.getId().equals(advocate.getId())) {
                                 PartyAdv partyAdv1 = new PartyAdv();
                                 partyAdv1.setId(UUID.randomUUID().toString());
-                                partyAdv1.setCaseId(party.getCaseId());
+//                                partyAdv1.setCaseId(party.getCaseId());
                                 partyAdv1.setAdvocateId(advocate.getId());
                                 partyAdv1.setPartyId(party.getId());
                                 partyAdv1.setPartyType(party.getPartyType());
                                 partyAdvList.add(partyAdv1);
                                 party.setAdvocate(null);
                             }
+//                            parties.setAdvocateId(advocateId);
                         }
                     }
                 }

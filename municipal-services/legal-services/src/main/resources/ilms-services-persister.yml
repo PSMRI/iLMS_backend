@@ -117,11 +117,11 @@ serviceMaps:
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.parties.*.id
+            - jsonPath: $.case.parties.*.partyId
 
             - jsonPath: $.case.PartyAdv.*.partyType
 
-            - jsonPath: $.case.parties.*.advocate.*.id
+            - jsonPath: $.case.parties.*.advocate.*.advocateId
 
             - jsonPath: $.case.PartyAdv.*.auditDetails.createdBy
 
