@@ -3,6 +3,7 @@ package org.legal.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
+import org.legal.repository.AdvocateRepository;
 import org.legal.service.AdvocateService;
 import org.legal.util.ResponseInfoFactory;
 import org.legal.web.model.Advocate;
@@ -38,14 +39,24 @@ public class AdvocateController {
     @Autowired
     private AdvocateService advocateService;
 
+    @Autowired
+    private AdvocateRepository advocateRepository;
+
     @PostMapping (value = "/_create")
     public ResponseEntity<AdvocateResponse> create(@Valid @RequestBody AdvocateRequest advocateRequest) {
-        Advocate advocate = advocateService.create(advocateRequest);
+        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
+        criteria.setContactNumber(advocateRequest.getAdvocate().getContactNumber());
+        AdvocateResponse advocateResponse = advocateRepository.getAdvocateDetails(criteria);
         List<Advocate> advocateList = new ArrayList<Advocate>();
-        advocateList.add(advocate);
+        if (advocateResponse != null) {
+            advocateList = advocateResponse.getAdvocate();
+        } else {
+            Advocate savedAdvocate = advocateService.create(advocateRequest);
+            advocateList.add(savedAdvocate);
+        }
         AdvocateResponse response = AdvocateResponse.builder().advocate(advocateList)
-                                            .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(advocateRequest.getRequestInfo(), true))
-                                            .build();
+                                                    .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(advocateRequest.getRequestInfo(), true))
+                                                    .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
