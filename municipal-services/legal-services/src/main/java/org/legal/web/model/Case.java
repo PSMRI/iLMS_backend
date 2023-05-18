@@ -54,8 +54,8 @@ public class Case {
     @JsonProperty("arisingDetails")
     private String arisingDetails;
 
-    @JsonProperty("stage")
-    private String stage;
+    @JsonProperty("applicationStatus")
+    private String applicationStatus;
 
     @JsonProperty("policyOrNonPolicyMatter")
     private String policyOrNonPolicyMatter;
@@ -72,9 +72,6 @@ public class Case {
 
     @JsonProperty("remarks")
     private String remarks;
-
-    @JsonProperty("firstHearingDate")
-    private Long firstHearingDate;
 
     @JsonProperty("additionalDetails")
     private JsonNode additionalDetails;
