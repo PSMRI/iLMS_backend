@@ -195,51 +195,6 @@ public class CaseService {
             caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
         for (Party party : caseRequest.getCaseObj().getParties()) {
-            List<PartyAdv> partyAdvList = caseRequest.getCaseObj().getPartyAdv();
-            if (partyAdvList == null) {
-                partyAdvList = new ArrayList<>();
-            }
-            if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                party.setStatus(Status.ACTIVE);
-                if (Objects.nonNull(party.getAdvocate())) {
-                    for (Advocate existingAdvocates : party.getAdvocate()) {
-                        List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
-                        for (Advocate advocate : advocates) {
-                            if (existingAdvocates.getId().equals(advocate.getId())) {
-                                PartyAdv partyAdv1 = new PartyAdv();
-                                partyAdv1.setId(UUID.randomUUID().toString());
-                                partyAdv1.setCaseId(party.getCaseId());
-                                partyAdv1.setAdvocateId(advocate.getId());
-                                partyAdv1.setPartyId(party.getId());
-                                partyAdv1.setPartyType(party.getPartyType());
-                                partyAdvList.add(partyAdv1);
-                                party.setAdvocate(null);
-                            }
-                        }
-                    }
-                }
-            } else if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-//                List<String> advocateId = new ArrayList<>();
-                party.setStatus(Status.ACTIVE);
-                if (Objects.nonNull(party.getAdvocate())) {
-                    for (Advocate existingAdvocates : party.getAdvocate()) {
-                        List<Advocate> advocates = caseRepository.getAdvocateById(existingAdvocates.getId());
-                        for (Advocate advocate : advocates) {
-                            if (existingAdvocates.getId().equals(advocate.getId())) {
-                                PartyAdv partyAdv1 = new PartyAdv();
-                                partyAdv1.setId(UUID.randomUUID().toString());
-//                                partyAdv1.setCaseId(party.getCaseId());
-                                partyAdv1.setAdvocateId(advocate.getId());
-                                partyAdv1.setPartyId(party.getId());
-                                partyAdv1.setPartyType(party.getPartyType());
-                                partyAdvList.add(partyAdv1);
-                                party.setAdvocate(null);
-                            }
-//                            parties.setAdvocateId(advocateId);
-                        }
-                    }
-                }
-            }
             if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
                 if (Objects.nonNull(party.getDepartmentName())) {
                     party.setFirstName(null);
@@ -247,10 +202,12 @@ public class CaseService {
                     party.setGender(null);
                     party.setPetitionerType(null);
                     party.setAddress(null);
+                    party.setStatus(Status.ACTIVE);
                     party.setContactNumber(null);
                     party.setDepartmentName(party.getDepartmentName());
                 } else {
                     party.setDepartmentName(null);
+                    party.setStatus(Status.ACTIVE);
                 }
                 party.setPartyType(PartyType.PETITIONER.toString());
                 party.setStatus(Status.ACTIVE);
@@ -267,9 +224,11 @@ public class CaseService {
                     party.setPetitionerType(null);
                     party.setAddress(null);
                     party.setContactNumber(null);
+                    party.setStatus(Status.ACTIVE);
                     party.setDepartmentName(party.getDepartmentName());
                 } else {
                     party.setDepartmentName(null);
+                    party.setStatus(Status.ACTIVE);
                 }
                 party.setPartyType(PartyType.RESPONDENT.toString());
                 party.setStatus(Status.ACTIVE);
