@@ -258,6 +258,15 @@ public class LEGALConfiguration {
     @Value("${egov.notif.subject}")
     private String notifSubject;
 
+    @Value("${legal.statelevel.tenantid}")
+    private String tenantId;
+
+    @Value("${pending.days}")
+    private Long pendingDays;
+
+    @Value("${sla.days}")
+    private Long slaDays;
+
 
     @PostConstruct
     public void initialize() {

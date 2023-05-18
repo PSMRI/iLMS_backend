@@ -295,4 +295,28 @@ public class NotificationUtil {
         return mapOfPhnoAndUUIDs;
     }
 
+//    public String getLocalizationMessagesForSchedular(String tenantId, RequestInfo requestInfo) {
+//
+//        String locale = NOTIFICATION_LOCALE;
+//        Boolean isRetryNeeded = false;
+//        String jsonString = null;
+//        LinkedHashMap responseMap = null;
+//
+//        if (!org.apache.commons.lang3.StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("\\|").length >= 2) {
+//            locale = requestInfo.getMsgId().split("\\|")[1];
+//            isRetryNeeded = true;
+//        }
+//        responseMap = (LinkedHashMap) serviceRepository.fetchResult(getUri(tenantId, requestInfo, locale), requestInfo);
+//        jsonString = new JSONObject(responseMap).toString();
+//
+//        if (org.apache.commons.lang3.StringUtils.isEmpty(jsonString) && isRetryNeeded) {
+//            responseMap = (LinkedHashMap) serviceRepository.fetchResult(getUri(tenantId, requestInfo, NOTIFICATION_LOCALE), requestInfo);
+//            jsonString = new JSONObject(responseMap).toString();
+//            if (org.apache.commons.lang3.StringUtils.isEmpty(jsonString)) {
+//                throw new CustomException("LOCALE_ERROR", "Localisation values not found for notifications");
+//            }
+//        }
+//        return jsonString;
+//    }
+
 }

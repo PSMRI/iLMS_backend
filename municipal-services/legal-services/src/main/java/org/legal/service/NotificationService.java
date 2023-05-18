@@ -2,8 +2,10 @@ package org.legal.service;
 
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.json.JSONObject;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.CaseRepository;
 import org.legal.repository.ServiceRepository;
@@ -13,16 +15,21 @@ import org.legal.web.model.Case;
 import org.legal.web.model.CaseRequest;
 import org.legal.web.model.CaseResponse;
 import org.legal.web.model.CaseSearchCriteria;
+import org.legal.web.model.Recepient;
+import org.legal.web.model.enums.Source;
+import org.legal.web.model.notification.Action;
+import org.legal.web.model.notification.Email;
 import org.legal.web.model.notification.EmailRequest;
 import org.legal.web.model.notification.Event;
 import org.legal.web.model.notification.EventRequest;
 import org.legal.web.model.notification.SMSRequest;
+import org.legal.web.model.user.UserSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
+import static org.apache.commons.lang3.ClassUtils.getName;
 import static org.legal.util.LEGALConstants.*;
 
 @Slf4j
@@ -32,7 +39,7 @@ public class NotificationService {
     NotificationUtil notificationUtil;
 
     @Autowired
-    LEGALConfiguration ilmsConfiguration;
+    LEGALConfiguration configs;
 
     @Autowired
     CaseRepository caseRepository;
@@ -120,7 +127,7 @@ public class NotificationService {
 
     public Map<String, String> fetchUsersByOfficerId(List<String> officerId, String tenantId) {
         StringBuilder uri = new StringBuilder();
-        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndPoint());
+        uri.append(configs.getUserHost()).append(configs.getUserSearchEndPoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
         userSearchRequest.put("tenantId", tenantId);
         userSearchRequest.put("uuid", officerId);
@@ -136,5 +143,122 @@ public class NotificationService {
         }
         return mobileNumberToUser;
     }
+    public void schedulerMsg(RequestInfo requestInfo, String uuid, String action) {
+        List<String> ids = new ArrayList<>();
+        ids.add(uuid);
+        String tenantId=configs.getTenantId();
+        String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, requestInfo);
+        String message = getCustomizedMsgForSchedular(localizationMessages, action, uuid);
+        if (configs.getIsUserEventsNotificationEnabled() != null && configs.getIsUserEventsNotificationEnabled()) {
+            EventRequest eventRequest = enrichEventRequestForScheduler(requestInfo,message,uuid);
+            if (eventRequest != null) {
+                notificationUtil.sendEventNotification(eventRequest);
+            }
+        }
+        if (configs.getIsSMSNotificationEnabled() != null && configs.getIsSMSNotificationEnabled()) {
+            List<SMSRequest> smsRequests = new ArrayList<>();
+//            String locale=requestInfo.getMsgId()!=null ? requestInfo.getMsgId().split("\\|")[1]:"en_IN";
+//            log.info("locale is "+locale );
+            Map<String,String> mobileNumbers=fetchUsersByOfficerId( ids,tenantId);
+            smsRequests = enrichSmsRequestForEmployee(mobileNumbers,message);
+            if (!CollectionUtils.isEmpty(smsRequests)) {
+                notificationUtil.sendSMS(smsRequests);
+            }
+        }
+        if (configs.getIsEmailNotificationEnabled() != null && configs.getIsEmailNotificationEnabled()) {
+            List<EmailRequest> emailRequests=new ArrayList<>();
+            emailRequests = enrichEmailRequestForEmployee( requestInfo,uuid, message, tenantId);
+            if (emailRequests != null) {
+                notificationUtil.sendEmail(emailRequests);
+            }
+        }
 
+    }
+    private String getCustomizedMsgForSchedular( String localizationMessages, String action, String uuid) {
+        String msgCode = null, messageTemplate = null;
+        msgCode = action;
+        messageTemplate = customizeForSchedular( msgCode, localizationMessages, uuid);
+        return messageTemplate;
+    }
+    private String customizeForSchedular( String msgCode, String localizationMessages, String uuid) {
+        String messageTemplate = getMessageTemplate(msgCode, localizationMessages, uuid);
+        return messageTemplate;
+    }
+    public String getMessageTemplate(String notificationCode, String localizationMessage, String uuid) {
+        String path = "$..messages[?(@.code==\"{}\")].message";
+        path = path.replace("{}", notificationCode);
+        String message = "";
+        try {
+            Object messageObj = JsonPath.parse(localizationMessage).read(path);
+            message = ((ArrayList<String>) messageObj).get(0);
+        } catch (Exception e) {
+            log.warn("Fetching from localization failed", e);
+        }
+        return message;
+    }
+    private EventRequest enrichEventRequestForScheduler(RequestInfo requestInfo, String finalMessage, String uuid) {
+        String tenantId = configs.getTenantId();
+        List<Event> events = new ArrayList<>();
+        List<String> toUsers = new ArrayList<>();
+        toUsers.add(uuid);
+        Action action = null;
+        Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+        events.add(Event.builder().tenantId(tenantId).description(finalMessage).eventType(USREVENTS_EVENT_TYPE)
+                        .name(USREVENTS_EVENT_NAME).postedBy(USREVENTS_EVENT_POSTEDBY)
+                        .source(Source.WEBAPP).recepient(recepient).actions(action).eventDetails(null).build());
+
+        if (!CollectionUtils.isEmpty(events)) {
+            return EventRequest.builder().requestInfo(requestInfo).events(events).build();
+        } else {
+            return null;
+        }
+    }
+    private List<SMSRequest> enrichSmsRequestForEmployee(Map<String,String> mobileNumber, String finalMessage) {
+        List<SMSRequest> smsRequest = new LinkedList<>();
+        for (Map.Entry<String, String> entryset : mobileNumber.entrySet()) {
+            smsRequest.add(new SMSRequest(entryset.getValue(), finalMessage));
+        }
+        return smsRequest;
+    }
+    private List<EmailRequest> enrichEmailRequestForEmployee(RequestInfo requestInfo,String uuid, String finalMessage,String tenantId) {
+        List<String> uuids = new ArrayList<>();
+        uuids.add(uuid);
+        Map<String, String> mobileNumberToEmailId = fetchUserEmail(uuids);
+        if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
+            log.error("Email Ids Not found for Mobilenumbers");
+        }
+        List<EmailRequest> emailRequest = new LinkedList<>();
+        for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
+            if (finalMessage.contains("##")){
+                finalMessage = finalMessage.split("##")[0];
+            }
+            String message = finalMessage;
+            String subject = configs.getNotifSubject();
+            String body = message;
+            Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).body(body).subject(subject).build();
+            EmailRequest email = new EmailRequest(requestInfo, emailobj);
+            emailRequest.add(email);
+        }
+        return emailRequest;
+    }
+    public Map<String, String> fetchUserEmail(List<String> uuid) {
+        Map<String, String> mapOfPhoneNoAndEmails = new HashMap<>();
+        StringBuilder uri = new StringBuilder();
+        uri.append(configs.getUserHost()).append(configs.getUserSearchEndPoint());
+        UserSearchRequest userSearchRequest = new UserSearchRequest();
+        userSearchRequest.setUuid(uuid);
+        try {
+            Object user = restRepo.fetchResult(uri, userSearchRequest);
+            if(null != user) {
+                String emailId = JsonPath.read(user, "$.user[0].emailId");
+                mapOfPhoneNoAndEmails.put(uuid.get(0), emailId);
+            }else {
+                log.error("Service returned null while fetching user for username - "+uuid);
+            }
+        }catch(Exception e) {
+            log.error("Exception while fetching user for username - "+uuid);
+            log.error("Exception trace: ",e);
+        }
+        return mapOfPhoneNoAndEmails;
+    }
 }
