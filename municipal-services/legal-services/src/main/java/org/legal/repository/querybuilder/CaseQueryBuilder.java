@@ -16,9 +16,9 @@ import java.util.Objects;
 public class CaseQueryBuilder {
     private static final String docQuery = "select count(*) OVER() AS document_full_count,* from eg_lg_document where case_id = ?";
 
-    private static final String partyQuery = "select party.*,advocate.id as adv_id, advocate.first_name, advocate.last_name,advocate.contact_number,advocate.status,advocate.createdby,advocate.createdtime,advocate.lastmodifiedby,advocate.lastmodifiedtime from eg_lg_case_party party inner join eg_lg_advocate advocate ON advocate.id = party.advocate_id where party.case_id=?";
+    private static final String partyQuery = "select party.*,advocate.id as adv_id, advocate.first_name, advocate.last_name,advocate.contact_number,advocate.status,advocate.createdby,advocate.createdtime,advocate.lastmodifiedby,advocate.lastmodifiedtime from eg_lg_case_party party inner join eg_lg_party_advocate_bridge bridge ON bridge.party_id = party.id inner join eg_lg_advocate advocate ON advocate.id = bridge.advocate_id where party.case_id=?";
 
-    private static final String actQuery="select * from eg_lg_act where case_id = ?";
+    private static final String actQuery = "select * from eg_lg_act where case_id = ?";
 
     private static final String Query = "select count(*) OVER() AS full_count,eg_lg_case.id as ilmsCase_id, eg_lg_case.case_number as ilms_caseNumber, eg_lg_case.cnr_number as ilms_cnrNumber, eg_lg_case.tenant_id as ilms_tenantId, eg_lg_case.parent_case_id as ilms_parentCaseId, eg_lg_case.linked_cases as ilms_linkedCases, eg_lg_case.case_type as ilms_caseType, eg_lg_case.case_category as ilms_caseCategory, eg_lg_case.filing_number as ilms_filingNumber, eg_lg_case.filing_date as ilms_filingDate, eg_lg_case.case_summary as ilms_caseSummary, eg_lg_case.arising_details as ilms_arisingDetails, eg_lg_case.policy_or_nonpolicy_matter as ilms_matter, eg_lg_case.case_status as ilms_caseStatus, eg_lg_case.application_status as ilms_applicationStatus, eg_lg_case.priority as ilms_priority, eg_lg_case.recommend_oic as ilms_recommendOic, eg_lg_case.remarks as ilms_remarks, eg_lg_case.additional_details as ilms_additionalDetails, eg_lg_case.status as ilms_status, eg_lg_case.createdby as ilms_createdBy, eg_lg_case.createdtime as ilms_createdTime, eg_lg_case.lastmodifiedby as ilms_lastModifiedBy, eg_lg_case.lastmodifiedtime as ilms_lastModifiedTime,eg_lg_court.id as court_id, eg_lg_court.case_id as court_caseId, eg_lg_court.court_name as court_name, eg_lg_court.district as court_district, eg_lg_court.state as court_state, eg_lg_court.division as court_division,eg_lg_court.status as court_status, eg_lg_court.createdby as court_createdby,eg_lg_court.createdtime as court_createdtime,eg_lg_court.lastmodifiedby as court_lastmodifiedby,eg_lg_court.lastmodifiedtime as court_lastmodifiedtime, FROM eg_lg_case LEFT OUTER JOIN eg_lg_court on eg_lg_court.case_id = eg_lg_case.id ";
 
@@ -29,7 +29,7 @@ public class CaseQueryBuilder {
     private static final String CaseQuery1 = "select DISTINCT(cases.id) from eg_lg_case as cases INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = cases.id LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid ";
     private static final String CaseQuery2 = " AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = cases.id GROUP BY wf.businessid)";
 
-    private static final String advocateQuery="select * from eg_lg_advocate ";
+    private static final String advocateQuery = "select * from eg_lg_advocate ";
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
 
@@ -166,6 +166,7 @@ public class CaseQueryBuilder {
     public String getPartyQuery() {
         return partyQuery;
     }
+
     public String getActQuery() {
         return actQuery;
     }
@@ -199,7 +200,8 @@ public class CaseQueryBuilder {
     public String getAssignedCases(String uuid) {
         return CaseQuery1 + "where " + "assg.assignee = " + "'" + uuid + "'" + CaseQuery2;
     }
-    public String getAdvocateQuery(String id){
-        return advocateQuery+"where id ='"+id+"';";
+
+    public String getAdvocateQuery(String id) {
+        return advocateQuery + "where id ='" + id + "';";
     }
 }

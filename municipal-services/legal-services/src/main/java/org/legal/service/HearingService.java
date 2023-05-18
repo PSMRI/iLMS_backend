@@ -13,6 +13,7 @@ import org.legal.web.model.*;
 import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.PartyType;
 import org.legal.web.model.enums.Status;
+import org.legal.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,18 +72,20 @@ public class HearingService {
                 hearingRequest.getHearing().setStatus(Status.ACTIVE);
                 for (Party party : hearingRequest.getHearing().getParties()) {
                     if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                        party.setStatus(Status.ACTIVE);
-//                        party.setPartyType(PartyType.PETITIONER.toString());
+                                                party.setStatus(Status.ACTIVE);
                         party.setCaseId(hearingRequest.getHearing().getCaseId());
                         if (Objects.nonNull(party.getAdvocate())) {
-                            party.getAdvocate().setStatus(Status.ACTIVE);
+                            for (Advocate advocate : party.getAdvocate()) {
+                                advocate.setStatus(Status.ACTIVE);
+                            }
                         }
                     } else if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
                         party.setStatus(Status.ACTIVE);
-//                        party.setPartyType(PartyType.RESPONDENT.toString());
                         party.setCaseId(hearingRequest.getHearing().getCaseId());
                         if (Objects.nonNull(party.getAdvocate())) {
-                            party.getAdvocate().setStatus(Status.ACTIVE);
+                            for (Advocate advocate : party.getAdvocate()) {
+                                advocate.setStatus(Status.ACTIVE);
+                            }
 
                         }
                     }
@@ -128,6 +131,9 @@ public class HearingService {
                 Hearing oldHearing = hearingList.get(0);
                 HearingRequest updatedRequest = hearingUtils.prepareHearingDetailsModalForUpdate(hearingDetailsRequest, oldHearing);
                 hearingDetailsValidator.updateValidator(updatedRequest.getHearing(), hearingDetailsRequest);
+                if (Objects.nonNull(hearingDetailsRequest.getHearing().getWorkflow())) {
+                    processUpdateForHearing(hearingDetailsRequest, updatedRequest.getHearing());
+                }
                 producer.push(ilmsConfiguration.getUpdateHearingTopic(), updatedRequest);
             } else {
                 throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available");
@@ -136,6 +142,14 @@ public class HearingService {
             throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
         }
         return hearingDetailsRequest.getHearing();
+    }
+    private void processUpdateForHearing(HearingRequest request, Hearing hearing) {
+        if (ilmsConfiguration.getIsWorkflowEnabled()) {
+            State state = workflowService.updateWorkflowForHearing(request, CreationReason.UPDATE);
+            if (state.getIsStartState() && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !hearing.getStatus()
+                                                                                                                            .equals(Status.ACTIVE)) {
+            }
+        }
     }
 }
 

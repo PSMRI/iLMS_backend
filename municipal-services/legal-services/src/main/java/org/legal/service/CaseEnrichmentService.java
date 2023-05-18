@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
+import org.legal.repository.CaseRepository;
 import org.legal.repository.IdGenRepository;
 import org.legal.util.CaseUtils;
 import org.legal.util.LegalErrorConstants;
@@ -31,6 +32,9 @@ public class CaseEnrichmentService {
     @Autowired
     private IdGenRepository idGenRepository;
 
+    @Autowired
+    private CaseRepository caseRepository;
+
     public void enrichCaseCreateRequest(CaseRequest caseRequest) {
         RequestInfo requestInfo = caseRequest.getRequestInfo();
         Case aCase = caseRequest.getCaseObj();
@@ -44,8 +48,10 @@ public class CaseEnrichmentService {
         }
         for (Party party : aCase.getParties()) {
             party.setAuditDetails(auditDetails);
-            if(Objects.nonNull(party.getAdvocate()))
-            party.getAdvocate().setAuditDetails(auditDetails);
+            if (Objects.nonNull(party.getAdvocate()))
+                for (Advocate advocate : party.getAdvocate()) {
+                    advocate.setAuditDetails(auditDetails);
+                }
         }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
             aCase.getDocuments().forEach(doc -> {
@@ -72,7 +78,9 @@ public class CaseEnrichmentService {
         ilmsCase.setAuditDetails(auditDetails);
         for (Party party : ilmsCase.getParties()) {
             party.setAuditDetails(auditDetails);
-            party.getAdvocate().setAuditDetails(auditDetails);
+            for (Advocate advocate : party.getAdvocate()) {
+                advocate.setAuditDetails(auditDetails);
+            }
         }
         if (request.getHearing().getPayment() != null) {
             request.getHearing().getPayment().setAuditDetails(auditDetails);
@@ -81,13 +89,12 @@ public class CaseEnrichmentService {
     }
 
     private void setIdgenIds(CaseRequest request) {
+        PartyAdv partyAdv = new PartyAdv();
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getCaseObj().getTenantId();
         Case caseObj = request.getCaseObj();
         List<String> caseId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCaseIdgenName(), ilmsConfiguration.getCaseIdgenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();
-//        List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
-//        ListIterator<String> actItr = actId.listIterator();
         List<String> courtId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCourtIdgenName(),
                 ilmsConfiguration.getCourtIdgenFormat(), 1);
         ListIterator<String> courtItr = courtId.listIterator();
@@ -101,11 +108,11 @@ public class CaseEnrichmentService {
             caseObj.getCourt().setId(courtItr.next());
         }
         if (Objects.nonNull(caseObj.getAct())) {
-        for (Act act:caseObj.getAct()) {
-            List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
-            ListIterator<String> actItr = actId.listIterator();
-            act.setId(actItr.next());
-        }
+            for (Act act : caseObj.getAct()) {
+                List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
+                ListIterator<String> actItr = actId.listIterator();
+                act.setId(actItr.next());
+            }
         }
         for (Party party : caseObj.getParties()) {
             if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
@@ -114,27 +121,85 @@ public class CaseEnrichmentService {
                 ListIterator<String> petitionerItr = petitionerId.listIterator();
                 party.setId(petitionerItr.next());
                 if (Objects.nonNull(party.getAdvocate())) {
-                    if ( StringUtils.isEmpty(party.getAdvocate().getId()) || !party.getAdvocate().getId().equals(party.getAdvocateId())) {
-                        List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
-                                ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
-                        ListIterator<String> padvocateItr = padvocateId.listIterator();
-                        party.getAdvocate().setId(padvocateItr.next());
+                    List<PartyAdv> partyAdvList = caseObj.getPartyAdv();
+                    if (partyAdvList == null) {
+                        partyAdvList = new ArrayList<>();
                     }
+                    for (Advocate advocate : party.getAdvocate()) {
+                        if (advocate.getId() == null) {
+                            List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
+                                    ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
+                            ListIterator<String> padvocateItr = padvocateId.listIterator();
+                            advocate.setId(padvocateItr.next());
+                            PartyAdv partyAdv1 = new PartyAdv();
+                            partyAdv1.setId(UUID.randomUUID().toString());
+                            partyAdv1.setCaseId(caseId.toString());
+                            partyAdv1.setAdvocateId(advocate.getId());
+                            partyAdv1.setPartyId(party.getId());
+                            partyAdv1.setPartyType(party.getPartyType());
+                            partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
+                            partyAdvList.add(partyAdv1);
+                        } else {
+                            List<Advocate> advocates = caseRepository.getAdvocateById(advocate.getId());
+                            for (Advocate padvocate : advocates) {
+                                if (padvocate.getId().equals(advocate.getId())) {
+                                    PartyAdv partyAdv1 = new PartyAdv();
+                                    partyAdv1.setId(UUID.randomUUID().toString());
+                                    partyAdv1.setCaseId(party.getCaseId());
+                                    partyAdv1.setAdvocateId(padvocate.getId());
+                                    partyAdv1.setPartyId(party.getId());
+                                    partyAdv1.setPartyType(party.getPartyType());
+                                    partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
+                                    partyAdvList.add(partyAdv1);
+                                    party.setAdvocate(null);
+                                }
+                            }
+                        }
+                    }
+                    caseObj.setPartyAdv(partyAdvList);
                 }
+
             } else {
                 List<String> respondentId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentIdgenName(),
                         ilmsConfiguration.getRespondentIdgenFormat(), 1);
                 ListIterator<String> respondentItr = respondentId.listIterator();
                 party.setId(respondentItr.next());
                 if (Objects.nonNull(party.getAdvocate())) {
-                    if ( StringUtils.isEmpty(party.getAdvocate().getId()) || !party.getAdvocate().getId().equals(party.getAdvocateId())) {
-                        List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
-                                ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
-                        ListIterator<String> radvocateItr = radvocateId.listIterator();
-                        party.getAdvocate().setId(radvocateItr.next());
-                        party.setAdvocateId(party.getAdvocate().getId());
+                    List<PartyAdv> partyAdvList = caseObj.getPartyAdv();
+                    if (partyAdvList == null) {
+                        partyAdvList = new ArrayList<>();
                     }
+                    for (Advocate advocate : party.getAdvocate()) {
+                        if (StringUtils.isEmpty(advocate.getId())) {
+                            List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
+                                    ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
+                            ListIterator<String> radvocateItr = radvocateId.listIterator();
+                            advocate.setId(radvocateItr.next());
+                            PartyAdv partyAdv1 = new PartyAdv();
+                            partyAdv1.setId(UUID.randomUUID().toString());
+                            partyAdv1.setCaseId(caseId.toString());
+                            partyAdv1.setAdvocateId(advocate.getId());
+                            partyAdv1.setPartyId(party.getId());
+                            partyAdv1.setPartyType(party.getPartyType());
+                            partyAdvList.add(partyAdv1);
+                        } else {
+                            List<Advocate> advocates = caseRepository.getAdvocateById(advocate.getId());
+                            for (Advocate radvocate : advocates) {
+                                PartyAdv partyAdv1 = new PartyAdv();
+                                partyAdv1.setId(UUID.randomUUID().toString());
+                                partyAdv1.setCaseId(party.getCaseId());
+                                partyAdv1.setAdvocateId(radvocate.getId());
+                                partyAdv1.setPartyId(party.getId());
+                                partyAdv1.setPartyType(party.getPartyType());
+                                partyAdvList.add(partyAdv1);
+                                party.setAdvocate(null);
+                            }
+                        }
+
+                    }
+                    caseObj.setPartyAdv(partyAdvList);
                 }
+
             }
         }
         if (Objects.nonNull(caseObj.getDocuments())) {
@@ -166,7 +231,9 @@ public class CaseEnrichmentService {
         }
         for (Party party : aCase.getParties()) {
             party.setAuditDetails(auditDetails);
-            party.getAdvocate().setAuditDetails(auditDetails);
+            for (Advocate advocate : party.getAdvocate()) {
+                advocate.setAuditDetails(auditDetails);
+            }
         }
 //        if (caseRequest.getCaseObj().getAct() != null) {
 //            caseRequest.getCaseObj().getAct().setAuditDetails(auditDetails);

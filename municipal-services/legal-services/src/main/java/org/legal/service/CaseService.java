@@ -62,13 +62,6 @@ public class CaseService {
         criteria.setUuid(requestInfo.getUserInfo().getUuid());
         List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
         caseResponse = caseRepository.getLegalCaseData(criteria);
-//        if (!caseResponse.getCaseList().isEmpty()) {
-//            caseResponse.getCaseList().forEach(caseObj -> {
-//                caseList.add(caseObj);
-//            });
-//        } else {
-//            throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
-//        }
         CaseResponse finalResult = new CaseResponse();
         String userRole = requestInfo.getUserInfo().getRoles().get(0).getCode();
         Integer total = null;
@@ -123,11 +116,11 @@ public class CaseService {
         }
         List<Hearing> hearingList = new ArrayList<>();
         List<Judgement> judgementList = new ArrayList<>();
-        HearingResponse hearingResponse=null;
-        JudgementResponse judgementResponse=null;
+        HearingResponse hearingResponse = null;
+        JudgementResponse judgementResponse = null;
         HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
-                                                                     .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
-                                                                     .build();
+                .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
+                .build();
         hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
         JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
                 caseResponse.getCaseList().get(0).getId())).build();
@@ -201,64 +194,48 @@ public class CaseService {
         if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
             caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
-        for (Party parties : caseRequest.getCaseObj().getParties()) {
-            if (parties.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                parties.setStatus(Status.ACTIVE);
-                parties.setAdvocateId("");
-                if (Objects.nonNull(parties.getAdvocate())) {
-                   List<Advocate> advocates=caseRepository.getAdvocateById(parties.getAdvocate().getId());
-                    for (Advocate advocate: advocates){
-                        if(parties.getAdvocate().getId().equals(advocate.getId())){
-                            parties.setAdvocateId(parties.getAdvocate().getId());
-                            parties.setAdvocate(null);
-                        }
-                    }
-                }
-            } else if (parties.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                parties.setStatus(Status.ACTIVE);
-                if (Objects.nonNull(parties.getAdvocate())) {
-                    List<Advocate> advocates=caseRepository.getAdvocateById(parties.getAdvocate().getId());
-                    for (Advocate advocate: advocates){
-                        if(parties.getAdvocate().getId().equals(advocate.getId())){
-                            parties.setAdvocateId(parties.getAdvocate().getId());
-                            parties.setAdvocate(null);
-                        }
-                    }
-                }
-            }
-            if (parties.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                if (Objects.nonNull(parties.getDepartmentName())) {
-                    parties.setFirstName(null);
-                    parties.setLastName(null);
-                    parties.setGender(null);
-                    parties.setPetitionerType(null);
-                    parties.setAddress(null);
-                    parties.setContactNumber(null);
-                    parties.setDepartmentName(parties.getDepartmentName());
+        for (Party party : caseRequest.getCaseObj().getParties()) {
+            if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
+                if (Objects.nonNull(party.getDepartmentName())) {
+                    party.setFirstName(null);
+                    party.setLastName(null);
+                    party.setGender(null);
+                    party.setPetitionerType(null);
+                    party.setAddress(null);
+                    party.setStatus(Status.ACTIVE);
+                    party.setContactNumber(null);
+                    party.setDepartmentName(party.getDepartmentName());
                 } else {
-                    parties.setDepartmentName(null);
+                    party.setDepartmentName(null);
+                    party.setStatus(Status.ACTIVE);
                 }
-                parties.setPartyType(PartyType.PETITIONER.toString());
-                parties.setStatus(Status.ACTIVE);
-                if (Objects.nonNull(parties.getAdvocate())) {
-                    parties.getAdvocate().setStatus(Status.ACTIVE);
+                party.setPartyType(PartyType.PETITIONER.toString());
+                party.setStatus(Status.ACTIVE);
+                if (Objects.nonNull(party.getAdvocate())) {
+                    for (Advocate advocate : party.getAdvocate()) {
+                        advocate.setStatus(Status.ACTIVE);
+                    }
                 }
             } else {
-                if (Objects.nonNull(parties.getDepartmentName())) {
-                    parties.setFirstName(null);
-                    parties.setLastName(null);
-                    parties.setGender(null);
-                    parties.setPetitionerType(null);
-                    parties.setAddress(null);
-                    parties.setContactNumber(null);
-                    parties.setDepartmentName(parties.getDepartmentName());
+                if (Objects.nonNull(party.getDepartmentName())) {
+                    party.setFirstName(null);
+                    party.setLastName(null);
+                    party.setGender(null);
+                    party.setPetitionerType(null);
+                    party.setAddress(null);
+                    party.setContactNumber(null);
+                    party.setStatus(Status.ACTIVE);
+                    party.setDepartmentName(party.getDepartmentName());
                 } else {
-                    parties.setDepartmentName(null);
+                    party.setDepartmentName(null);
+                    party.setStatus(Status.ACTIVE);
                 }
-                parties.setPartyType(PartyType.RESPONDENT.toString());
-                parties.setStatus(Status.ACTIVE);
-                if (Objects.nonNull(parties.getAdvocate())) {
-                    parties.getAdvocate().setStatus(Status.ACTIVE);
+                party.setPartyType(PartyType.RESPONDENT.toString());
+                party.setStatus(Status.ACTIVE);
+                if (Objects.nonNull(party.getAdvocate())) {
+                    for (Advocate advocate : party.getAdvocate()) {
+                        advocate.setStatus(Status.ACTIVE);
+                    }
                 }
             }
         }

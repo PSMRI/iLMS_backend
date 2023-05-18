@@ -4,15 +4,7 @@ import org.egov.common.contract.request.User;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.HearingRepository;
 import org.legal.service.CaseEnrichmentService;
-import org.legal.web.model.Case;
-import org.legal.web.model.CaseRequest;
-import org.legal.web.model.CaseResponse;
-import org.legal.web.model.CaseSearchCriteria;
-import org.legal.web.model.Hearing;
-import org.legal.web.model.HearingRequest;
-import org.legal.web.model.HearingResponse;
-import org.legal.web.model.HearingSearchCriteria;
-import org.legal.web.model.Party;
+import org.legal.web.model.*;
 import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.PartyType;
 import org.legal.web.model.workflow.ProcessInstance;
@@ -157,101 +149,112 @@ public class HearingUtils {
                     //Setting Data For Respondent Advocate
                     if (!StringUtils.isEmpty(party.getAdvocate())) {
 
-                        if (!StringUtils.isEmpty(party.getAdvocate().getFirstName())) {
-                            oldParty.getAdvocate()
-                                    .setFirstName(party.getAdvocate().getFirstName());
-                        }
-                        if (!StringUtils.isEmpty(party.getAdvocate().getLastName())) {
-                            oldParty.getAdvocate()
-                                    .setLastName(party.getAdvocate().getLastName());
-                        }
-                        if (!StringUtils.isEmpty(party.getAdvocate().getContactNumber())) {
-                            oldParty.getAdvocate()
-                                    .setContactNumber(party.getAdvocate().getContactNumber());
-                        }
+                        for (Advocate advocate : party.getAdvocate()) {
+                            for (Advocate oldAdvocate : oldParty.getAdvocate()) {
+                                if (!StringUtils.isEmpty(advocate.getFirstName())) {
+                                    oldAdvocate
+                                            .setFirstName(advocate.getFirstName());
+                                }
+                                if (!StringUtils.isEmpty(advocate.getLastName())) {
+                                    oldAdvocate
+                                            .setLastName(advocate.getLastName());
+                                }
+                                if (!StringUtils.isEmpty(advocate.getContactNumber())) {
+                                    oldAdvocate
+                                            .setContactNumber(advocate.getContactNumber());
+                                }
 
-                        if (!StringUtils.isEmpty(party.getAdvocate().getStatus())) {
-                            oldParty.getAdvocate()
-                                    .setStatus(party.getAdvocate().getStatus());
+                                if (!StringUtils.isEmpty(advocate.getStatus())) {
+                                    oldAdvocate
+                                            .setStatus(advocate.getStatus());
+                                }
+                            }
+                        }
+                    }
+                    //checking petitioner details
+                    if (party.getPartyType().equals(PartyType.PETITIONER.toString()) && party.getId().equals(oldParty.getId())) {
+                        if (!StringUtils.isEmpty(party.getCaseId())) {
+                            oldParty.setCaseId(party.getCaseId());
+                        }
+                        if (!StringUtils.isEmpty(party.getFirstName())) {
+                            oldParty.setFirstName(party.getFirstName());
+                        }
+                        if (!StringUtils.isEmpty(party.getAdvocateId())) {
+                            oldParty.setAdvocateId(party.getAdvocateId());
+                        }
+                        if (!StringUtils.isEmpty(party.getLastName())) {
+                            oldParty.setLastName(party.getLastName());
+                        }
+                        if (!StringUtils.isEmpty(party.getGender())) {
+                            oldParty.setGender(party.getGender());
+                        }
+                        if (!StringUtils.isEmpty(party.getPetitionerType())) {
+                            oldParty.setPetitionerType(party.getPetitionerType());
+                        }
+                        if (!StringUtils.isEmpty(party.getAddress())) {
+                            oldParty.setAddress(party.getAddress());
+                        }
+                        if (!StringUtils.isEmpty(party.getDepartmentName())) {
+                            oldParty.setDepartmentName(party.getDepartmentName());
+                        }
+                        if (!StringUtils.isEmpty(party.getContactNumber())) {
+                            oldParty.setContactNumber(party.getContactNumber());
+                        }
+                        if (!StringUtils.isEmpty(party.getPartyType())) {
+                            oldParty.setPartyType(party.getPartyType());
+                        }
+                        if (!StringUtils.isEmpty(party.getStatus())) {
+                            oldParty.setStatus(party.getStatus());
+                        }
+                        //Setting Data For Petitioner Advocate
+                        if (!StringUtils.isEmpty(party.getAdvocate())) {
+
+                            for (Advocate advocate : party.getAdvocate()) {
+                                for (Advocate oldAdvocate : oldParty.getAdvocate()) {
+                                    if (!StringUtils.isEmpty(advocate.getFirstName())) {
+                                        oldAdvocate
+                                                .setFirstName(advocate.getFirstName());
+                                    }
+                                    if (!StringUtils.isEmpty(advocate.getLastName())) {
+                                        oldAdvocate
+                                                .setLastName(advocate.getLastName());
+                                    }
+                                    if (!StringUtils.isEmpty(advocate.getContactNumber())) {
+                                        oldAdvocate
+                                                .setContactNumber(advocate.getContactNumber());
+                                    }
+
+                                    if (!StringUtils.isEmpty(advocate.getStatus())) {
+                                        oldAdvocate
+                                                .setStatus(advocate.getStatus());
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-                //checking petitioner details
-                if (party.getPartyType().equals(PartyType.PETITIONER.toString()) && party.getId().equals(oldParty.getId())) {
-                    if (!StringUtils.isEmpty(party.getCaseId())) {
-                        oldParty.setCaseId(party.getCaseId());
-                    }
-                    if (!StringUtils.isEmpty(party.getFirstName())) {
-                        oldParty.setFirstName(party.getFirstName());
-                    }
-                    if (!StringUtils.isEmpty(party.getAdvocateId())) {
-                        oldParty.setAdvocateId(party.getAdvocateId());
-                    }
-                    if (!StringUtils.isEmpty(party.getLastName())) {
-                        oldParty.setLastName(party.getLastName());
-                    }
-                    if (!StringUtils.isEmpty(party.getGender())) {
-                        oldParty.setGender(party.getGender());
-                    }
-                    if (!StringUtils.isEmpty(party.getPetitionerType())) {
-                        oldParty.setPetitionerType(party.getPetitionerType());
-                    }
-                    if (!StringUtils.isEmpty(party.getAddress())) {
-                        oldParty.setAddress(party.getAddress());
-                    }
-                    if (!StringUtils.isEmpty(party.getDepartmentName())) {
-                        oldParty.setDepartmentName(party.getDepartmentName());
-                    }
-                    if (!StringUtils.isEmpty(party.getContactNumber())) {
-                        oldParty.setContactNumber(party.getContactNumber());
-                    }
-                    if (!StringUtils.isEmpty(party.getPartyType())) {
-                        oldParty.setPartyType(party.getPartyType());
-                    }
-                    if (!StringUtils.isEmpty(party.getStatus())) {
-                        oldParty.setStatus(party.getStatus());
-                    }
-                    //Setting Data For Petitioner Advocate
-                    if (!StringUtils.isEmpty(party.getAdvocate())) {
-
-                        if (!StringUtils.isEmpty(party.getAdvocate().getFirstName())) {
-                            oldParty.getAdvocate()
-                                    .setFirstName(party.getAdvocate().getFirstName());
-                        }
-                        if (!StringUtils.isEmpty(party.getAdvocate().getLastName())) {
-                            oldParty.getAdvocate()
-                                    .setLastName(party.getAdvocate().getLastName());
-                        }
-                        if (!StringUtils.isEmpty(party.getAdvocate().getContactNumber())) {
-                            oldParty.getAdvocate()
-                                    .setContactNumber(party.getAdvocate().getContactNumber());
-                        }
-                        if (!StringUtils.isEmpty(party.getAdvocate().getStatus())) {
-                            oldParty.getAdvocate()
-                                    .setStatus(party.getAdvocate().getStatus());
-                        }
-                    }
+                if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAdditionalDetails())) {
+                    oldHearingRequest.setAdditionalDetails(hearingDetailsRequest.getHearing().getAdditionalDetails());
                 }
             }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getAdditionalDetails())) {
-                oldHearingRequest.setAdditionalDetails(hearingDetailsRequest.getHearing().getAdditionalDetails());
+            if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
+                if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate())) {
+                    oldHearingRequest.getPayment().setFineImposedDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate());
+                }
+                if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineDueDate())) {
+                    oldHearingRequest.getPayment().setFineDueDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate());
+                }
+                if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
+                    oldHearingRequest.getPayment().setFineAmount(hearingDetailsRequest.getHearing().getPayment().getFineAmount());
+                }
             }
         }
-        if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate())) {
-                oldHearingRequest.getPayment().setFineImposedDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate());
-            }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineDueDate())) {
-                oldHearingRequest.getPayment().setFineDueDate(hearingDetailsRequest.getHearing().getPayment().getFineDueDate());
-            }
-            if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
-                oldHearingRequest.getPayment().setFineAmount(hearingDetailsRequest.getHearing().getPayment().getFineAmount());
-            }
+            updatedRequest.setHearing(oldHearingRequest);
+            caseEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
+            return updatedRequest;
         }
-        updatedRequest.setHearing(oldHearingRequest);
-        caseEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
-        return updatedRequest;
-    }
+
+
 
     public ProcessInstanceRequest getWfForHearingCreate(HearingRequest request, CreationReason creationReasonForWorkflow) {
 

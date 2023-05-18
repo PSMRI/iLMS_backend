@@ -24,9 +24,6 @@ import java.util.Map;
 
 @Repository
 public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
-    private final Party petitioner = new Party();
-
-    private final Party respondent = new Party();
 
     @Autowired
     private ObjectMapper mapper;

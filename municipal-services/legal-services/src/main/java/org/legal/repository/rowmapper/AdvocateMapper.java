@@ -25,6 +25,7 @@ public class AdvocateMapper implements ResultSetExtractor<List<Advocate>> {
     public void setFullCount(int full_count) {
         this.fullCount = full_count;
     }
+
     @Override
     public List<Advocate> extractData(ResultSet rs) throws SQLException, DataAccessException {
         List<Advocate> advocates = new ArrayList<Advocate>();
@@ -36,11 +37,11 @@ public class AdvocateMapper implements ResultSetExtractor<List<Advocate>> {
                     .lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
 
             Advocate advocate = new Advocate();
-            advocate = Advocate.builder().id(rs.getString("id")).contactNumber(rs.getString("contact_number"))
+            advocate = Advocate.builder().id(rs.getString("adv_id")).contactNumber(rs.getString("contact_number"))
                     .firstName(rs.getString("first_name")).lastName(rs.getString("last_name"))
                     .status(Status.valueOf(rs.getString("status")))
                     .auditDetails(advocateAuditDetails).build();
-advocates.add(advocate);
+            advocates.add(advocate);
         }
         return advocates;
     }
