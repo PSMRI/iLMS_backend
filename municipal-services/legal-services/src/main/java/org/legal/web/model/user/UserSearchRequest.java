@@ -20,7 +20,7 @@ public class UserSearchRequest {
     private RequestInfo requestInfo;
 
     @JsonProperty("uuid")
-    private Set<String> uuid;
+    private List<String> uuid;
 
     @JsonProperty("id")
     private List<String> id;

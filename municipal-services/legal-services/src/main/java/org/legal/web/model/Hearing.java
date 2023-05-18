@@ -44,6 +44,9 @@ public class Hearing {
     @JsonProperty("hearingPurpose")
     private String hearingPurpose;
 
+    @JsonProperty("applicationStatus")
+    private String applicationStatus;
+
     @JsonProperty("requiredOfficer")
     private String requiredOfficer;
 

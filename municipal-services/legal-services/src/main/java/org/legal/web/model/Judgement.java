@@ -47,6 +47,9 @@ public class Judgement {
     @JsonProperty("complianceStatus")
     private String complianceStatus;
 
+    @JsonProperty("applicationStatus")
+    private String applicationStatus;
+
     @JsonProperty("remarks")
     private String remarks;
 

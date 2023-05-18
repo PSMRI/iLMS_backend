@@ -40,8 +40,8 @@ public class CaseValidator {
         if (Objects.nonNull(cases.getCategory()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_CATEGORY).contains(cases.getCategory())) {
             errorMap.put("Invalid CaseCategory", "The CaseCategory '" + cases.getCategory() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getStage()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_STAGE).contains(cases.getStage())) {
-            errorMap.put("Invalid CaseStage", "The CaseStage '" + cases.getStage() + "' does not exists");
+        if (Objects.nonNull(cases.getApplicationStatus()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_STAGE).contains(cases.getApplicationStatus())) {
+            errorMap.put("Invalid CaseStage", "The CaseStage '" + cases.getApplicationStatus() + "' does not exists");
         }
 //        if (Objects.nonNull(cases.getSubStage()) && !codes.get(LEGALConstants.MDMS_ILMS_SUB_STAGE).contains(cases.getSubStage())) {
 //            errorMap.put("Invalid CaseSubStage", "The CaseSubStage '" + cases.getSubStage() + "' does not exists");

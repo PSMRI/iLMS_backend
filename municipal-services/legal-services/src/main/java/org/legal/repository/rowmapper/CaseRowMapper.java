@@ -3,7 +3,6 @@ package org.legal.repository.rowmapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
-import org.legal.web.model.Act;
 import org.legal.web.model.AuditDetails;
 import org.legal.web.model.Case;
 import org.legal.web.model.Court;
@@ -65,12 +64,11 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String matter = rs.getString("ilms_matter");
                 this.setFullCount((rs.getInt("full_count")));
                 String caseStatus = rs.getString("ilms_caseStatus");
-               String caseStage = rs.getString("ilms_caseStage");
+               String applicationStatus = rs.getString("ilms_applicationStatus");
 //                String caseSubStage = rs.getString("ilms_caseSubStage");
                 String priority = rs.getString("ilms_priority");
                 String recommendOic = rs.getString("ilms_recommendOic");
                 String remarks = rs.getString("ilms_remarks");
-                Long firstHearingDate = rs.getLong("ilms_firstHearingDate");
                 JsonNode additionalDetails = getAdditionalDetail("ilms_additionalDetails", rs);
                 String status = rs.getString("ilms_status");
 
@@ -84,10 +82,9 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                             .type(caseType).category(caseCategory)
                             .parentCaseId(parentCaseId).number(caseNumber).filingNumber(filingNumber)
                             .remarks(remarks).filingDate(filingDate)
-                            .firstHearingDate(firstHearingDate)
                             .summary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
                             .policyOrNonPolicyMatter(matter).priority(priority)
-                            .caseStatus(caseStatus).stage(caseStage)
+                            .caseStatus(caseStatus).applicationStatus(applicationStatus)
                             .recommendOIC(recommendOic).auditDetails(auditDetails).linkedCases(linkedCases).build();
 
                     ilmsCaseMap.put(id, currentCase);

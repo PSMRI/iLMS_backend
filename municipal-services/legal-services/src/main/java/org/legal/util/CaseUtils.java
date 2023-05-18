@@ -59,9 +59,6 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getLinkedCases())) {
             oldData.setLinkedCases(caseRequest.getCaseObj().getLinkedCases());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFirstHearingDate())) {
-            oldData.setFirstHearingDate(caseRequest.getCaseObj().getFirstHearingDate());
-        }
 
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getType())) {
             oldData.setType(caseRequest.getCaseObj().getType());
@@ -93,9 +90,6 @@ public class CaseUtils {
 //        }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseStatus())) {
             oldData.setCaseStatus(caseRequest.getCaseObj().getCaseStatus());
-        }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getStage())) {
-            oldData.setStage(caseRequest.getCaseObj().getStage());
         }
 //        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getSubStage())) {
 //            oldData.setSubStage(caseRequest.getCaseObj().getSubStage());

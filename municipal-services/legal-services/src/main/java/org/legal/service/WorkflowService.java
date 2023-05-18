@@ -120,7 +120,7 @@ public class WorkflowService {
 
         ProcessInstanceRequest workflowReq = caseUtils.getWfForCaseCreate(request, creationReasonForWorkflow);
         State state = callWorkFlow(workflowReq);
-
+        request.getCaseObj().setApplicationStatus(state.getApplicationStatus());
         if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && cases.getId() == null) {
 
             String pId = commonUtils.getIdList(request.getRequestInfo(), cases.getTenantId(), ilmsConfiguration.getCaseIdgenName(),
@@ -262,7 +262,7 @@ public class WorkflowService {
 
         ProcessInstanceRequest workflowReq = hearingUtils.getWfForHearingCreate(request, creationReasonForWorkflow);
         State state = callWorkFlow(workflowReq);
-
+        request.getHearing().setApplicationStatus(state.getApplicationStatus());
         if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && hearing.getId() == null) {
 
             String pId = commonUtils.getIdList(request.getRequestInfo(), hearing.getTenantId(), ilmsConfiguration.getHearingIdgenName(),
@@ -282,7 +282,7 @@ public class WorkflowService {
 
         ProcessInstanceRequest workflowReq = judgementUtils.getWfForJudgementCreate(request, creationReasonForWorkflow);
         State state = callWorkFlow(workflowReq);
-
+        request.getJudgement().setApplicationStatus(state.getApplicationStatus());
         if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && judgement.getId() == null) {
 
             String pId = commonUtils.getIdList(request.getRequestInfo(), judgement.getTenantId(), ilmsConfiguration.getCaseIdgenName(),
