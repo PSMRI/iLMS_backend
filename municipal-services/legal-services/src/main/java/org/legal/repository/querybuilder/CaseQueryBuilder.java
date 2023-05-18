@@ -16,7 +16,7 @@ import java.util.Objects;
 public class CaseQueryBuilder {
     private static final String docQuery = "select count(*) OVER() AS document_full_count,* from eg_lg_document where case_id = ?";
 
-    private static final String partyQuery = "select party.*,advocate.id as adv_id, advocate.first_name, advocate.last_name,advocate.contact_number,advocate.status,advocate.createdby,advocate.createdtime,advocate.lastmodifiedby,advocate.lastmodifiedtime from eg_lg_case_party party inner join eg_lg_party_advocate_bridge bridge ON bridge.party_id = party.id inner join eg_lg_advocate advocate ON advocate.id = bridge.advocate_id where party.case_id=?";
+    private static final String partyQuery = "select party.*, advocate.first_name, advocate.last_name,advocate.contact_number,advocate.status,advocate.createdby,advocate.createdtime,advocate.lastmodifiedby,advocate.lastmodifiedtime from eg_lg_case_party party inner join eg_lg_party_advocate_bridge bridge ON bridge.party_id = party.id inner join eg_lg_advocate advocate ON advocate.id = bridge.advocate_id where party.case_id=?";
 
     private static final String actQuery = "select * from eg_lg_act where case_id = ?";
 

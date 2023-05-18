@@ -137,6 +137,7 @@ public class CaseEnrichmentService {
                             partyAdv1.setAdvocateId(advocate.getId());
                             partyAdv1.setPartyId(party.getId());
                             partyAdv1.setPartyType(party.getPartyType());
+                            partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
                             partyAdvList.add(partyAdv1);
                         } else {
                             List<Advocate> advocates = caseRepository.getAdvocateById(advocate.getId());
@@ -148,6 +149,7 @@ public class CaseEnrichmentService {
                                     partyAdv1.setAdvocateId(padvocate.getId());
                                     partyAdv1.setPartyId(party.getId());
                                     partyAdv1.setPartyType(party.getPartyType());
+                                    partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
                                     partyAdvList.add(partyAdv1);
                                     party.setAdvocate(null);
                                 }
