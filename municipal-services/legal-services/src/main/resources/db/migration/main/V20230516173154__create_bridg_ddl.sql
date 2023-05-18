@@ -10,7 +10,7 @@ createdby character varying(64),
 createdtime bigint,
 lastmodifiedby character varying(64),
 lastmodifiedtime bigint,
-CONSTRAINT pk_eg_lg_party_advocate_bridge_id PRIMARY KEY (id),
+CONSTRAINT pk_eg_lg_party_advocate_bridge_id PRIMARY KEY (id)
 );
 
 ALTER TABLE eg_lg_case_party DROP COLUMN advocate_id;
