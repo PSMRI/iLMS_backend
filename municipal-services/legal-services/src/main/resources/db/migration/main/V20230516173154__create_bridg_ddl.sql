@@ -9,7 +9,7 @@ advocate_id character varying(64) NOT NULL,
 createdby character varying(64),
 createdtime bigint,
 lastmodifiedby character varying(64),
-lastmodifiedtime bigint;
+lastmodifiedtime bigint,
 CONSTRAINT pk_eg_lg_party_advocate_bridge_id PRIMARY KEY (id),
 );
 
