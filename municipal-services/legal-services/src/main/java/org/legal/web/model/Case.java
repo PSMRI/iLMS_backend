@@ -107,4 +107,7 @@ public class Case {
     @DiffIgnore
     private ProcessInstance workflow;
 
+    @JsonProperty("PartyAdv")
+    private List<PartyAdv> partyAdv;
+
 }
