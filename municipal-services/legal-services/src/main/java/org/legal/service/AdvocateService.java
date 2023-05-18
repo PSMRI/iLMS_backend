@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
 import org.legal.repository.AdvocateRepository;
 import org.legal.repository.CaseRepository;
+import org.legal.repository.rowmapper.AdvocateMapper;
 import org.legal.util.AdvocateUtils;
 import org.legal.util.CaseUtils;
 import org.legal.util.LegalErrorConstants;
@@ -29,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class AdvocateService {
 
     @Autowired
@@ -48,17 +52,20 @@ public class AdvocateService {
     @Autowired
     private AdvocateUtils advocateUtils;
 
-    public Advocate create(AdvocateRequest request){
+    @Autowired
+    private AdvocateMapper advocateMapper;
+
+    public Advocate create(AdvocateRequest request) {
         advocateEnrichmentService.advocateEnrichmentRequest(request);
         request.getAdvocate().setStatus(Status.ACTIVE);
-        producer.push(legalConfiguration.getCreateAdvocateTopic(),request);
+        producer.push(legalConfiguration.getCreateAdvocateTopic(), request);
         return request.getAdvocate();
     }
 
     public Advocate update(AdvocateRequest advocateRequest) {
         if (advocateRequest.getAdvocate().getId() != null) {
             CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(advocateRequest.getAdvocate().getId())).build();
-            List<Advocate> advocateList= caseRepository.getAdvocateById(criteria.getId().get(0));
+            List<Advocate> advocateList = caseRepository.getAdvocateById(criteria.getId().get(0));
             if (!advocateList.isEmpty()) {
                 AdvocateRequest updatedAdvocateRequest = advocateUtils.prepareObjectMapperForUpdate(advocateList.get(0), advocateRequest);
                 producer.push(legalConfiguration.getUpdateAdvocateTopic(), updatedAdvocateRequest);
@@ -74,15 +81,15 @@ public class AdvocateService {
     }
 
     public AdvocateResponse advocateSearch(AdvocateSearchCriteria criteria) {
-        List<Advocate> advocateList = new ArrayList<>();
+        //  List<Advocate> advocateList = new ArrayList<>();
         AdvocateResponse advocateResponse = null;
         advocateResponse = advocateRepository.getAdvocateDetails(criteria);
-        if (!advocateResponse.getAdvocate().isEmpty()) {
-            advocateList = advocateResponse.getAdvocate();
-        } else {
-            throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, "Advocate is not Available");
-        }
+//        if (!advocateResponse.getAdvocate().isEmpty()) {
+//            advocateList = advocateResponse.getAdvocate();
+//        } else {
+//            log.error(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, "Advocate is not Available");
+//        }
+//        AdvocateResponse caseResponse = AdvocateResponse.builder().advocate(advocateList).totalCount(ad.getFullCount()).build();
         return advocateResponse;
     }
-
 }
