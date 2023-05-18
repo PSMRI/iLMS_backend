@@ -31,9 +31,9 @@ public class PartyRowMapper implements ResultSetExtractor<List<Party>> {
                     .lastModifiedTime(rs.getLong("lastModifiedTime")).build();
 
             Advocate advocate = new Advocate();
-            advocate = Advocate.builder().id(rs.getString("id")).contactNumber(rs.getString("contact_number"))
-                    .firstName(rs.getString("first_name")).lastName(rs.getString("last_name"))
-                    .status(Status.valueOf(rs.getString("status")))
+            advocate = Advocate.builder().id(rs.getString("adv_id")).contactNumber(rs.getString("adv_contact_number"))
+                    .firstName(rs.getString("adv_first_name")).lastName(rs.getString("adv_last_name"))
+                    .status(Status.valueOf(rs.getString("adv_status")))
                     .auditDetails(advocateAuditDetails).build();
 
             Party party = Party.builder().id(rs.getString("id")).departmentName(rs.getString("department_name")).firstName(rs.getString("first_name"))
