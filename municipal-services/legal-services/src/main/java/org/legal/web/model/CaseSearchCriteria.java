@@ -29,6 +29,10 @@ public class CaseSearchCriteria {
     @JsonProperty("parentCaseId")
     private List<String> parentCaseId;
 
+
+    @JsonProperty("applicationStatus")
+    private List<String> applicationStatus;
+
     @JsonProperty("sortBy")
     private SortBy sortBy;
 

@@ -81,6 +81,13 @@ public class CaseQueryBuilder {
         } catch (NullPointerException e) {
             preparedStmtList.add("");
         }
+
+        if (criteria.getApplicationStatus() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" eg_lg_case.application_status = ?");
+                preparedStmtList.add(criteria.getApplicationStatus());
+        }
+
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
     }
 
