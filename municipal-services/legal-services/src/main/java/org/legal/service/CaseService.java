@@ -118,76 +118,39 @@ public class CaseService {
         List<Judgement> judgementList = new ArrayList<>();
         HearingResponse hearingResponse = null;
         JudgementResponse judgementResponse = null;
-        HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
-                .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
-                .build();
-        hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
-        JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
-                caseResponse.getCaseList().get(0).getId())).build();
-        judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
-        caseResponse.getCaseList().forEach(caseObj -> {
-            if (caseObj.getStatus() == Status.ACTIVE) {
-                caseList.add(caseObj);
-            }
-        });
-        hearingResponse.getHearingList().forEach(hearing -> {
-            if (hearing.getStatus() == Status.ACTIVE) {
-                hearingList.add(hearing);
-            }
-        });
-        judgementResponse.getJudgementList().forEach(judgement -> {
-            if (judgement.getStatus() == Status.ACTIVE) {
-                judgementList.add(judgement);
-            }
-        });
+        if (!caseResponse.getCaseList().isEmpty()) {
+            HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
+                                                                         .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
+                                                                         .build();
+            hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
+            JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
+                    caseResponse.getCaseList().get(0).getId())).build();
+            judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
+            caseResponse.getCaseList().forEach(caseObj -> {
+                if (caseObj.getStatus() == Status.ACTIVE) {
+                    caseList.add(caseObj);
+                }
+            });
+            hearingResponse.getHearingList().forEach(hearing -> {
+                if (hearing.getStatus() == Status.ACTIVE) {
+                    hearingList.add(hearing);
+                }
+            });
+            judgementResponse.getJudgementList().forEach(judgement -> {
+                if (judgement.getStatus() == Status.ACTIVE) {
+                    judgementList.add(judgement);
+                }
+            });
 
-        finalResult.setTotalCount(caseResponse.getTotalCount());
-        finalResult.setCaseList(caseList);
-        finalResult.setStatusMap(statusCountMap);
-        finalResult.setOfficersCount(officersCount);
-        finalResult.setHearingList(hearingList);
-        finalResult.setJudgementList(judgementList);
-        return finalResult;
-    }
+            finalResult.setTotalCount(caseResponse.getTotalCount());
+            finalResult.setCaseList(caseList);
+            finalResult.setStatusMap(statusCountMap);
+            finalResult.setOfficersCount(officersCount);
+            finalResult.setHearingList(hearingList);
+            finalResult.setJudgementList(judgementList);
+        }
+            return finalResult;
 
-    public CaseDetailsResponse caseDetailsSearch(CaseSearchCriteria criteria, RequestInfo requestInfo) {
-        CaseDetailsResponse downloadResponse = new CaseDetailsResponse();
-        List<Case> caseList = new ArrayList<>();
-        List<Hearing> hearingList = new ArrayList<>();
-        List<Judgement> judgementList = new ArrayList<>();
-        CaseResponse caseResponse = null;
-        HearingResponse hearingResponse = null;
-        JudgementResponse judgementResponse = null;
-        criteria.setUuid(requestInfo.getUserInfo().getUuid());
-        caseResponse = caseRepository.getLegalCaseData(criteria);
-        HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
-                .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
-                .build();
-        hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
-        JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
-                caseResponse.getCaseList().get(0).getId())).build();
-        judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
-        caseResponse.getCaseList().forEach(caseObj -> {
-            if (caseObj.getStatus() == Status.ACTIVE) {
-                caseList.add(caseObj);
-            }
-        });
-        hearingResponse.getHearingList().forEach(hearing -> {
-            if (hearing.getStatus() == Status.ACTIVE) {
-                hearingList.add(hearing);
-            }
-        });
-        judgementResponse.getJudgementList().forEach(judgement -> {
-            if (judgement.getStatus() == Status.ACTIVE) {
-                judgementList.add(judgement);
-            }
-        });
-        downloadResponse.setCaseList(caseList);
-        downloadResponse.setHearingList(hearingList);
-        downloadResponse.setJudgementList(judgementList);
-        downloadResponse.setTotalCount(caseResponse.getTotalCount());
-        downloadResponse.setResponseInfo(caseResponse.getResponseInfo());
-        return downloadResponse;
     }
 
     public Case create(CaseRequest caseRequest) {

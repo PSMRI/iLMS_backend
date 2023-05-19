@@ -54,14 +54,4 @@ public class CaseController {
         response.setCaseList(caseList);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @PostMapping(value = "/_caseDetails")
-    public ResponseEntity<CaseDetailsResponse> CaseDetailsResponse(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-                                                                   @Valid @ModelAttribute CaseSearchCriteria criteria) {
-        log.info("ILMSCaseController :: search() : START ");
-        CaseDetailsResponse downloadResponse = caseService.caseDetailsSearch(criteria, requestInfoWrapper.getRequestInfo());
-        downloadResponse.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
-        log.info("ILMSCaseController :: search() : END With Response [ " + downloadResponse + " ]");
-        return new ResponseEntity<>(downloadResponse, HttpStatus.OK);
-    }
 }
