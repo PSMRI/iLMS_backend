@@ -146,7 +146,8 @@ public class CaseEnrichmentService {
                             partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
                             partyAdvList.add(partyAdv1);
                             party.setAdvocate(null);
-                        } else {
+                        }
+                        else {
                             List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
                                     ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
                             ListIterator<String> padvocateItr = padvocateId.listIterator();
@@ -166,7 +167,8 @@ public class CaseEnrichmentService {
 
                 }
 
-            } else {
+            }
+            else {
                 List<String> respondentId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentIdgenName(),
                         ilmsConfiguration.getRespondentIdgenFormat(), 1);
                 ListIterator<String> respondentItr = respondentId.listIterator();
