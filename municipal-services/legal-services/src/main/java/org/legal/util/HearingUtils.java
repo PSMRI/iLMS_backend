@@ -34,7 +34,10 @@ public class HearingUtils {
 
     public HearingRequest prepareHearingDetailsModalForUpdate(HearingRequest hearingDetailsRequest, Hearing oldHearingRequest) {
         HearingRequest updatedRequest = new HearingRequest();
-        final String tenantId = hearingRepository.getTenantIdFromHearing(hearingDetailsRequest.getHearing().getId());
+        String tenantId = hearingRepository.getTenantIdFromHearing(hearingDetailsRequest.getHearing().getId());
+        if (tenantId == null) {
+            tenantId = hearingDetailsRequest.getHearing().getTenantId();
+        }
         updatedRequest.setRequestInfo(hearingDetailsRequest.getRequestInfo());
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCaseId())) {
             oldHearingRequest.setCaseId(hearingDetailsRequest.getHearing().getCaseId());
@@ -249,11 +252,10 @@ public class HearingUtils {
                 }
             }
         }
-            updatedRequest.setHearing(oldHearingRequest);
-            caseEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
-            return updatedRequest;
-        }
-
+        updatedRequest.setHearing(oldHearingRequest);
+        caseEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
+        return updatedRequest;
+    }
 
 
     public ProcessInstanceRequest getWfForHearingCreate(HearingRequest request, CreationReason creationReasonForWorkflow) {
@@ -289,6 +291,19 @@ public class HearingUtils {
             default:
                 break;
         }
+        hearing.setWorkflow(wf);
+        return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
+    }
+
+    public ProcessInstanceRequest hearingWFThroughCase(HearingRequest request, String action) {
+        Hearing hearing = request.getHearing();
+        ProcessInstance wf = null != hearing.getWorkflow() ? hearing.getWorkflow() : new ProcessInstance();
+        wf.setBusinessId(hearing.getId());
+        wf.setBusinessService(configuration.getCreateHearingWfName());
+        wf.setModuleName(configuration.getPropertyModuleName());
+        wf.setAction(action);
+        wf.setTenantId(request.getHearing().getTenantId());
+        wf.setAssignes(request.getHearing().getWorkflow().getAssignes());
         hearing.setWorkflow(wf);
         return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
     }

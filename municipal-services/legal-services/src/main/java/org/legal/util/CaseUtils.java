@@ -333,9 +333,9 @@ public class CaseUtils {
         }
         //setting act details
         if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
-            List<Act> actList=caseRequest.getCaseObj().getAct();
+            List<Act> actList = caseRequest.getCaseObj().getAct();
             List<Act> oldAct = oldData.getAct();
-            for (Act act: actList) {
+            for (Act act : actList) {
                 for (Act oldActData : oldAct) {
                     if (oldActData.getId().equalsIgnoreCase(act.getId())) {
 
@@ -424,6 +424,20 @@ public class CaseUtils {
             default:
                 break;
         }
+        aCase.setWorkflow(wf);
+        return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
+    }
+
+    public ProcessInstanceRequest changeCaseWF(CaseRequest request, String action) {
+
+        Case aCase = request.getCaseObj();
+        ProcessInstance wf = null != aCase.getWorkflow() ? aCase.getWorkflow() : new ProcessInstance();
+        wf.setBusinessId(aCase.getId());
+        wf.setBusinessService(ilmsConfiguration.getCreateCaseWfName());
+        wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
+        wf.setAction(action);
+        wf.setTenantId(request.getCaseObj().getTenantId());
+        wf.setAssignes(request.getCaseObj().getWorkflow().getAssignes());
         aCase.setWorkflow(wf);
         return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
     }

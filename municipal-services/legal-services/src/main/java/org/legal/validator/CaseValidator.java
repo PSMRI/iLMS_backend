@@ -40,9 +40,9 @@ public class CaseValidator {
         if (Objects.nonNull(cases.getCategory()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_CATEGORY).contains(cases.getCategory())) {
             errorMap.put("Invalid CaseCategory", "The CaseCategory '" + cases.getCategory() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getApplicationStatus()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_STAGE).contains(cases.getApplicationStatus())) {
-            errorMap.put("Invalid CaseStage", "The CaseStage '" + cases.getApplicationStatus() + "' does not exists");
-        }
+//        if (Objects.nonNull(cases.getApplicationStatus()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_STAGE).contains(cases.getApplicationStatus())) {
+//            errorMap.put("Invalid CaseStage", "The CaseStage '" + cases.getApplicationStatus() + "' does not exists");
+//        }
 //        if (Objects.nonNull(cases.getSubStage()) && !codes.get(LEGALConstants.MDMS_ILMS_SUB_STAGE).contains(cases.getSubStage())) {
 //            errorMap.put("Invalid CaseSubStage", "The CaseSubStage '" + cases.getSubStage() + "' does not exists");
 //        }
@@ -96,7 +96,7 @@ public class CaseValidator {
 
         List<String> masterNames = new ArrayList<>(
                 Arrays.asList(LEGALConstants.MDMS_ILMS_CASE_TYPE, LEGALConstants.MDMS_ILMS_CASE_STATUS, LEGALConstants.MDMS_ILMS_CASE_CATEGORY,
-                        LEGALConstants.MDMS_ILMS_GENDER_TYPE,LEGALConstants.MDMS_ILMS_CASE_STAGE,
+                        LEGALConstants.MDMS_ILMS_GENDER_TYPE, LEGALConstants.MDMS_ILMS_CASE_STAGE,
                         LEGALConstants.MDMS_ILMS_PETITIONER_TYPE, LEGALConstants.MDMS_ILMS_DEPARTMENT_NAME, LEGALConstants.MDMS_ILMS_DOCUMENT_CATEGORY,
                         LEGALConstants.MDMS_ILMS_DEPARTMENT_IOC, LEGALConstants.CASE_FLAG, LEGALConstants.MDMS_ILMS_COURT_NAME));
 
