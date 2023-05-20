@@ -1,5 +1,6 @@
 package org.legal.web.model;
 
+import org.legal.web.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -23,6 +24,9 @@ public class PartyAdv {
 
     @JsonProperty("advocateId")
     private String advocateId;
+
+    @JsonProperty("status")
+    private Status status = Status.ACTIVE;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

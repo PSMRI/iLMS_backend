@@ -1,0 +1,1 @@
+ALTER TABLE eg_lg_party_advocate_bridge ADD COLUMN status character varying(64);
