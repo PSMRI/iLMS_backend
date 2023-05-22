@@ -285,7 +285,7 @@ serviceMaps:
               - jsonPath: $.case.PartyAdv.*.partyType
 
               - jsonPath: $.case.parties.*.advocate.*.advocateId
-                -
+                
               - jsonPath: $.case.PartyAdv.*.status
 
               - jsonPath: $.case.PartyAdv.*.auditDetails.createdBy
