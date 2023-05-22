@@ -17,6 +17,7 @@ import org.legal.web.model.workflow.ProcessInstance;
 import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.legal.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -60,9 +61,9 @@ public class JudgementService {
         HearingSearchCriteria criteria = HearingSearchCriteria.builder()
                 .caseId(Collections.singletonList(judgementRequest.getJudgement().getCaseId())).build();
         hearingResponse = hearingRepository.getHearingDetails(criteria);
-        String tenantId = hearingResponse.getHearingList().get(0).getTenantId();
-        judgementRequest.getJudgement().setTenantId(tenantId);
         if (!hearingResponse.getHearingList().isEmpty()) {
+            String tenantId = hearingResponse.getHearingList().get(0).getTenantId();
+            judgementRequest.getJudgement().setTenantId(tenantId);
             judgementRequest.getJudgement().setStatus(Status.ACTIVE);
             judgementValidator.createValidator(judgementRequest);
             judgementEnrichmentService.enrichJudgementCreateRequest(judgementRequest);
@@ -91,7 +92,7 @@ public class JudgementService {
 
             producer.push(ilmsConfiguration.getCreateJudgementTopic(), judgementRequest);
         } else {
-            throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement");
+            throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement" );
         }
         return judgementRequest.getJudgement();
     }

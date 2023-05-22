@@ -44,16 +44,9 @@ public class AdvocateController {
 
     @PostMapping (value = "/_create")
     public ResponseEntity<AdvocateResponse> create(@Valid @RequestBody AdvocateRequest advocateRequest) {
-        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
-        criteria.setContactNumber(advocateRequest.getAdvocate().getContactNumber());
-        AdvocateResponse advocateResponse = advocateRepository.getAdvocateDetails(criteria);
         List<Advocate> advocateList = new ArrayList<Advocate>();
-        if (advocateResponse != null) {
-            advocateList = advocateResponse.getAdvocate();
-        } else {
-            Advocate savedAdvocate = advocateService.create(advocateRequest);
-            advocateList.add(savedAdvocate);
-        }
+        Advocate savedAdvocate = advocateService.create(advocateRequest);
+        advocateList.add(savedAdvocate);
         AdvocateResponse response = AdvocateResponse.builder().advocate(advocateList)
                                                     .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(advocateRequest.getRequestInfo(), true))
                                                     .build();

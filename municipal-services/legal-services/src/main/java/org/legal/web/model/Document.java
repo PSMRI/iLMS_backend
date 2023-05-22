@@ -1,5 +1,6 @@
 package org.legal.web.model;
 
+import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,15 +22,18 @@ public class Document {
     @JsonProperty("caseId")
     private String caseId;
 
+    @NotNull
     @JsonProperty("documentType")
     private String documentType;
 
 //    @JsonProperty("documentId")
 //    private String documentId;
 
+    @NotNull
     @JsonProperty("fileStoreId")
     private String fileStoreId;
 
+    @NotNull
     @JsonProperty("status")
     private Status status;
 

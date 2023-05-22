@@ -122,11 +122,11 @@ public class HearingService {
         HearingResponse hearingResponse = null;
         hearingResponse = hearingDetailsRepository.getHearingDetails(criteria);
         if (!hearingResponse.getHearingList().isEmpty()) {
-            ilmsHearingList = hearingResponse.getHearingList();
+            return hearingResponse;
         } else {
             throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available");
         }
-        return hearingResponse;
+
     }
 
     public Hearing update(HearingRequest hearingDetailsRequest) {

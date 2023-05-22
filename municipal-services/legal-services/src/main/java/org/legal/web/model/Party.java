@@ -5,6 +5,7 @@ import lombok.*;
 import org.legal.web.model.enums.Status;
 
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 @Builder
 @AllArgsConstructor
@@ -42,12 +43,14 @@ public class Party {
     @JsonProperty("contactNumber")
     private String contactNumber;
 
+    @NotNull
     @JsonProperty("partyType")
     private String partyType;
 
     @JsonProperty("advocate")
     private List<Advocate> advocate;
 
+    @NotNull
     @JsonProperty("status")
     private Status status;
 

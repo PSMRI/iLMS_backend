@@ -274,22 +274,22 @@ public PartyAdv createNewPetAdvocateId(RequestInfo requestInfo, String tenantId,
     PartyAdv partyAdv1 = new PartyAdv();
     partyAdv1.setId(UUID.randomUUID().toString());
     partyAdv1.setCaseId(casId);
-    partyAdv1.setAdvocateId(String.valueOf(petAdvocateItr));
+    partyAdv1.setAdvocateId(advocate.getId());
     partyAdv1.setPartyId(partyId);
     partyAdv1.setPartyType(partyType);
     partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
     return partyAdv1;
     }
 
-    public PartyAdv createNewPetAdvocateIdForRespondent(RequestInfo requestInfo, String tenantId,Advocate advocate,String casId,String partyId, String partyType){
-        List<String> petAdvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
-                ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
-        ListIterator<String> petAdvocateItr = petAdvocateId.listIterator();
-        advocate.setId(petAdvocateItr.next());
+    public PartyAdv createNewPartyAdvocateId(RequestInfo requestInfo, String tenantId,String advId,String casId,String partyId, String partyType){
+//        List<String> petAdvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
+//                ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
+//        ListIterator<String> petAdvocateItr = petAdvocateId.listIterator();
+//        advocate.setId(petAdvocateItr.next());
         PartyAdv partyAdv1 = new PartyAdv();
         partyAdv1.setId(UUID.randomUUID().toString());
         partyAdv1.setCaseId(casId);
-        partyAdv1.setAdvocateId(advocate.getId());
+        partyAdv1.setAdvocateId(advId);
         partyAdv1.setPartyId(partyId);
         partyAdv1.setPartyType(partyType);
         partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));

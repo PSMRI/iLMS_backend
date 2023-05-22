@@ -56,17 +56,25 @@ public class AdvocateService {
     private AdvocateMapper advocateMapper;
 
     public Advocate create(AdvocateRequest request) {
-        advocateEnrichmentService.advocateEnrichmentRequest(request);
-        request.getAdvocate().setStatus(Status.ACTIVE);
-        producer.push(legalConfiguration.getCreateAdvocateTopic(), request);
+        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
+        criteria.setContactNumber(request.getAdvocate().getContactNumber());
+        AdvocateResponse advocateResponse = advocateRepository.getAdvocateDetails(criteria);
+        if (!advocateResponse.getAdvocate().isEmpty()) {
+            return advocateResponse.getAdvocate().get(0);
+        }
+        else {
+            advocateEnrichmentService.advocateEnrichmentRequest(request);
+            request.getAdvocate().setStatus(Status.ACTIVE);
+            producer.push(legalConfiguration.getCreateAdvocateTopic(), request);
+        }
         return request.getAdvocate();
     }
 
     public Advocate update(AdvocateRequest advocateRequest) {
         if (advocateRequest.getAdvocate().getId() != null) {
 
-            CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(advocateRequest.getAdvocate().getId())).build();
-            List<Advocate> advocateList = caseRepository.getAdvocateById(criteria.getId().get(0));
+            AdvocateSearchCriteria criteria = AdvocateSearchCriteria.builder().id(advocateRequest.getAdvocate().getId()).build();
+            List<Advocate> advocateList = caseRepository.getAdvocateById(criteria.getId());
             if (!advocateList.isEmpty()) {
                 AdvocateRequest updatedAdvocateRequest = advocateUtils.prepareObjectMapperForUpdate(advocateList.get(0), advocateRequest);
                 producer.push(legalConfiguration.getUpdateAdvocateTopic(), updatedAdvocateRequest);

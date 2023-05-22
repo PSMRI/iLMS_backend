@@ -1,5 +1,6 @@
 package org.legal.web.model;
 
+import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,18 +22,23 @@ public class Court {
     @JsonProperty("caseId")
     private String caseId;
 
+    @NotNull
     @JsonProperty("courtName")
     private String courtName;
 
+    @NotNull
     @JsonProperty("district")
     private String district;
 
+    @NotNull
     @JsonProperty("state")
     private String state;
 
+    @NotNull
     @JsonProperty("division")
     private String division;
 
+    @NotNull
     @JsonProperty("status")
     private Status status;
 

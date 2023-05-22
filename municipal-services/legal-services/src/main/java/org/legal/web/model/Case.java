@@ -20,12 +20,15 @@ public class Case {
     @JsonProperty("id")
     private String id;
 
+    @NotNull
     @JsonProperty("tenantId")
     private String tenantId;
 
+    @NotNull
     @JsonProperty("number")
     private String number;
 
+    @NotNull
     @JsonProperty("cnrNumber")
     private String cnrNumber;
 
@@ -35,15 +38,19 @@ public class Case {
     @JsonProperty("linkedCases")
     private JsonNode linkedCases;
 
+    @NotNull
     @JsonProperty("type")
     private String type;
 
+    @NotNull
     @JsonProperty("category")
     private String category;
 
+    @NotNull
     @JsonProperty("filingNumber")
     private String filingNumber;
 
+    @NotNull
     @JsonProperty("filingDate")
     private Long filingDate;
 
@@ -74,6 +81,7 @@ public class Case {
     @JsonProperty("additionalDetails")
     private JsonNode additionalDetails;
 
+    @NotNull
     @JsonProperty("status")
     private Status status;
 

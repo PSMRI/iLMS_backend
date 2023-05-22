@@ -293,26 +293,6 @@ serviceMaps:
 
             - jsonPath: $.case.PartyAdv.*.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-            basePath: case.PartyAdv.*
-            jsonMaps:
-              - jsonPath: $.case.PartyAdv.*.id
-
-              - jsonPath: $.case.id
-
-              - jsonPath: $.case.parties.*.partyId
-
-              - jsonPath: $.case.PartyAdv.*.partyType
-
-              - jsonPath: $.case.parties.*.advocate.*.advocateId
-                -
-              - jsonPath: $.case.PartyAdv.*.status
-
-              - jsonPath: $.case.PartyAdv.*.auditDetails.createdBy
-
-              - jsonPath: $.case.PartyAdv.*.auditDetails.createdTime
-
-
         - query: INSERT INTO eg_lg_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.payment
           jsonMaps:
@@ -559,23 +539,6 @@ serviceMaps:
             - jsonPath: $.case.documents.*.auditDetails.lastModifiedTime
 
             - jsonPath: $.case.documents.*.id
-
-        - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
-          basePath: case.parties.*.advocate.*
-          jsonMaps:
-            - jsonPath: $.case.parties.*.advocate.*.id
-
-            - jsonPath: $.case.parties.*.advocate.*.firstName
-
-            - jsonPath: $.case.parties.*.advocate.*.lastName
-
-            - jsonPath: $.case.parties.*.advocate.*.contactNumber
-
-            - jsonPath: $.case.parties.*.advocate.*.status
-
-            - jsonPath: $.case.parties.*.advocate.*.auditDetails.createdBy
-
-            - jsonPath: $.case.parties.*.advocate.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.PartyAdv.*
@@ -848,21 +811,21 @@ serviceMaps:
       auditAttributeBasePath: advocate
       queryMaps:
         - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
-          basePath: advocate.*
+          basePath: advocate
           jsonMaps:
-            - jsonPath: $.advocate.*.id
+            - jsonPath: $.advocate.id
 
-            - jsonPath: $.advocate.*.firstName
+            - jsonPath: $.advocate.firstName
 
-            - jsonPath: $.advocate.*.lastName
+            - jsonPath: $.advocate.lastName
 
-            - jsonPath: $.advocate.*.contactNumber
+            - jsonPath: $.advocate.contactNumber
 
-            - jsonPath: $.advocate.*.status
+            - jsonPath: $.advocate.status
 
-            - jsonPath: $.advocate.*.auditDetails.createdBy
+            - jsonPath: $.advocate.auditDetails.createdBy
 
-            - jsonPath: $.advocate.*.auditDetails.createdTime
+            - jsonPath: $.advocate.auditDetails.createdTime
 
     - version: 1.0
       description: Update advocate in eg_lg_advocate
@@ -896,11 +859,15 @@ serviceMaps:
       fromTopic: update-party-advocate-bridge
       isTransaction: true
       queryMaps:
-        - query: update eg_lg_party_advocate_bridge set status = ?  where advocate_id = ? AND case_id = ?);
-          basePath: partyAdv.*
+        - query: update eg_lg_party_advocate_bridge set status = ?, lastmodifiedby=?, lastmodifiedtime=?  where advocate_id = ? AND case_id = ?;
+          basePath: partyAdv
           jsonMaps:
-            - jsonPath: $.partyAdv.*.status
+            - jsonPath: $.partyAdv.status
 
-            - jsonPath: $.partyAdv.*.advocate_id
+            - jsonPath: $.partyAdv.auditDetails.lastModifiedBy
 
-            - jsonPath: $.partyAdv.*.case_id
+            - jsonPath: $.partyAdv.auditDetails.lastModifiedTime
+
+            - jsonPath: $.partyAdv.advocateId
+
+            - jsonPath: $.partyAdv.caseId

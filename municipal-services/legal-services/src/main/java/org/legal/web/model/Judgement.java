@@ -1,5 +1,6 @@
 package org.legal.web.model;
 
+import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.javers.core.metamodel.annotation.DiffIgnore;
@@ -17,24 +18,30 @@ public class Judgement {
     @JsonProperty("id")
     private String id;
 
+    @NotNull
     @JsonProperty("tenantId")
     private String tenantId;
 
     @JsonProperty("caseId")
     private String caseId;
 
+    @NotNull
     @JsonProperty("orderType")
     private String orderType;
 
+    @NotNull
     @JsonProperty("orderDate")
     private Long orderDate;
 
+    @NotNull
     @JsonProperty("decisionStatus")
     private String decisionStatus;
 
+    @NotNull
     @JsonProperty("complianceDate")
     private Long complianceDate;
 
+    @NotNull
     @JsonProperty("revisedComplianceDate")
     private Long revisedComplianceDate;
 
@@ -44,6 +51,7 @@ public class Judgement {
     @JsonProperty("revisedComplainceReason")
     private String revisedComplainceReason;
 
+    @NotNull
     @JsonProperty("complianceStatus")
     private String complianceStatus;
 
@@ -53,6 +61,7 @@ public class Judgement {
     @JsonProperty("remarks")
     private String remarks;
 
+    @NotNull
     @JsonProperty("status")
     private Status status;
 
