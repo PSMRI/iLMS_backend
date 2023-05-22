@@ -28,10 +28,10 @@ public class HearingValidator {
 
     private static Map<String, String> validateCodes(Hearing hearing, Map<String, List<String>> codes, Map<String, String> errorMap) {
 
-        if (Objects.nonNull(hearing.getBench()) && !codes.get(LEGALConstants.MDMS_ILMS_BENCH).contains(hearing.getBench())) {
+        if (Objects.nonNull(hearing.getBench()) && !codes.get(LEGALConstants.MDMS_LEGAL_BENCH).contains(hearing.getBench())) {
             errorMap.put("Invalid Bench", "The Bench '" + hearing.getBench() + "' does not exists");
         }
-        if (Objects.nonNull(hearing.getHearingType()) && !codes.get(LEGALConstants.MDMS_ILMS_HEARING_TYPE).contains(hearing.getHearingType())) {
+        if (Objects.nonNull(hearing.getHearingType()) && !codes.get(LEGALConstants.MDMS_LEGAL_HEARING_TYPE).contains(hearing.getHearingType())) {
             errorMap.put("Invalid HearingType", "The Type '" + hearing.getHearingType() + "' does not exists");
         }
 
@@ -71,10 +71,10 @@ public class HearingValidator {
         String tenantId = caseResponse.getCaseList().get(0).getTenantId();
 
         List<String> masterNames = new ArrayList<>(
-                Arrays.asList(LEGALConstants.MDMS_ILMS_COURT_NAME, LEGALConstants.MDMS_ILMS_DISTRICT, LEGALConstants.MDMS_ILMS_STATE,
-                        LEGALConstants.MDMS_ILMS_BENCH, LEGALConstants.MDMS_ILMS_DIVISION, LEGALConstants.MDMS_ILMS_HEARING_TYPE));
+                Arrays.asList(LEGALConstants.MDMS_LEGAL_COURT_NAME, LEGALConstants.MDMS_LEGAL_DISTRICT, LEGALConstants.MDMS_LEGAL_STATE,
+                        LEGALConstants.MDMS_LEGAL_BENCH, LEGALConstants.MDMS_LEGAL_DIVISION, LEGALConstants.MDMS_LEGAL_HEARING_TYPE));
 
-        Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, LEGALConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",
+        Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, LEGALConstants.MDMS_LEGAL_MOD_NAME, masterNames, "$.*.code",
                 LEGALConstants.JSONPATH_CODES, request.getRequestInfo());
 
         if (null != codes) {

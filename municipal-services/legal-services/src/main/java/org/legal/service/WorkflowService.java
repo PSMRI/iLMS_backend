@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
 @Service
 public class WorkflowService {
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     @Autowired
     private ObjectMapper mapper;
@@ -61,7 +61,7 @@ public class WorkflowService {
     public State callWorkFlow(ProcessInstanceRequest workflowReq) {
 
         ProcessInstanceResponse response = null;
-        StringBuilder url = new StringBuilder(ilmsConfiguration.getWfHost().concat(ilmsConfiguration.getWfTransitionPath()));
+        StringBuilder url = new StringBuilder(legalConfiguration.getWfHost().concat(legalConfiguration.getWfTransitionPath()));
         Optional<Object> optional = serviceRepository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional.get(), ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
@@ -101,8 +101,8 @@ public class WorkflowService {
      */
     private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
 
-        StringBuilder url = new StringBuilder(ilmsConfiguration.getWfHost());
-        url.append(ilmsConfiguration.getWfBusinessServiceSearchPath());
+        StringBuilder url = new StringBuilder(legalConfiguration.getWfHost());
+        url.append(legalConfiguration.getWfBusinessServiceSearchPath());
         url.append("?tenantId=");
         url.append(tenantId);
         url.append("&businessServices=");
@@ -121,10 +121,10 @@ public class WorkflowService {
         ProcessInstanceRequest workflowReq = caseUtils.getWfForCaseCreate(request, creationReasonForWorkflow);
         State state = callWorkFlow(workflowReq);
         request.getCaseObj().setApplicationStatus(state.getApplicationStatus());
-        if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && cases.getId() == null) {
+        if (state.getApplicationStatus().equalsIgnoreCase(legalConfiguration.getWfStatusActive()) && cases.getId() == null) {
 
-            String pId = commonUtils.getIdList(request.getRequestInfo(), cases.getTenantId(), ilmsConfiguration.getCaseIdgenName(),
-                    ilmsConfiguration.getCaseIdgenFormat(), 1).get(0);
+            String pId = commonUtils.getIdList(request.getRequestInfo(), cases.getTenantId(), legalConfiguration.getCaseIdgenName(),
+                    legalConfiguration.getCaseIdgenFormat(), 1).get(0);
             request.getCaseObj().setId(pId);
         }
 
@@ -155,8 +155,8 @@ public class WorkflowService {
      */
     private StringBuilder getWorkflowSearchURLWithParams(String tenantId, String businessId) {
 
-        StringBuilder url = new StringBuilder(ilmsConfiguration.getWfHost());
-        url.append(ilmsConfiguration.getWfProcessInstanceSearchPath());
+        StringBuilder url = new StringBuilder(legalConfiguration.getWfHost());
+        url.append(legalConfiguration.getWfProcessInstanceSearchPath());
         url.append("?tenantId=");
         url.append(tenantId);
         url.append("&businessIds=");
@@ -195,8 +195,8 @@ public class WorkflowService {
         List<HashMap<String, Object>> finalResponse = null;
         for (String businessSrv : listOfBusinessServices) {
             criteria.setBusinessService(Collections.singletonList(businessSrv));
-            StringBuilder url = new StringBuilder(ilmsConfiguration.getWfHost());
-            url.append(ilmsConfiguration.getProcessStatusCountPath());
+            StringBuilder url = new StringBuilder(legalConfiguration.getWfHost());
+            url.append(legalConfiguration.getProcessStatusCountPath());
             criteria.setIsProcessCountCall(true);
             // For BPA having large request, so that it was sending from the body
             List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
@@ -263,10 +263,10 @@ public class WorkflowService {
         ProcessInstanceRequest workflowReq = hearingUtils.getWfForHearingCreate(request, creationReasonForWorkflow);
         State state = callWorkFlow(workflowReq);
         request.getHearing().setApplicationStatus(state.getApplicationStatus());
-        if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && hearing.getId() == null) {
+        if (state.getApplicationStatus().equalsIgnoreCase(legalConfiguration.getWfStatusActive()) && hearing.getId() == null) {
 
-            String pId = commonUtils.getIdList(request.getRequestInfo(), hearing.getTenantId(), ilmsConfiguration.getHearingIdgenName(),
-                    ilmsConfiguration.getHearingIdgenFormat(), 1).get(0);
+            String pId = commonUtils.getIdList(request.getRequestInfo(), hearing.getTenantId(), legalConfiguration.getHearingIdgenName(),
+                    legalConfiguration.getHearingIdgenFormat(), 1).get(0);
             request.getHearing().setId(pId);
         }
 
@@ -283,10 +283,10 @@ public class WorkflowService {
         ProcessInstanceRequest workflowReq = judgementUtils.getWfForJudgementCreate(request, creationReasonForWorkflow);
         State state = callWorkFlow(workflowReq);
         request.getJudgement().setApplicationStatus(state.getApplicationStatus());
-        if (state.getApplicationStatus().equalsIgnoreCase(ilmsConfiguration.getWfStatusActive()) && judgement.getId() == null) {
+        if (state.getApplicationStatus().equalsIgnoreCase(legalConfiguration.getWfStatusActive()) && judgement.getId() == null) {
 
-            String pId = commonUtils.getIdList(request.getRequestInfo(), judgement.getTenantId(), ilmsConfiguration.getCaseIdgenName(),
-                    ilmsConfiguration.getCaseIdgenFormat(), 1).get(0);
+            String pId = commonUtils.getIdList(request.getRequestInfo(), judgement.getTenantId(), legalConfiguration.getCaseIdgenName(),
+                    legalConfiguration.getCaseIdgenFormat(), 1).get(0);
             request.getJudgement().setId(pId);
         }
 

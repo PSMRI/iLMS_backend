@@ -17,7 +17,7 @@ public class JudgementQueryBuilder {
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty()) {
@@ -50,14 +50,14 @@ public class JudgementQueryBuilder {
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, JudgementSearchCriteria criteria) {
 
-        int limit = ilmsConfiguration.getDefaultLimit();
-        int offset = ilmsConfiguration.getDefaultOffset();
+        int limit = legalConfiguration.getDefaultLimit();
+        int offset = legalConfiguration.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
-        if (criteria.getLimit() != null && criteria.getLimit() <= ilmsConfiguration.getMaxSearchLimit()) {
+        if (criteria.getLimit() != null && criteria.getLimit() <= legalConfiguration.getMaxSearchLimit()) {
             limit = criteria.getLimit();
         }
-        if (criteria.getLimit() != null && criteria.getLimit() > ilmsConfiguration.getMaxSearchLimit()) {
-            limit = ilmsConfiguration.getMaxSearchLimit();
+        if (criteria.getLimit() != null && criteria.getLimit() > legalConfiguration.getMaxSearchLimit()) {
+            limit = legalConfiguration.getMaxSearchLimit();
         }
         if (criteria.getOffset() != null) {
             offset = criteria.getOffset();

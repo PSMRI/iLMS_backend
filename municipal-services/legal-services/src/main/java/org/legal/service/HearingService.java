@@ -37,7 +37,7 @@ public class HearingService {
     private HearingEnrichmentService hearingEnrichmentService;
 
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     @Autowired
     private HearingRepository hearingDetailsRepository;
@@ -104,10 +104,10 @@ public class HearingService {
                 hearingRequest.getHearing().setHearingNumber(hearingDetailsRepository.getMaxValueOfHearing(hearingRequest.getHearing().getCaseId()));
                 hearingDetailsValidator.createValidator(hearingRequest);
                 hearingEnrichmentService.enrichHearingCreateRequest(hearingRequest);
-                if (ilmsConfiguration.getIsWorkflowEnabled()) {
+                if (legalConfiguration.getIsWorkflowEnabled()) {
                     workflowService.updateWorkflowForHearing(hearingRequest, CreationReason.CREATE);
                 }
-                producer.push(ilmsConfiguration.getCreateHearingTopic(), hearingRequest);
+                producer.push(legalConfiguration.getCreateHearingTopic(), hearingRequest);
             } else {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "CaseNumber Invalid");
             }
@@ -160,7 +160,7 @@ public class HearingService {
                     ProcessInstanceRequest workflowReq = caseUtils.changeCaseWF(caseRequest, action);
                     workflowService.callWorkFlow(workflowReq);
                 }
-                producer.push(ilmsConfiguration.getUpdateHearingTopic(), updatedRequest);
+                producer.push(legalConfiguration.getUpdateHearingTopic(), updatedRequest);
             } else {
                 throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available");
             }
@@ -171,7 +171,7 @@ public class HearingService {
     }
 
     private void processUpdateForHearing(HearingRequest request, Hearing hearing) {
-        if (ilmsConfiguration.getIsWorkflowEnabled()) {
+        if (legalConfiguration.getIsWorkflowEnabled()) {
             State state = workflowService.updateWorkflowForHearing(request, CreationReason.UPDATE);
             if (state.getIsStartState() && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !hearing.getStatus()
                     .equals(Status.ACTIVE)) {

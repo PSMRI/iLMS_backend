@@ -24,7 +24,7 @@ public class CaseUtils {
     private CaseEnrichmentService caseEnrichmentService;
 
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     @Autowired
     private CaseRepository caseRepository;
@@ -399,8 +399,8 @@ public class CaseUtils {
 
         switch (creationReasonForWorkflow) {
             case CREATE:
-                wf.setBusinessService(ilmsConfiguration.getCreateCaseWfName());
-                wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
+                wf.setBusinessService(legalConfiguration.getCreateCaseWfName());
+                wf.setModuleName(legalConfiguration.getPropertyModuleName());
 
                 wf.setAction("CREATE_CASE");
                 wf.setTenantId(request.getCaseObj().getTenantId());
@@ -433,8 +433,8 @@ public class CaseUtils {
         Case aCase = request.getCaseObj();
         ProcessInstance wf = null != aCase.getWorkflow() ? aCase.getWorkflow() : new ProcessInstance();
         wf.setBusinessId(aCase.getId());
-        wf.setBusinessService(ilmsConfiguration.getCreateCaseWfName());
-        wf.setModuleName(ilmsConfiguration.getPropertyModuleName());
+        wf.setBusinessService(legalConfiguration.getCreateCaseWfName());
+        wf.setModuleName(legalConfiguration.getPropertyModuleName());
         wf.setAction(action);
         wf.setTenantId(request.getCaseObj().getTenantId());
         wf.setAssignes(request.getCaseObj().getWorkflow().getAssignes());

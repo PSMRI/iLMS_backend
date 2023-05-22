@@ -15,7 +15,7 @@ public class DocumentQueryBuilder {
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     public String getDocumentSearchQuery(DocumentSearchCriteria criteria, List<Object> preparedStmtList) {
 
@@ -71,14 +71,14 @@ public class DocumentQueryBuilder {
      * @return the query by replacing the placeholders with preparedStmtList
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, DocumentSearchCriteria criteria) {
-        int limit = ilmsConfiguration.getDefaultLimit();
-        int offset = ilmsConfiguration.getDefaultOffset();
+        int limit = legalConfiguration.getDefaultLimit();
+        int offset = legalConfiguration.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
-        if (criteria.getLimit() != null && criteria.getLimit() <= ilmsConfiguration.getMaxSearchLimit()) {
+        if (criteria.getLimit() != null && criteria.getLimit() <= legalConfiguration.getMaxSearchLimit()) {
             limit = criteria.getLimit();
         }
-        if (criteria.getLimit() != null && criteria.getLimit() > ilmsConfiguration.getMaxSearchLimit()) {
-            limit = ilmsConfiguration.getMaxSearchLimit();
+        if (criteria.getLimit() != null && criteria.getLimit() > legalConfiguration.getMaxSearchLimit()) {
+            limit = legalConfiguration.getMaxSearchLimit();
         }
         if (criteria.getOffset() != null) {
             offset = criteria.getOffset();

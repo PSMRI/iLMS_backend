@@ -33,7 +33,7 @@ public class JudgementService {
     private Producer producer;
 
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     @Autowired
     private JudgementRepository judgementRepository;
@@ -72,7 +72,7 @@ public class JudgementService {
             CaseResponse caseResponse = caseRepository.getLegalCaseData(caseCriteria);
             caseRequest.setRequestInfo(judgementRequest.getRequestInfo());
             caseRequest.setCaseObj(caseResponse.getCaseList().get(0));
-            if (ilmsConfiguration.getIsWorkflowEnabled()) {
+            if (legalConfiguration.getIsWorkflowEnabled()) {
                 workflowService.updateWorkflowForJudgement(judgementRequest, CreationReason.CREATE);
             }
             ProcessInstance wf = null != caseRequest.getCaseObj().getWorkflow() ? caseRequest.getCaseObj().getWorkflow() : new ProcessInstance();
@@ -89,7 +89,7 @@ public class JudgementService {
                 workflowService.callWorkFlow(workflowReq);
             }
 
-            producer.push(ilmsConfiguration.getCreateJudgementTopic(), judgementRequest);
+            producer.push(legalConfiguration.getCreateJudgementTopic(), judgementRequest);
         } else {
             throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement");
         }
@@ -122,7 +122,7 @@ public class JudgementService {
                 if (Objects.nonNull(judgementRequest.getJudgement().getWorkflow())) {
                     processUpdateForJudgement(judgementRequest, finalRequest.getJudgement());
                 }
-                producer.push(ilmsConfiguration.getUpdateJudgementTopic(), finalRequest);
+                producer.push(legalConfiguration.getUpdateJudgementTopic(), finalRequest);
             } else {
                 throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
             }
@@ -133,7 +133,7 @@ public class JudgementService {
     }
 
     private void processUpdateForJudgement(JudgementRequest request, Judgement judgement) {
-        if (ilmsConfiguration.getIsWorkflowEnabled()) {
+        if (legalConfiguration.getIsWorkflowEnabled()) {
             State state = workflowService.updateWorkflowForJudgement(request, CreationReason.UPDATE);
             if (state.getIsStartState() && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !judgement.getStatus()
                     .equals(Status.ACTIVE)) {
