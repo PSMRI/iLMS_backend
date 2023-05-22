@@ -8,12 +8,15 @@ import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.JudgementRepository;
 import org.legal.util.CaseUtils;
+import org.legal.util.HearingUtils;
 import org.legal.util.LegalErrorConstants;
 import org.legal.validator.CaseValidator;
 import org.legal.web.model.*;
 import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.PartyType;
 import org.legal.web.model.enums.Status;
+import org.legal.web.model.workflow.ProcessInstance;
+import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.legal.web.model.workflow.ProcessInstanceSearchCriteria;
 import org.legal.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,9 @@ public class CaseService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private HearingUtils hearingUtils;
 
     public CaseService() {
     }
@@ -118,76 +124,39 @@ public class CaseService {
         List<Judgement> judgementList = new ArrayList<>();
         HearingResponse hearingResponse = null;
         JudgementResponse judgementResponse = null;
-        HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
-                .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
-                .build();
-        hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
-        JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
-                caseResponse.getCaseList().get(0).getId())).build();
-        judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
-        caseResponse.getCaseList().forEach(caseObj -> {
-            if (caseObj.getStatus() == Status.ACTIVE) {
-                caseList.add(caseObj);
-            }
-        });
-        hearingResponse.getHearingList().forEach(hearing -> {
-            if (hearing.getStatus() == Status.ACTIVE) {
-                hearingList.add(hearing);
-            }
-        });
-        judgementResponse.getJudgementList().forEach(judgement -> {
-            if (judgement.getStatus() == Status.ACTIVE) {
-                judgementList.add(judgement);
-            }
-        });
+        if (!caseResponse.getCaseList().isEmpty()) {
+            HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
+                    .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
+                    .build();
+            hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
+            JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
+                    caseResponse.getCaseList().get(0).getId())).build();
+            judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
+            caseResponse.getCaseList().forEach(caseObj -> {
+                if (caseObj.getStatus() == Status.ACTIVE) {
+                    caseList.add(caseObj);
+                }
+            });
+            hearingResponse.getHearingList().forEach(hearing -> {
+                if (hearing.getStatus() == Status.ACTIVE) {
+                    hearingList.add(hearing);
+                }
+            });
+            judgementResponse.getJudgementList().forEach(judgement -> {
+                if (judgement.getStatus() == Status.ACTIVE) {
+                    judgementList.add(judgement);
+                }
+            });
 
-        finalResult.setTotalCount(caseResponse.getTotalCount());
-        finalResult.setCaseList(caseList);
-        finalResult.setStatusMap(statusCountMap);
-        finalResult.setOfficersCount(officersCount);
-        finalResult.setHearingList(hearingList);
-        finalResult.setJudgementList(judgementList);
+            finalResult.setTotalCount(caseResponse.getTotalCount());
+            finalResult.setCaseList(caseList);
+            finalResult.setStatusMap(statusCountMap);
+            finalResult.setOfficersCount(officersCount);
+            finalResult.setHearingList(hearingList);
+            finalResult.setJudgementList(judgementList);
+        }
         return finalResult;
-    }
 
-    public CaseDetailsResponse caseDetailsSearch(CaseSearchCriteria criteria, RequestInfo requestInfo) {
-        CaseDetailsResponse downloadResponse = new CaseDetailsResponse();
-        List<Case> caseList = new ArrayList<>();
-        List<Hearing> hearingList = new ArrayList<>();
-        List<Judgement> judgementList = new ArrayList<>();
-        CaseResponse caseResponse = null;
-        HearingResponse hearingResponse = null;
-        JudgementResponse judgementResponse = null;
-        criteria.setUuid(requestInfo.getUserInfo().getUuid());
-        caseResponse = caseRepository.getLegalCaseData(criteria);
-        HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder()
-                .caseId(Collections.singletonList(caseResponse.getCaseList().get(0).getId()))
-                .build();
-        hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
-        JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
-                caseResponse.getCaseList().get(0).getId())).build();
-        judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
-        caseResponse.getCaseList().forEach(caseObj -> {
-            if (caseObj.getStatus() == Status.ACTIVE) {
-                caseList.add(caseObj);
-            }
-        });
-        hearingResponse.getHearingList().forEach(hearing -> {
-            if (hearing.getStatus() == Status.ACTIVE) {
-                hearingList.add(hearing);
-            }
-        });
-        judgementResponse.getJudgementList().forEach(judgement -> {
-            if (judgement.getStatus() == Status.ACTIVE) {
-                judgementList.add(judgement);
-            }
-        });
-        downloadResponse.setCaseList(caseList);
-        downloadResponse.setHearingList(hearingList);
-        downloadResponse.setJudgementList(judgementList);
-        downloadResponse.setTotalCount(caseResponse.getTotalCount());
-        downloadResponse.setResponseInfo(caseResponse.getResponseInfo());
-        return downloadResponse;
     }
 
     public Case create(CaseRequest caseRequest) {
@@ -265,6 +234,9 @@ public class CaseService {
      */
     public Case update(CaseRequest caseRequest) {
         if (caseRequest.getCaseObj().getId() != null) {
+            HearingSearchCriteria hearingSearchCriteria = null;
+            String action = "";
+            HearingRequest request = new HearingRequest();
             CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseRequest.getCaseObj().getId())).build();
             CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
             if (!caseResponse.getCaseList().isEmpty()) {
@@ -275,6 +247,33 @@ public class CaseService {
                 //                todo : notification has send to all the officers who has worked on this case.
                 if (Objects.nonNull(caseRequest.getCaseObj().getWorkflow())) {
                     processCaseUpdate(caseRequest, updatedCaseRequest.getCaseObj());
+                    String caseId = caseRequest.getCaseObj().getId();
+                    hearingSearchCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(caseId)).build();
+                    HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
+                    request.setRequestInfo(caseRequest.getRequestInfo());
+                    for (Hearing hearing : hearingResponse.getHearingList()) {
+                        request.setHearing(hearing);
+                        ProcessInstance wf = null != hearing.getWorkflow() ? hearing.getWorkflow() : new ProcessInstance();
+                        wf.setAssignes(caseRequest.getCaseObj().getWorkflow().getAssignes());
+                        hearing.setWorkflow(wf);
+                        if (caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
+                            action = "ASSIGNED_TO_RO";
+                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFThroughCase(request, action);
+                            workflowService.callWorkFlow(workflowReq);
+                        }
+                        if (caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
+                            action = "DEACTIVATE";
+                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFThroughCase(request, action);
+                            workflowService.callWorkFlow(workflowReq);
+                        }
+                        for (Document document : caseRequest.getCaseObj().getDocuments()) {
+                            if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("SUBMIT_COUNTER_AFFIDAVIT")) {
+                                action = "ASSIGNED_TO_APPOINTED_OIC";
+                                ProcessInstanceRequest workflowReq = hearingUtils.hearingWFThroughCase(request, action);
+                                workflowService.callWorkFlow(workflowReq);
+                            }
+                        }
+                    }
                     notificationService.process(ilmsConfiguration.getUpdateCaseTopic(), caseRequest);
                 }
                 caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());

@@ -12,7 +12,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: case
       queryMaps:
-        - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, case_stage, priority, recommend_oic, remarks, first_hearing_date, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, application_status, priority, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
@@ -45,15 +45,13 @@ serviceMaps:
 
             - jsonPath: $.case.caseStatus
 
-            - jsonPath: $.case.stage
+            - jsonPath: $.case.applicationStatus
 
             - jsonPath: $.case.priority
 
             - jsonPath: $.case.recommendOic
 
             - jsonPath: $.case.remarks
-
-            - jsonPath: $.case.firstHearingDate
 
             - jsonPath: $.case.additionalDetails
               type: JSON
@@ -110,7 +108,7 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.PartyAdv.*
           jsonMaps:
             - jsonPath: $.case.PartyAdv.*.id
@@ -122,6 +120,8 @@ serviceMaps:
             - jsonPath: $.case.PartyAdv.*.partyType
 
             - jsonPath: $.case.parties.*.advocate.*.advocateId
+
+            - jsonPath: $.case.PartyAdv.*.status
 
             - jsonPath: $.case.PartyAdv.*.auditDetails.createdBy
 
@@ -197,7 +197,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: hearing
       queryMaps:
-        - query: INSERT INTO eg_lg_hearing(id, tenant_id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks,first_hearing_date, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_hearing(id, tenant_id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, application_status, first_hearing_date, additional_details, status , createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing
           jsonMaps:
             - jsonPath: $.hearing.id
@@ -241,6 +241,8 @@ serviceMaps:
             - jsonPath: $.hearing.departmentOfficer
 
             - jsonPath: $.hearing.remarks
+
+            - jsonPath: $.hearing.applicationStatus
 
             - jsonPath: $.hearing.firstHearingDate
 
@@ -291,6 +293,25 @@ serviceMaps:
 
             - jsonPath: $.case.PartyAdv.*.auditDetails.createdTime
 
+        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            basePath: case.PartyAdv.*
+            jsonMaps:
+              - jsonPath: $.case.PartyAdv.*.id
+
+              - jsonPath: $.case.id
+
+              - jsonPath: $.case.parties.*.partyId
+
+              - jsonPath: $.case.PartyAdv.*.partyType
+
+              - jsonPath: $.case.parties.*.advocate.*.advocateId
+                -
+              - jsonPath: $.case.PartyAdv.*.status
+
+              - jsonPath: $.case.PartyAdv.*.auditDetails.createdBy
+
+              - jsonPath: $.case.PartyAdv.*.auditDetails.createdTime
+
 
         - query: INSERT INTO eg_lg_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.payment
@@ -324,7 +345,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: judgement
       queryMaps:
-        - query: INSERT INTO eg_lg_judgement(id,tenant_id, case_id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, revised_complaince_reason,compliance_status, remarks, additional_details, status, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_judgement(id,tenant_id, case_id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, revised_complaince_reason,compliance_status, remarks, application_status, additional_details, status, createdby, createdtime) VALUES (?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: judgement
           jsonMaps:
 
@@ -352,6 +373,8 @@ serviceMaps:
 
             - jsonPath: $.judgement.remarks
 
+            - jsonPath: $.judgement.applicationStatus
+
             - jsonPath: $.judgement.additionalDetails
               type: JSON
               dbType: JSONB
@@ -373,7 +396,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: case
       queryMaps:
-        - query: UPDATE eg_lg_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, linked_cases=?, case_type=?, case_category=?, filing_number=?, filing_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, case_stage=?, priority=?, recommend_oic=?, remarks=?, first_hearing_date=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_case SET tenant_id=?, case_number=?, cnr_number=?, parent_case_id=?, linked_cases=?, case_type=?, case_category=?, filing_number=?, filing_date=?, case_summary=?, arising_details=?, policy_or_nonpolicy_matter=?, case_status=?, application_status=?, priority=?, recommend_oic=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
           jsonMaps:
 
@@ -405,7 +428,7 @@ serviceMaps:
 
             - jsonPath: $.case.caseStatus
 
-            - jsonPath: $.case.stage
+            - jsonPath: $.case.applicationStatus
 
             - jsonPath: $.case.priority
 
@@ -413,7 +436,6 @@ serviceMaps:
 
             - jsonPath: $.case.remarks
 
-            - jsonPath: $.case.firstHearingDate
 
             - jsonPath: $.case.additionalDetails
               type: JSON
@@ -586,7 +608,7 @@ serviceMaps:
       auditAttributeBasePath: hearing
       queryMaps:
 
-        - query: UPDATE eg_lg_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?,first_hearing_date=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_hearing SET hearing_number=?, court_number=?, bench=?, judge_name=?, hearing_date=?, business_date=?, hearing_purpose=?, required_officer=?, affidavit_filing_date=?, affidavit_filing_due_date=?, case_number=?, oath_number=?, next_hearing_date=?, is_presence_required=?, hearing_type=?, department_officer=?, remarks=?, first_hearing_date=?, application_status=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: hearing
           jsonMaps:
 
@@ -627,6 +649,8 @@ serviceMaps:
             - jsonPath: $.hearing.remarks
 
             - jsonPath: $.hearing.firstHearingDate
+
+            - jsonPath: $.hearing.applicationStatus
 
             - jsonPath: $.hearing.additionalDetails
               type: JSON
@@ -702,7 +726,7 @@ serviceMaps:
 
             - jsonPath: $.judgement.caseId
 
-        - query: Update eg_lg_judgement  SET case_id=?, order_type=?, order_date=?, decision_status=?, compliance_date=?, revised_compliance_date=?, order_no_override=?, revised_complaince_reason=?, compliance_status=?, remarks=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=?  WHERE id=? ;
+        - query: Update eg_lg_judgement  SET case_id=?, order_type=?, order_date=?, decision_status=?, compliance_date=?, revised_compliance_date=?, order_no_override=?, revised_complaince_reason=?, compliance_status=?, remarks=?, application_status=?, additional_details=?, status=?, lastmodifiedby=?, lastmodifiedtime=?  WHERE id=? ;
           basePath: judgement
           jsonMaps:
 
@@ -725,6 +749,8 @@ serviceMaps:
             - jsonPath: $.judgement.complianceStatus
 
             - jsonPath: $.judgement.remarks
+
+            - jsonPath: $.judgement.applicationStatus
 
             - jsonPath: $.judgement.additionalDetails
               type: JSON

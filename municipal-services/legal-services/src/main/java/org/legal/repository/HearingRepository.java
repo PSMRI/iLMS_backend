@@ -86,8 +86,10 @@ public class HearingRepository {
         preparedStmtList.add(id);
         List<String> tenantId = jdbcTemplate.query(hearingQueryBuilder.getTenantIdFromHearingQuery(), preparedStmtList.toArray(),
                 new SingleColumnRowMapper<>(String.class));
-
-        return tenantId.get(0);
+        if (!tenantId.isEmpty()) {
+            return tenantId.get(0);
+        }
+        return null;
     }
 
     public List<Party> getGetFromPartyQuery(String caseId) {

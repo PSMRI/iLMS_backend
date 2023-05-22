@@ -32,7 +32,6 @@ public class Case {
     @JsonProperty("parentCaseId")
     private String parentCaseId;
 
-
     @JsonProperty("linkedCases")
     private JsonNode linkedCases;
 
@@ -63,7 +62,6 @@ public class Case {
     @JsonProperty("caseStatus")
     private String caseStatus;
 
-
     @JsonProperty("priority")
     private String priority;
 
@@ -82,7 +80,6 @@ public class Case {
     @JsonProperty("parties")
     private List<Party> parties;
 
-
     @JsonProperty("act")
     private List<Act> act;
 
@@ -91,7 +88,6 @@ public class Case {
 
     @JsonProperty("documents")
     private List<Document> documents;
-
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
@@ -106,5 +102,4 @@ public class Case {
 
     @JsonProperty("PartyAdv")
     private List<PartyAdv> partyAdv;
-
 }

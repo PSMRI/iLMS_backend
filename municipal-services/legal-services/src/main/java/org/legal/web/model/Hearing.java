@@ -99,4 +99,7 @@ public class Hearing {
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
+    @JsonProperty("PartyAdv")
+    private List<PartyAdv> partyAdv;
+
 }

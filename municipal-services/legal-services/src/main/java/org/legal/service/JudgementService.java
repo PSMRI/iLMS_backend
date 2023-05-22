@@ -4,13 +4,17 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
+import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.JudgementRepository;
+import org.legal.util.CaseUtils;
 import org.legal.util.LegalErrorConstants;
 import org.legal.validator.JudgementValidator;
 import org.legal.web.model.*;
 import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.Status;
+import org.legal.web.model.workflow.ProcessInstance;
+import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.legal.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,28 +27,36 @@ import java.util.Objects;
 @Service
 public class JudgementService {
     @Autowired
-    JudgementEnrichmentService judgementEnrichmentService;
+    private JudgementEnrichmentService judgementEnrichmentService;
 
     @Autowired
-    Producer producer;
+    private Producer producer;
 
     @Autowired
-    LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration ilmsConfiguration;
 
     @Autowired
-    JudgementRepository judgementRepository;
+    private JudgementRepository judgementRepository;
 
     @Autowired
-    JudgementValidator judgementValidator;
+    private JudgementValidator judgementValidator;
 
     @Autowired
-    HearingRepository hearingRepository;
+    private HearingRepository hearingRepository;
+
+    @Autowired
+    private CaseRepository caseRepository;
 
     @Autowired
     private WorkflowService workflowService;
 
+    @Autowired
+    private CaseUtils caseUtils;
+
     public Judgement create(JudgementRequest judgementRequest) {
         HearingResponse hearingResponse = null;
+        String action = "";
+        CaseRequest caseRequest = new CaseRequest();
         HearingSearchCriteria criteria = HearingSearchCriteria.builder()
                 .caseId(Collections.singletonList(judgementRequest.getJudgement().getCaseId())).build();
         hearingResponse = hearingRepository.getHearingDetails(criteria);
@@ -54,9 +66,29 @@ public class JudgementService {
             judgementRequest.getJudgement().setStatus(Status.ACTIVE);
             judgementValidator.createValidator(judgementRequest);
             judgementEnrichmentService.enrichJudgementCreateRequest(judgementRequest);
+
+            String caseId = judgementRequest.getJudgement().getCaseId();
+            CaseSearchCriteria caseCriteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
+            CaseResponse caseResponse = caseRepository.getLegalCaseData(caseCriteria);
+            caseRequest.setRequestInfo(judgementRequest.getRequestInfo());
+            caseRequest.setCaseObj(caseResponse.getCaseList().get(0));
             if (ilmsConfiguration.getIsWorkflowEnabled()) {
                 workflowService.updateWorkflowForJudgement(judgementRequest, CreationReason.CREATE);
             }
+            ProcessInstance wf = null != caseRequest.getCaseObj().getWorkflow() ? caseRequest.getCaseObj().getWorkflow() : new ProcessInstance();
+            wf.setAssignes(judgementRequest.getJudgement().getWorkflow().getAssignes());
+            caseRequest.getCaseObj().setWorkflow(wf);
+            if (judgementRequest.getJudgement().getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_APPEALED_REVIEW")) {
+                action = "REVIEW_JUDGEMENT";
+                ProcessInstanceRequest workflowReq = caseUtils.changeCaseWF(caseRequest, action);
+                workflowService.callWorkFlow(workflowReq);
+            }
+            if (judgementRequest.getJudgement().getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_COMPLETED")) {
+                action = "COMPLY_JUDGEMENT";
+                ProcessInstanceRequest workflowReq = caseUtils.changeCaseWF(caseRequest, action);
+                workflowService.callWorkFlow(workflowReq);
+            }
+
             producer.push(ilmsConfiguration.getCreateJudgementTopic(), judgementRequest);
         } else {
             throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement");
@@ -90,8 +122,8 @@ public class JudgementService {
                 if (Objects.nonNull(judgementRequest.getJudgement().getWorkflow())) {
                     processUpdateForJudgement(judgementRequest, finalRequest.getJudgement());
                 }
-                    producer.push(ilmsConfiguration.getUpdateJudgementTopic(), finalRequest);
-            }else {
+                producer.push(ilmsConfiguration.getUpdateJudgementTopic(), finalRequest);
+            } else {
                 throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
             }
         } else {
@@ -104,7 +136,7 @@ public class JudgementService {
         if (ilmsConfiguration.getIsWorkflowEnabled()) {
             State state = workflowService.updateWorkflowForJudgement(request, CreationReason.UPDATE);
             if (state.getIsStartState() && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !judgement.getStatus()
-                                                                                                                            .equals(Status.ACTIVE)) {
+                    .equals(Status.ACTIVE)) {
             }
         }
     }
