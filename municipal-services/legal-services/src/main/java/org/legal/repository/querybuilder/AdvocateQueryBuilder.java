@@ -12,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 public class AdvocateQueryBuilder {
     private static final String Query = "select * from eg_lg_advocate ";
     private final String paginationWrapper = "{} {orderBy} {pagination}";
+    private final String partyAdvQuery = "select * from eg_lg_party_advocate_bridge where advocate_id = ? AND case_id = ?";
 
     @Autowired
     private LEGALConfiguration legalConfiguration;
@@ -102,4 +103,7 @@ public class AdvocateQueryBuilder {
         }
     }
 
+    public String getPartyAdvQuery() {
+        return partyAdvQuery;
+    }
 }

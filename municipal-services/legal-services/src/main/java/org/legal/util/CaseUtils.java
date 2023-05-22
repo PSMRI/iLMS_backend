@@ -2,11 +2,14 @@ package org.legal.util;
 
 import org.egov.common.contract.request.User;
 import org.legal.configs.LEGALConfiguration;
+import org.legal.producer.Producer;
+import org.legal.repository.AdvocateRepository;
 import org.legal.repository.CaseRepository;
 import org.legal.service.CaseEnrichmentService;
 import org.legal.web.model.*;
 import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.PartyType;
+import org.legal.web.model.enums.Status;
 import org.legal.web.model.workflow.ProcessInstance;
 import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,9 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
+import java.util.UUID;
 
 @Component
 public class CaseUtils {
@@ -31,6 +36,12 @@ public class CaseUtils {
 
     @Autowired
     private CommonUtils commonUtils;
+
+    @Autowired
+    private AdvocateRepository advocateRepository;
+
+    @Autowired
+    private Producer producer;
 
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
@@ -152,32 +163,6 @@ public class CaseUtils {
                             if (!StringUtils.isEmpty(party.getStatus())) {
                                 oldParty.setStatus(party.getStatus());
                             }
-                            //Setting Data For Petitioner Advocate
-                            if (!StringUtils.isEmpty(party.getAdvocate())) {
-
-                                for (Advocate advocate : party.getAdvocate()) {
-                                    for (Advocate oldAdvocate : oldParty.getAdvocate()) {
-                                        if (!StringUtils.isEmpty(advocate.getFirstName())) {
-                                            oldAdvocate
-                                                    .setFirstName(advocate.getFirstName());
-                                        }
-                                        if (!StringUtils.isEmpty(advocate.getLastName())) {
-                                            oldAdvocate
-                                                    .setLastName(advocate.getLastName());
-                                        }
-                                        if (!StringUtils.isEmpty(advocate.getContactNumber())) {
-                                            oldAdvocate
-                                                    .setContactNumber(advocate.getContactNumber());
-                                        }
-
-                                        if (!StringUtils.isEmpty(advocate.getStatus())) {
-                                            oldAdvocate
-                                                    .setStatus(advocate.getStatus());
-                                        }
-                                    }
-                                }
-                            }
-
                         } else {
                             if (!StringUtils.isEmpty(party.getCaseId())) {
                                 oldParty.setCaseId(party.getCaseId());
@@ -210,29 +195,69 @@ public class CaseUtils {
                                 oldParty.setStatus(party.getStatus());
                             }
                             //Setting Data For Petitioner Advocate
-                            if (!StringUtils.isEmpty(party.getAdvocate())) {
-
-                                for (Advocate advocate : party.getAdvocate()) {
-                                    for (Advocate oldAdvocate : oldParty.getAdvocate()) {
+                        } if (!StringUtils.isEmpty(party.getAdvocate())) {
+                            List<PartyAdv> partyAdvList = new ArrayList<>();
+                            for (Advocate advocate : party.getAdvocate()) {
+                                for (Advocate oldAdvocate:oldParty.getAdvocate()){
+                                    if (advocate.getContactNumber().equals(oldAdvocate.getContactNumber())){
                                         if (!StringUtils.isEmpty(advocate.getFirstName())) {
-                                            oldAdvocate
-                                                    .setFirstName(advocate.getFirstName());
+                                            oldAdvocate.setFirstName(advocate.getFirstName());
                                         }
                                         if (!StringUtils.isEmpty(advocate.getLastName())) {
-                                            oldAdvocate
-                                                    .setLastName(advocate.getLastName());
+                                            oldAdvocate.setLastName(advocate.getLastName());
                                         }
                                         if (!StringUtils.isEmpty(advocate.getContactNumber())) {
-                                            oldAdvocate
-                                                    .setContactNumber(advocate.getContactNumber());
+                                            oldAdvocate.setContactNumber(advocate.getContactNumber());
                                         }
 
                                         if (!StringUtils.isEmpty(advocate.getStatus())) {
-                                            oldAdvocate
-                                                    .setStatus(advocate.getStatus());
+                                            oldAdvocate.setStatus(advocate.getStatus());
+                                        }
+                                    }else {
+                                        List<PartyAdv> partyAdvList1=advocateRepository.getPartyAdv(oldAdvocate.getId(),caseRequest.getCaseObj().getId());
+                                        for (PartyAdv partyAdv1: partyAdvList1){
+                                            if (!partyAdv1.getAdvocateId().equals(advocate.getId()))
+                                                partyAdv1.setStatus(Status.INACTIVE);
+                                            producer.push(ilmsConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdv1);
                                         }
                                     }
                                 }
+
+                                AdvocateSearchCriteria criteria = AdvocateSearchCriteria.builder().contactNumber(advocate.getContactNumber()).build();
+                                AdvocateResponse advocateResponse = null;
+                                advocateResponse = advocateRepository.getAdvocateDetails(criteria);
+                                if (!advocateResponse.getAdvocate().isEmpty()) {
+                                    for (Advocate oldAdvocate : advocateResponse.getAdvocate()) {
+                                        if (!StringUtils.isEmpty(advocate.getFirstName())) {
+                                            oldAdvocate.setFirstName(advocate.getFirstName());
+                                        }
+                                        if (!StringUtils.isEmpty(advocate.getLastName())) {
+                                            oldAdvocate.setLastName(advocate.getLastName());
+                                        }
+                                        if (!StringUtils.isEmpty(advocate.getContactNumber())) {
+                                            oldAdvocate.setContactNumber(advocate.getContactNumber());
+                                        }
+
+                                        if (!StringUtils.isEmpty(advocate.getStatus())) {
+                                            oldAdvocate.setStatus(advocate.getStatus());
+                                        }
+                                        if (!oldAdvocate.getContactNumber().equals(advocate.getContactNumber())){
+
+                                            List<PartyAdv> partyAdvList1=advocateRepository.getPartyAdv(oldAdvocate.getId(),caseRequest.getCaseObj().getId());
+                                            for (PartyAdv partyAdv1: partyAdvList1){
+                                                if (partyAdv1.getAdvocateId().equals(caseRequest.getCaseObj()))
+                                                    partyAdv1.setStatus(Status.INACTIVE);
+                                                producer.push(ilmsConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdv1);
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    PartyAdv partyAdv1 = caseEnrichmentService.createNewPetAdvocateId(caseRequest.getRequestInfo(), oldData.getTenantId(),
+                                            advocate, caseRequest.getCaseObj().getId(), party.getId(), party.getPartyType());
+                                    partyAdvList.add(partyAdv1);
+                                    caseRequest.getCaseObj().setPartyAdv(partyAdvList);
+                                }
+
                             }
                         }
                     }
@@ -304,29 +329,47 @@ public class CaseUtils {
                         }
                         //Setting Data For Respondent Advocate
                         if (!StringUtils.isEmpty(party.getAdvocate())) {
-
+                            List<PartyAdv> partyAdvList = new ArrayList<>();
                             for (Advocate advocate : party.getAdvocate()) {
-                                for (Advocate oldAdvocate : oldParty.getAdvocate()) {
-                                    if (!StringUtils.isEmpty(advocate.getFirstName())) {
-                                        oldAdvocate
-                                                .setFirstName(advocate.getFirstName());
+                                AdvocateSearchCriteria criteria = AdvocateSearchCriteria.builder().contactNumber(advocate.getContactNumber()).build();
+                                AdvocateResponse advocateResponse = null;
+                                advocateResponse = advocateRepository.getAdvocateDetails(criteria);
+                                if (!advocateResponse.getAdvocate().isEmpty()) {
+                                    for (Advocate oldAdvocate : advocateResponse.getAdvocate()) {
+                                        if (!StringUtils.isEmpty(advocate.getFirstName())) {
+                                            oldAdvocate.setFirstName(advocate.getFirstName());
+                                        }
+                                        if (!StringUtils.isEmpty(advocate.getLastName())) {
+                                            oldAdvocate.setLastName(advocate.getLastName());
+                                        }
+                                        if (!StringUtils.isEmpty(advocate.getContactNumber())) {
+                                            oldAdvocate.setContactNumber(advocate.getContactNumber());
+                                        }
+                                        if (!StringUtils.isEmpty(advocate.getStatus())) {
+                                            oldAdvocate.setStatus(advocate.getStatus());
+                                        }
+                                        if (!oldAdvocate.getContactNumber().equals(advocate.getContactNumber())){
+                                            List<PartyAdv> newPartyAdvList=new ArrayList<>();
+                                            List<PartyAdv> partyAdvList1=advocateRepository.getPartyAdv(oldAdvocate.getId(),caseRequest.getCaseObj().getId());
+                                            for (PartyAdv partyAdv1: partyAdvList1){
+                                                if (partyAdv1.getAdvocateId().equals(caseRequest.getCaseObj()))
+                                                    partyAdv1.setStatus(Status.INACTIVE);
+                                                newPartyAdvList.add(partyAdv1);
+                                            }
+                                            oldData.setPartyAdv(newPartyAdvList);
+                                        }
                                     }
-                                    if (!StringUtils.isEmpty(advocate.getLastName())) {
-                                        oldAdvocate
-                                                .setLastName(advocate.getLastName());
-                                    }
-                                    if (!StringUtils.isEmpty(advocate.getContactNumber())) {
-                                        oldAdvocate
-                                                .setContactNumber(advocate.getContactNumber());
-                                    }
-
-                                    if (!StringUtils.isEmpty(advocate.getStatus())) {
-                                        oldAdvocate
-                                                .setStatus(advocate.getStatus());
-                                    }
+                                } else {
+                                    PartyAdv partyAdv1 = caseEnrichmentService.createNewPetAdvocateIdForRespondent(caseRequest.getRequestInfo(), oldData.getTenantId(),
+                                            advocate, caseRequest.getCaseObj().getId(), party.getId(), party.getPartyType());
+                                    partyAdvList.add(partyAdv1);
+                                    caseRequest.getCaseObj().setPartyAdv(partyAdvList);
                                 }
+
                             }
+
                         }
+
                     }
                 }
             }

@@ -149,6 +149,9 @@ public class LEGALConfiguration {
     @Value("${persister.update.legal.advocate.topic}")
     private String updateAdvocateTopic;
 
+    @Value("${persister.update.legal.party.advocate.bridge.topic}")
+    private String updatePartyAdvocateBridgeTopic;
+
     @Value("${persister.update-child-case.topic}")
     private String updateChildCaseTopic;
 
