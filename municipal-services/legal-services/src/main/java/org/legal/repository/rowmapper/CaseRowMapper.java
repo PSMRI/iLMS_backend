@@ -39,43 +39,43 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
     @Override
     public List<Case> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-        Map<String, Case> ilmsCaseMap = new LinkedHashMap<String, Case>();
+        Map<String, Case> legalCaseMap = new LinkedHashMap<String, Case>();
         this.setFullCount(0);
         while (rs.next()) {
             String duplicacyCheck = "";
             Case currentCase = new Case();
             // TODO fill the ILMSCase object with data in the result set record
-            if (!duplicacyCheck.equals(rs.getString("ilmsCase_id"))) {
-                String id = rs.getString("ilmsCase_id");
+            if (!duplicacyCheck.equals(rs.getString("legalCase_id"))) {
+                String id = rs.getString("legalCase_id");
                 duplicacyCheck = id;
-                String cnrNumber = rs.getString("ilms_cnrNumber");
-                String caseType = rs.getString("ilms_caseType");
-                currentCase = ilmsCaseMap.get(id);
-                String tenantId = rs.getString("ilms_tenantId");
-                String parentCaseId = rs.getString("ilms_parentCaseId");
-                JsonNode linkedCases = getLinkedCases("ilms_linkedCases", rs);
-                String caseCategory = rs.getString("ilms_caseCategory");
-                String caseNumber = rs.getString("ilms_caseNumber");
-                String filingNumber = rs.getString("ilms_filingNumber");
-                Long filingDate = rs.getLong("ilms_filingDate");
-               // Long registrationDate = rs.getLong("ilms_registrationDate");
-                String caseSummary = rs.getString("ilms_caseSummary");
-                String arisingDetails = rs.getString("ilms_arisingDetails");
-                String matter = rs.getString("ilms_matter");
+                String cnrNumber = rs.getString("legal_cnrNumber");
+                String caseType = rs.getString("legal_caseType");
+                currentCase = legalCaseMap.get(id);
+                String tenantId = rs.getString("legal_tenantId");
+                String parentCaseId = rs.getString("legal_parentCaseId");
+                JsonNode linkedCases = getLinkedCases("legal_linkedCases", rs);
+                String caseCategory = rs.getString("legal_caseCategory");
+                String caseNumber = rs.getString("legal_caseNumber");
+                String filingNumber = rs.getString("legal_filingNumber");
+                Long filingDate = rs.getLong("legal_filingDate");
+                // Long registrationDate = rs.getLong("ilms_registrationDate");
+                String caseSummary = rs.getString("legal_caseSummary");
+                String arisingDetails = rs.getString("legal_arisingDetails");
+                String matter = rs.getString("legal_matter");
                 this.setFullCount((rs.getInt("full_count")));
-                String caseStatus = rs.getString("ilms_caseStatus");
-               String applicationStatus = rs.getString("ilms_applicationStatus");
+                String caseStatus = rs.getString("legal_caseStatus");
+                String applicationStatus = rs.getString("legal_applicationStatus");
 //                String caseSubStage = rs.getString("ilms_caseSubStage");
-                String priority = rs.getString("ilms_priority");
-                String recommendOic = rs.getString("ilms_recommendOic");
-                String remarks = rs.getString("ilms_remarks");
-                JsonNode additionalDetails = getAdditionalDetail("ilms_additionalDetails", rs);
-                String status = rs.getString("ilms_status");
+                String priority = rs.getString("legal_priority");
+                String recommendOic = rs.getString("legal_recommendOic");
+                String remarks = rs.getString("legal_remarks");
+                JsonNode additionalDetails = getAdditionalDetail("legal_additionalDetails", rs);
+                String status = rs.getString("legal_status");
 
-                AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("ilms_createdTime"))
-                        .createdBy(rs.getString("ilms_createdBy"))
-                        .lastModifiedTime(rs.getLong("ilms_lastModifiedTime"))
-                        .lastModifiedBy(rs.getString("ilms_lastModifiedBy")).build();
+                AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("legal_createdTime"))
+                        .createdBy(rs.getString("legal_createdBy"))
+                        .lastModifiedTime(rs.getLong("legal_lastModifiedTime"))
+                        .lastModifiedBy(rs.getString("legal_lastModifiedBy")).build();
 
                 if (currentCase == null) {
                     currentCase = Case.builder().id(id).cnrNumber(cnrNumber).tenantId(tenantId).additionalDetails(additionalDetails)
@@ -87,12 +87,12 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                             .caseStatus(caseStatus).applicationStatus(applicationStatus)
                             .recommendOIC(recommendOic).auditDetails(auditDetails).linkedCases(linkedCases).build();
 
-                    ilmsCaseMap.put(id, currentCase);
+                    legalCaseMap.put(id, currentCase);
                 }
             }
             addChildrenToProperty(rs, currentCase);
         }
-        return new ArrayList<>(ilmsCaseMap.values());
+        return new ArrayList<>(legalCaseMap.values());
     }
 
     @SuppressWarnings("unused")

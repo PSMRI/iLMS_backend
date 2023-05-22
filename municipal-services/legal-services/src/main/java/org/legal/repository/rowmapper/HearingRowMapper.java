@@ -41,7 +41,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
     @Override
     public List<Hearing> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-        Map<String, Hearing> ilmsHearingMap = new LinkedHashMap<String, Hearing>();
+        Map<String, Hearing> legalHearingMap = new LinkedHashMap<String, Hearing>();
         this.setFullCount(0);
         while (rs.next()) {
             String duplicacyCheck = "";
@@ -59,9 +59,9 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 duplicacyCheck = id;
                 String hearingNumber = rs.getString("hearing_number");
 
-                currentHearing = ilmsHearingMap.get(id);
+                currentHearing = legalHearingMap.get(id);
                 String caseId = rs.getString("hearing_case_id");
-                currentHearing = ilmsHearingMap.get(id);
+                currentHearing = legalHearingMap.get(id);
                 String courtNumber = rs.getString("hearing_court_number");
                 String bench = rs.getString("hearing_bench");
                 JsonNode judgeName = getJudgeNames("hearing_judge_name", rs);
@@ -91,12 +91,12 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .requiredOfficer(requiredOfficer).auditDetails(auditDetails).affidavitFilingDate(affidavitFilingDate)
                             .affidavitFilingDueDate(affidavitFilingDueDate).caseNumber(caseNumber).oathNumber(oathNumber).build();
 
-                    ilmsHearingMap.put(id, currentHearing);
+                    legalHearingMap.put(id, currentHearing);
                 }
             }
             addChildrenToHearingDetails(rs, currentHearing);
         }
-        return new ArrayList<>(ilmsHearingMap.values());
+        return new ArrayList<>(legalHearingMap.values());
     }
 
     @SuppressWarnings("unused")

@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class HearingQueryBuilder {
 
-    private static final String getTenantIdQuery = "SELECT tenant_id FROM ilms_case WHERE ID=(select case_id FROM eg_lg_hearing WHERE id=?)";
+    private static final String getTenantIdQuery = "SELECT tenant_id FROM eg_lg_case WHERE ID=(select case_id FROM eg_lg_hearing WHERE id=?)";
 
     private static final String maxValueQuery = "select count(*) from eg_lg_hearing where case_id = ?";
 

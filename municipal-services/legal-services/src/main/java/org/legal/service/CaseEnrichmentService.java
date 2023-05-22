@@ -75,11 +75,11 @@ public class CaseEnrichmentService {
 
     public void enrichmentForHearingUpdateRequest(HearingRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        Hearing ilmsCase = request.getHearing();
+        Hearing legalCase = request.getHearing();
         AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
         request.getHearing().setAuditDetails(auditDetails);
-        ilmsCase.setAuditDetails(auditDetails);
-        for (Party party : ilmsCase.getParties()) {
+        legalCase.setAuditDetails(auditDetails);
+        for (Party party : legalCase.getParties()) {
             party.setAuditDetails(auditDetails);
             for (Advocate advocate : party.getAdvocate()) {
                 advocate.setAuditDetails(auditDetails);
@@ -87,7 +87,7 @@ public class CaseEnrichmentService {
         }
         if (request.getHearing().getPayment() != null) {
             request.getHearing().getPayment().setAuditDetails(auditDetails);
-            ilmsCase.getPayment().setAuditDetails(auditDetails);
+            legalCase.getPayment().setAuditDetails(auditDetails);
         }
     }
 

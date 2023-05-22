@@ -274,23 +274,23 @@ serviceMaps:
             - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: case.PartyAdv.*
+          basePath: hearing.PartyAdv.*
           jsonMaps:
-            - jsonPath: $.case.PartyAdv.*.id
+            - jsonPath: $.hearing.PartyAdv.*.id
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.parties.*.partyId
+            - jsonPath: $.hearing.parties.*.partyId
 
-            - jsonPath: $.case.PartyAdv.*.partyType
+            - jsonPath: $.hearing.PartyAdv.*.partyType
 
-            - jsonPath: $.case.parties.*.advocate.*.advocateId
+            - jsonPath: $.hearing.parties.*.advocate.*.advocateId
 
-            - jsonPath: $.case.PartyAdv.*.status
+            - jsonPath: $.hearing.PartyAdv.*.status
 
-            - jsonPath: $.case.PartyAdv.*.auditDetails.createdBy
+            - jsonPath: $.hearing.PartyAdv.*.auditDetails.createdBy
 
-            - jsonPath: $.case.PartyAdv.*.auditDetails.createdTime
+            - jsonPath: $.hearing.PartyAdv.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.payment

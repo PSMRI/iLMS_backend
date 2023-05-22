@@ -118,11 +118,11 @@ public class HearingService {
     }
 
     public HearingResponse hearingSearch(HearingSearchCriteria criteria, RequestInfo requestInfo) {
-        List<Hearing> ilmsHearingList = new ArrayList<>();
+        List<Hearing> legalHearingList = new ArrayList<>();
         HearingResponse hearingResponse = null;
         hearingResponse = hearingDetailsRepository.getHearingDetails(criteria);
         if (!hearingResponse.getHearingList().isEmpty()) {
-            ilmsHearingList = hearingResponse.getHearingList();
+            legalHearingList = hearingResponse.getHearingList();
         } else {
             throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available");
         }
