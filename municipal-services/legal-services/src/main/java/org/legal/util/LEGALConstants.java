@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 public class LEGALConstants {
     public static final String Respondent = "Respondent";
 
-    public static final String MDMS_LEGAL_MOD_NAME = "common-masters";
+    public static final String MDMS_LEGAL_MOD_NAME = "legal";
 
-    public static final String JSONPATH_CODES = "$.MdmsRes.common-masters";
+    public static final String JSONPATH_CODES = "$.MdmsRes.legal";
 
     public static final String MDMS_LEGAL_CASE_TYPE = "CaseType";
 
