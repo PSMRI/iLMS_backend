@@ -1,9 +1,11 @@
 package org.legal.web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -31,7 +33,7 @@ public class CaseSearchCriteria {
 
 
     @JsonProperty("applicationStatus")
-    private List<String> applicationStatus;
+    private Set<String> applicationStatus;
 
     @JsonProperty("sortBy")
     private SortBy sortBy;
@@ -41,6 +43,9 @@ public class CaseSearchCriteria {
 
     @JsonProperty("uuid")
     private String uuid;
+
+    @JsonIgnore
+    private Boolean isPlainSearch;
 
     public enum SortOrder {
         ASC,

@@ -67,7 +67,7 @@ public class CaseRepository {
                 party1.add(party);
                 singleCase.setParties(party1);
             }
-           singleCase.setAct(getAct(singleCase.getId()));
+            singleCase.setAct(getAct(singleCase.getId()));
         }
         CaseResponse caseResponse = CaseResponse.builder().caseList(caseList).totalCount(caseRowMapper.getFullCount()).build();
         return caseResponse;
@@ -117,9 +117,16 @@ public class CaseRepository {
         return documentList;
     }
 
-    public List<Advocate> getAdvocateById(String id){
-        List<Advocate> advocateList = jdbcTemplate.query(caseQueryBuilder.getAdvocateQuery(id),advocateMapper);
-    return advocateList;
+    public List<Advocate> getAdvocateById(String id) {
+        List<Advocate> advocateList = jdbcTemplate.query(caseQueryBuilder.getAdvocateQuery(id), advocateMapper);
+        return advocateList;
+    }
+
+    public Integer getCount(CaseSearchCriteria criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = caseQueryBuilder.getCountQuery(criteria, preparedStmtList);
+        Integer count = jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+        return count;
     }
 }
 

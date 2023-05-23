@@ -1,6 +1,7 @@
 package org.legal.web.controller;
 
 import lombok.extern.log4j.Log4j2;
+import org.egov.common.contract.response.ResponseInfo;
 import org.legal.service.CaseService;
 import org.legal.util.ResponseInfoFactory;
 import org.legal.web.model.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/case")
@@ -27,10 +29,10 @@ public class CaseController {
     @PostMapping(value = "/_search")
     public ResponseEntity<CaseResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                @Valid @ModelAttribute CaseSearchCriteria criteria) {
-        log.info("ILMSCaseController :: search() : START ");
-        CaseResponse response = caseService.ilmsCaseSearch(criteria, requestInfoWrapper.getRequestInfo(), requestInfoWrapper.getProcessSearchCriteria());
+        log.info("LEGALCaseController :: search() : START ");
+        CaseResponse response = caseService.legalCaseSearch(criteria, requestInfoWrapper.getRequestInfo(), requestInfoWrapper.getProcessSearchCriteria());
         response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
-        log.info("ILMSCaseController :: search() : END With Response [ " + response + " ]");
+        log.info("LEGALCaseController :: search() : END With Response [ " + response + " ]");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -53,5 +55,15 @@ public class CaseController {
         caseList.add(caseObj);
         response.setCaseList(caseList);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/_count", method = RequestMethod.POST)
+    public ResponseEntity<CountResponse> requestsCountPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                           @Valid @ModelAttribute CaseSearchCriteria criteria) {
+        Map<String, Integer> countMap = caseService.count(requestInfoWrapper.getRequestInfo(), criteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        CountResponse response = CountResponse.builder().responseInfo(responseInfo).statusCountMap(countMap).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 }

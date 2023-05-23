@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class HearingQueryBuilder {
 
-    private static final String getTenantIdQuery = "SELECT tenant_id FROM ilms_case WHERE ID=(select case_id FROM eg_lg_hearing WHERE id=?)";
+    private static final String getTenantIdQuery = "SELECT tenant_id FROM eg_lg_case WHERE ID=(select case_id FROM eg_lg_hearing WHERE id=?)";
 
     private static final String maxValueQuery = "select count(*) from eg_lg_hearing where case_id = ?";
 
@@ -19,7 +19,7 @@ public class HearingQueryBuilder {
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     public String getHearingSearchQuery(HearingSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(Query);
@@ -50,14 +50,14 @@ public class HearingQueryBuilder {
 
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, HearingSearchCriteria criteria) {
 
-        int limit = ilmsConfiguration.getDefaultLimit();
-        int offset = ilmsConfiguration.getDefaultOffset();
+        int limit = legalConfiguration.getDefaultLimit();
+        int offset = legalConfiguration.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
-        if (criteria.getLimit() != null && criteria.getLimit() <= ilmsConfiguration.getMaxSearchLimit()) {
+        if (criteria.getLimit() != null && criteria.getLimit() <= legalConfiguration.getMaxSearchLimit()) {
             limit = criteria.getLimit();
         }
-        if (criteria.getLimit() != null && criteria.getLimit() > ilmsConfiguration.getMaxSearchLimit()) {
-            limit = ilmsConfiguration.getMaxSearchLimit();
+        if (criteria.getLimit() != null && criteria.getLimit() > legalConfiguration.getMaxSearchLimit()) {
+            limit = legalConfiguration.getMaxSearchLimit();
         }
         if (criteria.getOffset() != null) {
             offset = criteria.getOffset();

@@ -1,41 +1,29 @@
 package org.legal.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.IdGenRepository;
 import org.legal.util.AdvocateUtils;
-import org.legal.util.CaseUtils;
 import org.legal.util.LegalErrorConstants;
-import org.legal.web.model.Act;
 import org.legal.web.model.Advocate;
 import org.legal.web.model.AdvocateRequest;
 import org.legal.web.model.AuditDetails;
-import org.legal.web.model.Case;
-import org.legal.web.model.CaseRequest;
-import org.legal.web.model.Hearing;
-import org.legal.web.model.HearingRequest;
-import org.legal.web.model.Party;
-import org.legal.web.model.enums.PartyType;
-import org.legal.web.model.enums.Status;
 import org.legal.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class AdvocateEnrichmentService {
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     @Autowired
     private AdvocateUtils advocateUtils;
@@ -57,10 +45,10 @@ public class AdvocateEnrichmentService {
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getAdvocate().getTenantId();
         Advocate advocate = request.getAdvocate();
-        List<String> advocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(), ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
+        List<String> advocateId = getIdList(requestInfo, tenantId, legalConfiguration.getPetitionerAdvocateIdgenName(), legalConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
         ListIterator<String> advItr = advocateId.listIterator();
-            advocate.setId(advItr.next());
-        }
+        advocate.setId(advItr.next());
+    }
 
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {

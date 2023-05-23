@@ -295,7 +295,7 @@ public class HearingUtils {
         return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
     }
 
-    public ProcessInstanceRequest hearingWFThroughCase(HearingRequest request, String action) {
+    public ProcessInstanceRequest hearingWFUpdate(HearingRequest request, String action) {
         Hearing hearing = request.getHearing();
         ProcessInstance wf = null != hearing.getWorkflow() ? hearing.getWorkflow() : new ProcessInstance();
         wf.setBusinessId(hearing.getId());

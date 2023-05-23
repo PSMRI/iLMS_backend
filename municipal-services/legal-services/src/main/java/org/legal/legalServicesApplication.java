@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @Import({TracerConfiguration.class})
-public class ILMSApplication {
+public class legalServicesApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ILMSApplication.class, args);
+        SpringApplication.run(legalServicesApplication.class, args);
     }
 }

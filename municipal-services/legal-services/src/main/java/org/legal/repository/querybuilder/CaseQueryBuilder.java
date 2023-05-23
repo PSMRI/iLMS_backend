@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class CaseQueryBuilder {
@@ -20,7 +18,7 @@ public class CaseQueryBuilder {
 
     private static final String actQuery = "select * from eg_lg_act where case_id = ?";
 
-    private static final String Query = "select count(*) OVER() AS full_count,eg_lg_case.id as ilmsCase_id, eg_lg_case.case_number as ilms_caseNumber, eg_lg_case.cnr_number as ilms_cnrNumber, eg_lg_case.tenant_id as ilms_tenantId, eg_lg_case.parent_case_id as ilms_parentCaseId, eg_lg_case.linked_cases as ilms_linkedCases, eg_lg_case.case_type as ilms_caseType, eg_lg_case.case_category as ilms_caseCategory, eg_lg_case.filing_number as ilms_filingNumber, eg_lg_case.filing_date as ilms_filingDate, eg_lg_case.case_summary as ilms_caseSummary, eg_lg_case.arising_details as ilms_arisingDetails, eg_lg_case.policy_or_nonpolicy_matter as ilms_matter, eg_lg_case.case_status as ilms_caseStatus, eg_lg_case.application_status as ilms_applicationStatus, eg_lg_case.priority as ilms_priority, eg_lg_case.recommend_oic as ilms_recommendOic, eg_lg_case.remarks as ilms_remarks, eg_lg_case.additional_details as ilms_additionalDetails, eg_lg_case.status as ilms_status, eg_lg_case.createdby as ilms_createdBy, eg_lg_case.createdtime as ilms_createdTime, eg_lg_case.lastmodifiedby as ilms_lastModifiedBy, eg_lg_case.lastmodifiedtime as ilms_lastModifiedTime,eg_lg_court.id as court_id, eg_lg_court.case_id as court_caseId, eg_lg_court.court_name as court_name, eg_lg_court.district as court_district, eg_lg_court.state as court_state, eg_lg_court.division as court_division,eg_lg_court.status as court_status, eg_lg_court.createdby as court_createdby,eg_lg_court.createdtime as court_createdtime,eg_lg_court.lastmodifiedby as court_lastmodifiedby,eg_lg_court.lastmodifiedtime as court_lastmodifiedtime FROM eg_lg_case LEFT OUTER JOIN eg_lg_court on eg_lg_court.case_id = eg_lg_case.id ";
+    private static final String Query = "select count(*) OVER() AS full_count,eg_lg_case.id as legalCase_id, eg_lg_case.case_number as legal_caseNumber, eg_lg_case.cnr_number as legal_cnrNumber, eg_lg_case.tenant_id as legal_tenantId, eg_lg_case.parent_case_id as legal_parentCaseId, eg_lg_case.linked_cases as legal_linkedCases, eg_lg_case.case_type as legal_caseType, eg_lg_case.case_category as legal_caseCategory, eg_lg_case.filing_number as legal_filingNumber, eg_lg_case.filing_date as legal_filingDate, eg_lg_case.case_summary as legal_caseSummary, eg_lg_case.arising_details as legal_arisingDetails, eg_lg_case.policy_or_nonpolicy_matter as legal_matter, eg_lg_case.case_status as legal_caseStatus, eg_lg_case.application_status as legal_applicationStatus, eg_lg_case.priority as legal_priority, eg_lg_case.recommend_oic as legal_recommendOic, eg_lg_case.remarks as legal_remarks, eg_lg_case.additional_details as legal_additionalDetails, eg_lg_case.status as legal_status, eg_lg_case.createdby as legal_createdBy, eg_lg_case.createdtime as legal_createdTime, eg_lg_case.lastmodifiedby as legal_lastModifiedBy, eg_lg_case.lastmodifiedtime as legal_lastModifiedTime,eg_lg_court.id as court_id, eg_lg_court.case_id as court_caseId, eg_lg_court.court_name as court_name, eg_lg_court.district as court_district, eg_lg_court.state as court_state, eg_lg_court.division as court_division,eg_lg_court.status as court_status, eg_lg_court.createdby as court_createdby,eg_lg_court.createdtime as court_createdtime,eg_lg_court.lastmodifiedby as court_lastmodifiedby,eg_lg_court.lastmodifiedtime as court_lastmodifiedtime FROM eg_lg_case LEFT OUTER JOIN eg_lg_court on eg_lg_court.case_id = eg_lg_case.id ";
 
     private static final String ChildCaseQuery = "SELECT id FROM eg_lg_case where id= ? or parent_case_id= ? ";
 
@@ -30,11 +28,10 @@ public class CaseQueryBuilder {
     private static final String CaseQuery2 = " AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = cases.id GROUP BY wf.businessid)";
 
     private static final String advocateQuery = "select * from eg_lg_advocate ";
+    private static final String COUNT_WRAPPER = "select count(*) from ({INTERNAL_QUERY}) as count";
     private final String paginationWrapper = "{} {orderBy} {pagination}";
-
-
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     public String getLegalCaseSearchQuery(CaseSearchCriteria criteria, List<Object> preparedStmtList) {
 
@@ -82,10 +79,12 @@ public class CaseQueryBuilder {
             preparedStmtList.add("");
         }
 
-        if (criteria.getApplicationStatus() != null) {
-                addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" eg_lg_case.application_status = ?");
-                preparedStmtList.add(criteria.getApplicationStatus());
+
+        Set<String> applicationStatuses = criteria.getApplicationStatus();
+        if (!CollectionUtils.isEmpty(applicationStatuses)) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" eg_lg_case.application_status IN (").append(createQuery(applicationStatuses)).append(")");
+            addToPreparedStatement(preparedStmtList, applicationStatuses);
         }
 
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
@@ -99,14 +98,14 @@ public class CaseQueryBuilder {
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, CaseSearchCriteria criteria) {
 
-        int limit = ilmsConfiguration.getDefaultLimit();
-        int offset = ilmsConfiguration.getDefaultOffset();
+        int limit = legalConfiguration.getDefaultLimit();
+        int offset = legalConfiguration.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
-        if (criteria.getLimit() != null && criteria.getLimit() <= ilmsConfiguration.getMaxSearchLimit()) {
+        if (criteria.getLimit() != null && criteria.getLimit() <= legalConfiguration.getMaxSearchLimit()) {
             limit = criteria.getLimit();
         }
-        if (criteria.getLimit() != null && criteria.getLimit() > ilmsConfiguration.getMaxSearchLimit()) {
-            limit = ilmsConfiguration.getMaxSearchLimit();
+        if (criteria.getLimit() != null && criteria.getLimit() > legalConfiguration.getMaxSearchLimit()) {
+            limit = legalConfiguration.getMaxSearchLimit();
         }
         if (criteria.getOffset() != null) {
             offset = criteria.getOffset();
@@ -132,13 +131,13 @@ public class CaseQueryBuilder {
         }
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
+    private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });
     }
 
-    private Object createQuery(List<String> ids) {
+    private Object createQuery(Collection<String> ids) {
         StringBuilder builder = new StringBuilder();
         int length = ids.size();
         for (int i = 0; i < length; i++) {
@@ -210,5 +209,11 @@ public class CaseQueryBuilder {
 
     public String getAdvocateQuery(String id) {
         return advocateQuery + "where id ='" + id + "';";
+    }
+
+    public String getCountQuery(CaseSearchCriteria criteria, List<Object> preparedStmtList) {
+        String query = getLegalCaseSearchQuery(criteria, preparedStmtList);
+        String countQuery = COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        return countQuery;
     }
 }

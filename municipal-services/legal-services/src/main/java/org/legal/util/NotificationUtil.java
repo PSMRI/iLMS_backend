@@ -34,7 +34,7 @@ import static org.legal.util.LEGALConstants.*;
 @Component
 public class NotificationUtil {
     @Autowired
-    LEGALConfiguration ilmsConfiguration;
+    LEGALConfiguration legalConfiguration;
     @Autowired
     RestTemplate restTemplate;
     @Autowired
@@ -45,7 +45,7 @@ public class NotificationUtil {
     public List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
         List<String> masterData = new ArrayList<>();
         StringBuilder uri = new StringBuilder();
-        uri.append(ilmsConfiguration.getMdmsHost()).append(ilmsConfiguration.getMdmsEndpoint());
+        uri.append(legalConfiguration.getMdmsHost()).append(legalConfiguration.getMdmsEndpoint());
         if (StringUtils.isEmpty(tenantId)) {
             return masterData;
         }
@@ -95,12 +95,12 @@ public class NotificationUtil {
     }
 
     public void sendSMS(List<SMSRequest> smsRequestList) {
-        if (ilmsConfiguration.getIsSMSNotificationEnabled()) {
+        if (legalConfiguration.getIsSMSNotificationEnabled()) {
             if (CollectionUtils.isEmpty(smsRequestList)) {
                 log.info("Messages from localization couldn't be fetched!");
             }
             for (SMSRequest smsRequest : smsRequestList) {
-                producer.push(ilmsConfiguration.getSmsNotifTopic(), smsRequest);
+                producer.push(legalConfiguration.getSmsNotifTopic(), smsRequest);
                 log.info("Sending SMS notification: ");
                 log.info("MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
             }
@@ -135,12 +135,12 @@ public class NotificationUtil {
 
     public StringBuilder getUri(String tenantId, RequestInfo requestInfo, String locale) {
 
-        if (ilmsConfiguration.getIsLocalizationStateLevel()) {
+        if (legalConfiguration.getIsLocalizationStateLevel()) {
             tenantId = tenantId.split("\\.")[0];
         }
         StringBuilder uri = new StringBuilder();
-        uri.append(ilmsConfiguration.getLocalizationHost()).append(ilmsConfiguration.getLocalizationContextPath())
-                .append(ilmsConfiguration.getLocalizationSearchEndpoint()).append("?").append("locale=").append(locale).append("&tenantId=")
+        uri.append(legalConfiguration.getLocalizationHost()).append(legalConfiguration.getLocalizationContextPath())
+                .append(legalConfiguration.getLocalizationSearchEndpoint()).append("?").append("locale=").append(locale).append("&tenantId=")
                 .append(tenantId).append("&module=").append(NOTIFICATION_MODULENAME);
 
         return uri;
@@ -164,7 +164,7 @@ public class NotificationUtil {
 
         HashMap<String, String> body = new HashMap<>();
         body.put("url", url);
-        String res = restTemplate.postForObject(ilmsConfiguration.getUrlShortnerHost() + ilmsConfiguration.getUrlShortnerEndpoint(), body, String.class);
+        String res = restTemplate.postForObject(legalConfiguration.getUrlShortnerHost() + legalConfiguration.getUrlShortnerEndpoint(), body, String.class);
 
         if (StringUtils.isEmpty(res)) {
             log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
@@ -176,12 +176,12 @@ public class NotificationUtil {
 
     public void sendEmail(List<EmailRequest> emailRequestList) {
 
-        if (ilmsConfiguration.getIsEmailNotificationEnabled()) {
+        if (legalConfiguration.getIsEmailNotificationEnabled()) {
             if (CollectionUtils.isEmpty(emailRequestList))
                 log.info("Messages from localization couldn't be fetched!");
             for (EmailRequest emailRequest : emailRequestList) {
                 if (!StringUtils.isEmpty(emailRequest.getEmail().getBody())) {
-                    producer.push(ilmsConfiguration.getEmailNotifTopic(), emailRequest);
+                    producer.push(legalConfiguration.getEmailNotifTopic(), emailRequest);
                     log.info("Sending EMAIL notification! ");
                     log.info("Email Id: " + emailRequest.getEmail().toString());
                 } else {
@@ -203,7 +203,7 @@ public class NotificationUtil {
         List<EmailRequest> emailRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
             String message = mobileNumberToMsg.get(entryset.getKey());
-            String subject = ilmsConfiguration.getNotifSubject();
+            String subject = legalConfiguration.getNotifSubject();
             String body = message;
             Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false).body(body).subject(subject).build();
             EmailRequest email = new EmailRequest(requestInfo, emailobj);
@@ -215,7 +215,7 @@ public class NotificationUtil {
     public Map<String, String> fetchUserEmailIds(Set<String> mobileNumbers, String tenantId) {
         Map<String, String> mapOfPhnoAndEmailIds = new HashMap<>();
         StringBuilder uri = new StringBuilder();
-        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndPoint());
+        uri.append(legalConfiguration.getUserHost()).append(legalConfiguration.getUserSearchEndPoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
         userSearchRequest.put("tenantId", tenantId);
         for (String mobileNo : mobileNumbers) {
@@ -241,7 +241,7 @@ public class NotificationUtil {
 
     public void sendEventNotification(EventRequest request) {
         log.info("EVENT notification sent!");
-        producer.push(ilmsConfiguration.getSaveUserEventsTopic(), request);
+        producer.push(legalConfiguration.getSaveUserEventsTopic(), request);
     }
 
     public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Case cases) {
@@ -272,7 +272,7 @@ public class NotificationUtil {
 
         Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
         StringBuilder uri = new StringBuilder();
-        uri.append(ilmsConfiguration.getUserHost()).append(ilmsConfiguration.getUserSearchEndPoint());
+        uri.append(legalConfiguration.getUserHost()).append(legalConfiguration.getUserSearchEndPoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
         userSearchRequest.put("tenantId", tenantId);
         userSearchRequest.put("userType", "EMPLOYEE");

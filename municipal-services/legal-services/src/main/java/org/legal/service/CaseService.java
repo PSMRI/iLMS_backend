@@ -45,7 +45,7 @@ public class CaseService {
     private CaseEnrichmentService caseEnrichmentService;
 
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     @Autowired
     private CaseUtils caseUtils;
@@ -62,7 +62,7 @@ public class CaseService {
     public CaseService() {
     }
 
-    public CaseResponse ilmsCaseSearch(CaseSearchCriteria criteria, RequestInfo requestInfo, ProcessInstanceSearchCriteria processInstanceSearchCriteria) {
+    public CaseResponse legalCaseSearch(CaseSearchCriteria criteria, RequestInfo requestInfo, ProcessInstanceSearchCriteria processInstanceSearchCriteria) {
         List<Case> caseList = new ArrayList<>();
         CaseResponse caseResponse = null;
         criteria.setUuid(requestInfo.getUserInfo().getUuid());
@@ -218,19 +218,19 @@ public class CaseService {
         caseValidator.validateCreate(caseRequest);
         caseValidator.caseNumberDuplicacyCheck(caseRequest);
         caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
-        if (ilmsConfiguration.getIsWorkflowEnabled()) {
+        if (legalConfiguration.getIsWorkflowEnabled()) {
             workflowService.updateWorkflow(caseRequest, CreationReason.CREATE);
-            notificationService.process(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
+            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
         }
-        producer.push(ilmsConfiguration.getCreateCaseTopic(), caseRequest);
+        producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
         return caseRequest.getCaseObj();
     }
 
     /**
-     * Updates the ilms_case
+     * Updates the legal_case
      *
      * @param caseRequest The update Request
-     * @return Updated ilmsCase
+     * @return Updated legalCase
      */
     public Case update(CaseRequest caseRequest) {
         if (caseRequest.getCaseObj().getId() != null) {
@@ -243,7 +243,7 @@ public class CaseService {
                 CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCaseList().get(0), caseRequest);
                 Case cases = caseResponse.getCaseList().get(0);
                 caseValidator.validateUpdate(cases, caseRequest);
-                producer.push(ilmsConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+                producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
                 //                todo : notification has send to all the officers who has worked on this case.
                 if (Objects.nonNull(caseRequest.getCaseObj().getWorkflow())) {
                     processCaseUpdate(caseRequest, updatedCaseRequest.getCaseObj());
@@ -258,23 +258,23 @@ public class CaseService {
                         hearing.setWorkflow(wf);
                         if (caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
                             action = "ASSIGNED_TO_RO";
-                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFThroughCase(request, action);
+                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
                             workflowService.callWorkFlow(workflowReq);
                         }
                         if (caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
                             action = "DEACTIVATE";
-                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFThroughCase(request, action);
+                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
                             workflowService.callWorkFlow(workflowReq);
                         }
                         for (Document document : caseRequest.getCaseObj().getDocuments()) {
                             if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("SUBMIT_COUNTER_AFFIDAVIT")) {
                                 action = "ASSIGNED_TO_APPOINTED_OIC";
-                                ProcessInstanceRequest workflowReq = hearingUtils.hearingWFThroughCase(request, action);
+                                ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
                                 workflowService.callWorkFlow(workflowReq);
                             }
                         }
                     }
-                    notificationService.process(ilmsConfiguration.getUpdateCaseTopic(), caseRequest);
+                    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                 }
                 caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
             } else {
@@ -287,12 +287,28 @@ public class CaseService {
     }
 
     private void processCaseUpdate(CaseRequest request, Case cases) {
-        if (ilmsConfiguration.getIsWorkflowEnabled()) {
+        if (legalConfiguration.getIsWorkflowEnabled()) {
             State state = workflowService.updateWorkflow(request, CreationReason.UPDATE);
             if (state.getIsStartState() && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !cases.getStatus()
                     .equals(Status.ACTIVE)) {
             }
         }
+    }
+
+    public Map<String, Integer> count(RequestInfo requestInfo, CaseSearchCriteria criteria) {
+        criteria.setIsPlainSearch(false);
+        Map<String, Integer> statusCountMap = new HashMap<>();
+        Set<String> applicationStatus = new HashSet<>();
+        for (String status : criteria.getApplicationStatus()) {
+            if (!status.isEmpty()) {
+                applicationStatus.clear();
+                applicationStatus.add(status);
+                criteria.setApplicationStatus(applicationStatus);
+                Integer count = caseRepository.getCount(criteria);
+                statusCountMap.put(status, count);
+            }
+        }
+        return statusCountMap;
     }
 }
 

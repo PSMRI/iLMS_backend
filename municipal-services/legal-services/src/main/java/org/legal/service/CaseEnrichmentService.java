@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
-import org.legal.repository.AdvocateRepository;
 import org.legal.repository.CaseRepository;
 import org.legal.repository.IdGenRepository;
 import org.legal.util.CaseUtils;
@@ -16,7 +15,6 @@ import org.legal.web.model.idGen.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CaseEnrichmentService {
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     @Autowired
     private CaseUtils caseUtils;
@@ -77,11 +75,11 @@ public class CaseEnrichmentService {
 
     public void enrichmentForHearingUpdateRequest(HearingRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        Hearing ilmsCase = request.getHearing();
+        Hearing legalCase = request.getHearing();
         AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
         request.getHearing().setAuditDetails(auditDetails);
-        ilmsCase.setAuditDetails(auditDetails);
-        for (Party party : ilmsCase.getParties()) {
+        legalCase.setAuditDetails(auditDetails);
+        for (Party party : legalCase.getParties()) {
             party.setAuditDetails(auditDetails);
             for (Advocate advocate : party.getAdvocate()) {
                 advocate.setAuditDetails(auditDetails);
@@ -89,7 +87,7 @@ public class CaseEnrichmentService {
         }
         if (request.getHearing().getPayment() != null) {
             request.getHearing().getPayment().setAuditDetails(auditDetails);
-            ilmsCase.getPayment().setAuditDetails(auditDetails);
+            legalCase.getPayment().setAuditDetails(auditDetails);
         }
     }
 
@@ -98,10 +96,10 @@ public class CaseEnrichmentService {
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getCaseObj().getTenantId();
         Case caseObj = request.getCaseObj();
-        List<String> caseId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCaseIdgenName(), ilmsConfiguration.getCaseIdgenFormat(), 1);
+        List<String> caseId = getIdList(requestInfo, tenantId, legalConfiguration.getCaseIdgenName(), legalConfiguration.getCaseIdgenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();
-        List<String> courtId = getIdList(requestInfo, tenantId, ilmsConfiguration.getCourtIdgenName(),
-                ilmsConfiguration.getCourtIdgenFormat(), 1);
+        List<String> courtId = getIdList(requestInfo, tenantId, legalConfiguration.getCourtIdgenName(),
+                legalConfiguration.getCourtIdgenFormat(), 1);
         ListIterator<String> courtItr = courtId.listIterator();
         Map<String, String> errorMap = new HashMap<>();
 
@@ -114,15 +112,15 @@ public class CaseEnrichmentService {
         }
         if (Objects.nonNull(caseObj.getAct())) {
             for (Act act : caseObj.getAct()) {
-                List<String> actId = getIdList(requestInfo, tenantId, ilmsConfiguration.getActIdgenName(), ilmsConfiguration.getActIdgenFormat(), 1);
+                List<String> actId = getIdList(requestInfo, tenantId, legalConfiguration.getActIdgenName(), legalConfiguration.getActIdgenFormat(), 1);
                 ListIterator<String> actItr = actId.listIterator();
                 act.setId(actItr.next());
             }
         }
         for (Party party : caseObj.getParties()) {
             if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                List<String> petitionerId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerIdgenName(),
-                        ilmsConfiguration.getPetitionerIdgenFormat(), 1);
+                List<String> petitionerId = getIdList(requestInfo, tenantId, legalConfiguration.getPetitionerIdgenName(),
+                        legalConfiguration.getPetitionerIdgenFormat(), 1);
                 ListIterator<String> petitionerItr = petitionerId.listIterator();
                 party.setId(petitionerItr.next());
                 if (Objects.nonNull(party.getAdvocate())) {
@@ -146,10 +144,9 @@ public class CaseEnrichmentService {
                             partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
                             partyAdvList.add(partyAdv1);
                             party.setAdvocate(null);
-                        }
-                        else {
-                            List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
-                                    ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
+                        } else {
+                            List<String> padvocateId = getIdList(requestInfo, tenantId, legalConfiguration.getPetitionerAdvocateIdgenName(),
+                                    legalConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
                             ListIterator<String> padvocateItr = padvocateId.listIterator();
                             advocate.setId(padvocateItr.next());
                             PartyAdv partyAdv1 = new PartyAdv();
@@ -167,10 +164,9 @@ public class CaseEnrichmentService {
 
                 }
 
-            }
-            else {
-                List<String> respondentId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentIdgenName(),
-                        ilmsConfiguration.getRespondentIdgenFormat(), 1);
+            } else {
+                List<String> respondentId = getIdList(requestInfo, tenantId, legalConfiguration.getRespondentIdgenName(),
+                        legalConfiguration.getRespondentIdgenFormat(), 1);
                 ListIterator<String> respondentItr = respondentId.listIterator();
                 party.setId(respondentItr.next());
                 if (Objects.nonNull(party.getAdvocate())) {
@@ -197,8 +193,8 @@ public class CaseEnrichmentService {
                         } else
 //                        for (Advocate radvocate : advocates) {
                         {
-                            List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
-                                    ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
+                            List<String> radvocateId = getIdList(requestInfo, tenantId, legalConfiguration.getRespondentAdvocateIdgenName(),
+                                    legalConfiguration.getRespondentAdvocateIdgenFormat(), 1);
                             ListIterator<String> radvocateItr = radvocateId.listIterator();
                             advocate.setId(radvocateItr.next());
                             PartyAdv partyAdv1 = new PartyAdv();
@@ -219,8 +215,8 @@ public class CaseEnrichmentService {
         }
         if (Objects.nonNull(caseObj.getDocuments())) {
             caseObj.getDocuments().forEach((doc -> {
-                List<String> docId = getIdList(requestInfo, tenantId, ilmsConfiguration.getDocumentIdgenName(),
-                        ilmsConfiguration.getDocumentIdgenFormat(), 1);
+                List<String> docId = getIdList(requestInfo, tenantId, legalConfiguration.getDocumentIdgenName(),
+                        legalConfiguration.getDocumentIdgenFormat(), 1);
                 doc.setId(docId.get(0));
             }));
         }

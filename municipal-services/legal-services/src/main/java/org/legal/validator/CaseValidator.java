@@ -27,17 +27,17 @@ public class CaseValidator {
 
     private static Map<String, String> validateCodes(Case cases, Map<String, List<String>> codes, Map<String, String> errorMap) {
         if (Objects.nonNull(cases.getCourt())) {
-            if (Objects.nonNull(cases.getCourt().getCourtName()) && !codes.get(LEGALConstants.MDMS_ILMS_COURT_NAME).contains(cases.getCourt().getCourtName())) {
+            if (Objects.nonNull(cases.getCourt().getCourtName()) && !codes.get(LEGALConstants.MDMS_LEGAL_COURT_NAME).contains(cases.getCourt().getCourtName())) {
                 errorMap.put("Invalid CourtName", "The CourtName '" + cases.getCourt().getCourtName() + "' does not exists");
             }
         }
-        if (Objects.nonNull(cases.getType()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_TYPE).contains(cases.getType())) {
+        if (Objects.nonNull(cases.getType()) && !codes.get(LEGALConstants.MDMS_LEGAL_CASE_TYPE).contains(cases.getType())) {
             errorMap.put("Invalid CASE TYPE", "The CaseType '" + cases.getType() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getCaseStatus()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_STATUS).contains(cases.getCaseStatus())) {
+        if (Objects.nonNull(cases.getCaseStatus()) && !codes.get(LEGALConstants.MDMS_LEGAL_CASE_STATUS).contains(cases.getCaseStatus())) {
             errorMap.put("Invalid CASE Status", "The CaseStatus '" + cases.getCaseStatus() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getCategory()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_CATEGORY).contains(cases.getCategory())) {
+        if (Objects.nonNull(cases.getCategory()) && !codes.get(LEGALConstants.MDMS_LEGAL_CASE_CATEGORY).contains(cases.getCategory())) {
             errorMap.put("Invalid CaseCategory", "The CaseCategory '" + cases.getCategory() + "' does not exists");
         }
 //        if (Objects.nonNull(cases.getApplicationStatus()) && !codes.get(LEGALConstants.MDMS_ILMS_CASE_STAGE).contains(cases.getApplicationStatus())) {
@@ -46,7 +46,7 @@ public class CaseValidator {
 //        if (Objects.nonNull(cases.getSubStage()) && !codes.get(LEGALConstants.MDMS_ILMS_SUB_STAGE).contains(cases.getSubStage())) {
 //            errorMap.put("Invalid CaseSubStage", "The CaseSubStage '" + cases.getSubStage() + "' does not exists");
 //        }
-        if (Objects.nonNull(cases.getRecommendOIC()) && !codes.get(LEGALConstants.MDMS_ILMS_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
+        if (Objects.nonNull(cases.getRecommendOIC()) && !codes.get(LEGALConstants.MDMS_LEGAL_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
             errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + cases.getRecommendOIC() + "' does not exists");
         }
         if (Objects.nonNull(cases.getPriority()) && !codes.get(LEGALConstants.CASE_FLAG).contains(cases.getPriority())) {
@@ -54,7 +54,7 @@ public class CaseValidator {
         }
         if (Objects.nonNull(cases.getDocuments())) {
             cases.getDocuments().forEach(document -> {
-                if (Objects.nonNull(document.getDocumentType()) && !codes.get(LEGALConstants.MDMS_ILMS_DOCUMENT_CATEGORY)
+                if (Objects.nonNull(document.getDocumentType()) && !codes.get(LEGALConstants.MDMS_LEGAL_DOCUMENT_CATEGORY)
                         .contains(document.getDocumentType())) {
                     errorMap.put("Invalid DocumentCategory", "The DocumentCategory '" + document.getDocumentType() + "' does not exists");
                 }
@@ -95,12 +95,12 @@ public class CaseValidator {
         String tenantId = aCase.getTenantId();
 
         List<String> masterNames = new ArrayList<>(
-                Arrays.asList(LEGALConstants.MDMS_ILMS_CASE_TYPE, LEGALConstants.MDMS_ILMS_CASE_STATUS, LEGALConstants.MDMS_ILMS_CASE_CATEGORY,
-                        LEGALConstants.MDMS_ILMS_GENDER_TYPE, LEGALConstants.MDMS_ILMS_CASE_STAGE,
-                        LEGALConstants.MDMS_ILMS_PETITIONER_TYPE, LEGALConstants.MDMS_ILMS_DEPARTMENT_NAME, LEGALConstants.MDMS_ILMS_DOCUMENT_CATEGORY,
-                        LEGALConstants.MDMS_ILMS_DEPARTMENT_IOC, LEGALConstants.CASE_FLAG, LEGALConstants.MDMS_ILMS_COURT_NAME));
+                Arrays.asList(LEGALConstants.MDMS_LEGAL_CASE_TYPE, LEGALConstants.MDMS_LEGAL_CASE_STATUS, LEGALConstants.MDMS_LEGAL_CASE_CATEGORY,
+                        LEGALConstants.MDMS_LEGAL_GENDER_TYPE, LEGALConstants.MDMS_LEGAL_CASE_STAGE,
+                        LEGALConstants.MDMS_LEGAL_PETITIONER_TYPE, LEGALConstants.MDMS_LEGAL_DEPARTMENT_NAME, LEGALConstants.MDMS_LEGAL_DOCUMENT_CATEGORY,
+                        LEGALConstants.MDMS_LEGAL_DEPARTMENT_IOC, LEGALConstants.CASE_FLAG, LEGALConstants.MDMS_LEGAL_COURT_NAME));
 
-        Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, LEGALConstants.MDMS_ILMS_MOD_NAME, masterNames, "$.*.code",
+        Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, LEGALConstants.MDMS_LEGAL_MOD_NAME, masterNames, "$.*.code",
                 LEGALConstants.JSONPATH_CODES, request.getRequestInfo());
 
         if (null != codes) {

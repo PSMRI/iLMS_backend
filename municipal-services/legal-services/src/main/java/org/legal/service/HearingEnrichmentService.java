@@ -1,7 +1,6 @@
 package org.legal.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class HearingEnrichmentService {
     @Autowired
-    private LEGALConfiguration ilmsConfiguration;
+    private LEGALConfiguration legalConfiguration;
 
     @Autowired
     private CaseUtils caseUtils;
@@ -66,10 +65,10 @@ public class HearingEnrichmentService {
         CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
         String tenantId = caseResponse.getCaseList().get(0).getTenantId();
         Hearing hearing = request.getHearing();
-        List<String> applicationNumbers = getIdList(requestInfo, tenantId, ilmsConfiguration.getHearingIdgenName(),
-                ilmsConfiguration.getHearingIdgenFormat(), 1);
+        List<String> applicationNumbers = getIdList(requestInfo, tenantId, legalConfiguration.getHearingIdgenName(),
+                legalConfiguration.getHearingIdgenFormat(), 1);
         ListIterator<String> itr = applicationNumbers.listIterator();
-        List<String> paymentIds = getIdList(requestInfo, tenantId, ilmsConfiguration.getPaymentIdgenName(), ilmsConfiguration.getPaymentIdgenFormat(),
+        List<String> paymentIds = getIdList(requestInfo, tenantId, legalConfiguration.getPaymentIdgenName(), legalConfiguration.getPaymentIdgenFormat(),
                 1);
         ListIterator<String> paymentItr = paymentIds.listIterator();
         Map<String, String> errorMap = new HashMap<>();
@@ -104,8 +103,8 @@ public class HearingEnrichmentService {
                                 partyAdvList.add(partyAdv1);
                                 party.setAdvocate(null);
                             } else {
-                                List<String> padvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
-                                        ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
+                                List<String> padvocateId = getIdList(requestInfo, tenantId, legalConfiguration.getPetitionerAdvocateIdgenName(),
+                                        legalConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
                                 ListIterator<String> padvocateItr = padvocateId.listIterator();
                                 advocate.setId(padvocateItr.next());
                                 PartyAdv partyAdv1 = new PartyAdv();
@@ -121,8 +120,7 @@ public class HearingEnrichmentService {
                             hearing.setPartyAdv(partyAdvList);
                         }
                     }
-                }
-                else {
+                } else {
                     if (Objects.nonNull(party.getAdvocate())) {
                         for (Advocate advocate : party.getAdvocate()) {
                             AdvocateSearchCriteria advCriteria = new AdvocateSearchCriteria();
@@ -143,8 +141,8 @@ public class HearingEnrichmentService {
                             } else
                             //                        for (Advocate radvocate : advocates) {
                             {
-                                List<String> radvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getRespondentAdvocateIdgenName(),
-                                        ilmsConfiguration.getRespondentAdvocateIdgenFormat(), 1);
+                                List<String> radvocateId = getIdList(requestInfo, tenantId, legalConfiguration.getRespondentAdvocateIdgenName(),
+                                        legalConfiguration.getRespondentAdvocateIdgenFormat(), 1);
                                 ListIterator<String> radvocateItr = radvocateId.listIterator();
                                 advocate.setId(radvocateItr.next());
                                 PartyAdv partyAdv1 = new PartyAdv();
