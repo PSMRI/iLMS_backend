@@ -13,7 +13,7 @@ public class CountQueryBuilder {
             " (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee in" +
             " ( select uuid from eg_user where id IN" +
             "  (select user_id from eg_userrole_v1 where role_code in (?)))" +
-            "  AND pi_outer.tenantid = 'mp'  AND pi_outer.businessservice ='iLMS'" +
+            "  AND pi_outer.tenantid = 'mp'  AND pi_outer.businessservice LIKE 'LEGAL-%'" +
             " ORDER BY pi_outer.lastModifiedTime DESC )) as count";
 
 

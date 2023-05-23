@@ -1,6 +1,7 @@
 package org.legal.web.controller;
 
 import lombok.extern.log4j.Log4j2;
+import org.egov.common.contract.response.ResponseInfo;
 import org.legal.service.CaseService;
 import org.legal.util.ResponseInfoFactory;
 import org.legal.web.model.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/case")
@@ -53,5 +55,15 @@ public class CaseController {
         caseList.add(caseObj);
         response.setCaseList(caseList);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/_count", method = RequestMethod.POST)
+    public ResponseEntity<CountResponse> requestsCountPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                           @Valid @ModelAttribute CaseSearchCriteria criteria) {
+        Map<String, Integer> countMap = caseService.count(requestInfoWrapper.getRequestInfo(), criteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        CountResponse response = CountResponse.builder().responseInfo(responseInfo).statusCountMap(countMap).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 }

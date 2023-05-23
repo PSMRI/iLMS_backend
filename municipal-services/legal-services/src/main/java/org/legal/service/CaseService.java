@@ -258,18 +258,18 @@ public class CaseService {
                         hearing.setWorkflow(wf);
                         if (caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
                             action = "ASSIGNED_TO_RO";
-                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFThroughCase(request, action);
+                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
                             workflowService.callWorkFlow(workflowReq);
                         }
                         if (caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
                             action = "DEACTIVATE";
-                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFThroughCase(request, action);
+                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
                             workflowService.callWorkFlow(workflowReq);
                         }
                         for (Document document : caseRequest.getCaseObj().getDocuments()) {
                             if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("SUBMIT_COUNTER_AFFIDAVIT")) {
                                 action = "ASSIGNED_TO_APPOINTED_OIC";
-                                ProcessInstanceRequest workflowReq = hearingUtils.hearingWFThroughCase(request, action);
+                                ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
                                 workflowService.callWorkFlow(workflowReq);
                             }
                         }
@@ -293,6 +293,22 @@ public class CaseService {
                     .equals(Status.ACTIVE)) {
             }
         }
+    }
+
+    public Map<String, Integer> count(RequestInfo requestInfo, CaseSearchCriteria criteria) {
+        criteria.setIsPlainSearch(false);
+        Map<String, Integer> statusCountMap = new HashMap<>();
+        Set<String> applicationStatus = new HashSet<>();
+        for (String status : criteria.getApplicationStatus()) {
+            if (!status.isEmpty()) {
+                applicationStatus.clear();
+                applicationStatus.add(status);
+                criteria.setApplicationStatus(applicationStatus);
+                Integer count = caseRepository.getCount(criteria);
+                statusCountMap.put(status, count);
+            }
+        }
+        return statusCountMap;
     }
 }
 

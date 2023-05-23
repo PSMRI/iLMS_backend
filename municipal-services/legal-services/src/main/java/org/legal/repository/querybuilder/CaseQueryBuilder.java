@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class CaseQueryBuilder {
@@ -30,9 +28,8 @@ public class CaseQueryBuilder {
     private static final String CaseQuery2 = " AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = cases.id GROUP BY wf.businessid)";
 
     private static final String advocateQuery = "select * from eg_lg_advocate ";
+    private static final String COUNT_WRAPPER = "select count(*) from ({INTERNAL_QUERY}) as count";
     private final String paginationWrapper = "{} {orderBy} {pagination}";
-
-
     @Autowired
     private LEGALConfiguration legalConfiguration;
 
@@ -82,10 +79,12 @@ public class CaseQueryBuilder {
             preparedStmtList.add("");
         }
 
-        if (criteria.getApplicationStatus() != null) {
+
+        Set<String> applicationStatuses = criteria.getApplicationStatus();
+        if (!CollectionUtils.isEmpty(applicationStatuses)) {
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" eg_lg_case.application_status = ?");
-            preparedStmtList.add(criteria.getApplicationStatus());
+            builder.append(" eg_lg_case.application_status IN (").append(createQuery(applicationStatuses)).append(")");
+            addToPreparedStatement(preparedStmtList, applicationStatuses);
         }
 
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
@@ -132,13 +131,13 @@ public class CaseQueryBuilder {
         }
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
+    private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });
     }
 
-    private Object createQuery(List<String> ids) {
+    private Object createQuery(Collection<String> ids) {
         StringBuilder builder = new StringBuilder();
         int length = ids.size();
         for (int i = 0; i < length; i++) {
@@ -210,5 +209,11 @@ public class CaseQueryBuilder {
 
     public String getAdvocateQuery(String id) {
         return advocateQuery + "where id ='" + id + "';";
+    }
+
+    public String getCountQuery(CaseSearchCriteria criteria, List<Object> preparedStmtList) {
+        String query = getLegalCaseSearchQuery(criteria, preparedStmtList);
+        String countQuery = COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        return countQuery;
     }
 }

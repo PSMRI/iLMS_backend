@@ -133,15 +133,37 @@ public class HearingService {
         String action = "";
         if (hearingDetailsRequest.getHearing().getId() != null) {
             CaseRequest caseRequest = new CaseRequest();
-            HearingSearchCriteria criteria = HearingSearchCriteria.builder().id((hearingDetailsRequest.getHearing().getId())).build();
+            HearingSearchCriteria criteria = HearingSearchCriteria.builder().id((hearingDetailsRequest.getHearing().getCaseId())).build();
             HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
+            HearingRequest updatedRequest = new HearingRequest();
+            HearingRequest request = new HearingRequest();
+            request.setRequestInfo(hearingDetailsRequest.getRequestInfo());
             if (!hearingDetailsResponse.getHearingList().isEmpty()) {
                 List<Hearing> hearingList = hearingDetailsResponse.getHearingList();
-                Hearing oldHearing = hearingList.get(0);
-                HearingRequest updatedRequest = hearingUtils.prepareHearingDetailsModalForUpdate(hearingDetailsRequest, oldHearing);
-                hearingDetailsValidator.updateValidator(updatedRequest.getHearing(), hearingDetailsRequest);
-                if (Objects.nonNull(hearingDetailsRequest.getHearing().getWorkflow())) {
-                    processUpdateForHearing(hearingDetailsRequest, updatedRequest.getHearing());
+                for (Hearing oldHearing : hearingList) {
+                    request.setHearing(oldHearing);
+                    if (oldHearing.getId().equals(hearingDetailsRequest.getHearing().getId())) {
+                        updatedRequest = hearingUtils.prepareHearingDetailsModalForUpdate(hearingDetailsRequest, oldHearing);
+                        hearingDetailsValidator.updateValidator(updatedRequest.getHearing(), hearingDetailsRequest);
+                        if (Objects.nonNull(hearingDetailsRequest.getHearing().getWorkflow())) {
+                            processUpdateForHearing(hearingDetailsRequest, updatedRequest.getHearing());
+                        }
+                    }
+                    if (hearingDetailsRequest.getHearing().getWorkflow().getAction().equalsIgnoreCase("ASSIGNED_TO_RO") && oldHearing.getApplicationStatus().equalsIgnoreCase("PENDING_AT_DEC_FOR_NEXT_HEARING")) {
+                        action = "REVIEW_TO_RO";
+                        ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
+                        workflowService.callWorkFlow(workflowReq);
+                    }
+                    if (hearingDetailsRequest.getHearing().getWorkflow().getAction().equalsIgnoreCase("ASSIGNED_TO_APPOINTED_OIC") && oldHearing.getApplicationStatus().equalsIgnoreCase("NEXT_HEARING_REVIEW_AT_RO")) {
+                        action = "Approved";
+                        ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
+                        workflowService.callWorkFlow(workflowReq);
+                    }
+                    if (hearingDetailsRequest.getHearing().getWorkflow().getAction().equalsIgnoreCase("REVIEW_AND_ASSIGN_BACK_TO_DEC") && oldHearing.getApplicationStatus().equalsIgnoreCase("NEXT_HEARING_REVIEW_AT_RO")) {
+                        action = "Reject";
+                        ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
+                        workflowService.callWorkFlow(workflowReq);
+                    }
                 }
                 String caseId = hearingDetailsRequest.getHearing().getCaseId();
                 CaseSearchCriteria caseCriteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
