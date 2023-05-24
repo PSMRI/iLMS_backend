@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
 import static org.apache.commons.lang3.ClassUtils.getName;
 import static org.legal.util.LEGALConstants.*;
 
@@ -53,9 +54,15 @@ public class NotificationService {
     public void process(String topicName, CaseRequest caseRequest) {
 
         RequestInfo requestInfo = caseRequest.getRequestInfo();
+        String assignee;
+        if (!caseRequest.getWorkflow().getAssignes().get(0).isEmpty()) {
+            assignee = caseRequest.getWorkflow().getAssignes().get(0);
+        } else {
+            assignee = caseRequest.getRequestInfo().getUserInfo().getUuid();
+        }
         Case cases = caseRequest.getCaseObj();
-        String moduleName = cases.getWorkflow().getModuleName();
-        String action = cases.getWorkflow().getAction();
+        String moduleName = configs.getModuleName();
+        String action = caseRequest.getWorkflow().getAction();
         String tenantId;
         if (cases.getTenantId() != null) {
             tenantId = cases.getTenantId();
@@ -75,7 +82,7 @@ public class NotificationService {
         }
 
         if (configuredChannelNamesForCase.contains(CHANNEL_NAME_EVENT)) {
-            List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, tenantId, cases);
+            List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, assignee, tenantId, cases);
             notificationUtil.sendEventNotification(new EventRequest(requestInfo, events));
         }
 
@@ -88,11 +95,12 @@ public class NotificationService {
     private List<SMSRequest> enrichSMSRequest(String topicName, CaseRequest request, Case cases, String tenantId) {
 
         String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
-        String message = getCustomizedMsg(topicName, cases, localizationMessages);
+        String action = request.getWorkflow().getAction();
+        String message = getCustomizedMsg(topicName, cases, action, localizationMessages);
         String officerId;
         List<String> ids = new ArrayList<>();
-        if (!(request.getCaseObj().getWorkflow().getAssignes()).isEmpty()) {
-            officerId = request.getCaseObj().getWorkflow().getAssignes().get(0).getUuid();
+        if (!(request.getWorkflow().getAssignes()).isEmpty()) {
+            officerId = request.getWorkflow().getAssignes().get(0);
             ids.add(officerId);
         } else {
             officerId = request.getRequestInfo().getUserInfo().getUuid();
@@ -104,11 +112,9 @@ public class NotificationService {
         return notificationUtil.createSMSRequest(message, mobileNumberToOwner);
     }
 
-    private String getCustomizedMsg(String topicName, Case cases, String localizationMessages) {
+    private String getCustomizedMsg(String topicName, Case cases, String action, String localizationMessages) {
 
         String msgCode = null, messageTemplate = null;
-        String action;
-        action = cases.getWorkflow().getAction();
         msgCode = action;
 
         messageTemplate = customize(cases, msgCode, localizationMessages);
@@ -143,14 +149,15 @@ public class NotificationService {
         }
         return mobileNumberToUser;
     }
+
     public void schedulerMsg(RequestInfo requestInfo, String uuid, String action) {
         List<String> ids = new ArrayList<>();
         ids.add(uuid);
-        String tenantId=configs.getTenantId();
+        String tenantId = configs.getTenantId();
         String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, requestInfo);
         String message = getCustomizedMsgForSchedular(localizationMessages, action, uuid);
         if (configs.getIsUserEventsNotificationEnabled() != null && configs.getIsUserEventsNotificationEnabled()) {
-            EventRequest eventRequest = enrichEventRequestForScheduler(requestInfo,message,uuid);
+            EventRequest eventRequest = enrichEventRequestForScheduler(requestInfo, message, uuid);
             if (eventRequest != null) {
                 notificationUtil.sendEventNotification(eventRequest);
             }
@@ -159,31 +166,34 @@ public class NotificationService {
             List<SMSRequest> smsRequests = new ArrayList<>();
 //            String locale=requestInfo.getMsgId()!=null ? requestInfo.getMsgId().split("\\|")[1]:"en_IN";
 //            log.info("locale is "+locale );
-            Map<String,String> mobileNumbers=fetchUsersByOfficerId( ids,tenantId);
-            smsRequests = enrichSmsRequestForEmployee(mobileNumbers,message);
+            Map<String, String> mobileNumbers = fetchUsersByOfficerId(ids, tenantId);
+            smsRequests = enrichSmsRequestForEmployee(mobileNumbers, message);
             if (!CollectionUtils.isEmpty(smsRequests)) {
                 notificationUtil.sendSMS(smsRequests);
             }
         }
         if (configs.getIsEmailNotificationEnabled() != null && configs.getIsEmailNotificationEnabled()) {
-            List<EmailRequest> emailRequests=new ArrayList<>();
-            emailRequests = enrichEmailRequestForEmployee( requestInfo,uuid, message, tenantId);
+            List<EmailRequest> emailRequests = new ArrayList<>();
+            emailRequests = enrichEmailRequestForEmployee(requestInfo, uuid, message, tenantId);
             if (emailRequests != null) {
                 notificationUtil.sendEmail(emailRequests);
             }
         }
 
     }
-    private String getCustomizedMsgForSchedular( String localizationMessages, String action, String uuid) {
+
+    private String getCustomizedMsgForSchedular(String localizationMessages, String action, String uuid) {
         String msgCode = null, messageTemplate = null;
         msgCode = action;
-        messageTemplate = customizeForSchedular( msgCode, localizationMessages, uuid);
+        messageTemplate = customizeForSchedular(msgCode, localizationMessages, uuid);
         return messageTemplate;
     }
-    private String customizeForSchedular( String msgCode, String localizationMessages, String uuid) {
+
+    private String customizeForSchedular(String msgCode, String localizationMessages, String uuid) {
         String messageTemplate = getMessageTemplate(msgCode, localizationMessages, uuid);
         return messageTemplate;
     }
+
     public String getMessageTemplate(String notificationCode, String localizationMessage, String uuid) {
         String path = "$..messages[?(@.code==\"{}\")].message";
         path = path.replace("{}", notificationCode);
@@ -196,6 +206,7 @@ public class NotificationService {
         }
         return message;
     }
+
     private EventRequest enrichEventRequestForScheduler(RequestInfo requestInfo, String finalMessage, String uuid) {
         String tenantId = configs.getTenantId();
         List<Event> events = new ArrayList<>();
@@ -204,8 +215,8 @@ public class NotificationService {
         Action action = null;
         Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
         events.add(Event.builder().tenantId(tenantId).description(finalMessage).eventType(USREVENTS_EVENT_TYPE)
-                        .name(USREVENTS_EVENT_NAME).postedBy(USREVENTS_EVENT_POSTEDBY)
-                        .source(Source.WEBAPP).recepient(recepient).actions(action).eventDetails(null).build());
+                .name(USREVENTS_EVENT_NAME).postedBy(USREVENTS_EVENT_POSTEDBY)
+                .source(Source.WEBAPP).recepient(recepient).actions(action).eventDetails(null).build());
 
         if (!CollectionUtils.isEmpty(events)) {
             return EventRequest.builder().requestInfo(requestInfo).events(events).build();
@@ -213,14 +224,16 @@ public class NotificationService {
             return null;
         }
     }
-    private List<SMSRequest> enrichSmsRequestForEmployee(Map<String,String> mobileNumber, String finalMessage) {
+
+    private List<SMSRequest> enrichSmsRequestForEmployee(Map<String, String> mobileNumber, String finalMessage) {
         List<SMSRequest> smsRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumber.entrySet()) {
             smsRequest.add(new SMSRequest(entryset.getValue(), finalMessage));
         }
         return smsRequest;
     }
-    private List<EmailRequest> enrichEmailRequestForEmployee(RequestInfo requestInfo,String uuid, String finalMessage,String tenantId) {
+
+    private List<EmailRequest> enrichEmailRequestForEmployee(RequestInfo requestInfo, String uuid, String finalMessage, String tenantId) {
         List<String> uuids = new ArrayList<>();
         uuids.add(uuid);
         Map<String, String> mobileNumberToEmailId = fetchUserEmail(uuids);
@@ -229,7 +242,7 @@ public class NotificationService {
         }
         List<EmailRequest> emailRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
-            if (finalMessage.contains("##")){
+            if (finalMessage.contains("##")) {
                 finalMessage = finalMessage.split("##")[0];
             }
             String message = finalMessage;
@@ -241,6 +254,7 @@ public class NotificationService {
         }
         return emailRequest;
     }
+
     public Map<String, String> fetchUserEmail(List<String> uuid) {
         Map<String, String> mapOfPhoneNoAndEmails = new HashMap<>();
         StringBuilder uri = new StringBuilder();
@@ -249,15 +263,15 @@ public class NotificationService {
         userSearchRequest.setUuid(uuid);
         try {
             Object user = restRepo.fetchResult(uri, userSearchRequest);
-            if(null != user) {
+            if (null != user) {
                 String emailId = JsonPath.read(user, "$.user[0].emailId");
                 mapOfPhoneNoAndEmails.put(uuid.get(0), emailId);
-            }else {
-                log.error("Service returned null while fetching user for username - "+uuid);
+            } else {
+                log.error("Service returned null while fetching user for username - " + uuid);
             }
-        }catch(Exception e) {
-            log.error("Exception while fetching user for username - "+uuid);
-            log.error("Exception trace: ",e);
+        } catch (Exception e) {
+            log.error("Exception while fetching user for username - " + uuid);
+            log.error("Exception trace: ", e);
         }
         return mapOfPhoneNoAndEmails;
     }

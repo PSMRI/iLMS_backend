@@ -38,10 +38,11 @@ public class CaseController {
 
     @PostMapping(value = "/_create")
     public ResponseEntity<CaseResponse> create(@Valid @RequestBody CaseRequest caseRequest) {
-        Case caseObj = caseService.create(caseRequest);
+        CaseRequest caseReq = caseService.create(caseRequest);
+        Workflow workflow = caseReq.getWorkflow();
         List<Case> caseList = new ArrayList<Case>();
-        caseList.add(caseObj);
-        CaseResponse response = CaseResponse.builder().caseList(caseList)
+        caseList.add(caseReq.getCaseObj());
+        CaseResponse response = CaseResponse.builder().caseList(caseList).workflow(workflow)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true))
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -49,11 +50,13 @@ public class CaseController {
 
     @PostMapping(value = "/_update")
     public ResponseEntity<CaseResponse> update(@Valid @RequestBody CaseRequest caseRequest) {
-        CaseResponse response = new CaseResponse();
-        Case caseObj = caseService.update(caseRequest);
+        CaseRequest caseReq = caseService.update(caseRequest);
+        Case caseObj = caseReq.getCaseObj();
+        Workflow workflow = caseReq.getWorkflow();
         List<Case> caseList = new ArrayList<>();
         caseList.add(caseObj);
-        response.setCaseList(caseList);
+        CaseResponse response = CaseResponse.builder().caseList(caseList).workflow(workflow).responseInfo(
+                responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

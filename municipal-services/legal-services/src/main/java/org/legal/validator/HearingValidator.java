@@ -71,8 +71,8 @@ public class HearingValidator {
         String tenantId = caseResponse.getCaseList().get(0).getTenantId();
 
         List<String> masterNames = new ArrayList<>(
-                Arrays.asList(LEGALConstants.MDMS_LEGAL_COURT_NAME, LEGALConstants.MDMS_LEGAL_DISTRICT, LEGALConstants.MDMS_LEGAL_STATE,
-                        LEGALConstants.MDMS_LEGAL_BENCH, LEGALConstants.MDMS_LEGAL_DIVISION, LEGALConstants.MDMS_LEGAL_HEARING_TYPE));
+                Arrays.asList(LEGALConstants.MDMS_LEGAL_COURT_NAME,
+                        LEGALConstants.MDMS_LEGAL_BENCH, LEGALConstants.MDMS_LEGAL_HEARING_TYPE));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, LEGALConstants.MDMS_LEGAL_MOD_NAME, masterNames, "$.*.code",
                 LEGALConstants.JSONPATH_CODES, request.getRequestInfo());

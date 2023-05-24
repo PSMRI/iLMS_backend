@@ -92,14 +92,6 @@ public class Case {
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
-    @JsonProperty("creationReason")
-    @NotNull(message = "The value provided is either Invald or null")
-    private CreationReason creationReason;
-
-    @JsonProperty("workflow")
-    @DiffIgnore
-    private ProcessInstance workflow;
-
     @JsonProperty("PartyAdv")
     private List<PartyAdv> partyAdv;
 }

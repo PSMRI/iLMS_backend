@@ -244,7 +244,7 @@ public class NotificationUtil {
         producer.push(legalConfiguration.getSaveUserEventsTopic(), request);
     }
 
-    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Case cases) {
+    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String assignee, String tenantId, Case cases) {
         Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest::getMobileNumber).collect(Collectors.toSet());
         Set<String> message = smsRequests.stream().map(SMSRequest::getMessage).collect(Collectors.toSet());
         Map<String, String> mapOfPhnoAndUUIDs = fetchUserUUIDs(mobileNumbers, requestInfo, tenantId);
@@ -254,8 +254,8 @@ public class NotificationUtil {
         }
         List<Event> events = new ArrayList<>();
         List<String> toUsers = new ArrayList<>();
-        if (!(cases.getWorkflow().getAssignes()).isEmpty()) {
-            toUsers.add(cases.getWorkflow().getAssignes().get(0).getUuid());
+        if (!assignee.isEmpty()) {
+            toUsers.add(assignee);
         } else {
             toUsers.add(requestInfo.getUserInfo().getUuid());
         }

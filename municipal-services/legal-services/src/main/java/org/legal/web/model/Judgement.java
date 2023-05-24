@@ -56,10 +56,6 @@ public class Judgement {
     @JsonProperty("status")
     private Status status;
 
-    @JsonProperty("workflow")
-    @DiffIgnore
-    private ProcessInstance workflow;
-
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 

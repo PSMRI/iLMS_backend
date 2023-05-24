@@ -74,7 +74,7 @@ public class LEGALConfiguration {
     private String wfStatusActive;
 
     @Value("${legal.module.name}")
-    private String propertyModuleName;
+    private String moduleName;
 
     // Idgen Config
     @Value("${egov.idgen.host}")
