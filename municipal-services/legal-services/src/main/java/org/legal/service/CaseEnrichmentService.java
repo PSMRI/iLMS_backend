@@ -141,6 +141,7 @@ public class CaseEnrichmentService {
                             partyAdv1.setAdvocateId(advocate1.getId());
                             partyAdv1.setPartyId(party.getId());
                             partyAdv1.setPartyType(party.getPartyType());
+                            partyAdv1.setAdvocateContactNumber(advocate1.getContactNumber());
                             partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
                             partyAdvList.add(partyAdv1);
                             party.setAdvocate(null);
@@ -153,6 +154,7 @@ public class CaseEnrichmentService {
                             partyAdv1.setId(UUID.randomUUID().toString());
                             partyAdv1.setCaseId(caseId.toString());
                             partyAdv1.setAdvocateId(advocate.getId());
+                            partyAdv1.setAdvocateContactNumber(advocate.getContactNumber());
                             partyAdv1.setPartyId(party.getId());
                             partyAdv1.setPartyType(party.getPartyType());
                             partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
@@ -185,6 +187,7 @@ public class CaseEnrichmentService {
                             partyAdv1.setId(UUID.randomUUID().toString());
                             partyAdv1.setCaseId(party.getCaseId());
                             partyAdv1.setAdvocateId(advocate1.getId());
+                            partyAdv1.setAdvocateContactNumber(advocate1.getContactNumber());
                             partyAdv1.setPartyId(party.getId());
                             partyAdv1.setPartyType(party.getPartyType());
                             partyAdvList.add(partyAdv1);
@@ -201,6 +204,7 @@ public class CaseEnrichmentService {
                             partyAdv1.setId(UUID.randomUUID().toString());
                             partyAdv1.setCaseId(caseId.toString());
                             partyAdv1.setAdvocateId(advocate.getId());
+                            partyAdv1.setAdvocateContactNumber(advocate.getContactNumber());
                             partyAdv1.setPartyId(party.getId());
                             partyAdv1.setPartyType(party.getPartyType());
                             partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));

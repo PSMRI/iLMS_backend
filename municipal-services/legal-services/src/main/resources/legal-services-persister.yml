@@ -108,7 +108,7 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, advocate_contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.PartyAdv.*
           jsonMaps:
             - jsonPath: $.case.PartyAdv.*.id
@@ -120,6 +120,8 @@ serviceMaps:
             - jsonPath: $.case.PartyAdv.*.partyType
 
             - jsonPath: $.case.parties.*.advocate.*.advocateId
+
+            - jsonPath: $.case.parties.*.advocate.*.advocateContactNumber
 
             - jsonPath: $.case.PartyAdv.*.status
 
@@ -273,8 +275,7 @@ serviceMaps:
 
             - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.createdTime
 
-
-        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, advocate_contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.PartyAdv.*
           jsonMaps:
             - jsonPath: $.hearing.PartyAdv.*.id
@@ -286,6 +287,8 @@ serviceMaps:
             - jsonPath: $.hearing.PartyAdv.*.partyType
 
             - jsonPath: $.hearing.parties.*.advocate.*.advocateId
+
+            - jsonPath: $.hearing.parties.*.advocate.*.advocateContactNumber
 
             - jsonPath: $.hearing.PartyAdv.*.status
 
