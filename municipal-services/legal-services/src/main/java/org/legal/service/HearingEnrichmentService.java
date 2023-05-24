@@ -97,6 +97,7 @@ public class HearingEnrichmentService {
                                 partyAdv1.setId(UUID.randomUUID().toString());
                                 partyAdv1.setCaseId(party.getCaseId());
                                 partyAdv1.setAdvocateId(advocate1.getId());
+                                partyAdv1.setAdvocateContactNumber(advocate1.getContactNumber());
                                 partyAdv1.setPartyId(party.getId());
                                 partyAdv1.setPartyType(party.getPartyType());
                                 partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
@@ -111,6 +112,7 @@ public class HearingEnrichmentService {
                                 partyAdv1.setId(UUID.randomUUID().toString());
                                 partyAdv1.setCaseId(hearing.getCaseId());
                                 partyAdv1.setAdvocateId(advocate.getId());
+                                partyAdv1.setAdvocateContactNumber(advocate.getContactNumber());
                                 partyAdv1.setPartyId(party.getId());
                                 partyAdv1.setPartyType(party.getPartyType());
                                 partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
@@ -133,6 +135,7 @@ public class HearingEnrichmentService {
                                 partyAdv1.setId(UUID.randomUUID().toString());
                                 partyAdv1.setCaseId(party.getCaseId());
                                 partyAdv1.setAdvocateId(advocate1.getId());
+                                partyAdv1.setAdvocateContactNumber(advocate1.getContactNumber());
                                 partyAdv1.setPartyId(party.getId());
                                 partyAdv1.setPartyType(party.getPartyType());
                                 partyAdvList.add(partyAdv1);
@@ -148,6 +151,7 @@ public class HearingEnrichmentService {
                                 PartyAdv partyAdv1 = new PartyAdv();
                                 partyAdv1.setId(UUID.randomUUID().toString());
                                 partyAdv1.setCaseId(hearing.getCaseId());
+                                partyAdv1.setAdvocateContactNumber(advocate.getContactNumber());
                                 partyAdv1.setAdvocateId(advocate.getId());
                                 partyAdv1.setPartyId(party.getId());
                                 partyAdv1.setPartyType(party.getPartyType());

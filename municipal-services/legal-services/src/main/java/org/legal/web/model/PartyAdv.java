@@ -25,6 +25,9 @@ public class PartyAdv {
     @JsonProperty("advocateId")
     private String advocateId;
 
+    @JsonProperty("advocateContactNumber")
+    private String advocateContactNumber;
+
     @JsonProperty("status")
     private Status status = Status.ACTIVE;
 
