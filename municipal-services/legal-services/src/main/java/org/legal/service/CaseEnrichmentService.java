@@ -263,8 +263,8 @@ public class CaseEnrichmentService {
         }
     }
 public PartyAdv createNewPetAdvocateId(RequestInfo requestInfo, String tenantId,Advocate advocate,String casId,String partyId, String partyType){
-    List<String> petAdvocateId = getIdList(requestInfo, tenantId, ilmsConfiguration.getPetitionerAdvocateIdgenName(),
-            ilmsConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
+    List<String> petAdvocateId = getIdList(requestInfo, tenantId, legalConfiguration.getPetitionerAdvocateIdgenName(),
+            legalConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
     ListIterator<String> petAdvocateItr = petAdvocateId.listIterator();
                                         advocate.setId(petAdvocateItr.next());
     PartyAdv partyAdv1 = new PartyAdv();

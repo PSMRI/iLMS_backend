@@ -92,7 +92,7 @@ public class HearingRepository {
         return null;
     }
 
-    public List<Party> getGetFromPartyQuery(String caseId) {
+    public List<Party> getPartyFromPartyQuery(String caseId) {
         List<Party> partyList = caseRepository.getParty(caseId);
         return partyList;
     }

@@ -279,7 +279,7 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.hearing.PartyAdv.*.id
 
-            - jsonPath: $.case.id
+            - jsonPath: $.hearing.caseId
 
             - jsonPath: $.hearing.parties.*.partyId
 
@@ -292,6 +292,7 @@ serviceMaps:
             - jsonPath: $.hearing.PartyAdv.*.auditDetails.createdBy
 
             - jsonPath: $.hearing.PartyAdv.*.auditDetails.createdTime
+
 
         - query: INSERT INTO eg_lg_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.payment

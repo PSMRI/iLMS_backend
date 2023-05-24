@@ -89,7 +89,6 @@ public class Hearing {
     @JsonProperty("remarks")
     private String remarks;
 
-    @NotNull
     @JsonProperty("status")
     private Status status;
 
