@@ -14,6 +14,7 @@ import org.legal.web.model.workflow.ProcessInstance;
 import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -60,8 +61,8 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getTenantId())) {
             oldData.setTenantId(caseRequest.getCaseObj().getTenantId());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getNumber())) {
-            oldData.setNumber(caseRequest.getCaseObj().getNumber());
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseNumber())) {
+            oldData.setCaseNumber(caseRequest.getCaseObj().getCaseNumber());
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCnrNumber())) {
             oldData.setCnrNumber(caseRequest.getCaseObj().getCnrNumber());
@@ -263,55 +264,27 @@ public class CaseUtils {
         return request;
     }
 
-    public ProcessInstanceRequest getWfForCaseCreate(CaseRequest request, CreationReason creationReasonForWorkflow) {
 
-        Case aCase = request.getCaseObj();
-        ProcessInstance wf = null != aCase.getWorkflow() ? aCase.getWorkflow() : new ProcessInstance();
-        wf.setBusinessId(aCase.getId());
-
-        switch (creationReasonForWorkflow) {
-            case CREATE:
-                wf.setBusinessService(legalConfiguration.getCreateCaseWfName());
-                wf.setModuleName(legalConfiguration.getPropertyModuleName());
-
-                wf.setAction("CREATE_CASE");
-                wf.setTenantId(request.getCaseObj().getTenantId());
-                List<User> userList = new ArrayList<>();
+    public ProcessInstance changeCaseWF(CaseRequest request, String action) {
+        Case caseObj = request.getCaseObj();
+        Workflow workflow = request.getWorkflow();
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setBusinessId(caseObj.getId());
+        processInstance.setAction(action);
+        processInstance.setModuleName(legalConfiguration.getModuleName());
+        processInstance.setTenantId(caseObj.getTenantId());
+        processInstance.setBusinessService(legalConfiguration.getCreateCaseWfName());
+        processInstance.setComment(workflow.getComments());
+        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+            List<User> users = new ArrayList<>();
+            workflow.getAssignes().forEach(uuid -> {
                 User user = new User();
-                user.setUuid(request.getRequestInfo().getUserInfo().getUuid());
-                userList.add(user);
-                wf.setAssignes(userList);
-
-                break;
-
-            case UPDATE:
-                String caseId = request.getCaseObj().getId();
-                CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
-                CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
-                String tenantId = caseResponse.getCaseList().get(0).getTenantId();
-                wf.setTenantId(tenantId);
-                wf.setAssignes(request.getCaseObj().getWorkflow().getAssignes());
-                break;
-
-            default:
-                break;
+                user.setUuid(uuid);
+                users.add(user);
+            });
+            processInstance.setAssignes(users);
         }
-        aCase.setWorkflow(wf);
-        return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
-    }
-
-    public ProcessInstanceRequest changeCaseWF(CaseRequest request, String action) {
-
-        Case aCase = request.getCaseObj();
-        ProcessInstance wf = null != aCase.getWorkflow() ? aCase.getWorkflow() : new ProcessInstance();
-        wf.setBusinessId(aCase.getId());
-        wf.setBusinessService(legalConfiguration.getCreateCaseWfName());
-        wf.setModuleName(legalConfiguration.getPropertyModuleName());
-        wf.setAction(action);
-        wf.setTenantId(request.getCaseObj().getTenantId());
-        wf.setAssignes(request.getCaseObj().getWorkflow().getAssignes());
-        aCase.setWorkflow(wf);
-        return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
+        return processInstance;
     }
 
     public List<PartyAdv> updatePartyAdvocates (CaseRequest caseRequest){

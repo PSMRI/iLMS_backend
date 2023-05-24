@@ -1,6 +1,7 @@
 package org.legal.service;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
@@ -60,6 +61,76 @@ public class CaseService {
     private HearingUtils hearingUtils;
 
     public CaseService() {
+    }
+
+    /**
+     * Updates the legal_case
+     *
+     * @param caseRequest The update Request
+     * @return Updated legalCase
+     */
+
+    public CaseRequest update(CaseRequest caseRequest) {
+        if (caseRequest.getCaseObj().getId() != null) {
+            HearingSearchCriteria hearingSearchCriteria = null;
+            String action = "";
+            HearingRequest request = new HearingRequest();
+            CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseRequest.getCaseObj().getId())).build();
+            CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
+            if (!caseResponse.getCaseList().isEmpty()) {
+                CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCaseList().get(0), caseRequest);
+                Case cases = caseResponse.getCaseList().get(0);
+                caseValidator.validateUpdate(cases, caseRequest);
+                producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+                //                todo : notification has send to all the officers who has worked on this case.
+                if (Objects.nonNull(caseRequest.getWorkflow())) {
+                    if (legalConfiguration.getIsWorkflowEnabled()) {
+                        caseRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateCaseWfName());
+                        workflowService.updateCaseWorkflowStatus(caseRequest);
+                    }
+                    String caseId = caseRequest.getCaseObj().getId();
+                    hearingSearchCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(caseId)).build();
+                    HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
+                    request.setRequestInfo(caseRequest.getRequestInfo());
+                    for (Hearing hearing : hearingResponse.getHearingList()) {
+                        request.setHearing(hearing);
+                        Workflow workflow = new Workflow();
+                        workflow.setAssignes(caseRequest.getWorkflow().getAssignes());
+                        request.setWorkflow(workflow);
+                        if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
+                            action = "ASSIGNED_TO_RO";
+                            ProcessInstance workflowReq = hearingUtils.hearingWFUpdate(request, action);
+                            ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(workflowReq));
+                            workflowService.callWorkFlow(workflowRequest);
+                        }
+                        if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
+                            action = "DEACTIVATE";
+                            ProcessInstance workflowReq = hearingUtils.hearingWFUpdate(request, action);
+                            ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(workflowReq));
+                            workflowService.callWorkFlow(workflowRequest);
+                        }
+
+                        for (Document document : caseRequest.getCaseObj().getDocuments()) {
+                            if (document.getDocumentType() != null) {
+                                if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getWorkflow().getAction().equalsIgnoreCase("SUBMIT_COUNTER_AFFIDAVIT")) {
+                                    action = "ASSIGNED_TO_APPOINTED_OIC";
+                                    ProcessInstance workflowReq = hearingUtils.hearingWFUpdate(request, action);
+                                    ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(workflowReq));
+                                    workflowService.callWorkFlow(workflowRequest);
+                                }
+                            }
+                        }
+                    }
+                    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
+                }
+                caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
+            } else {
+                throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
+            }
+        } else {
+            throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "id is mandatory");
+        }
+        return caseRequest;
     }
 
     public CaseResponse legalCaseSearch(CaseSearchCriteria criteria, RequestInfo requestInfo, ProcessInstanceSearchCriteria processInstanceSearchCriteria) {
@@ -159,7 +230,7 @@ public class CaseService {
 
     }
 
-    public Case create(CaseRequest caseRequest) {
+    public CaseRequest create(CaseRequest caseRequest) {
         if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
             caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
@@ -219,80 +290,17 @@ public class CaseService {
         caseValidator.caseNumberDuplicacyCheck(caseRequest);
         caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
         if (legalConfiguration.getIsWorkflowEnabled()) {
-            workflowService.updateWorkflow(caseRequest, CreationReason.CREATE);
-            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
+            if (caseRequest.getWorkflow().getAssignes() == null) {
+                List<String> users = new ArrayList<>();
+                users.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
+                caseRequest.getWorkflow().setAssignes(users);
+            }
+            caseRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateCaseWfName());
+            workflowService.updateCaseWorkflowStatus(caseRequest);
+//            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
         }
         producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
-        return caseRequest.getCaseObj();
-    }
-
-    /**
-     * Updates the legal_case
-     *
-     * @param caseRequest The update Request
-     * @return Updated legalCase
-     */
-    public Case update(CaseRequest caseRequest) {
-        if (caseRequest.getCaseObj().getId() != null) {
-            HearingSearchCriteria hearingSearchCriteria = null;
-            String action = "";
-            HearingRequest request = new HearingRequest();
-            CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseRequest.getCaseObj().getId())).build();
-            CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
-            if (!caseResponse.getCaseList().isEmpty()) {
-                CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCaseList().get(0), caseRequest);
-                Case cases = caseResponse.getCaseList().get(0);
-                caseValidator.validateUpdate(cases, caseRequest);
-                producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
-                //                todo : notification has send to all the officers who has worked on this case.
-                if (Objects.nonNull(caseRequest.getCaseObj().getWorkflow())) {
-                    processCaseUpdate(caseRequest, updatedCaseRequest.getCaseObj());
-                    String caseId = caseRequest.getCaseObj().getId();
-                    hearingSearchCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(caseId)).build();
-                    HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
-                    request.setRequestInfo(caseRequest.getRequestInfo());
-                    for (Hearing hearing : hearingResponse.getHearingList()) {
-                        request.setHearing(hearing);
-                        ProcessInstance wf = null != hearing.getWorkflow() ? hearing.getWorkflow() : new ProcessInstance();
-                        wf.setAssignes(caseRequest.getCaseObj().getWorkflow().getAssignes());
-                        hearing.setWorkflow(wf);
-                        if (caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
-                            action = "ASSIGNED_TO_RO";
-                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
-                            workflowService.callWorkFlow(workflowReq);
-                        }
-                        if (caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
-                            action = "DEACTIVATE";
-                            ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
-                            workflowService.callWorkFlow(workflowReq);
-                        }
-                        for (Document document : caseRequest.getCaseObj().getDocuments()) {
-                            if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getCaseObj().getWorkflow().getAction().equalsIgnoreCase("SUBMIT_COUNTER_AFFIDAVIT")) {
-                                action = "ASSIGNED_TO_APPOINTED_OIC";
-                                ProcessInstanceRequest workflowReq = hearingUtils.hearingWFUpdate(request, action);
-                                workflowService.callWorkFlow(workflowReq);
-                            }
-                        }
-                    }
-                    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
-                }
-                caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
-            } else {
-                throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
-            }
-        } else {
-            throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "id is mandatory");
-        }
-        return caseRequest.getCaseObj();
-    }
-
-    private void processCaseUpdate(CaseRequest request, Case cases) {
-        if (legalConfiguration.getIsWorkflowEnabled()) {
-            State state = workflowService.updateWorkflow(request, CreationReason.UPDATE);
-            if (state.getIsStartState() && state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString()) && !cases.getStatus()
-                    .equals(Status.ACTIVE)) {
-            }
-        }
+        return caseRequest;
     }
 
     public Map<String, Integer> count(RequestInfo requestInfo, CaseSearchCriteria criteria) {

@@ -16,6 +16,8 @@ import org.legal.web.model.workflow.ProcessInstance;
 import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -78,8 +80,8 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBusinessDate())) {
             oldHearingRequest.setBusinessDate(hearingDetailsRequest.getHearing().getBusinessDate());
         }
-        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourtNumber())) {
-            oldHearingRequest.setCourtNumber(hearingDetailsRequest.getHearing().getCourtNumber());
+        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourtRoomNumber())) {
+            oldHearingRequest.setCourtRoomNumber(hearingDetailsRequest.getHearing().getCourtRoomNumber());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBench())) {
             oldHearingRequest.setBench(hearingDetailsRequest.getHearing().getBench());
@@ -359,54 +361,26 @@ public class HearingUtils {
     }
 
 
-    public ProcessInstanceRequest getWfForHearingCreate(HearingRequest request, CreationReason creationReasonForWorkflow) {
-
+    public ProcessInstance hearingWFUpdate(HearingRequest request, String action) {
         Hearing hearing = request.getHearing();
-        ProcessInstance wf = null != hearing.getWorkflow() ? hearing.getWorkflow() : new ProcessInstance();
-        wf.setBusinessId(hearing.getId());
-
-        switch (creationReasonForWorkflow) {
-            case CREATE:
-                wf.setBusinessService(configuration.getCreateHearingWfName());
-                wf.setModuleName(configuration.getPropertyModuleName());
-
-                wf.setAction("CREATE_HEARING");
-                wf.setTenantId(request.getHearing().getTenantId());
-                List<User> userList = new ArrayList<>();
+        Workflow workflow = request.getWorkflow();
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setBusinessId(hearing.getId());
+        processInstance.setAction(action);
+        processInstance.setModuleName(configuration.getModuleName());
+        processInstance.setTenantId(hearing.getTenantId());
+        processInstance.setBusinessService(configuration.getCreateHearingWfName());
+        processInstance.setComment(workflow.getComments());
+        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+            List<User> users = new ArrayList<>();
+            workflow.getAssignes().forEach(uuid -> {
                 User user = new User();
-                user.setUuid(request.getRequestInfo().getUserInfo().getUuid());
-                userList.add(user);
-                wf.setAssignes(userList);
-
-                break;
-
-            case UPDATE:
-                String hearingId = request.getHearing().getId();
-                HearingSearchCriteria criteria = HearingSearchCriteria.builder().id(hearingId).build();
-                HearingResponse hearingResponse = hearingRepository.getHearingDetails(criteria);
-                String tenantId = hearingResponse.getHearingList().get(0).getTenantId();
-                wf.setTenantId(tenantId);
-                wf.setAssignes(request.getHearing().getWorkflow().getAssignes());
-                break;
-
-            default:
-                break;
+                user.setUuid(uuid);
+                users.add(user);
+            });
+            processInstance.setAssignes(users);
         }
-        hearing.setWorkflow(wf);
-        return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
-    }
-
-    public ProcessInstanceRequest hearingWFUpdate(HearingRequest request, String action) {
-        Hearing hearing = request.getHearing();
-        ProcessInstance wf = null != hearing.getWorkflow() ? hearing.getWorkflow() : new ProcessInstance();
-        wf.setBusinessId(hearing.getId());
-        wf.setBusinessService(configuration.getCreateHearingWfName());
-        wf.setModuleName(configuration.getPropertyModuleName());
-        wf.setAction(action);
-        wf.setTenantId(request.getHearing().getTenantId());
-        wf.setAssignes(request.getHearing().getWorkflow().getAssignes());
-        hearing.setWorkflow(wf);
-        return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
+        return processInstance;
     }
 
 //    public void setAdvocatesForHearing(Hearing oldHearingRequest,Party partyRequest,Party oldParty, String caseId,String tenantId, RequestInfo requestInfo){

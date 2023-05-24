@@ -19,7 +19,7 @@ serviceMaps:
 
             - jsonPath: $.case.tenantId
 
-            - jsonPath: $.case.number
+            - jsonPath: $.case.caseNumber
 
             - jsonPath: $.case.cnrNumber
 
@@ -206,7 +206,7 @@ serviceMaps:
 
             - jsonPath: $.hearing.hearingNumber
 
-            - jsonPath: $.hearing.courtNumber
+            - jsonPath: $.hearing.courtRoomNumber
 
             - jsonPath: $.hearing.bench
 
@@ -383,7 +383,7 @@ serviceMaps:
 
             - jsonPath: $.case.tenantId
 
-            - jsonPath: $.case.number
+            - jsonPath: $.case.caseNumber
 
             - jsonPath: $.case.cnrNumber
 
@@ -578,7 +578,7 @@ serviceMaps:
 
             - jsonPath: $.hearing.hearingNumber
 
-            - jsonPath: $.hearing.courtNumber
+            - jsonPath: $.hearing.courtRoomNumber
 
             - jsonPath: $.hearing.bench
 

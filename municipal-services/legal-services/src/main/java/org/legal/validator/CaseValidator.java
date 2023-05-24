@@ -70,9 +70,9 @@ public class CaseValidator {
             throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
                     "TenantId is mandatory [ " + caseRequest.getCaseObj().getTenantId() + " ]");
         }
-        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getNumber())) {
+        if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getCaseNumber())) {
             throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
-                    "caseNumber is mandatory [ " + caseRequest.getCaseObj().getNumber() + " ]");
+                    "caseNumber is mandatory [ " + caseRequest.getCaseObj().getCaseNumber() + " ]");
         }
 
         Map<String, String> errorMap = new HashMap<>();
@@ -128,12 +128,12 @@ public class CaseValidator {
     }
 
     public void caseNumberDuplicacyCheck(CaseRequest caseRequest) {
-        CaseSearchCriteria criteria = CaseSearchCriteria.builder().number(Collections.singletonList(caseRequest.getCaseObj().getNumber()))
+        CaseSearchCriteria criteria = CaseSearchCriteria.builder().caseNumber(Collections.singletonList(caseRequest.getCaseObj().getCaseNumber()))
                 .build();
         Integer count = caseRepository.getCaseCount(criteria);
         if (count >= 1) {
             throw new CustomException(LegalErrorConstants.DUPLICATE_VALUE_ERROR,
-                    "Already Exists In System, case number should be unique [ " + caseRequest.getCaseObj().getNumber() + " ]");
+                    "Already Exists In System, case number should be unique [ " + caseRequest.getCaseObj().getCaseNumber() + " ]");
         }
     }
 

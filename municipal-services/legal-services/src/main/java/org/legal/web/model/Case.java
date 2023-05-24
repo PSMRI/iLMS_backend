@@ -24,9 +24,8 @@ public class Case {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @NotNull
-    @JsonProperty("number")
-    private String number;
+    @JsonProperty("caseNumber")
+    private String caseNumber;
 
     @NotNull
     @JsonProperty("cnrNumber")
@@ -99,14 +98,6 @@ public class Case {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
-
-    @JsonProperty("creationReason")
-    @NotNull(message = "The value provided is either Invald or null")
-    private CreationReason creationReason;
-
-    @JsonProperty("workflow")
-    @DiffIgnore
-    private ProcessInstance workflow;
 
     @JsonProperty("PartyAdv")
     private List<PartyAdv> partyAdv;

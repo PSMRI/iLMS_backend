@@ -6,6 +6,7 @@ import lombok.*;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.legal.web.model.enums.Status;
 import org.legal.web.model.workflow.ProcessInstance;
+
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
@@ -25,9 +26,8 @@ public class Hearing {
     @JsonProperty("hearingNumber")
     private String hearingNumber;
 
-    @NotNull
-    @JsonProperty("courtNumber")
-    private String courtNumber;
+    @JsonProperty("courtRoomNumber")
+    private String courtRoomNumber;
 
     @NotNull
     @JsonProperty("bench")
@@ -97,10 +97,6 @@ public class Hearing {
 
     @JsonProperty("payment")
     private Payment payment;
-
-    @JsonProperty("workflow")
-    @DiffIgnore
-    private ProcessInstance workflow;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails;

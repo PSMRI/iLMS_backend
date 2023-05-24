@@ -48,7 +48,7 @@ public class CaseQueryBuilder {
             }
         }
 
-        List<String> caseNumber = criteria.getNumber();
+        List<String> caseNumber = criteria.getCaseNumber();
         try {
             if (!CollectionUtils.isEmpty(caseNumber)) {
                 addClauseIfRequired(preparedStmtList, builder);
@@ -190,10 +190,10 @@ public class CaseQueryBuilder {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append("cnr_number= ?");
             preparedStmtList.add(criteria.getCnrNumber());
-        } else if (Objects.nonNull(criteria.getNumber())) {
+        } else if (Objects.nonNull(criteria.getCaseNumber())) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append("case_number= ?");
-            preparedStmtList.add(criteria.getNumber().get(0));
+            preparedStmtList.add(criteria.getCaseNumber().get(0));
         }
         addClauseIfRequired(preparedStmtList, builder);
         builder.append(" status = 'ACTIVE' ");

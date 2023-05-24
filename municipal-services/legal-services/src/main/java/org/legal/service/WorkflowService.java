@@ -5,21 +5,15 @@ import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.ServiceRepository;
 import org.legal.util.CaseUtils;
 import org.legal.util.CommonUtils;
 import org.legal.util.HearingUtils;
-import org.legal.util.JudgementUtils;
-import org.legal.web.model.Case;
-import org.legal.web.model.CaseRequest;
-import org.legal.web.model.Hearing;
-import org.legal.web.model.HearingRequest;
-import org.legal.web.model.Judgement;
-import org.legal.web.model.JudgementRequest;
-import org.legal.web.model.RequestInfoWrapper;
-import org.legal.web.model.enums.CreationReason;
+import org.legal.web.model.*;
+
 import org.legal.web.model.workflow.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,8 +42,6 @@ public class WorkflowService {
     @Autowired
     private CaseUtils caseUtils;
 
-    @Autowired
-    private JudgementUtils judgementUtils;
 
     /**
      * Method to integrate with workflow
@@ -114,22 +106,112 @@ public class WorkflowService {
      * method to prepare process instance request
      * and assign status back to property
      */
-    public State updateWorkflow(CaseRequest request, CreationReason creationReasonForWorkflow) {
 
-        Case cases = request.getCaseObj();
+//    CASE
+    public String updateCaseWorkflowStatus(CaseRequest caseRequest) {
+        ProcessInstance processInstance = getProcessInstanceForCase(caseRequest);
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(processInstance));
+        State state = callWorkFlow(workflowRequest);
+        caseRequest.getCaseObj().setApplicationStatus(state.getApplicationStatus());
+        return state.getApplicationStatus();
+    }
 
-        ProcessInstanceRequest workflowReq = caseUtils.getWfForCaseCreate(request, creationReasonForWorkflow);
-        State state = callWorkFlow(workflowReq);
-        request.getCaseObj().setApplicationStatus(state.getApplicationStatus());
-        if (state.getApplicationStatus().equalsIgnoreCase(legalConfiguration.getWfStatusActive()) && cases.getId() == null) {
 
-            String pId = commonUtils.getIdList(request.getRequestInfo(), cases.getTenantId(), legalConfiguration.getCaseIdgenName(),
-                    legalConfiguration.getCaseIdgenFormat(), 1).get(0);
-            request.getCaseObj().setId(pId);
+    private ProcessInstance getProcessInstanceForCase(CaseRequest request) {
+
+        Case caseObj = request.getCaseObj();
+        Workflow workflow = request.getWorkflow();
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setBusinessId(caseObj.getId());
+        processInstance.setAction(request.getWorkflow().getAction());
+        processInstance.setModuleName(legalConfiguration.getModuleName());
+        processInstance.setTenantId(caseObj.getTenantId());
+        processInstance.setBusinessService(legalConfiguration.getCreateCaseWfName());
+        processInstance.setComment(workflow.getComments());
+
+        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+            List<User> users = new ArrayList<>();
+
+            workflow.getAssignes().forEach(uuid -> {
+                User user = new User();
+                user.setUuid(uuid);
+                users.add(user);
+            });
+            processInstance.setAssignes(users);
         }
+        return processInstance;
+    }
 
-        request.getCaseObj().getWorkflow().setState(state);
-        return state;
+    //    HEARING
+
+    public String updateHearingWorkflowStatus(HearingRequest hearingRequest) {
+        ProcessInstance processInstance = getProcessInstanceForHearing(hearingRequest);
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(hearingRequest.getRequestInfo(), Collections.singletonList(processInstance));
+        State state = callWorkFlow(workflowRequest);
+        hearingRequest.getHearing().setApplicationStatus(state.getApplicationStatus());
+        return state.getApplicationStatus();
+    }
+
+
+    private ProcessInstance getProcessInstanceForHearing(HearingRequest request) {
+
+        Hearing hearing = request.getHearing();
+        Workflow workflow = request.getWorkflow();
+
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setBusinessId(hearing.getId());
+        processInstance.setAction(request.getWorkflow().getAction());
+        processInstance.setModuleName(legalConfiguration.getModuleName());
+        processInstance.setTenantId(hearing.getTenantId());
+        processInstance.setBusinessService(legalConfiguration.getCreateHearingWfName());
+        processInstance.setComment(workflow.getComments());
+        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+            List<User> users = new ArrayList<>();
+            workflow.getAssignes().forEach(uuid -> {
+                User user = new User();
+                user.setUuid(uuid);
+                users.add(user);
+            });
+            processInstance.setAssignes(users);
+        }
+        return processInstance;
+    }
+
+    //    JUDGEMENT
+
+    public String updateJudgementWorkflowStatus(JudgementRequest judgementRequest) {
+        ProcessInstance processInstance = getProcessInstanceForJudgement(judgementRequest);
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(judgementRequest.getRequestInfo(), Collections.singletonList(processInstance));
+        State state = callWorkFlow(workflowRequest);
+        judgementRequest.getJudgement().setApplicationStatus(state.getApplicationStatus());
+        return state.getApplicationStatus();
+    }
+
+
+    private ProcessInstance getProcessInstanceForJudgement(JudgementRequest request) {
+
+        Judgement judgement = request.getJudgement();
+        Workflow workflow = request.getWorkflow();
+
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setBusinessId(judgement.getId());
+        processInstance.setAction(request.getWorkflow().getAction());
+        processInstance.setModuleName(legalConfiguration.getModuleName());
+        processInstance.setTenantId(judgement.getTenantId());
+        processInstance.setBusinessService(legalConfiguration.getCreateJudgementWfName());
+        processInstance.setComment(workflow.getComments());
+
+        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+            List<User> users = new ArrayList<>();
+
+            workflow.getAssignes().forEach(uuid -> {
+                User user = new User();
+                user.setUuid(uuid);
+                users.add(user);
+            });
+            processInstance.setAssignes(users);
+        }
+        return processInstance;
     }
 
     /**
@@ -252,46 +334,6 @@ public class WorkflowService {
         }
 
         return url;
-    }
-
-    // update workflow for hearing
-
-    public State updateWorkflowForHearing(HearingRequest request, CreationReason creationReasonForWorkflow) {
-
-        Hearing hearing = request.getHearing();
-
-        ProcessInstanceRequest workflowReq = hearingUtils.getWfForHearingCreate(request, creationReasonForWorkflow);
-        State state = callWorkFlow(workflowReq);
-        request.getHearing().setApplicationStatus(state.getApplicationStatus());
-        if (state.getApplicationStatus().equalsIgnoreCase(legalConfiguration.getWfStatusActive()) && hearing.getId() == null) {
-
-            String pId = commonUtils.getIdList(request.getRequestInfo(), hearing.getTenantId(), legalConfiguration.getHearingIdgenName(),
-                    legalConfiguration.getHearingIdgenFormat(), 1).get(0);
-            request.getHearing().setId(pId);
-        }
-
-        request.getHearing().getWorkflow().setState(state);
-        return state;
-    }
-
-    // update workflow for judgement
-
-    public State updateWorkflowForJudgement(JudgementRequest request, CreationReason creationReasonForWorkflow) {
-
-        Judgement judgement = request.getJudgement();
-
-        ProcessInstanceRequest workflowReq = judgementUtils.getWfForJudgementCreate(request, creationReasonForWorkflow);
-        State state = callWorkFlow(workflowReq);
-        request.getJudgement().setApplicationStatus(state.getApplicationStatus());
-        if (state.getApplicationStatus().equalsIgnoreCase(legalConfiguration.getWfStatusActive()) && judgement.getId() == null) {
-
-            String pId = commonUtils.getIdList(request.getRequestInfo(), judgement.getTenantId(), legalConfiguration.getCaseIdgenName(),
-                    legalConfiguration.getCaseIdgenFormat(), 1).get(0);
-            request.getJudgement().setId(pId);
-        }
-
-        request.getJudgement().getWorkflow().setState(state);
-        return state;
     }
 
 }

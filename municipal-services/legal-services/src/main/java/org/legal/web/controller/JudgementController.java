@@ -3,10 +3,7 @@ package org.legal.web.controller;
 import org.egov.common.contract.response.ResponseInfo;
 import org.legal.service.JudgementService;
 import org.legal.util.ResponseInfoFactory;
-import org.legal.web.model.JudgementRequest;
-import org.legal.web.model.JudgementResponse;
-import org.legal.web.model.JudgementSearchCriteria;
-import org.legal.web.model.Judgement;
+import org.legal.web.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +26,12 @@ public class JudgementController {
 
     @PostMapping(value = "/_create")
     public ResponseEntity<JudgementResponse> create(@Valid @RequestBody JudgementRequest judgementRequest) {
-        Judgement judgement = judgementService.create(judgementRequest);
+        JudgementRequest judgementReq = judgementService.create(judgementRequest);
+        Judgement judgement = judgementReq.getJudgement();
+        Workflow workflow = judgementReq.getWorkflow();
         List<Judgement> judgements = new ArrayList<Judgement>();
         judgements.add(judgement);
-        JudgementResponse response = JudgementResponse.builder().judgementList(judgements).responseInfo(
+        JudgementResponse response = JudgementResponse.builder().judgementList(judgements).workflow(workflow).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -47,9 +46,11 @@ public class JudgementController {
 
     @PostMapping(value = "/_update")
     public ResponseEntity<JudgementResponse> update(@Valid @RequestBody JudgementRequest judgementRequest) {
-        Judgement judgement = judgementService.updateJudgement(judgementRequest);
+        JudgementRequest judgementReq = judgementService.updateJudgement(judgementRequest);
+        Judgement judgement = judgementReq.getJudgement();
+        Workflow workflow = judgementReq.getWorkflow();
         ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true);
-        JudgementResponse response = JudgementResponse.builder().judgementList(Collections.singletonList(judgement)).responseInfo(resInfo).build();
+        JudgementResponse response = JudgementResponse.builder().judgementList(Collections.singletonList(judgement)).workflow(workflow).responseInfo(resInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

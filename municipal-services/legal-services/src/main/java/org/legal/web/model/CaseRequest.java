@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.javers.core.metamodel.annotation.DiffIgnore;
+import org.legal.web.model.workflow.ProcessInstance;
 
 @Builder
 @AllArgsConstructor
@@ -19,5 +21,9 @@ public class CaseRequest {
 
     @JsonProperty("case")
     private Case caseObj;
+
+    @JsonProperty("workflow")
+    @DiffIgnore
+    private Workflow workflow;
 
 }

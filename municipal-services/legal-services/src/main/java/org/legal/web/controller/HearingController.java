@@ -6,11 +6,7 @@ import javax.validation.Valid;
 
 import org.legal.service.HearingService;
 import org.legal.util.ResponseInfoFactory;
-import org.legal.web.model.Hearing;
-import org.legal.web.model.HearingRequest;
-import org.legal.web.model.HearingResponse;
-import org.legal.web.model.HearingSearchCriteria;
-import org.legal.web.model.RequestInfoWrapper;
+import org.legal.web.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +29,12 @@ public class HearingController {
 
     @PostMapping(value = "/_create")
     public ResponseEntity<HearingResponse> create(@Valid @RequestBody HearingRequest hearingRequest) {
-        Hearing hearing = hearingService.create(hearingRequest);
+        HearingRequest hearingReq = hearingService.create(hearingRequest);
+        Hearing hearing = hearingReq.getHearing();
+        Workflow workflow = hearingReq.getWorkflow();
         List<Hearing> hearingList = new ArrayList<Hearing>();
         hearingList.add(hearing);
-        HearingResponse response = HearingResponse.builder().hearingList(hearingList).responseInfo(
+        HearingResponse response = HearingResponse.builder().hearingList(hearingList).workflow(workflow).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(hearingRequest.getRequestInfo(), true)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -51,10 +49,12 @@ public class HearingController {
 
     @PostMapping(value = "/_update")
     public ResponseEntity<HearingResponse> update(@Valid @RequestBody HearingRequest hearingDetailsRequest) {
-        Hearing hearingDetails = hearingService.update(hearingDetailsRequest);
+        HearingRequest hearingReq = hearingService.update(hearingDetailsRequest);
+        Hearing hearing = hearingReq.getHearing();
+        Workflow workflow = hearingReq.getWorkflow();
         List<Hearing> hearingDetailsList = new ArrayList<Hearing>();
-        hearingDetailsList.add(hearingDetails);
-        HearingResponse response = HearingResponse.builder().hearingList(hearingDetailsList).responseInfo(
+        hearingDetailsList.add(hearing);
+        HearingResponse response = HearingResponse.builder().hearingList(hearingDetailsList).workflow(workflow).responseInfo(
                 responseInfoFactory.createResponseInfoFromRequestInfo(hearingDetailsRequest.getRequestInfo(), true)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
