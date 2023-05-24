@@ -80,7 +80,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 if (currentCase == null) {
                     currentCase = Case.builder().id(id).cnrNumber(cnrNumber).tenantId(tenantId).additionalDetails(additionalDetails)
                             .type(caseType).category(caseCategory)
-                            .parentCaseId(parentCaseId).number(caseNumber).filingNumber(filingNumber)
+                            .parentCaseId(parentCaseId).caseNumber(caseNumber).filingNumber(filingNumber)
                             .remarks(remarks).filingDate(filingDate)
                             .summary(caseSummary).status(Status.valueOf(status)).arisingDetails(arisingDetails)
                             .policyOrNonPolicyMatter(matter).priority(priority)

@@ -19,8 +19,8 @@ public class CaseSearchCriteria {
     @JsonProperty("limit")
     private Integer limit;
 
-    @JsonProperty("number")
-    private List<String> number;
+    @JsonProperty("caseNumber")
+    private List<String> caseNumber;
 
     @JsonProperty("cnrNumber")
     private String cnrNumber;

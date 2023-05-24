@@ -73,7 +73,7 @@ public class HearingService {
             }
         }
         if (Objects.nonNull(caseResponse.getCaseList())) {
-            if (caseResponse.getCaseList().get(0).getNumber().equals(hearingRequest.getHearing().getCaseNumber())) {
+            if (caseResponse.getCaseList().get(0).getCaseNumber().equals(hearingRequest.getHearing().getCaseNumber())) {
                 hearingRequest.getHearing().setStatus(Status.ACTIVE);
                 for (Party party : hearingRequest.getHearing().getParties()) {
                     if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {

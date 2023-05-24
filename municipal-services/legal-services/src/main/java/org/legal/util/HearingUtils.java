@@ -62,8 +62,8 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBusinessDate())) {
             oldHearingRequest.setBusinessDate(hearingDetailsRequest.getHearing().getBusinessDate());
         }
-        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourtNumber())) {
-            oldHearingRequest.setCourtNumber(hearingDetailsRequest.getHearing().getCourtNumber());
+        if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getCourtRoomNumber())) {
+            oldHearingRequest.setCourtRoomNumber(hearingDetailsRequest.getHearing().getCourtRoomNumber());
         }
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getBench())) {
             oldHearingRequest.setBench(hearingDetailsRequest.getHearing().getBench());

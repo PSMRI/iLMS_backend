@@ -48,8 +48,8 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getTenantId())) {
             oldData.setTenantId(caseRequest.getCaseObj().getTenantId());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getNumber())) {
-            oldData.setNumber(caseRequest.getCaseObj().getNumber());
+        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseNumber())) {
+            oldData.setCaseNumber(caseRequest.getCaseObj().getCaseNumber());
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCnrNumber())) {
             oldData.setCnrNumber(caseRequest.getCaseObj().getCnrNumber());

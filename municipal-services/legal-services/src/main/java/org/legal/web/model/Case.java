@@ -23,8 +23,8 @@ public class Case {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("number")
-    private String number;
+    @JsonProperty("caseNumber")
+    private String caseNumber;
 
     @JsonProperty("cnrNumber")
     private String cnrNumber;

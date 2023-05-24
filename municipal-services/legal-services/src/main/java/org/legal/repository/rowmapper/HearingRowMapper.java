@@ -84,7 +84,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 this.setFullCount((rs.getInt("full_count")));
                 if (currentHearing == null) {
                     currentHearing = Hearing.builder().id(id).hearingNumber(hearingNumber).additionalDetails(additionalDetails).caseId(caseId)
-                            .judgeName(judgeName).hearingDate(hearingDate).courtNumber(courtNumber)
+                            .judgeName(judgeName).hearingDate(hearingDate).courtRoomNumber(courtNumber)
                             .nextHearingDate(nextHearingDate).bench(bench).tenantId(tenantId).firstHearingDate(firstHearingDate)
                             .isPresenceRequired(isPresenceRequired).hearingType(hearingType).departmentOfficer(departmentOfficer)
                             .remarks(remarks).status(Status.valueOf(status)).businessDate(businessDate).hearingPurpose(hearingPurpose)

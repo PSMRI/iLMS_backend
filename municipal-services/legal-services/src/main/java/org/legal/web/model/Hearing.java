@@ -24,8 +24,8 @@ public class Hearing {
     @JsonProperty("hearingNumber")
     private String hearingNumber;
 
-    @JsonProperty("courtNumber")
-    private String courtNumber;
+    @JsonProperty("courtRoomNumber")
+    private String courtRoomNumber;
 
     @JsonProperty("bench")
     private String bench;
