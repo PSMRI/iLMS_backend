@@ -1,5 +1,6 @@
 package org.legal.util;
 
+import static org.legal.web.model.enums.Status.INACTIVE;
 import org.egov.common.contract.request.User;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
@@ -9,8 +10,6 @@ import org.legal.service.AdvocateService;
 import org.legal.service.CaseEnrichmentService;
 import org.legal.web.model.*;
 import org.legal.web.model.enums.CreationReason;
-import org.legal.web.model.enums.PartyType;
-import org.legal.web.model.enums.Status;
 import org.legal.web.model.workflow.ProcessInstance;
 import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,8 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class CaseUtils {
@@ -134,126 +132,7 @@ public class CaseUtils {
         if (Objects.nonNull(caseRequest.getCaseObj().getParties())) {
             for (Party party : caseRequest.getCaseObj().getParties()) {
                 for (Party oldParty : oldData.getParties()) {
-                    if (party.getPartyType().equals(PartyType.PETITIONER.toString()) && party.getId().equals(oldParty.getId())) {
-                        if (Objects.nonNull(party.getDepartmentName())) {
-
-                            if (!StringUtils.isEmpty(party.getCaseId())) {
-                                oldParty.setCaseId(party.getCaseId());
-                            }
-                            if (!StringUtils.isEmpty(party.getFirstName())) {
-                                oldParty.setFirstName(null);
-                            }
-                            if (!StringUtils.isEmpty(party.getLastName())) {
-                                oldParty.setLastName(null);
-                            }
-                            if (!StringUtils.isEmpty(party.getGender())) {
-                                oldParty.setGender(null);
-                            }
-                            if (!StringUtils.isEmpty(party.getPetitionerType())) {
-                                oldParty.setPetitionerType(null);
-                            }
-                            if (!StringUtils.isEmpty(party.getAddress())) {
-                                oldParty.setAddress(null);
-                            }
-                            if (!StringUtils.isEmpty(party.getDepartmentName())) {
-                                oldParty.setDepartmentName(party.getDepartmentName());
-                            }
-                            if (!StringUtils.isEmpty(party.getContactNumber())) {
-                                oldParty.setContactNumber(null);
-                            }
-                            if (!StringUtils.isEmpty(party.getPartyType())) {
-                                oldParty.setPartyType(party.getPartyType());
-                            }
-                            if (!StringUtils.isEmpty(party.getStatus())) {
-                                oldParty.setStatus(party.getStatus());
-                            }
-                        } else {
-                            if (!StringUtils.isEmpty(party.getCaseId())) {
-                                oldParty.setCaseId(party.getCaseId());
-                            }
-                            if (!StringUtils.isEmpty(party.getFirstName())) {
-                                oldParty.setFirstName(party.getFirstName());
-                            }
-                            if (!StringUtils.isEmpty(party.getLastName())) {
-                                oldParty.setLastName(party.getLastName());
-                            }
-                            if (!StringUtils.isEmpty(party.getGender())) {
-                                oldParty.setGender(party.getGender());
-                            }
-                            if (!StringUtils.isEmpty(party.getPetitionerType())) {
-                                oldParty.setPetitionerType(party.getPetitionerType());
-                            }
-                            if (!StringUtils.isEmpty(party.getAddress())) {
-                                oldParty.setAddress(party.getAddress());
-                            }
-                            if (StringUtils.isEmpty(party.getDepartmentName())) {
-                                oldParty.setDepartmentName(null);
-                            }
-                            if (!StringUtils.isEmpty(party.getContactNumber())) {
-                                oldParty.setContactNumber(party.getContactNumber());
-                            }
-                            if (!StringUtils.isEmpty(party.getPartyType())) {
-                                oldParty.setPartyType(party.getPartyType());
-                            }
-                            if (!StringUtils.isEmpty(party.getStatus())) {
-                                oldParty.setStatus(party.getStatus());
-                            }
-                            //Setting Data For Petitioner Advocate
-                        } if (!StringUtils.isEmpty(party.getAdvocate())) {
-                            List<PartyAdv> partyAdvList = new ArrayList<>();
-                            for (Advocate advocate : party.getAdvocate()) {
-                                AdvocateSearchCriteria criteria = AdvocateSearchCriteria.builder().contactNumber(advocate.getContactNumber()).build();
-                                AdvocateResponse advocateResponse = null;
-                                advocateResponse = advocateRepository.getAdvocateDetails(criteria);
-                                if (!advocateResponse.getAdvocate().isEmpty()) {
-                                        List<Advocate> oldAdvocate1=advocateResponse.getAdvocate();
-                                        Advocate oldAdvocate=oldAdvocate1.get(0);
-                                        if (!StringUtils.isEmpty(advocate.getFirstName())) {
-                                            oldAdvocate.setFirstName(advocate.getFirstName());
-                                        }
-                                        if (!StringUtils.isEmpty(advocate.getLastName())) {
-                                            oldAdvocate.setLastName(advocate.getLastName());
-                                        }
-                                        if (!StringUtils.isEmpty(advocate.getContactNumber())) {
-                                            oldAdvocate.setContactNumber(advocate.getContactNumber());
-                                        }
-
-                                        if (!StringUtils.isEmpty(advocate.getStatus())) {
-                                            oldAdvocate.setStatus(advocate.getStatus());
-                                        }
-                                }
-                                    else {
-                                    AdvocateRequest advocateRequest=new AdvocateRequest();
-                                    advocate.setTenantId(oldData.getTenantId());
-                                    advocateRequest.setAdvocate(advocate);
-                                    advocateRequest.setRequestInfo(caseRequest.getRequestInfo());
-                                   Advocate responseAdv= advocateService.create(advocateRequest);
-                                    PartyAdv partyAdv1 = caseEnrichmentService.createNewPartyAdvocateId(caseRequest.getRequestInfo(), oldData.getTenantId(),
-                                            responseAdv.getId(), caseRequest.getCaseObj().getId(), party.getId(), party.getPartyType());
-                                    partyAdvList.add(partyAdv1);
-                                    oldData.setPartyAdv(partyAdvList);
-
-                                    }
-
-                            }
-                            for (Advocate advocate:oldParty.getAdvocate()){
-
-                                List<PartyAdv> partyAdvList1=advocateRepository.getPartyAdv(advocate.getId(),caseRequest.getCaseObj().getId());
-                                for (PartyAdv partyAdv1: partyAdvList1){
-                                    if (partyAdv1.getAdvocateId().equals(caseRequest.getCaseObj())){
-                                        partyAdv1.setStatus(Status.INACTIVE);
-                                    partyAdv1.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                                        PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv1).build();
-                                    producer.push(ilmsConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
-                                }}
-                            }
-
-                        }
-
-                    }
-
-   //       Setting Respondent details
-                    if (party.getPartyType().equals(PartyType.RESPONDENT.toString()) && party.getId().equals(oldParty.getId())) {
+                    if (party.getId().equals(oldParty.getId())) {
                         if (Objects.nonNull(party.getDepartmentName())) {
 
                             if (!StringUtils.isEmpty(party.getCaseId())) {
@@ -318,60 +197,11 @@ public class CaseUtils {
                                 oldParty.setStatus(party.getStatus());
                             }
                         }
-                        //Setting Data For Respondent Advocate
-                        if (!StringUtils.isEmpty(party.getAdvocate())) {
-                            List<PartyAdv> partyAdvList = new ArrayList<>();
-                            for (Advocate advocate : party.getAdvocate()) {
-                                AdvocateSearchCriteria criteria = AdvocateSearchCriteria.builder().contactNumber(advocate.getContactNumber()).build();
-                                AdvocateResponse advocateResponse = null;
-                                advocateResponse = advocateRepository.getAdvocateDetails(criteria);
-                                if (!advocateResponse.getAdvocate().isEmpty()) {
-                                    List<Advocate> oldAdvocate1=advocateResponse.getAdvocate();
-                                    Advocate oldAdvocate=oldAdvocate1.get(0);
-                                    if (!StringUtils.isEmpty(advocate.getFirstName())) {
-                                        oldAdvocate.setFirstName(advocate.getFirstName());
-                                    }
-                                    if (!StringUtils.isEmpty(advocate.getLastName())) {
-                                        oldAdvocate.setLastName(advocate.getLastName());
-                                    }
-                                    if (!StringUtils.isEmpty(advocate.getContactNumber())) {
-                                        oldAdvocate.setContactNumber(advocate.getContactNumber());
-                                    }
-
-                                    if (!StringUtils.isEmpty(advocate.getStatus())) {
-                                        oldAdvocate.setStatus(advocate.getStatus());
-                                    }
-                                }
-                                else {
-
-                                    AdvocateRequest advocateRequest=new AdvocateRequest();
-                                    advocate.setTenantId(oldData.getTenantId());
-                                    advocateRequest.setAdvocate(advocate);
-                                    advocateRequest.setRequestInfo(caseRequest.getRequestInfo());
-                                   Advocate responseAdv= advocateService.create(advocateRequest);
-                                    PartyAdv partyAdv1 = caseEnrichmentService.createNewPartyAdvocateId(caseRequest.getRequestInfo(), oldData.getTenantId(),
-                                            responseAdv.getId(), caseRequest.getCaseObj().getId(), party.getId(), party.getPartyType());
-                                    partyAdvList.add(partyAdv1);
-                                    oldData.setPartyAdv(partyAdvList);
-                                }
-
-                            }
-                            for (Advocate advocate:oldParty.getAdvocate()){
-                                List<PartyAdv> partyAdvList1=advocateRepository.getPartyAdv(advocate.getId(),caseRequest.getCaseObj().getId());
-                                for (PartyAdv partyAdv1: partyAdvList1){
-                                    if (partyAdv1.getAdvocateId().equals(advocate.getId())){
-                                        partyAdv1.setStatus(Status.INACTIVE);
-                                        partyAdv1.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                                        PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv1).build();
-                                        producer.push(ilmsConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
-                                }}
-                            }
-
-                        }
-
                     }
                 }
             }
+            List<PartyAdv> partyAdvList = updatePartyAdvocates(caseRequest);
+            oldData.setPartyAdv(partyAdvList);
         }
         //setting act details
         if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
@@ -482,5 +312,61 @@ public class CaseUtils {
         wf.setAssignes(request.getCaseObj().getWorkflow().getAssignes());
         aCase.setWorkflow(wf);
         return ProcessInstanceRequest.builder().processInstances(Collections.singletonList(wf)).requestInfo(request.getRequestInfo()).build();
+    }
+
+    public List<PartyAdv> updatePartyAdvocates (CaseRequest caseRequest){
+        List<PartyAdv> partyAdvList1 = new ArrayList();
+        List<Party> parties = caseRequest.getCaseObj().getParties();
+        String tenantId = caseRequest.getRequestInfo().getUserInfo().getTenantId();
+        parties.forEach(party -> {
+            if (Objects.nonNull(party.getAdvocate())) {
+                List<String> advocatesMobileReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());
+                List<Advocate> advocatesReqPresentInDB = advocateRepository.getAdvocates(advocatesMobileReq);
+                List<String> advocatesIdDBReq = advocatesReqPresentInDB.stream().map(Advocate::getId).collect(Collectors.toList());
+                List<String> advocatesMobileDBReq = advocatesReqPresentInDB.stream().map(Advocate::getContactNumber).collect(Collectors.toList());
+
+                List<PartyAdv> advocates = advocateRepository.getPartyCaseAdv(party.getId(), caseRequest.getCaseObj().getId());
+                List<String> advocatesBridgeDB = advocates.stream().map(PartyAdv::getAdvocateId).collect(Collectors.toList());
+
+                List<String> advocatesReqCopy = new ArrayList<>(advocatesIdDBReq);
+                advocatesIdDBReq.removeAll(advocatesBridgeDB);
+                advocatesBridgeDB.removeAll(advocatesReqCopy);
+                if (advocatesBridgeDB.size() > 0) {
+                    PartyMultipleAdvocates partyMultipleAdvocates = new PartyMultipleAdvocates();
+                    partyMultipleAdvocates.setAdvocateId(advocatesBridgeDB);
+                    partyMultipleAdvocates.setStatus(INACTIVE);
+                    partyMultipleAdvocates.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                    partyMultipleAdvocates.setPartyId(party.getId());
+                    PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyMultipleAdvocates(partyMultipleAdvocates).build();
+                    producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
+                }
+                advocatesMobileReq.removeAll(advocatesMobileDBReq);
+                List<Advocate> advocateListRequestAbsentDB = party.getAdvocate().stream()
+                                                                   .filter(advocateFilter -> advocatesMobileReq.contains(advocateFilter.getContactNumber()))
+                                                                   .collect(Collectors.toList());
+                List<Advocate> allAdvocates = new ArrayList<>();
+                advocateListRequestAbsentDB.forEach(advocatesNotInDB -> {
+                    AdvocateRequest advocateRequest = new AdvocateRequest();
+                    advocatesNotInDB.setTenantId(tenantId);
+                    advocateRequest.setAdvocate(advocatesNotInDB);
+                    advocateRequest.setRequestInfo(caseRequest.getRequestInfo());
+                    Advocate responseAdv = advocateService.create(advocateRequest);
+                    allAdvocates.add(responseAdv);
+                });
+                allAdvocates.addAll(advocatesReqPresentInDB);
+
+                if (allAdvocates.size() > 0) {
+                    allAdvocates.forEach(advocate -> {
+                        // we will first check if that advocate exists in advocate table
+                        // if yes, then we make that entry in bridge table
+                        // if no, we first make an entry in advocate table then in bridge table
+                        PartyAdv partyAdv1 = caseEnrichmentService.createNewPartyAdvocateId(caseRequest.getRequestInfo(), tenantId,
+                                advocate.getId(), caseRequest.getCaseObj().getId(), party.getId(), party.getPartyType());
+                        partyAdvList1.add(partyAdv1);
+                    });
+                }
+            }
+        });
+        return partyAdvList1;
     }
 }

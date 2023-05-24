@@ -3,16 +3,19 @@ package org.legal.repository.querybuilder;
 import java.util.List;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.web.model.AdvocateSearchCriteria;
-import org.legal.web.model.HearingSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 @Component
 public class AdvocateQueryBuilder {
     private static final String Query = "select * from eg_lg_advocate ";
+
     private final String paginationWrapper = "{} {orderBy} {pagination}";
+
     private final String partyAdvQuery = "select * from eg_lg_party_advocate_bridge where advocate_id = ? AND case_id = ?";
+    private final String partyCaseAdvQuery = "select * from eg_lg_party_advocate_bridge where party_id = ? AND case_id = ?";
+
+    private final String advocatesQuery = "select id from eg_lg_party_advocate where mobile_number in = ? ";
 
     @Autowired
     private LEGALConfiguration legalConfiguration;
@@ -32,10 +35,10 @@ public class AdvocateQueryBuilder {
         }
 
         if (criteria.getContactNumber() != null) {
-                addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" eg_lg_advocate.contact_number = ?");
-                preparedStmtList.add(criteria.getContactNumber());
-            }
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" eg_lg_advocate.contact_number = ?");
+            preparedStmtList.add(criteria.getContactNumber());
+        }
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
     }
 
@@ -105,5 +108,13 @@ public class AdvocateQueryBuilder {
 
     public String getPartyAdvQuery() {
         return partyAdvQuery;
+    }
+
+    public String getAdvocates() {
+        return advocatesQuery;
+    }
+
+    public String getAdvocatesOfParty() {
+        return partyCaseAdvQuery;
     }
 }

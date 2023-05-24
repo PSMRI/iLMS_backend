@@ -2,23 +2,16 @@ package org.legal.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.legal.repository.querybuilder.AdvocateQueryBuilder;
-import org.legal.repository.querybuilder.CaseQueryBuilder;
 import org.legal.repository.querybuilder.HearingQueryBuilder;
 import org.legal.repository.rowmapper.AdvocateMapper;
 import org.legal.repository.rowmapper.HearingRowMapper;
 import org.legal.repository.rowmapper.PartyAdvRowMapper;
-import org.legal.repository.rowmapper.PartyRowMapper;
 import org.legal.web.model.Advocate;
 import org.legal.web.model.AdvocateResponse;
 import org.legal.web.model.AdvocateSearchCriteria;
-import org.legal.web.model.Hearing;
-import org.legal.web.model.HearingResponse;
-import org.legal.web.model.HearingSearchCriteria;
-import org.legal.web.model.Party;
 import org.legal.web.model.PartyAdv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -62,6 +55,20 @@ public class AdvocateRepository {
         preparedStmtList.add(caseId);
         List<PartyAdv> parties = jdbcTemplate.query(advocateQueryBuilder.getPartyAdvQuery(), preparedStmtList.toArray(), partyAdvRowMapper);
         return parties;
+    }
+
+    public List<PartyAdv> getPartyCaseAdv(String partyId,String caseId) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(partyId);
+        preparedStmtList.add(caseId);
+        List<PartyAdv> parties = jdbcTemplate.query(advocateQueryBuilder.getAdvocatesOfParty(), preparedStmtList.toArray(), partyAdvRowMapper);
+        return parties;
+    }
+
+    public List<Advocate> getAdvocates(List<String> mobileNumbers){
+        List<Object> preparedStmtList = new ArrayList<>();
+        return jdbcTemplate.query(advocateQueryBuilder.getAdvocates(),preparedStmtList.toArray(),  advocateMapper);
+
     }
 }
 

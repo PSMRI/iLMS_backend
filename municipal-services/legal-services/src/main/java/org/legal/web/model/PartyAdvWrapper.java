@@ -14,6 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class PartyAdvWrapper {
-    @JsonProperty ("partyAdv")
-    private PartyAdv partyAdv;
+    @JsonProperty ("partyMultipleAdvocates")
+    private PartyMultipleAdvocates partyMultipleAdvocates;
 }

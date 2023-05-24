@@ -58,49 +58,26 @@ public class HearingService {
     private CaseUtils caseUtils;
 
     public Hearing create(HearingRequest hearingRequest) {
-        String petitionerId = null;
-        String respondentId = null;
         CaseResponse caseResponse = null;
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(hearingRequest.getHearing().getCaseId())).build();
         caseResponse = caseRepository.getLegalCaseData(criteria);
         if (caseResponse.getCaseList().isEmpty()) {
             throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available.");
         }
-        List<Party> partyList = hearingDetailsRepository.getGetFromPartyQuery(hearingRequest.getHearing().getCaseId());
-        for (Party party : partyList) {
-            if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                respondentId = party.getId();
-            } else {
-                petitionerId = party.getId();
-            }
-        }
+     //   List<Party> partyList = hearingDetailsRepository.getGetFromPartyQuery(hearingRequest.getHearing().getCaseId());
+//        for (Party party : partyList) {
+//            if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
+//                respondentId = party.getId();
+//            } else {
+//                petitionerId = party.getId();
+//            }
+//        }
         if (Objects.nonNull(caseResponse.getCaseList())) {
             if (caseResponse.getCaseList().get(0).getNumber().equals(hearingRequest.getHearing().getCaseNumber())) {
                 hearingRequest.getHearing().setStatus(Status.ACTIVE);
-                for (Party party : hearingRequest.getHearing().getParties()) {
-                    if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                        party.setStatus(Status.ACTIVE);
-                        party.setCaseId(hearingRequest.getHearing().getCaseId());
-                        if (Objects.nonNull(party.getAdvocate())) {
-                            for (Advocate advocate : party.getAdvocate()) {
-                                advocate.setStatus(Status.ACTIVE);
-                            }
-                        }
-                    } else if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-                        party.setStatus(Status.ACTIVE);
-                        party.setCaseId(hearingRequest.getHearing().getCaseId());
-                        if (Objects.nonNull(party.getAdvocate())) {
-                            for (Advocate advocate : party.getAdvocate()) {
-                                advocate.setStatus(Status.ACTIVE);
-                            }
-
-                        }
-                    }
-                }
                 if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
                     hearingRequest.getHearing().getPayment().setStatus(Status.ACTIVE);
                 }
-
                 hearingRequest.getHearing().setHearingNumber(hearingDetailsRepository.getMaxValueOfHearing(hearingRequest.getHearing().getCaseId()));
                 hearingDetailsValidator.createValidator(hearingRequest);
                 hearingEnrichmentService.enrichHearingCreateRequest(hearingRequest);
