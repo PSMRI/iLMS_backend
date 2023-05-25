@@ -119,11 +119,24 @@ public class JudgementService {
                 Workflow workflow = new Workflow();
                 workflow.setAssignes(judgementRequest.getWorkflow().getAssignes());
                 caseRequest.setWorkflow(workflow);
+                CaseRequest caseAppStatus = new CaseRequest();
+                Case caseApp = new Case();
+                caseAppStatus.setCaseObj(caseApp);
                 if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_APPEALED_REVIEW")) {
-                    workflowService.updateCaseWorkflow(caseRequest, "REVIEW_JUDGEMENT");
+                    String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, "REVIEW_JUDGEMENT");
+                    caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
+                    caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
+                    caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
+                    caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                    producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
                 }
                 if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_COMPLETED")) {
-                    workflowService.updateCaseWorkflow(caseRequest, "COMPLY_JUDGEMENT");
+                    String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, "COMPLY_JUDGEMENT");
+                    caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
+                    caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
+                    caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
+                    caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                    producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
                 }
                 producer.push(legalConfiguration.getUpdateJudgementTopic(), finalRequest);
             } else {
