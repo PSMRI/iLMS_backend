@@ -13,8 +13,7 @@ import org.legal.web.model.workflow.ProcessInstance;
 @Getter
 @Setter
 public class Judgement {
-
-
+    
     @JsonProperty("id")
     private String id;
 

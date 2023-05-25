@@ -26,9 +26,6 @@ public class Document {
     @JsonProperty("documentType")
     private String documentType;
 
-//    @JsonProperty("documentId")
-//    private String documentId;
-
     @NotNull
     @JsonProperty("fileStoreId")
     private String fileStoreId;

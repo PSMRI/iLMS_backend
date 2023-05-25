@@ -120,16 +120,10 @@ public class JudgementService {
                 workflow.setAssignes(judgementRequest.getWorkflow().getAssignes());
                 caseRequest.setWorkflow(workflow);
                 if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_APPEALED_REVIEW")) {
-                    action = "REVIEW_JUDGEMENT";
-                    ProcessInstance workflowReq = caseUtils.changeCaseWF(caseRequest, action);
-                    ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(workflowReq));
-                    workflowService.callWorkFlow(workflowRequest);
+                    workflowService.updateCaseWorkflow(caseRequest, "REVIEW_JUDGEMENT");
                 }
                 if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_COMPLETED")) {
-                    action = "COMPLY_JUDGEMENT";
-                    ProcessInstance workflowReq = caseUtils.changeCaseWF(caseRequest, action);
-                    ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(workflowReq));
-                    workflowService.callWorkFlow(workflowRequest);
+                    workflowService.updateCaseWorkflow(caseRequest, "COMPLY_JUDGEMENT");
                 }
                 producer.push(legalConfiguration.getUpdateJudgementTopic(), finalRequest);
             } else {
