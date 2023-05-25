@@ -84,14 +84,12 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.advocate.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_case_party(id,  case_id, advocate_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_case_party(id,  case_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.parties.*
           jsonMaps:
             - jsonPath: $.case.parties.*.id
 
             - jsonPath: $.case.id
-
-            - jsonPath: $.case.parties.*.advocate.id
 
             - jsonPath: $.case.parties.*.firstName
 
@@ -396,13 +394,12 @@ serviceMaps:
 
             - jsonPath: $.case.id
 
-        - query: UPDATE eg_lg_case_party SET case_id=?, advocate_id=?, first_name=?, last_name=?, gender=?, petitioner_type=?, address=?, department_name=?, contact_number=?, party_type=?, status=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_case_party SET case_id=?,  first_name=?, last_name=?, gender=?, petitioner_type=?, address=?, department_name=?, contact_number=?, party_type=?, status=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case.parties.*
           jsonMaps:
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.paties.*.advocateId
 
             - jsonPath: $.case.parties.*.firstName
 

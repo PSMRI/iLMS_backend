@@ -124,9 +124,6 @@ public class HearingUtils {
                     if (!StringUtils.isEmpty(party.getFirstName())) {
                         oldParty.setFirstName(party.getFirstName());
                     }
-                    if (!StringUtils.isEmpty(party.getAdvocateId())) {
-                        oldParty.setAdvocateId(party.getAdvocateId());
-                    }
                     if (!StringUtils.isEmpty(party.getLastName())) {
                         oldParty.setLastName(party.getLastName());
                     }
@@ -183,9 +180,6 @@ public class HearingUtils {
                         }
                         if (!StringUtils.isEmpty(party.getFirstName())) {
                             oldParty.setFirstName(party.getFirstName());
-                        }
-                        if (!StringUtils.isEmpty(party.getAdvocateId())) {
-                            oldParty.setAdvocateId(party.getAdvocateId());
                         }
                         if (!StringUtils.isEmpty(party.getLastName())) {
                             oldParty.setLastName(party.getLastName());
