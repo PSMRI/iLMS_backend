@@ -92,22 +92,41 @@ public class CaseService {
                     hearingSearchCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(caseId)).build();
                     HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
                     request.setRequestInfo(caseRequest.getRequestInfo());
+                    HearingRequest hearingAppStatus = new HearingRequest();
+                    Hearing hearingApp = new Hearing();
+                    hearingAppStatus.setHearing(hearingApp);
                     for (Hearing hearing : hearingResponse.getHearingList()) {
                         request.setHearing(hearing);
                         Workflow workflow = new Workflow();
                         workflow.setAssignes(caseRequest.getWorkflow().getAssignes());
                         request.setWorkflow(workflow);
                         if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
-                            workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_RO");
+                            String applicationStatus = workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_RO");
+                            hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
+                            hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
+                            hearingAppStatus.getHearing().setId(request.getHearing().getId());
+                            hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                            producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
                         }
                         if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
-                            workflowService.updateHearingWorkflow(request, "DEACTIVATE");
+                            String applicationStatus = workflowService.updateHearingWorkflow(request, "DEACTIVATE");
+                            hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
+                            hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
+                            hearingAppStatus.getHearing().setId(request.getHearing().getId());
+                            hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                            producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
+
                         }
 
                         for (Document document : caseRequest.getCaseObj().getDocuments()) {
                             if (document.getDocumentType() != null) {
                                 if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getWorkflow().getAction().equalsIgnoreCase("SUBMIT_COUNTER_AFFIDAVIT")) {
-                                    workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_APPOINTED_OIC");
+                                    String applicationStatus = workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_APPOINTED_OIC");
+                                    hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
+                                    hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
+                                    hearingAppStatus.getHearing().setId(request.getHearing().getId());
+                                    hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                                    producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
                                 }
                             }
                         }

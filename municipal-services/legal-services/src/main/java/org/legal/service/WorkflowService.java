@@ -202,13 +202,6 @@ public class WorkflowService {
         judgementRequest.getJudgement().setApplicationStatus(state.getApplicationStatus());
         return state.getApplicationStatus();
     }
-    public String updateJudgementWorkflow(JudgementRequest judgementRequest) {
-        ProcessInstance processInstance = getProcessInstanceForJudgement(judgementRequest);
-        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(judgementRequest.getRequestInfo(), Collections.singletonList(processInstance));
-        State state = callWorkFlow(workflowRequest);
-        judgementRequest.getJudgement().setApplicationStatus(state.getApplicationStatus());
-        return state.getApplicationStatus();
-    }
 
 
     private ProcessInstance getProcessInstanceForJudgement(JudgementRequest request) {
