@@ -42,14 +42,6 @@ public class HearingRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = hearingQueryBuilder.getHearingSearchQuery(criteria, preparedStmtList);
         List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
-        for (Hearing singleHearing : hearingDetails) {
-            List<Party> partyList = getHearing(singleHearing.getCaseId());
-            List<Party> party1 = new ArrayList<>();
-            for (Party party : partyList) {
-                party1.add(party);
-                singleHearing.setParties(party1);
-            }
-        }
         HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount())
                 .build();
         return hearingResponse;

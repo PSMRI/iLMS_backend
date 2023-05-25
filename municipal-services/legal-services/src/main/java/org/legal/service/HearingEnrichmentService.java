@@ -55,9 +55,6 @@ public class HearingEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(hearingRequest.getRequestInfo().getUserInfo().getUuid(), true);
         hearingRequest.getHearing().setAuditDetails(auditDetails);
         hearing.setAuditDetails(auditDetails);
-        for (Party party : hearingRequest.getHearing().getParties()) {
-            party.setAuditDetails(auditDetails);
-        }
         if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
             hearingRequest.getHearing().getPayment().setAuditDetails(auditDetails);
             hearing.getPayment().setAuditDetails(auditDetails);
@@ -82,105 +79,7 @@ public class HearingEnrichmentService {
             throw new CustomException(errorMap);
         }
 
-       // List<Party> partyList = hearingDetailsRepository.getPartyFromPartyQuery(request.getHearing().getCaseId());
-        String petId=null;
-        String resId=null;
-        for (Party oldparty:caseResponse.getCaseList().get(0).getParties()){
-            if (oldparty.getPartyType().equals(PartyType.PETITIONER.toString())){
-                 petId=oldparty.getId();
-            }else {
-                resId=oldparty.getId();
-            }
-        }
-        List<PartyAdv> partyAdvList = hearing.getPartyAdv();
-        if (partyAdvList == null) {
-            partyAdvList = new ArrayList<>();
-        }
         hearing.setId(itr.next());
-            for (Party party : hearing.getParties()) {
-                if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                    if (Objects.nonNull(party.getAdvocate())) {
-                     //   hearingUtils.setAdvocatesForHearing(hearing,party,,hearing.getCaseId(),tenantId,requestInfo);
-                        for (Advocate advocate : party.getAdvocate()) {
-                            AdvocateSearchCriteria advCriteria = new AdvocateSearchCriteria();
-                            advCriteria.setContactNumber(advocate.getContactNumber());
-                            AdvocateResponse petadvocate = advocateService.advocateSearch(advCriteria);
-                            // List<Advocate> advocates = new ArrayList<>();
-                            if (!petadvocate.getAdvocate().isEmpty()) {
-
-                                Advocate advocate1 = petadvocate.getAdvocate().get(0);
-                                PartyAdv partyAdv1 = new PartyAdv();
-                                partyAdv1.setId(UUID.randomUUID().toString());
-                                partyAdv1.setCaseId(party.getCaseId());
-                                partyAdv1.setAdvocateId(advocate1.getId());
-                                partyAdv1.setAdvocateContactNumber(advocate1.getContactNumber());
-                                partyAdv1.setPartyId(party.getId());
-                                partyAdv1.setPartyType(party.getPartyType());
-                                partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
-                                partyAdvList.add(partyAdv1);
-                                party.setAdvocate(null);
-
-                            } else {
-                                List<String> padvocateId = getIdList(requestInfo, tenantId, legalConfiguration.getPetitionerAdvocateIdgenName(),
-                                        legalConfiguration.getPetitionerAdvocateIdgenFormat(), 1);
-                                ListIterator<String> padvocateItr = padvocateId.listIterator();
-                                advocate.setId(padvocateItr.next());
-                                PartyAdv partyAdv1 = new PartyAdv();
-                                partyAdv1.setId(UUID.randomUUID().toString());
-                                partyAdv1.setCaseId(hearing.getCaseId());
-                                partyAdv1.setAdvocateId(advocate.getId());
-
-                                partyAdv1.setAdvocateContactNumber(advocate.getContactNumber());
-                                partyAdv1.setPartyId(party.getId());
-                                partyAdv1.setPartyType(party.getPartyType());
-                                partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
-                                partyAdvList.add(partyAdv1);
-                            }
-
-                            hearing.setPartyAdv(partyAdvList);
-                        }
-                    }
-                } else {
-                    if (Objects.nonNull(party.getAdvocate())) {
-                        for (Advocate advocate : party.getAdvocate()) {
-                            AdvocateSearchCriteria advCriteria = new AdvocateSearchCriteria();
-                            advCriteria.setContactNumber(advocate.getContactNumber());
-                            AdvocateResponse resadvocate = advocateService.advocateSearch(advCriteria);
-                            //                        List<Advocate> advocates = new ArrayList<>();
-                            if (!resadvocate.getAdvocate().isEmpty()) {
-
-                                Advocate advocate1 = resadvocate.getAdvocate().get(0);
-                                PartyAdv partyAdv1 = new PartyAdv();
-                                partyAdv1.setId(UUID.randomUUID().toString());
-                                partyAdv1.setCaseId(party.getCaseId());
-                                partyAdv1.setAdvocateId(advocate1.getId());
-                                partyAdv1.setAdvocateContactNumber(advocate1.getContactNumber());
-                                partyAdv1.setPartyId(party.getId());
-                                partyAdv1.setPartyType(party.getPartyType());
-                                partyAdvList.add(partyAdv1);
-                                partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
-                                party.setAdvocate(null);
-                            } else
-                            //                        for (Advocate radvocate : advocates) {
-                            {
-                                List<String> radvocateId = getIdList(requestInfo, tenantId, legalConfiguration.getRespondentAdvocateIdgenName(),
-                                        legalConfiguration.getRespondentAdvocateIdgenFormat(), 1);
-                                ListIterator<String> radvocateItr = radvocateId.listIterator();
-                                advocate.setId(radvocateItr.next());
-                                PartyAdv partyAdv1 = new PartyAdv();
-                                partyAdv1.setId(UUID.randomUUID().toString());
-                                partyAdv1.setCaseId(hearing.getCaseId());
-                                partyAdv1.setAdvocateContactNumber(advocate.getContactNumber());
-                                partyAdv1.setAdvocateId(advocate.getId());
-                                partyAdv1.setPartyId(party.getId());
-                                partyAdv1.setPartyType(party.getPartyType());
-                                partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
-                                partyAdvList.add(partyAdv1);
-                            }
-                        }
-                    }
-                }
-            }
 
         if (Objects.nonNull(hearing.getPayment())) {
             hearing.getPayment().setId(paymentItr.next());

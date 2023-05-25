@@ -258,44 +258,6 @@ serviceMaps:
 
             - jsonPath: $.hearing.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES ( ?, ?, ?, ?, ?, ?, ?);
-          basePath: hearing.parties.*.advocate.*
-          jsonMaps:
-            - jsonPath: $.hearing.parties.*.advocate.*.id
-
-            - jsonPath: $.hearing.parties.*.advocate.*.firstName
-
-            - jsonPath: $.hearing.parties.*.advocate.*.lastName
-
-            - jsonPath: $.hearing.parties.*.advocate.*.contactNumber
-
-            - jsonPath: $.hearing.parties.*.advocate.*.status
-
-            - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.createdBy
-
-            - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.createdTime
-
-        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, advocate_contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: hearing.PartyAdv.*
-          jsonMaps:
-            - jsonPath: $.hearing.PartyAdv.*.id
-
-            - jsonPath: $.hearing.caseId
-
-            - jsonPath: $.hearing.parties.*.partyId
-
-            - jsonPath: $.hearing.PartyAdv.*.partyType
-
-            - jsonPath: $.hearing.parties.*.advocate.*.advocateId
-
-            - jsonPath: $.hearing.parties.*.advocate.*.advocateContactNumber
-
-            - jsonPath: $.hearing.PartyAdv.*.status
-
-            - jsonPath: $.hearing.PartyAdv.*.auditDetails.createdBy
-
-            - jsonPath: $.hearing.PartyAdv.*.auditDetails.createdTime
-
 
         - query: INSERT INTO eg_lg_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.payment
@@ -630,29 +592,6 @@ serviceMaps:
             - jsonPath: $.hearing.auditDetails.lastModifiedTime
 
             - jsonPath: $.hearing.id
-
-
-        - query: UPDATE eg_lg_advocate SET  hearing_id=?, first_name=?, last_name=?, contact_number=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE  id = ?;
-          basePath: hearing.parties.*.advocate.*
-          jsonMaps:
-
-            - jsonPath: $.hearing.parties.*.id
-
-            - jsonPath: $.hearing.parties.*.advocate.*.hearingId
-
-            - jsonPath: $.hearing.parties.*.advocate.*.firstName
-
-            - jsonPath: $.hearing.parties.*.advocate.*.lastName
-
-            - jsonPath: $.hearing.parties.*.advocate.*.contactNumber
-
-            - jsonPath: $.hearing.parties.*.advocate.*.status
-
-            - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.lastModifiedBy
-
-            - jsonPath: $.hearing.parties.*.advocate.*.auditDetails.lastModifiedTime
-
-            - jsonPath: $.hearing.parties.*.advocate.*.id
 
 
         - query: UPDATE eg_lg_payment SET fine_imposed_date=?, fine_due_date=?, fine_amount=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;

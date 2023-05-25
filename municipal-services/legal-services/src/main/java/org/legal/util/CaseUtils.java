@@ -297,7 +297,6 @@ public class CaseUtils {
                 List<String> advocatesMobileReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());
                 List<Advocate> advocatesReqPresentInDB = advocateRepository.getAdvocates(advocatesMobileReq);
                 List<String> advocatesMobileDB = advocatesReqPresentInDB.stream().map(Advocate::getContactNumber).collect(Collectors.toList());
-                List<String> advocatesReqCopy = new ArrayList<>(advocatesMobileReq);
                 advocatesMobileReq.removeAll(advocatesMobileDB);
                 List<Advocate> advocateListRequestAbsentDB = party.getAdvocate().stream().filter(advocateFilter -> advocatesMobileReq.contains(
                         advocateFilter.getContactNumber())).collect(Collectors.toList());

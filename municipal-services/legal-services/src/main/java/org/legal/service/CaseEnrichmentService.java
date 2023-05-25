@@ -79,12 +79,6 @@ public class CaseEnrichmentService {
         AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
         request.getHearing().setAuditDetails(auditDetails);
         legalCase.setAuditDetails(auditDetails);
-        for (Party party : legalCase.getParties()) {
-            party.setAuditDetails(auditDetails);
-            for (Advocate advocate : party.getAdvocate()) {
-                advocate.setAuditDetails(auditDetails);
-            }
-        }
         if (request.getHearing().getPayment() != null) {
             request.getHearing().getPayment().setAuditDetails(auditDetails);
             legalCase.getPayment().setAuditDetails(auditDetails);

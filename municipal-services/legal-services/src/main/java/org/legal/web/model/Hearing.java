@@ -92,8 +92,11 @@ public class Hearing {
     @JsonProperty("status")
     private Status status;
 
-    @JsonProperty("parties")
-    private List<Party> parties;
+    @JsonProperty("respondentAdvocate")
+    private Advocate respondentAdvocate;
+
+    @JsonProperty("petitionerAdvocate")
+    private Advocate petitionerAdvocate;
 
     @JsonProperty("payment")
     private Payment payment;
@@ -104,7 +107,6 @@ public class Hearing {
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
-    @JsonProperty("PartyAdv")
-    private List<PartyAdv> partyAdv;
+
 
 }
