@@ -11,6 +11,7 @@ import org.legal.service.AdvocateService;
 import org.legal.service.CaseEnrichmentService;
 import org.legal.web.model.*;
 import org.legal.web.model.enums.CreationReason;
+import org.legal.web.model.enums.PartyType;
 import org.legal.web.model.workflow.ProcessInstance;
 import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -292,7 +293,7 @@ public class CaseUtils {
         List<PartyAdv> partyAdvList1 = new ArrayList();
         String tenantId = caseRequest.getRequestInfo().getUserInfo().getTenantId();
         caseRequest.getCaseObj().getParties().forEach(party -> {
-            if (Objects.nonNull(party.getAdvocate())) {
+            if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER) || party.getPartyType().equals(PartyType.RESPONDENT))) {
                 List<String> advocatesMobileReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());
                 List<Advocate> advocatesReqPresentInDB = advocateRepository.getAdvocates(advocatesMobileReq);
                 List<String> advocatesMobileDB = advocatesReqPresentInDB.stream().map(Advocate::getContactNumber).collect(Collectors.toList());
