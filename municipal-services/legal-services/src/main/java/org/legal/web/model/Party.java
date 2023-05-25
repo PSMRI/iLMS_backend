@@ -18,10 +18,7 @@ public class Party {
 
     @JsonProperty("caseId")
     private String caseId;
-
-    @JsonProperty("advocateId")
-    private List<String> advocateId;
-
+    
     @JsonProperty("firstName")
     private String firstName;
 
