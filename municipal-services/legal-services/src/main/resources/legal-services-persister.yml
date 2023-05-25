@@ -863,16 +863,17 @@ serviceMaps:
       fromTopic: update-party-advocate-bridge
       isTransaction: true
       queryMaps:
-        - query: update eg_lg_party_advocate_bridge set status = ?, lastmodifiedby=?, lastmodifiedtime=?  where advocate_id in ? AND case_id = ? AND party_id = ?;
-          basePath: partyAdv
+        - query: update eg_lg_party_advocate_bridge set status = ?, lastmodifiedby=?, lastmodifiedtime=?  where advocate_id =? AND case_id = ? AND party_id = ?;
+          basePath: partyMultipleAdvocates
           jsonMaps:
-            - jsonPath: $.partyAdv.status
+            - jsonPath: $.partyMultipleAdvocates.status
 
-            - jsonPath: $.partyAdv.auditDetails.lastModifiedBy
+            - jsonPath: $.partyMultipleAdvocates.auditDetails.lastModifiedBy
 
-            - jsonPath: $.partyAdv.auditDetails.lastModifiedTime
+            - jsonPath: $.partyMultipleAdvocates.auditDetails.lastModifiedTime
 
-            - jsonPath: $.partyAdv.advocateId.*
+            - jsonPath: $.partyMultipleAdvocates.advocateId
 
-            - jsonPath: $.partyAdv.caseId
-            - jsonPath: $.partyAdv.partyId
+            - jsonPath: $.partyMultipleAdvocates.caseId
+
+            - jsonPath: $.partyMultipleAdvocates.partyId

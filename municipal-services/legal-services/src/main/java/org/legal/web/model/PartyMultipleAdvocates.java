@@ -24,10 +24,10 @@ public class PartyMultipleAdvocates {
     private String partyId;
 
     @JsonProperty("advocateId")
-    private List<String> advocateId;
+    private String advocateId;
 
     @JsonProperty("status")
-    private Status status = Status.ACTIVE;
+    private Status status;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

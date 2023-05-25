@@ -224,17 +224,17 @@ public class HearingUtils {
                                 }
 
                             }
-                            for (Advocate advocate:oldParty.getAdvocate()){
-                                List<PartyAdv> partyAdvList1=advocateRepository.getPartyAdv(advocate.getId(),hearingDetailsRequest.getHearing().getCaseId());
-                                for (PartyAdv partyAdv1: partyAdvList1){
-                                    if (partyAdv1.getAdvocateId().equals(advocate.getId())){
-                                        partyAdv1.setStatus(Status.INACTIVE);
-                                        partyAdv1.setAuditDetails(caseUtils.getAuditDetails(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                                        PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv1).build();
-                                        producer.push(configuration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
-                                    }
-                                }
-                            }
+//                            for (Advocate advocate:oldParty.getAdvocate()){
+//                                List<PartyAdv> partyAdvList1=advocateRepository.getPartyAdv(advocate.getId(),hearingDetailsRequest.getHearing().getCaseId());
+//                                for (PartyAdv partyAdv1: partyAdvList1){
+//                                    if (partyAdv1.getAdvocateId().equals(advocate.getId())){
+//                                        partyAdv1.setStatus(Status.INACTIVE);
+//                                        partyAdv1.setAuditDetails(caseUtils.getAuditDetails(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false));
+//                                        PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv1).build();
+//                                        producer.push(configuration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
+//                                    }
+//                                }
+//                            }
 
                         }
                     }
@@ -324,17 +324,17 @@ public class HearingUtils {
                             }
 
                         }
-                        for (Advocate advocate:oldParty.getAdvocate()){
-                            List<PartyAdv> partyAdvList1=advocateRepository.getPartyAdv(advocate.getId(),hearingDetailsRequest.getHearing().getCaseId());
-                            for (PartyAdv partyAdv1: partyAdvList1){
-                                if (partyAdv1.getAdvocateId().equals(advocate.getId())){
-                                    partyAdv1.setStatus(Status.INACTIVE);
-                                    partyAdv1.setAuditDetails(caseUtils.getAuditDetails(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                                    PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv1).build();
-                                    producer.push(configuration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
-                                }
-                            }
-                        }
+//                        for (Advocate advocate:oldParty.getAdvocate()){
+//                            List<PartyAdv> partyAdvList1=advocateRepository.getPartyAdv(advocate.getId(),hearingDetailsRequest.getHearing().getCaseId());
+//                            for (PartyAdv partyAdv1: partyAdvList1){
+//                                if (partyAdv1.getAdvocateId().equals(advocate.getId())){
+//                                    partyAdv1.setStatus(Status.INACTIVE);
+//                                    partyAdv1.setAuditDetails(caseUtils.getAuditDetails(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false));
+//                                    PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv1).build();
+//                                    producer.push(configuration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
+//                                }
+//                            }
+//                        }
 
                     }
                     }

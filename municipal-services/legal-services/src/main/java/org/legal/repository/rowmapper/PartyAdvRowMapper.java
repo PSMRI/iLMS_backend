@@ -28,7 +28,7 @@ public class PartyAdvRowMapper implements ResultSetExtractor<List<PartyAdv>> {
 
 
             PartyAdv party = PartyAdv.builder().id(rs.getString("id")).partyId(rs.getString("party_id")).partyType(rs.getString("party_type"))
-                    .caseId(rs.getString("case_id")).advocateId(rs.getString("advocate_id"))
+                    .caseId(rs.getString("case_id")).advocateId(rs.getString("advocate_id")).advocateContactNumber(rs.getString("advocate_contact_number"))
                                .status(Status.valueOf(rs.getString("status"))).auditDetails(partyAuditDetails)
                                .build();
             parties.add(party);

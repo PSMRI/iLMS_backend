@@ -1,5 +1,6 @@
 package org.legal.util;
 
+import static org.legal.web.model.enums.Status.ACTIVE;
 import static org.legal.web.model.enums.Status.INACTIVE;
 import org.egov.common.contract.request.User;
 import org.legal.configs.LEGALConfiguration;
@@ -295,28 +296,12 @@ public class CaseUtils {
             if (Objects.nonNull(party.getAdvocate())) {
                 List<String> advocatesMobileReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());
                 List<Advocate> advocatesReqPresentInDB = advocateRepository.getAdvocates(advocatesMobileReq);
-                List<String> advocatesIdDBReq = advocatesReqPresentInDB.stream().map(Advocate::getId).collect(Collectors.toList());
-                List<String> advocatesMobileDBReq = advocatesReqPresentInDB.stream().map(Advocate::getContactNumber).collect(Collectors.toList());
-
-                List<PartyAdv> advocates = advocateRepository.getPartyCaseAdv(party.getId(), caseRequest.getCaseObj().getId());
-                List<String> advocatesBridgeDB = advocates.stream().map(PartyAdv::getAdvocateId).collect(Collectors.toList());
-
-                List<String> advocatesReqCopy = new ArrayList<>(advocatesIdDBReq);
-                advocatesIdDBReq.removeAll(advocatesBridgeDB);
-                advocatesBridgeDB.removeAll(advocatesReqCopy);
-                if (advocatesBridgeDB.size() > 0) {
-                    PartyMultipleAdvocates partyMultipleAdvocates = new PartyMultipleAdvocates();
-                    partyMultipleAdvocates.setAdvocateId(advocatesBridgeDB);
-                    partyMultipleAdvocates.setStatus(INACTIVE);
-                    partyMultipleAdvocates.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                    partyMultipleAdvocates.setPartyId(party.getId());
-                    PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyMultipleAdvocates(partyMultipleAdvocates).build();
-                    producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
-                }
-                advocatesMobileReq.removeAll(advocatesMobileDBReq);
+                List<String> advocatesMobileDB = advocatesReqPresentInDB.stream().map(Advocate::getContactNumber).collect(Collectors.toList());
+                List<String> advocatesReqCopy = new ArrayList<>(advocatesMobileReq);
+                advocatesMobileReq.removeAll(advocatesMobileDB);
                 List<Advocate> advocateListRequestAbsentDB = party.getAdvocate().stream()
-                                                                   .filter(advocateFilter -> advocatesMobileReq.contains(advocateFilter.getContactNumber()))
-                                                                   .collect(Collectors.toList());
+                                                                  .filter(advocateFilter -> advocatesMobileReq.contains(advocateFilter.getContactNumber()))
+                                                                  .collect(Collectors.toList());
                 List<Advocate> allAdvocates = new ArrayList<>();
                 advocateListRequestAbsentDB.forEach(advocatesNotInDB -> {
                     AdvocateRequest advocateRequest = new AdvocateRequest();
@@ -328,8 +313,45 @@ public class CaseUtils {
                 });
                 allAdvocates.addAll(advocatesReqPresentInDB);
 
-                if (allAdvocates.size() > 0) {
-                    allAdvocates.forEach(advocate -> {
+                List<PartyAdv> advocatesBridge = advocateRepository.getPartyCaseAdv(party.getId(), caseRequest.getCaseObj().getId(),advocatesReqCopy);
+                List<PartyAdv> advocatesBridgeExtra = advocateRepository.getPartyAdvByCaseIdAndPartyId(party.getId(), caseRequest.getCaseObj().getId());
+                advocatesBridgeExtra.removeAll(advocatesBridge);
+                advocatesBridge.removeAll(advocatesBridgeExtra);
+                List<String> advocatesBridgeIds = advocatesBridge.stream().map(PartyAdv::getAdvocateId).collect(Collectors.toList());
+                if (advocatesBridgeIds.size() > 0) {
+                    for ( String advocateIds: advocatesBridgeIds){
+                        PartyMultipleAdvocates partyMultipleAdvocates = new PartyMultipleAdvocates();
+                        partyMultipleAdvocates.setCaseId(caseRequest.getCaseObj().getId());
+                        partyMultipleAdvocates.setAdvocateId(advocateIds);
+                        partyMultipleAdvocates.setStatus(ACTIVE);
+                        partyMultipleAdvocates.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                        partyMultipleAdvocates.setPartyId(party.getId());
+                        PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyMultipleAdvocates(partyMultipleAdvocates).build();
+                        producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
+                    }
+
+                }
+                List<String> advocatesBridgeExtraIds = advocatesBridgeExtra.stream().map(PartyAdv::getAdvocateId).collect(Collectors.toList());
+
+                if (advocatesBridgeExtraIds.size() > 0) {
+                    for (String advocateId: advocatesBridgeExtraIds){
+                        PartyMultipleAdvocates partyMultipleAdvocates = new PartyMultipleAdvocates();
+                        partyMultipleAdvocates.setCaseId(caseRequest.getCaseObj().getId());
+                        partyMultipleAdvocates.setAdvocateId(advocateId);
+                        partyMultipleAdvocates.setStatus(INACTIVE);
+                        partyMultipleAdvocates.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                        partyMultipleAdvocates.setPartyId(party.getId());
+                        PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyMultipleAdvocates(partyMultipleAdvocates).build();
+                        producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
+                    }
+
+                }
+                List<Advocate> advocateListRequestAbsentBridge = allAdvocates.stream()
+                                                                  .filter(advocateFilter -> advocatesBridgeIds.contains(advocateFilter.getContactNumber()))
+                                                                  .collect(Collectors.toList());
+
+                if (advocateListRequestAbsentBridge.size() > 0) {
+                    advocateListRequestAbsentBridge.forEach(advocate -> {
                         // we will first check if that advocate exists in advocate table
                         // if yes, then we make that entry in bridge table
                         // if no, we first make an entry in advocate table then in bridge table
