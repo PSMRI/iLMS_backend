@@ -280,7 +280,7 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.hearing.PartyAdv.*.id
 
-            - jsonPath: $.case.id
+            - jsonPath: $.hearing.caseId
 
             - jsonPath: $.hearing.parties.*.partyId
 
@@ -837,3 +837,53 @@ serviceMaps:
             - jsonPath: $.advocate.*.auditDetails.lastModifiedTime
 
             - jsonPath: $.advocate.*.id
+
+    - version: 1.0
+      description: update application status in eg_lg_case table
+      fromTopic: update-legal-case-applicationstatus
+      isTransaction: true
+      isAuditEnabled: true
+      module: legal-services
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: case
+      queryMaps:
+        - query: UPDATE eg_lg_case SET application_status=?, tenant_id=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+          basePath: case
+          jsonMaps:
+
+            - jsonPath: $.case.applicationStatus
+
+            - jsonPath: $.case.tenantId
+
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+
+            - jsonPath: $.case.id
+
+    - version: 1.0
+      description: update Application Status in hearing_details table
+      fromTopic: update-hearing-details-applicationstatus
+      isAuditEnabled: true
+      module: legal-services
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.id
+      auditAttributeBasePath: hearing
+      queryMaps:
+
+        - query: UPDATE eg_lg_hearing SET application_status=?, tenant_id=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+          basePath: hearing
+          jsonMaps:
+
+            - jsonPath: $.hearing.applicationStatus
+
+            - jsonPath: $.hearing.tenantId
+
+            - jsonPath: $.hearing.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hearing.auditDetails.lastModifiedTime
+
+            - jsonPath: $.hearing.id
