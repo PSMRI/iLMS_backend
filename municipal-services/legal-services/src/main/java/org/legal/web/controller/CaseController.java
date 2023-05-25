@@ -45,6 +45,7 @@ public class CaseController {
         CaseResponse response = CaseResponse.builder().caseList(caseList).workflow(workflow)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true))
                 .build();
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

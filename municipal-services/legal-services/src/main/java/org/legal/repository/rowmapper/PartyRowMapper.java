@@ -10,39 +10,73 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class PartyRowMapper implements ResultSetExtractor<List<Party>> {
     @Override
     public List<Party> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        List<Party> parties = new ArrayList<Party>();
+        List<Party> parties = new ArrayList<>();
+        Map<String, Party> partyMap = new HashMap<>();
+
         while (rs.next()) {
+            String partyId = rs.getString("id");
+            Party party;
 
-            AuditDetails partyAuditDetails = AuditDetails.builder().createdTime(rs.getLong("createdtime")).createdBy(rs.getString("createdby"))
-                    .lastModifiedBy(rs.getString("lastmodifiedby"))
-                    .lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
+            if (partyMap.containsKey(partyId)) {
+                // Retrieve existing party from the map
+                party = partyMap.get(partyId);
+            } else {
+                // Create new party if not found in the map
+                AuditDetails partyAuditDetails = AuditDetails.builder()
+                        .createdTime(rs.getLong("createdtime"))
+                        .createdBy(rs.getString("createdby"))
+                        .lastModifiedBy(rs.getString("lastmodifiedby"))
+                        .lastModifiedTime(rs.getLong("lastmodifiedtime"))
+                        .build();
 
-            AuditDetails advocateAuditDetails = AuditDetails.builder().createdTime(rs.getLong("createdTime"))
+                party = Party.builder()
+                        .id(partyId)
+                        .departmentName(rs.getString("department_name"))
+                        .firstName(rs.getString("first_name"))
+                        .lastName(rs.getString("last_name"))
+                        .gender(rs.getString("gender"))
+                        .petitionerType(rs.getString("petitioner_type"))
+                        .partyType(rs.getString("party_type"))
+                        .address(rs.getString("address"))
+                        .contactNumber(rs.getString("contact_number"))
+                        .caseId(rs.getString("case_id"))
+                        .status(Status.valueOf(rs.getString("status")))
+                        .auditDetails(partyAuditDetails)
+                        .advocate(new ArrayList<>())
+                        .build();
+
+                partyMap.put(partyId, party);
+                parties.add(party);
+            }
+
+            // Create advocateAuditDetails and advocate object for current row
+            AuditDetails advocateAuditDetails = AuditDetails.builder()
+                    .createdTime(rs.getLong("createdTime"))
                     .createdBy(rs.getString("createdBy"))
                     .lastModifiedBy(rs.getString("lastModifiedBy"))
-                    .lastModifiedTime(rs.getLong("lastModifiedTime")).build();
+                    .lastModifiedTime(rs.getLong("lastModifiedTime"))
+                    .build();
 
-            Advocate advocate = new Advocate();
-            advocate = Advocate.builder().id(rs.getString("adv_id")).contactNumber(rs.getString("adv_contact_number"))
-                    .firstName(rs.getString("adv_first_name")).lastName(rs.getString("adv_last_name"))
+            Advocate advocate = Advocate.builder()
+                    .id(rs.getString("adv_id"))
+                    .contactNumber(rs.getString("adv_contact_number"))
+                    .firstName(rs.getString("adv_first_name"))
+                    .lastName(rs.getString("adv_last_name"))
                     .status(Status.valueOf(rs.getString("adv_status")))
-                    .auditDetails(advocateAuditDetails).build();
+                    .auditDetails(advocateAuditDetails)
+                    .build();
 
-            Party party = Party.builder().id(rs.getString("id")).departmentName(rs.getString("department_name")).firstName(rs.getString("first_name"))
-                    .lastName(rs.getString("last_name")).gender(rs.getString("gender")).petitionerType(rs.getString("petitioner_type"))
-                    .partyType(rs.getString("party_type")).address(rs.getString("address")).contactNumber(rs.getString("contact_number"))
-                    .caseId(rs.getString("case_id")).status(Status.valueOf(rs.getString("status"))).auditDetails(partyAuditDetails)
-                    .advocate(Collections.singletonList(advocate)).build();
-            parties.add(party);
+            // Add advocate to the advocate list of the party
+            party.getAdvocate().add(advocate);
         }
+
         return parties;
+
     }
 }
