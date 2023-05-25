@@ -116,6 +116,14 @@ public class WorkflowService {
         return state.getApplicationStatus();
     }
 
+    public String updateCaseWorkflow(CaseRequest caseRequest, String action) {
+        ProcessInstance processInstance = caseUtils.changeCaseWF(caseRequest, action);
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(processInstance));
+        State state = callWorkFlow(workflowRequest);
+        caseRequest.getCaseObj().setApplicationStatus(state.getApplicationStatus());
+        return state.getApplicationStatus();
+    }
+
 
     private ProcessInstance getProcessInstanceForCase(CaseRequest request) {
 
@@ -152,6 +160,14 @@ public class WorkflowService {
         return state.getApplicationStatus();
     }
 
+    public String updateHearingWorkflow(HearingRequest hearingRequest, String action) {
+        ProcessInstance processInstance = hearingUtils.hearingWFUpdate(hearingRequest, action);
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(hearingRequest.getRequestInfo(), Collections.singletonList(processInstance));
+        State state = callWorkFlow(workflowRequest);
+        hearingRequest.getHearing().setApplicationStatus(state.getApplicationStatus());
+        return state.getApplicationStatus();
+    }
+
 
     private ProcessInstance getProcessInstanceForHearing(HearingRequest request) {
 
@@ -180,6 +196,13 @@ public class WorkflowService {
     //    JUDGEMENT
 
     public String updateJudgementWorkflowStatus(JudgementRequest judgementRequest) {
+        ProcessInstance processInstance = getProcessInstanceForJudgement(judgementRequest);
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(judgementRequest.getRequestInfo(), Collections.singletonList(processInstance));
+        State state = callWorkFlow(workflowRequest);
+        judgementRequest.getJudgement().setApplicationStatus(state.getApplicationStatus());
+        return state.getApplicationStatus();
+    }
+    public String updateJudgementWorkflow(JudgementRequest judgementRequest) {
         ProcessInstance processInstance = getProcessInstanceForJudgement(judgementRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(judgementRequest.getRequestInfo(), Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);

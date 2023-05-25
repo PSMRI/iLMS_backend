@@ -79,14 +79,14 @@ public class CaseService {
             CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
             if (!caseResponse.getCaseList().isEmpty()) {
                 CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCaseList().get(0), caseRequest);
+                updatedCaseRequest.setWorkflow(caseRequest.getWorkflow());
                 Case cases = caseResponse.getCaseList().get(0);
-                caseValidator.validateUpdate(cases, caseRequest);
-                producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+                caseValidator.validateUpdate(cases, updatedCaseRequest);
                 //                todo : notification has send to all the officers who has worked on this case.
-                if (Objects.nonNull(caseRequest.getWorkflow())) {
+                if (Objects.nonNull(updatedCaseRequest.getWorkflow())) {
                     if (legalConfiguration.getIsWorkflowEnabled()) {
-                        caseRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateCaseWfName());
-                        workflowService.updateCaseWorkflowStatus(caseRequest);
+                        updatedCaseRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateCaseWfName());
+                        workflowService.updateCaseWorkflowStatus(updatedCaseRequest);
                     }
                     String caseId = caseRequest.getCaseObj().getId();
                     hearingSearchCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(caseId)).build();
@@ -98,25 +98,16 @@ public class CaseService {
                         workflow.setAssignes(caseRequest.getWorkflow().getAssignes());
                         request.setWorkflow(workflow);
                         if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
-                            action = "ASSIGNED_TO_RO";
-                            ProcessInstance workflowReq = hearingUtils.hearingWFUpdate(request, action);
-                            ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(workflowReq));
-                            workflowService.callWorkFlow(workflowRequest);
+                            workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_RO");
                         }
                         if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
-                            action = "DEACTIVATE";
-                            ProcessInstance workflowReq = hearingUtils.hearingWFUpdate(request, action);
-                            ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(workflowReq));
-                            workflowService.callWorkFlow(workflowRequest);
+                            workflowService.updateHearingWorkflow(request, "DEACTIVATE");
                         }
 
                         for (Document document : caseRequest.getCaseObj().getDocuments()) {
                             if (document.getDocumentType() != null) {
                                 if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getWorkflow().getAction().equalsIgnoreCase("SUBMIT_COUNTER_AFFIDAVIT")) {
-                                    action = "ASSIGNED_TO_APPOINTED_OIC";
-                                    ProcessInstance workflowReq = hearingUtils.hearingWFUpdate(request, action);
-                                    ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(workflowReq));
-                                    workflowService.callWorkFlow(workflowRequest);
+                                    workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_APPOINTED_OIC");
                                 }
                             }
                         }
@@ -124,6 +115,7 @@ public class CaseService {
                     notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                 }
                 caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
+                producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
             } else {
                 throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
             }

@@ -134,7 +134,8 @@ public class HearingService {
         String action = "";
         if (hearingDetailsRequest.getHearing().getId() != null) {
             CaseRequest caseRequest = new CaseRequest();
-            HearingSearchCriteria criteria = HearingSearchCriteria.builder().id((hearingDetailsRequest.getHearing().getCaseId())).build();
+            HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId(
+                    Collections.singletonList((hearingDetailsRequest.getHearing().getCaseId()))).build();
             HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
             HearingRequest updatedRequest = new HearingRequest();
             HearingRequest request = new HearingRequest();
@@ -145,31 +146,23 @@ public class HearingService {
                     request.setHearing(oldHearing);
                     if (oldHearing.getId().equals(hearingDetailsRequest.getHearing().getId())) {
                         updatedRequest = hearingUtils.prepareHearingDetailsModalForUpdate(hearingDetailsRequest, oldHearing);
+                        updatedRequest.setWorkflow(hearingDetailsRequest.getWorkflow());
                         hearingDetailsValidator.updateValidator(updatedRequest.getHearing(), hearingDetailsRequest);
-                        if (Objects.nonNull(hearingDetailsRequest.getWorkflow())) {
+                        if (Objects.nonNull(updatedRequest.getWorkflow())) {
                             if (legalConfiguration.getIsWorkflowEnabled()) {
                                 hearingDetailsResponse.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
-                                workflowService.updateHearingWorkflowStatus(hearingDetailsRequest);
+                                workflowService.updateHearingWorkflowStatus(updatedRequest);
                             }
                         }
                     }
-                    if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase("ASSIGNED_TO_RO") && oldHearing.getApplicationStatus().equalsIgnoreCase("PENDING_AT_DEC_FOR_NEXT_HEARING")) {
-                        action = "REVIEW_TO_RO";
-                        ProcessInstance workflowReq = hearingUtils.hearingWFUpdate(request, action);
-                        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(workflowReq));
-                        workflowService.callWorkFlow(workflowRequest);
+                    if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase("ASSIGNED_TO_RO") && oldHearing.getApplicationStatus().equalsIgnoreCase("Pending At DEC for next hearing")) {
+                        workflowService.updateHearingWorkflow(request, "REVIEW_TO_RO");
                     }
-                    if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase("ASSIGNED_TO_APPOINTED_OIC") && oldHearing.getApplicationStatus().equalsIgnoreCase("NEXT_HEARING_REVIEW_AT_RO")) {
-                        action = "Approved";
-                        ProcessInstance workflowReq = hearingUtils.hearingWFUpdate(request, action);
-                        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(workflowReq));
-                        workflowService.callWorkFlow(workflowRequest);
+                    if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase("ASSIGNED_TO_APPOINTED_OIC") && oldHearing.getApplicationStatus().equalsIgnoreCase("Pending at RO for Next Hearing Review")) {
+                        workflowService.updateHearingWorkflow(request, "Approved");
                     }
-                    if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase("REVIEW_AND_ASSIGN_BACK_TO_DEC") && oldHearing.getApplicationStatus().equalsIgnoreCase("NEXT_HEARING_REVIEW_AT_RO")) {
-                        action = "Reject";
-                        ProcessInstance workflowReq = hearingUtils.hearingWFUpdate(request, action);
-                        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(request.getRequestInfo(), Collections.singletonList(workflowReq));
-                        workflowService.callWorkFlow(workflowRequest);
+                    if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase("REVIEW_AND_ASSIGN_BACK_TO_DEC") && oldHearing.getApplicationStatus().equalsIgnoreCase("Pending at RO for Next Hearing Review")) {
+                        workflowService.updateHearingWorkflow(request, "Reject");
                     }
                 }
                 String caseId = hearingDetailsRequest.getHearing().getCaseId();
@@ -181,15 +174,9 @@ public class HearingService {
                 workflow.setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
                 request.setWorkflow(workflow);
                 if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase("Approved") && !hearingDetailsRequest.getHearing().getHearingType().equalsIgnoreCase("Final_Hearing")) {
-                    action = "SUBMIT_SUPPLEMENTARY_AFFIDAVIT";
-                    ProcessInstance workflowReq = caseUtils.changeCaseWF(caseRequest, action);
-                    ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(workflowReq));
-                    workflowService.callWorkFlow(workflowRequest);
+                    workflowService.updateCaseWorkflow(caseRequest, "SUBMIT_SUPPLEMENTARY_AFFIDAVIT");
                 } else if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase("Approved") && hearingDetailsRequest.getHearing().getHearingType().equalsIgnoreCase("Final_Hearing")) {
-                    action = "PROCEED_WITH_JUDGEMENT";
-                    ProcessInstance workflowReq = caseUtils.changeCaseWF(caseRequest, action);
-                    ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(workflowReq));
-                    workflowService.callWorkFlow(workflowRequest);
+                    workflowService.updateCaseWorkflow(caseRequest, "PROCEED_WITH_JUDGEMENT");
                 }
                 producer.push(legalConfiguration.getUpdateHearingTopic(), updatedRequest);
             } else {
