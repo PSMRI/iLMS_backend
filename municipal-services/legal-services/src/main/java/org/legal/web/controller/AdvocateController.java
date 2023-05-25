@@ -48,7 +48,7 @@ public class AdvocateController {
         criteria.setContactNumber(advocateRequest.getAdvocate().getContactNumber());
         AdvocateResponse advocateResponse = advocateRepository.getAdvocateDetails(criteria);
         List<Advocate> advocateList = new ArrayList<Advocate>();
-        if (advocateResponse != null) {
+        if (!advocateResponse.getAdvocate().isEmpty()) {
             advocateList = advocateResponse.getAdvocate();
         } else {
             Advocate savedAdvocate = advocateService.create(advocateRequest);
