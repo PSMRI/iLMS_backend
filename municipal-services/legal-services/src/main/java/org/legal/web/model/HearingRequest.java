@@ -19,7 +19,6 @@ public class HearingRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo RequestInfo;
 
-    @Valid
     @JsonProperty("hearing")
     private Hearing hearing;
 
