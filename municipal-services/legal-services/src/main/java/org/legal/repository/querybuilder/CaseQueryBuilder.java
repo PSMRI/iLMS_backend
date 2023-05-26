@@ -93,7 +93,7 @@ public class CaseQueryBuilder {
     /**
      * @param query            prepared Query
      * @param preparedStmtList values to be replased on the query
-     * @param criteria         ilms case search criteria
+     * @param criteria         legal case search criteria
      * @return the query by replacing the placeholders with preparedStmtList
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, CaseSearchCriteria criteria) {

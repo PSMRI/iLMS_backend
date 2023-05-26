@@ -56,10 +56,10 @@ public class LEGALConfiguration {
     private String createJudgementWfName;
 
     @Value("${legal.legacy.entry.workflow.name}")
-    private String legacyIlmsWfName;
+    private String legacyLegalWfName;
 
     @Value("${legal.update.workflow.name}")
-    private String updateIlmsWfName;
+    private String updateLegalWfName;
 
     @Value("${is.mutation.workflow.enabled}")
     private Boolean isMutationWorkflowEnabled;

@@ -336,7 +336,7 @@ public class CaseUtils {
                     }
                     // new entries for absent advocates in the bridge table will be created with active status
                     else {
-                        PartyAdv partyAdv1 = caseEnrichmentService.createNewPartyAdvocateId(caseRequest.getRequestInfo(), tenantId, advocate.getId(),
+                        PartyAdv partyAdv1 = caseEnrichmentService.createNewPartyAdvocateId(caseRequest.getRequestInfo(), advocate.getId(),
                                 caseRequest.getCaseObj().getId(), party.getId(), party.getPartyType());
                         partyAdvList1.add(partyAdv1);
                     }
