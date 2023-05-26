@@ -19,9 +19,12 @@ import org.legal.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Transactional
+@Slf4j
 @Service
 public class JudgementService {
     @Autowired
@@ -52,6 +55,9 @@ public class JudgementService {
     private CaseUtils caseUtils;
 
     public JudgementRequest create(JudgementRequest judgementRequest) {
+        try {
+
+
         HearingResponse hearingResponse = null;
         HearingSearchCriteria criteria = HearingSearchCriteria.builder()
                 .caseId(Collections.singletonList(judgementRequest.getJudgement().getCaseId())).build();
@@ -76,75 +82,92 @@ public class JudgementService {
             throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement" );
         }
         return judgementRequest;
+    }catch(Exception e){
+            log.error(LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG,e.getMessage());
+            throw new CustomException(LegalErrorConstants.JUDGEMENT_CREATE_FAILED, LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG);
+        }
     }
+
 
     public JudgementResponse JudgementSearch(JudgementSearchCriteria criteria, RequestInfo requestInfo) {
-        List<Judgement> judgements = new LinkedList<>();
-        JudgementResponse judgementResponse = null;
-        judgementResponse = judgementRepository.getJudgementData(criteria);
-        judgements = judgementResponse.getJudgementList();
-        if (!judgements.isEmpty()) {
-            judgementEnrichmentService.enrichJudgementSearch();
-        } else {
-            throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
-        }
-        return judgementResponse;
-    }
+        try {
 
-    public JudgementRequest updateJudgement(JudgementRequest judgementRequest) {
-        String action = "";
-        CaseRequest caseRequest = new CaseRequest();
-        if (judgementRequest.getJudgement().getId() != null) {
-            JudgementSearchCriteria criteria = JudgementSearchCriteria.builder()
-                    .id(Collections.singletonList(judgementRequest.getJudgement().getId())).build();
-            JudgementResponse judgementResponse = judgementRepository.getJudgementData(criteria);
-            if (!judgementResponse.getJudgementList().isEmpty()) {
-                List<Judgement> judgements = judgementResponse.getJudgementList();
-                Judgement oldJudgement = judgements.get(0);
-                JudgementRequest finalRequest = judgementRepository.getMappedData(judgementRequest, oldJudgement);
-                judgementValidator.updateValidator(finalRequest.getJudgement(), judgementRequest);
-
-                String caseId = judgementRequest.getJudgement().getCaseId();
-                CaseSearchCriteria caseCriteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
-                CaseResponse caseResponse = caseRepository.getLegalCaseData(caseCriteria);
-                caseRequest.setRequestInfo(judgementRequest.getRequestInfo());
-                caseRequest.setCaseObj(caseResponse.getCaseList().get(0));
-
-                if (Objects.nonNull(judgementRequest.getWorkflow())) {
-                    if (legalConfiguration.getIsWorkflowEnabled()) {
-                        judgementRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateJudgementWfName());
-                        workflowService.updateJudgementWorkflowStatus(judgementRequest);
-                    }
-                }
-                Workflow workflow = new Workflow();
-                workflow.setAssignes(judgementRequest.getWorkflow().getAssignes());
-                caseRequest.setWorkflow(workflow);
-                CaseRequest caseAppStatus = new CaseRequest();
-                Case caseApp = new Case();
-                caseAppStatus.setCaseObj(caseApp);
-                if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_APPEALED_REVIEW")) {
-                    String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, "REVIEW_JUDGEMENT");
-                    caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
-                    caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
-                    caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
-                    caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                    producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
-                }
-                if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_COMPLETED")) {
-                    String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, "COMPLY_JUDGEMENT");
-                    caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
-                    caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
-                    caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
-                    caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                    producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
-                }
-                producer.push(legalConfiguration.getUpdateJudgementTopic(), finalRequest);
+            List<Judgement> judgements = new LinkedList<>();
+            JudgementResponse judgementResponse = null;
+            judgementResponse = judgementRepository.getJudgementData(criteria);
+            judgements = judgementResponse.getJudgementList();
+            if (!judgements.isEmpty()) {
+                judgementEnrichmentService.enrichJudgementSearch();
             } else {
                 throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
             }
-        } else {
-            throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
+            return judgementResponse;
+        }catch(Exception e){
+            log.error(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG,e.getMessage());
+            throw new CustomException(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED, LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG);
         }
-        return judgementRequest;
+    }
+
+    public JudgementRequest updateJudgement(JudgementRequest judgementRequest) {
+        try {
+
+            String action = "";
+            CaseRequest caseRequest = new CaseRequest();
+            if (judgementRequest.getJudgement().getId() != null) {
+                JudgementSearchCriteria criteria = JudgementSearchCriteria.builder().id(Collections.singletonList(judgementRequest.getJudgement().getId()))
+                                                                          .build();
+                JudgementResponse judgementResponse = judgementRepository.getJudgementData(criteria);
+                if (!judgementResponse.getJudgementList().isEmpty()) {
+                    List<Judgement> judgements = judgementResponse.getJudgementList();
+                    Judgement oldJudgement = judgements.get(0);
+                    JudgementRequest finalRequest = judgementRepository.getMappedData(judgementRequest, oldJudgement);
+                    judgementValidator.updateValidator(finalRequest.getJudgement(), judgementRequest);
+
+                    String caseId = judgementRequest.getJudgement().getCaseId();
+                    CaseSearchCriteria caseCriteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
+                    CaseResponse caseResponse = caseRepository.getLegalCaseData(caseCriteria);
+                    caseRequest.setRequestInfo(judgementRequest.getRequestInfo());
+                    caseRequest.setCaseObj(caseResponse.getCaseList().get(0));
+
+                    if (Objects.nonNull(judgementRequest.getWorkflow())) {
+                        if (legalConfiguration.getIsWorkflowEnabled()) {
+                            judgementRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateJudgementWfName());
+                            workflowService.updateJudgementWorkflowStatus(judgementRequest);
+                        }
+                    }
+                    Workflow workflow = new Workflow();
+                    workflow.setAssignes(judgementRequest.getWorkflow().getAssignes());
+                    caseRequest.setWorkflow(workflow);
+                    CaseRequest caseAppStatus = new CaseRequest();
+                    Case caseApp = new Case();
+                    caseAppStatus.setCaseObj(caseApp);
+                    if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_APPEALED_REVIEW")) {
+                        String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, "REVIEW_JUDGEMENT");
+                        caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
+                        caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
+                        caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
+                        caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                        producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
+                    }
+                    if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase("JUDGEMENT_COMPLETED")) {
+                        String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, "COMPLY_JUDGEMENT");
+                        caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
+                        caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
+                        caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
+                        caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                        producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
+                    }
+                    producer.push(legalConfiguration.getUpdateJudgementTopic(), finalRequest);
+                } else {
+                    throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
+                }
+            } else {
+                throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
+            }
+            return judgementRequest;
+        }catch(Exception e){
+            log.error(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG,e.getMessage());
+            throw new CustomException(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED, LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG);
+        }
     }
 }

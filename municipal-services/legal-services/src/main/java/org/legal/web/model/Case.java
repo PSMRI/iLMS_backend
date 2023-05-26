@@ -24,10 +24,11 @@ public class Case {
     @JsonProperty("tenantId")
     private String tenantId;
 
+    @NotNull(message = "caseNumber is mandatory")
     @JsonProperty("caseNumber")
     private String caseNumber;
 
-    @NotNull
+    @NotNull(message = "cnrNumber is mandatory")
     @JsonProperty("cnrNumber")
     private String cnrNumber;
 
@@ -37,19 +38,19 @@ public class Case {
     @JsonProperty("linkedCases")
     private JsonNode linkedCases;
 
-    @NotNull
+    @NotNull(message = "type is mandatory")
     @JsonProperty("type")
     private String type;
 
-    @NotNull
+    @NotNull(message = "category is mandatory")
     @JsonProperty("category")
     private String category;
 
-    @NotNull
+    @NotNull(message = "filingNumber is mandatory")
     @JsonProperty("filingNumber")
     private String filingNumber;
 
-    @NotNull
+    @NotNull(message = "filingDate is mandatory")
     @JsonProperty("filingDate")
     private Long filingDate;
 

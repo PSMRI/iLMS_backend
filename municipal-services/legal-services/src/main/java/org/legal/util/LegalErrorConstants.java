@@ -28,7 +28,24 @@ public class LegalErrorConstants {
     public static final String ADVOCATE_NOT_AVAILABLE = "ADVOCATE_NOT_AVAILABLE";
 
     public static final String JUDGEMENT_NOT_AVAILABLE = "JUDGEMENT_NOT_AVAILABLE";
-
+    public static final String CASE_CREATE_FAILED_MSG = "error while create the case";
+    public static final String CASE_CREATE_FAILED = "CASE_CREATE_FAILED";
+    public static final String CASE_UPDATE_FAILED = "CASE_UPDATE_FAILED";
+    public static final String CASE_UPDATE_FAILED_MSG = "error while update the case";
+    public static final String CASE_SEARCH_FAILED = "CASE_SEARCH_FAILED";
+    public static final String CASE_SEARCH_FAILED_MSG = "error while search the case";
+    public static final String HEARING_CREATE_FAILED = "HEARING_CREATE_FAILED";
+    public static final String HEARING_CREATE_FAILED_MSG = "error while create hearing";
+    public static final String HEARING_UPDATE_FAILED = "HEARING_UPDATE_FAILED";
+    public static final String HEARING_UPDATE_FAILED_MSG = "error while update hearing";
+    public static final String HEARING_SEARCH_FAILED = "HEARING_SEARCH_FAILED";
+    public static final String HEARING_SEARCH_FAILED_MSG = "error while search hearing";
+    public static final String JUDGEMENT_CREATE_FAILED = "JUDGEMENT_CREATE_FAILED";
+    public static final String JUDGEMENT_CREATE_FAILED_MSG = "error while create judgement";
+    public static final String JUDGEMENT_UPDATE_FAILED = "JUDGEMENT_UPDATE_FAILED";
+    public static final String JUDGEMENT_UPDATE_FAILED_MSG = "error while update Judgement";
+    public static final String JUDGEMENT_SEARCH_FAILED = "JUDGEMENT_SEARCH_FAILED";
+    public static final String JUDGEMENT_SEARCH_FAILED_MSG= "error while search judgement";
     public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
 
     public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenentID";

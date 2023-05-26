@@ -254,6 +254,10 @@ serviceMaps:
 
             - jsonPath: $.hearing.status
 
+            - jsonPath: $.hearing.respondentAdvocate.id
+
+            - jsonPath: $.hearing.petitionerAdvocate.id
+
             - jsonPath: $.hearing.auditDetails.createdBy
 
             - jsonPath: $.hearing.auditDetails.createdTime
