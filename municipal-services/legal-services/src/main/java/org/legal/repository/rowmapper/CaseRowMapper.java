@@ -44,7 +44,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
         while (rs.next()) {
             String duplicacyCheck = "";
             Case currentCase = new Case();
-            // TODO fill the ILMSCase object with data in the result set record
+            // TODO fill the LegalCase object with data in the result set record
             if (!duplicacyCheck.equals(rs.getString("legalCase_id"))) {
                 String id = rs.getString("legalCase_id");
                 duplicacyCheck = id;
@@ -58,14 +58,12 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                 String caseNumber = rs.getString("legal_caseNumber");
                 String filingNumber = rs.getString("legal_filingNumber");
                 Long filingDate = rs.getLong("legal_filingDate");
-                // Long registrationDate = rs.getLong("ilms_registrationDate");
                 String caseSummary = rs.getString("legal_caseSummary");
                 String arisingDetails = rs.getString("legal_arisingDetails");
                 String matter = rs.getString("legal_matter");
                 this.setFullCount((rs.getInt("full_count")));
                 String caseStatus = rs.getString("legal_caseStatus");
                 String applicationStatus = rs.getString("legal_applicationStatus");
-//                String caseSubStage = rs.getString("ilms_caseSubStage");
                 String priority = rs.getString("legal_priority");
                 String recommendOic = rs.getString("legal_recommendOic");
                 String remarks = rs.getString("legal_remarks");
@@ -98,15 +96,6 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
     @SuppressWarnings("unused")
     private void addChildrenToProperty(ResultSet rs, Case aCase) throws SQLException {
         // TODO add all the child data petitioner, respondant, act, advocate
-//        if (Status.valueOf(rs.getString("actStatus")) == Status.ACTIVE) {
-//            AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("act_createdBy")).createdTime(rs.getLong("act_createdTime"))
-//                    .lastModifiedBy(rs.getString("act_lastModifiedBy"))
-//                    .lastModifiedTime(rs.getLong("act_lastModifiedTime")).build();
-//
-//            Act act = Act.builder().id(rs.getString("actId")).actName(rs.getString("actName")).status(Status.valueOf(rs.getString("actStatus")))
-//                    .sectionNumber(rs.getString("actSectionNumber")).caseId(rs.getString("actCaseId")).auditDetails(auditDetails).build();
-//            aCase.setAct(act);
-//        }
         if (Status.valueOf(rs.getString("court_status")) == Status.ACTIVE) {
             AuditDetails auditDetails = AuditDetails.builder().createdTime(rs.getLong("court_createdtime")).createdBy(rs.getString("court_createdby"))
                     .lastModifiedBy(rs.getString("court_lastmodifiedby"))

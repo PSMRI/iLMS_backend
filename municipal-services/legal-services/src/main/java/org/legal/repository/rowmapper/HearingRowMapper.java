@@ -52,7 +52,7 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                     .lastModifiedBy(rs.getString("hearing_lastmodifiedby"))
                     .lastModifiedTime(rs.getLong("hearing_lastmodifiedtime")).build();
 
-            // TODO fill the ILMSCase object with data in the result set record
+            // TODO fill the LegalCase object with data in the result set record
             if (!duplicacyCheck.equals(rs.getString("hearing_id"))) {
                 String id = rs.getString("hearing_id");
                 String tenantId = rs.getString("tenant_id");
