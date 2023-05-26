@@ -91,50 +91,54 @@ public class CaseService {
                     String caseId = caseRequest.getCaseObj().getId();
                     hearingSearchCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(caseId)).build();
                     HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
-                    request.setRequestInfo(caseRequest.getRequestInfo());
-                    HearingRequest hearingAppStatus = new HearingRequest();
-                    Hearing hearingApp = new Hearing();
-                    hearingAppStatus.setHearing(hearingApp);
-                    for (Hearing hearing : hearingResponse.getHearingList()) {
-                        request.setHearing(hearing);
-                        Workflow workflow = new Workflow();
-                        workflow.setAssignes(caseRequest.getWorkflow().getAssignes());
-                        request.setWorkflow(workflow);
-                        if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
-                            String applicationStatus = workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_RO");
-                            hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
-                            hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
-                            hearingAppStatus.getHearing().setId(request.getHearing().getId());
-                            hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                            producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
-                        }
-                        if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
-                            String applicationStatus = workflowService.updateHearingWorkflow(request, "DEACTIVATE");
-                            hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
-                            hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
-                            hearingAppStatus.getHearing().setId(request.getHearing().getId());
-                            hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                            producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
+                    if (!hearingResponse.getHearingList().isEmpty()) {
+                        request.setRequestInfo(caseRequest.getRequestInfo());
+                        HearingRequest hearingAppStatus = new HearingRequest();
+                        Hearing hearingApp = new Hearing();
+                        hearingAppStatus.setHearing(hearingApp);
+                        for (Hearing hearing : hearingResponse.getHearingList()) {
+                            request.setHearing(hearing);
+                            Workflow workflow = new Workflow();
+                            workflow.setAssignes(caseRequest.getWorkflow().getAssignes());
+                            request.setWorkflow(workflow);
+                            if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
+                                String applicationStatus = workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_RO");
+                                hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
+                                hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
+                                hearingAppStatus.getHearing().setId(request.getHearing().getId());
+                                hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                                producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
+                            }
+                            if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
+                                String applicationStatus = workflowService.updateHearingWorkflow(request, "DEACTIVATE");
+                                hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
+                                hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
+                                hearingAppStatus.getHearing().setId(request.getHearing().getId());
+                                hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                                producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
 
-                        }
+                            }
 
-                        for (Document document : caseRequest.getCaseObj().getDocuments()) {
-                            if (document.getDocumentType() != null) {
-                                if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getWorkflow().getAction().equalsIgnoreCase("SUBMIT_COUNTER_AFFIDAVIT")) {
-                                    String applicationStatus = workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_APPOINTED_OIC");
-                                    hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
-                                    hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
-                                    hearingAppStatus.getHearing().setId(request.getHearing().getId());
-                                    hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                                    producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
+                            for (Document document : caseRequest.getCaseObj().getDocuments()) {
+                                if (document.getDocumentType() != null) {
+                                    if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getWorkflow().getAction()
+                                                                                                                                 .equalsIgnoreCase(
+                                                                                                                                         "SUBMIT_COUNTER_AFFIDAVIT")) {
+                                        String applicationStatus = workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_APPOINTED_OIC");
+                                        hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
+                                        hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
+                                        hearingAppStatus.getHearing().setId(request.getHearing().getId());
+                                        hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                                        producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
+                                    }
                                 }
                             }
                         }
+                        notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
-                    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
+                    caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
+                    producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
                 }
-                caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
-                producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
             } else {
                 throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
             }
@@ -150,6 +154,7 @@ public class CaseService {
         criteria.setUuid(requestInfo.getUserInfo().getUuid());
         List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
         caseResponse = caseRepository.getLegalCaseData(criteria);
+
         CaseResponse finalResult = new CaseResponse();
         String userRole = requestInfo.getUserInfo().getRoles().get(0).getCode();
         Integer total = null;

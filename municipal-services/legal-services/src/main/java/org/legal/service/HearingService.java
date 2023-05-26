@@ -121,13 +121,14 @@ public class HearingService {
             HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId(
                     Collections.singletonList((hearingDetailsRequest.getHearing().getCaseId()))).build();
             HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
+            if (!hearingDetailsResponse.getHearingList().isEmpty()){
             HearingRequest updatedRequest = new HearingRequest();
             HearingRequest request = new HearingRequest();
             request.setRequestInfo(hearingDetailsRequest.getRequestInfo());
             HearingRequest hearingAppStatus = new HearingRequest();
             Hearing hearingApp = new Hearing();
             hearingAppStatus.setHearing(hearingApp);
-            if (!hearingDetailsResponse.getHearingList().isEmpty()) {
+
                 List<Hearing> hearingList = hearingDetailsResponse.getHearingList();
                 for (Hearing oldHearing : hearingList) {
                     request.setHearing(oldHearing);
