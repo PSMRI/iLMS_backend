@@ -156,8 +156,12 @@ public class CaseService {
                 throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "id is mandatory");
             }
             return caseRequest;
-        }catch(Exception e){
-            log.error(LegalErrorConstants.CASE_UPDATE_FAILED_MSG,e.getMessage());
+
+        }catch (CustomException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            log.error(LegalErrorConstants.CASE_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_UPDATE_FAILED, LegalErrorConstants.CASE_UPDATE_FAILED_MSG);
         }
     }
@@ -170,7 +174,6 @@ public class CaseService {
             criteria.setUuid(requestInfo.getUserInfo().getUuid());
             List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
             caseResponse = caseRepository.getLegalCaseData(criteria);
-
             CaseResponse finalResult = new CaseResponse();
             String userRole = requestInfo.getUserInfo().getRoles().get(0).getCode();
             Integer total = null;
@@ -179,7 +182,7 @@ public class CaseService {
             Integer oica = null;
             Integer ao = null;
             Integer oic = null;
-
+            if (!caseResponse.getCaseList().isEmpty()) {
             OfficersCount officersCount = new OfficersCount();
             CaseSearchCriteria criteria1 = new CaseSearchCriteria();
             criteria1.setUuid(criteria.getUuid());
@@ -227,7 +230,6 @@ public class CaseService {
             List<Judgement> judgementList = new ArrayList<>();
             HearingResponse hearingResponse = null;
             JudgementResponse judgementResponse = null;
-            if (!caseResponse.getCaseList().isEmpty()) {
                 HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(
                         caseResponse.getCaseList().get(0).getId())).build();
                 hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
@@ -256,10 +258,16 @@ public class CaseService {
                 finalResult.setOfficersCount(officersCount);
                 finalResult.setHearingList(hearingList);
                 finalResult.setJudgementList(judgementList);
+            }else {
+                throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, LegalErrorConstants.CASE_NOT_AVAILABLE);
             }
             return finalResult;
-        }catch(Exception e){
-            log.error(LegalErrorConstants.CASE_SEARCH_FAILED_MSG,e.getMessage());
+
+        }catch (CustomException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            log.error(LegalErrorConstants.CASE_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, LegalErrorConstants.CASE_SEARCH_FAILED_MSG);
         }
     }
@@ -337,8 +345,11 @@ public class CaseService {
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
             return caseRequest;
-        }catch(Exception e){
-            log.error(LegalErrorConstants.CASE_CREATE_FAILED_MSG,e.getMessage());
+        }catch (CustomException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            log.error(LegalErrorConstants.CASE_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_CREATE_FAILED, LegalErrorConstants.CASE_CREATE_FAILED_MSG);
         }
     }

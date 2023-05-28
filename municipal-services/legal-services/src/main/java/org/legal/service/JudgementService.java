@@ -81,9 +81,13 @@ public class JudgementService {
         } else {
             throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement" );
         }
-        return judgementRequest;
-    }catch(Exception e){
-            log.error(LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG,e.getMessage());
+            return judgementRequest;
+
+        }catch (CustomException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            log.error(LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_CREATE_FAILED, LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG);
         }
     }
@@ -102,8 +106,11 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
             }
             return judgementResponse;
-        }catch(Exception e){
-            log.error(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG,e.getMessage());
+        }catch (CustomException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            log.error(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED, LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG);
         }
     }
@@ -165,8 +172,10 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
             }
             return judgementRequest;
-        }catch(Exception e){
-            log.error(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG,e.getMessage());
+        }catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED, LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG);
         }
     }

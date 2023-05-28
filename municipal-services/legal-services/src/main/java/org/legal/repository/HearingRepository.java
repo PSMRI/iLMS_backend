@@ -5,6 +5,8 @@ import org.legal.repository.querybuilder.CaseQueryBuilder;
 import org.legal.repository.querybuilder.HearingQueryBuilder;
 import org.legal.repository.rowmapper.HearingRowMapper;
 import org.legal.repository.rowmapper.PartyRowMapper;
+import org.legal.web.model.Advocate;
+import org.legal.web.model.Case;
 import org.legal.web.model.Hearing;
 import org.legal.web.model.HearingResponse;
 import org.legal.web.model.HearingSearchCriteria;
@@ -38,10 +40,21 @@ public class HearingRepository {
     @Autowired
     private CaseRepository caseRepository;
 
+    @Autowired
+    private AdvocateRepository advocateRepository;
+
     public HearingResponse getHearingDetails(HearingSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = hearingQueryBuilder.getHearingSearchQuery(criteria, preparedStmtList);
         List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
+        for (Hearing singleHearing : hearingDetails) {
+          List<Advocate> respondentAdvocateList=  caseRepository.getAdvocateById(singleHearing.getRespondentAdvocate().getId());
+          Advocate advocate=respondentAdvocateList.get(0);
+            singleHearing.setRespondentAdvocate(advocate);
+            List<Advocate> petitionerAdvocateList=  caseRepository.getAdvocateById(singleHearing.getPetitionerAdvocate().getId());
+            Advocate petAdvocate=petitionerAdvocateList.get(0);
+            singleHearing.setPetitionerAdvocate(petAdvocate);
+        }
         HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount())
                 .build();
         return hearingResponse;

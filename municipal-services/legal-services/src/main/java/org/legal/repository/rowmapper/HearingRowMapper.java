@@ -3,6 +3,7 @@ package org.legal.repository.rowmapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
+import org.legal.web.model.Advocate;
 import org.legal.web.model.AuditDetails;
 import org.legal.web.model.Hearing;
 import org.legal.web.model.Party;
@@ -58,7 +59,10 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                 String tenantId = rs.getString("tenant_id");
                 duplicacyCheck = id;
                 String hearingNumber = rs.getString("hearing_number");
-
+                String respondentAdvocate=rs.getString("respondent_advocate");
+                Advocate respondentAdvocates=Advocate.builder().id(respondentAdvocate).build();
+                String petitionerAdvocate=rs.getString("petitioner_advocate");
+                Advocate petAdvocates=Advocate.builder().id(petitionerAdvocate).build();
                 currentHearing = legalHearingMap.get(id);
                 String caseId = rs.getString("hearing_case_id");
                 currentHearing = legalHearingMap.get(id);
@@ -90,7 +94,10 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .isPresenceRequired(isPresenceRequired).hearingType(hearingType).departmentOfficer(departmentOfficer)
                             .remarks(remarks).status(Status.valueOf(status)).businessDate(businessDate).hearingPurpose(hearingPurpose)
                             .requiredOfficer(requiredOfficer).auditDetails(auditDetails).applicationStatus(applicationStatus).affidavitFilingDate(affidavitFilingDate)
-                            .affidavitFilingDueDate(affidavitFilingDueDate).caseNumber(caseNumber).oathNumber(oathNumber).build();
+                            .affidavitFilingDueDate(affidavitFilingDueDate)
+                                            .respondentAdvocate(respondentAdvocates)
+                                            .petitionerAdvocate(petAdvocates)
+                                            .caseNumber(caseNumber).oathNumber(oathNumber).build();
 
                     legalHearingMap.put(id, currentHearing);
                 }
