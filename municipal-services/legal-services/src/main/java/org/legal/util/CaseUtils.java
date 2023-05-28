@@ -290,52 +290,45 @@ public class CaseUtils {
     }
 
     public List<PartyAdv> updatePartyAdvocates (CaseRequest caseRequest) {
-        List<PartyAdv> partyAdvList1 = new ArrayList();
+        List<PartyAdv> partyAdvList1 = new ArrayList<>();
         String tenantId = caseRequest.getRequestInfo().getUserInfo().getTenantId();
         caseRequest.getCaseObj().getParties().forEach(party -> {
-            if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER) || party.getPartyType().equals(PartyType.RESPONDENT))) {
-                List<String> advocatesMobileReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());
-                List<Advocate> advocatesReqPresentInDB = advocateRepository.getAdvocates(advocatesMobileReq);
-                List<String> advocatesMobileDB = advocatesReqPresentInDB.stream().map(Advocate::getContactNumber).collect(Collectors.toList());
-                advocatesMobileReq.removeAll(advocatesMobileDB);
-                List<Advocate> advocateListRequestAbsentDB = party.getAdvocate().stream().filter(advocateFilter -> advocatesMobileReq.contains(
-                        advocateFilter.getContactNumber())).collect(Collectors.toList());
-                List<Advocate> allAdvocates = new ArrayList<>();
+            if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER.toString()) || party.getPartyType().equals(PartyType.RESPONDENT.toString()))) {
+                List<String> advocatesIdsReq = party.getAdvocate().stream().map(Advocate::getId).collect(Collectors.toList());
+                List<Advocate> advocatesPresentInDB = advocateRepository.getAdvocatesById(advocatesIdsReq);
                 //create new advocates in the main advocate table whichever is not present
-                advocateListRequestAbsentDB.forEach(advocatesNotInDB -> {
-                    AdvocateRequest advocateRequest = new AdvocateRequest();
-                    advocatesNotInDB.setTenantId(tenantId);
-                    advocateRequest.setAdvocate(advocatesNotInDB);
-                    advocateRequest.setRequestInfo(caseRequest.getRequestInfo());
-                    Advocate responseAdv = advocateService.create(advocateRequest);
-                    allAdvocates.add(responseAdv);
+                party.getAdvocate().forEach(advocatesReq -> {
+                    if(advocatesReq.getId() == null) {
+                        AdvocateRequest advocateRequest = new AdvocateRequest();
+                        advocatesReq.setTenantId(tenantId);
+                        advocateRequest.setAdvocate(advocatesReq);
+                        advocateRequest.setRequestInfo(caseRequest.getRequestInfo());
+                        Advocate responseAdv = advocateService.create(advocateRequest);
+                        advocatesPresentInDB.add(responseAdv);
+                    }
                 });
-                allAdvocates.addAll(advocatesReqPresentInDB);
-                List<String> allAdvocatesIds = allAdvocates.stream().map(Advocate::getId).collect(Collectors.toList());
                 List<PartyAdv> advocatesBridge = advocateRepository.getPartyAdvByCaseIdAndPartyId(party.getId(), caseRequest.getCaseObj().getId());
-                //make all the current advocates for a particular case's party as inactive in the bridge table
+                List advocatesDbIds = advocatesPresentInDB.stream().map(Advocate::getId).collect(Collectors.toList());
                 advocatesBridge.forEach(partyAdv -> {
-                    partyAdv.setStatus(INACTIVE);
-                    partyAdv.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                    PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv).build();
-                    producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
-                });
-
-                List<String> advocatesBridgeIds = advocatesBridge.stream().map(PartyAdv::getAdvocateId).collect(Collectors.toList());
-                allAdvocates.forEach(advocate -> {
                     //all the advocates which are present in the bridge table and have been sent in the request, will be made active
-                    if (advocatesBridgeIds.contains(advocate.getId())) {
-                        PartyAdv partyAdv = new PartyAdv();
-                        partyAdv.setCaseId(caseRequest.getCaseObj().getId());
-                        partyAdv.setAdvocateId(advocate.getId());
+                    if (advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(ACTIVE)){
                         partyAdv.setStatus(ACTIVE);
                         partyAdv.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                        partyAdv.setPartyId(party.getId());
                         PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv).build();
                         producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
                     }
-                    // new entries for absent advocates in the bridge table will be created with active status
-                    else {
+                    //the advocates which are absent in the request but present in the bridge table for this particular case and party will be made inactive
+                    else if (!advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(INACTIVE)){
+                        partyAdv.setStatus(INACTIVE);
+                        partyAdv.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                        PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv).build();
+                        producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
+                    }
+                });
+                List<String> advocatesBridgeIds = advocatesBridge.stream().map(PartyAdv::getAdvocateId).collect(Collectors.toList());
+                //all the advocates which are present in the bridge table and have been sent in the request, will be made active
+                advocatesPresentInDB.forEach(advocate -> {
+                    if (!advocatesBridgeIds.contains(advocate.getId())) {
                         PartyAdv partyAdv1 = caseEnrichmentService.createNewPartyAdvocateId(caseRequest.getRequestInfo(), advocate.getId(),
                                 caseRequest.getCaseObj().getId(), party.getId(), party.getPartyType());
                         partyAdvList1.add(partyAdv1);

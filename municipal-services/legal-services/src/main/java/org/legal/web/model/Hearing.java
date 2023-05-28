@@ -26,11 +26,11 @@ public class Hearing {
     @JsonProperty("hearingNumber")
     private String hearingNumber;
 
-    @NotNull(message = "courtRoomNumber is mandatory")
+
     @JsonProperty("courtRoomNumber")
     private String courtRoomNumber;
 
-    @NotNull(message = "bench is mandatory")
+
     @JsonProperty("bench")
     private String bench;
 
@@ -40,11 +40,10 @@ public class Hearing {
     @JsonProperty("judgeName")
     private JsonNode judgeName;
 
-    @NotNull(message = "hearingDate is mandatory")
     @JsonProperty("hearingDate")
     private Long hearingDate;
 
-    @NotNull(message = "businessDate is mandatory")
+
     @JsonProperty("businessDate")
     private Long businessDate;
 
@@ -57,22 +56,20 @@ public class Hearing {
     @JsonProperty("requiredOfficer")
     private String requiredOfficer;
 
-    @NotNull (message = "affidavitFilingDate is mandatory")
+
     @JsonProperty("affidavitFilingDate")
     private Long affidavitFilingDate;
 
-    @NotNull(message = "affidavitFilingDueDate is mandatory")
     @JsonProperty("affidavitFilingDueDate")
     private Long affidavitFilingDueDate;
 
-    @NotNull(message = "caseNumber is mandatory")
+
     @JsonProperty("caseNumber")
     private String caseNumber;
 
     @JsonProperty("oathNumber")
     private String oathNumber;
 
-    @NotNull(message = "nextHearingDate is mandatory")
     @JsonProperty("nextHearingDate")
     private Long nextHearingDate;
 

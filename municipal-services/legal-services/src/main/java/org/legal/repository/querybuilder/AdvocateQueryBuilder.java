@@ -112,11 +112,11 @@ public class AdvocateQueryBuilder {
         return partyAdvQuery;
     }
 
-    public String getAdvocates(List<String> mobileNumbers,List<Object> preparedStmtList) {
+    public String getAdvocatesById(List<String> ids,List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(advocatesQuery);
         addClauseIfRequired(preparedStmtList,builder);
-        builder.append("eg_lg_advocate.contact_number IN (").append(createQuery(mobileNumbers)).append(")");
-        addToPreparedStatement(preparedStmtList,mobileNumbers);
+        builder.append("eg_lg_advocate.id IN (").append(createQuery(ids)).append(")");
+        addToPreparedStatement(preparedStmtList,ids);
         return builder.toString();
     }
 

@@ -17,33 +17,27 @@ public class Judgement {
     @JsonProperty("id")
     private String id;
 
-    @NotNull(message = "tenantId is mandatory")
     @JsonProperty("tenantId")
     private String tenantId;
 
     @JsonProperty("caseId")
     private String caseId;
 
-    @NotNull(message = "orderType is mandatory")
     @JsonProperty("orderType")
     private String orderType;
 
-    @NotNull (message = "orderDate is mandatory")
     @JsonProperty("orderDate")
     private Long orderDate;
 
     @JsonProperty("decisionStatus")
     private String decisionStatus;
 
-    @NotNull (message = "complianceDate is mandatory")
     @JsonProperty("complianceDate")
     private Long complianceDate;
 
-    @NotNull (message = "revisedComplianceDate is mandatory")
     @JsonProperty("revisedComplianceDate")
     private Long revisedComplianceDate;
-
-    @NotNull (message = "orderNoOverride is mandatory")
+    
     @JsonProperty("orderNoOverride")
     private String orderNoOverride;
 

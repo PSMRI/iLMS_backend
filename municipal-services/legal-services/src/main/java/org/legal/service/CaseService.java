@@ -10,6 +10,7 @@ import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.JudgementRepository;
 import org.legal.util.CaseUtils;
+import org.legal.util.Constants;
 import org.legal.util.HearingUtils;
 import org.legal.util.LegalErrorConstants;
 import org.legal.validator.CaseValidator;
@@ -25,7 +26,9 @@ import org.legal.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -131,10 +134,10 @@ public class CaseService {
 
                                 for (Document document : caseRequest.getCaseObj().getDocuments()) {
                                     if (document.getDocumentType() != null) {
-                                        if (document.getDocumentType().equalsIgnoreCase("ILMS_DOCS_COUNTER_AFFIDAVIT") && caseRequest.getWorkflow().getAction()
-                                                                                                                                     .equalsIgnoreCase(
-                                                                                                                                             "SUBMIT_COUNTER_AFFIDAVIT")) {
-                                            String applicationStatus = workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_APPOINTED_OIC");
+                                        if (document.getDocumentType().equalsIgnoreCase(Constants.LEGAL_DOCS_COUNTER_AFFIDAVIT) && caseRequest.getWorkflow().getAction()
+                                                .equalsIgnoreCase(
+                                                        Constants.SUBMIT_COUNTER_AFFIDAVIT)) {
+                                            String applicationStatus = workflowService.updateHearingWorkflow(request, Constants.ASSIGNED_TO_APPOINTED_OIC);
                                             hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
                                             hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
                                             hearingAppStatus.getHearing().setId(request.getHearing().getId());
@@ -156,7 +159,6 @@ public class CaseService {
                 throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "id is mandatory");
             }
             return caseRequest;
-
         }catch (CustomException e) {
             throw e;
         }
@@ -262,7 +264,6 @@ public class CaseService {
                 throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, LegalErrorConstants.CASE_NOT_AVAILABLE);
             }
             return finalResult;
-
         }catch (CustomException e) {
             throw e;
         }
