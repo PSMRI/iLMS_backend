@@ -68,15 +68,9 @@ public class AdvocateRepository {
         return parties;
     }
 
-//    public List<Advocate> getAdvocates(List<String> mobileNumbers){
-//        List<Object> preparedStmtList = new ArrayList<>();
-//        preparedStmtList.add(mobileNumbers);
-//        return jdbcTemplate.query(advocateQueryBuilder.getAdvocates(),preparedStmtList.toArray(),  advocateMapper);
-//
-//    }
-    public List<Advocate> getAdvocates(List<String> mobileNumbers){
+    public List<Advocate> getAdvocatesById(List<String> Ids){
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = advocateQueryBuilder.getAdvocates(mobileNumbers, preparedStmtList);
+        String query = advocateQueryBuilder.getAdvocatesById(Ids, preparedStmtList);
         List<Advocate> advocateDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), advocateMapper);
 
         return advocateDetails;
