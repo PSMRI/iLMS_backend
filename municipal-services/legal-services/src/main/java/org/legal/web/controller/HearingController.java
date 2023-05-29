@@ -41,7 +41,12 @@ public class HearingController {
             hearingList.add(hearing);
             HearingResponse response = HearingResponse.builder().hearingList(hearingList).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(hearingRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
+        }  catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_CREATE_FAILED, LegalErrorConstants.HEARING_CREATE_FAILED_MSG);
@@ -55,7 +60,12 @@ public class HearingController {
             HearingResponse response = hearingService.hearingSearch(criteria, requestInfoWrapper.getRequestInfo());
             response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
             return new ResponseEntity<>(response, HttpStatus.OK);
+        }  catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_SEARCH_FAILED, LegalErrorConstants.HEARING_SEARCH_FAILED_MSG);
@@ -73,7 +83,12 @@ public class HearingController {
             hearingDetailsList.add(hearing);
             HearingResponse response = HearingResponse.builder().hearingList(hearingDetailsList).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(hearingDetailsRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
+        }  catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_UPDATE_FAILED, LegalErrorConstants.HEARING_UPDATE_FAILED_MSG);

@@ -94,9 +94,12 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement");
             }
             return judgementRequest;
-        } catch (CustomException e) {
+        }  catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
             log.error(LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_CREATE_FAILED, LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG);
@@ -117,9 +120,12 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
             }
             return judgementResponse;
-        } catch (CustomException e) {
+        }  catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
             log.error(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED, LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG);
@@ -193,9 +199,12 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
             }
             return judgementRequest;
-        } catch (CustomException e) {
+        }  catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
             log.error(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED, LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG);
