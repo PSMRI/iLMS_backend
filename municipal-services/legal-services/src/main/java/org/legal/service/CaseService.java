@@ -114,16 +114,16 @@ public class CaseService {
                                 Workflow workflow = new Workflow();
                                 workflow.setAssignes(caseRequest.getWorkflow().getAssignes());
                                 request.setWorkflow(workflow);
-                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("FORWARD_TO_RO")) {
-                                    String applicationStatus = workflowService.updateHearingWorkflow(request, "ASSIGNED_TO_RO");
+                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.FORWARD_TO_RO)) {
+                                    String applicationStatus = workflowService.updateHearingWorkflow(request, Constants.ASSIGNED_TO_RO);
                                     hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
                                     hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
                                     hearingAppStatus.getHearing().setId(request.getHearing().getId());
                                     hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
                                     producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
                                 }
-                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase("INACTIVATE")) {
-                                    String applicationStatus = workflowService.updateHearingWorkflow(request, "DEACTIVATE");
+                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE)) {
+                                    String applicationStatus = workflowService.updateHearingWorkflow(request, Constants.DEACTIVATE);
                                     hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
                                     hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
                                     hearingAppStatus.getHearing().setId(request.getHearing().getId());
@@ -159,10 +159,9 @@ public class CaseService {
                 throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "id is mandatory");
             }
             return caseRequest;
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error(LegalErrorConstants.CASE_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_UPDATE_FAILED, LegalErrorConstants.CASE_UPDATE_FAILED_MSG);
         }
@@ -185,53 +184,53 @@ public class CaseService {
             Integer ao = null;
             Integer oic = null;
             if (!caseResponse.getCaseList().isEmpty()) {
-            OfficersCount officersCount = new OfficersCount();
-            CaseSearchCriteria criteria1 = new CaseSearchCriteria();
-            criteria1.setUuid(criteria.getUuid());
-            total = caseRepository.getCaseCount(criteria1);
-            officersCount.setTOTAL(total);
+                OfficersCount officersCount = new OfficersCount();
+                CaseSearchCriteria criteria1 = new CaseSearchCriteria();
+                criteria1.setUuid(criteria.getUuid());
+                total = caseRepository.getCaseCount(criteria1);
+                officersCount.setTOTAL(total);
 
-            if (userRole.equals("DEC")) {
-                dec = caseRepository.getCountOfUser("DEC");
-                officersCount.setDEC(dec);
-            } else if (userRole.equals("RO")) {
-                dec = caseRepository.getCountOfUser("DEC");
-                ro = caseRepository.getCountOfUser("RO");
-                officersCount.setDEC(dec);
-                officersCount.setRO(ro);
-            } else if (userRole.equals("OICA")) {
-                dec = caseRepository.getCountOfUser("DEC");
-                ro = caseRepository.getCountOfUser("RO");
-                oica = caseRepository.getCountOfUser("OICA");
-                officersCount.setDEC(dec);
-                officersCount.setRO(ro);
-                officersCount.setOICA(oica);
-            } else if (userRole.equals("AO")) {
-                dec = caseRepository.getCountOfUser("DEC");
-                ro = caseRepository.getCountOfUser("RO");
-                oica = caseRepository.getCountOfUser("OICA");
-                ao = caseRepository.getCountOfUser("AO");
-                officersCount.setDEC(dec);
-                officersCount.setRO(ro);
-                officersCount.setOICA(oica);
-                officersCount.setAO(ao);
-            } else if (userRole.equals("OIC") || userRole.equals("MO")) {
+                if (userRole.equals(Constants.DEC)) {
+                    dec = caseRepository.getCountOfUser(Constants.DEC);
+                    officersCount.setDEC(dec);
+                } else if (userRole.equals(Constants.RO)) {
+                    dec = caseRepository.getCountOfUser(Constants.DEC);
+                    ro = caseRepository.getCountOfUser(Constants.RO);
+                    officersCount.setDEC(dec);
+                    officersCount.setRO(ro);
+                } else if (userRole.equals(Constants.OICA)) {
+                    dec = caseRepository.getCountOfUser(Constants.DEC);
+                    ro = caseRepository.getCountOfUser(Constants.RO);
+                    oica = caseRepository.getCountOfUser(Constants.OICA);
+                    officersCount.setDEC(dec);
+                    officersCount.setRO(ro);
+                    officersCount.setOICA(oica);
+                } else if (userRole.equals(Constants.AO)) {
+                    dec = caseRepository.getCountOfUser(Constants.DEC);
+                    ro = caseRepository.getCountOfUser(Constants.RO);
+                    oica = caseRepository.getCountOfUser(Constants.OICA);
+                    ao = caseRepository.getCountOfUser(Constants.AO);
+                    officersCount.setDEC(dec);
+                    officersCount.setRO(ro);
+                    officersCount.setOICA(oica);
+                    officersCount.setAO(ao);
+                } else if (userRole.equals(Constants.OIC) || userRole.equals(Constants.MO)) {
 
-                dec = caseRepository.getCountOfUser("DEC");
-                ro = caseRepository.getCountOfUser("RO");
-                oica = caseRepository.getCountOfUser("OICA");
-                ao = caseRepository.getCountOfUser("AO");
-                oic = caseRepository.getCountOfUser("OIC");
-                officersCount.setDEC(dec);
-                officersCount.setRO(ro);
-                officersCount.setOICA(oica);
-                officersCount.setAO(ao);
-                officersCount.setOIC(oic);
-            }
-            List<Hearing> hearingList = new ArrayList<>();
-            List<Judgement> judgementList = new ArrayList<>();
-            HearingResponse hearingResponse = null;
-            JudgementResponse judgementResponse = null;
+                    dec = caseRepository.getCountOfUser(Constants.DEC);
+                    ro = caseRepository.getCountOfUser(Constants.RO);
+                    oica = caseRepository.getCountOfUser(Constants.OICA);
+                    ao = caseRepository.getCountOfUser(Constants.AO);
+                    oic = caseRepository.getCountOfUser(Constants.OIC);
+                    officersCount.setDEC(dec);
+                    officersCount.setRO(ro);
+                    officersCount.setOICA(oica);
+                    officersCount.setAO(ao);
+                    officersCount.setOIC(oic);
+                }
+                List<Hearing> hearingList = new ArrayList<>();
+                List<Judgement> judgementList = new ArrayList<>();
+                HearingResponse hearingResponse = null;
+                JudgementResponse judgementResponse = null;
                 HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(
                         caseResponse.getCaseList().get(0).getId())).build();
                 hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
@@ -260,14 +259,13 @@ public class CaseService {
                 finalResult.setOfficersCount(officersCount);
                 finalResult.setHearingList(hearingList);
                 finalResult.setJudgementList(judgementList);
-            }else {
+            } else {
                 throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, LegalErrorConstants.CASE_NOT_AVAILABLE);
             }
             return finalResult;
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error(LegalErrorConstants.CASE_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, LegalErrorConstants.CASE_SEARCH_FAILED_MSG);
         }
@@ -346,10 +344,9 @@ public class CaseService {
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
             return caseRequest;
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error(LegalErrorConstants.CASE_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_CREATE_FAILED, LegalErrorConstants.CASE_CREATE_FAILED_MSG);
         }

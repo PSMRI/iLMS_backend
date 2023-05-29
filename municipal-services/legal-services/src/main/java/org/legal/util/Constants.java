@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Constants {
-    public static final String LEGAL_DOCS_COUNTER_AFFIDAVIT = "ILMS_DOCS_COUNTER_AFFIDAVIT";
+    public static final String LEGAL_DOCS_COUNTER_AFFIDAVIT = "LEGAL_DOCS_COUNTER_AFFIDAVIT";
     public static final String SUBMIT_COUNTER_AFFIDAVIT = "SUBMIT_COUNTER_AFFIDAVIT";
     public static final String ASSIGNED_TO_APPOINTED_OIC = "ASSIGNED_TO_APPOINTED_OIC";
     public static final String ASSIGNED_TO_RO = "ASSIGNED_TO_RO";
@@ -20,4 +20,13 @@ public class Constants {
     public static final String REVIEW_JUDGEMENT = "REVIEW_JUDGEMENT";
     public static final String COMPLY_JUDGEMENT = "COMPLY_JUDGEMENT";
     public static final String JUDGEMENT_COMPLETED = "JUDGEMENT_COMPLETED";
+    public static final String FORWARD_TO_RO = "FORWARD_TO_RO";
+    public static final String DEACTIVATE = "DEACTIVATE";
+    public static final String INACTIVATE = "INACTIVATE";
+    public static final String DEC = "DEC";
+    public static final String RO = "RO";
+    public static final String OICA = "OICA";
+    public static final String OIC = "OIC";
+    public static final String AO = "AO";
+    public static final String MO = "MO";
 }
