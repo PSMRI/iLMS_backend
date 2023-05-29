@@ -52,13 +52,13 @@ public class PersisterConsumerConfig {
     private Set<String> topics = new HashSet<>();
 
     @PostConstruct
-    public void setTopics(){
+    public void setTopics() {
         topicMap.getTopicMap().keySet().forEach(topic -> {
-                    if(!topic.contains("-batch")){
-                        topics.add(topic);
-                    }
-               });
-        log.info("Topics subscribed for single listner: "+topics.toString());
+            if (!topic.contains("-batch")) {
+                topics.add(topic);
+            }
+        });
+        log.info("Topics subscribed for single listner: " + topics.toString());
     }
 
     @Bean
@@ -68,7 +68,7 @@ public class PersisterConsumerConfig {
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
 
-        JsonDeserializer jsonDeserializer = new JsonDeserializer<>(Object.class,false);
+        JsonDeserializer jsonDeserializer = new JsonDeserializer<>(Object.class, false);
 
         ErrorHandlingDeserializer2<String> errorHandlingDeserializer
                 = new ErrorHandlingDeserializer2<>(jsonDeserializer);
@@ -94,9 +94,9 @@ public class PersisterConsumerConfig {
     public KafkaMessageListenerContainer<String, String> container() throws Exception {
         ContainerProperties properties = new ContainerProperties(this.topics.toArray(new String[topics.size()]));
         // set more properties
-     //   properties.setPauseEnabled(true);
-     //   properties.setPauseAfter(0);
-     //   properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
+        //   properties.setPauseEnabled(true);
+        //   properties.setPauseAfter(0);
+        //   properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
         properties.setMessageListener(indexerMessageListener);
 
         log.info("Custom KafkaListenerContainer built...");
@@ -105,12 +105,13 @@ public class PersisterConsumerConfig {
     }
 
     @Bean
-    public boolean startContainer(){
+    public boolean startContainer() {
         KafkaMessageListenerContainer<String, String> container = null;
         try {
             container = container();
         } catch (Exception e) {
-            log.error("Container couldn't be started: ",e);
+            e.printStackTrace();
+            log.error("Container couldn't be started: ", e);
             return false;
         }
         container.start();
@@ -119,12 +120,13 @@ public class PersisterConsumerConfig {
 
     }
 
-    public boolean pauseContainer(){
+    public boolean pauseContainer() {
         KafkaMessageListenerContainer<String, String> container = null;
         try {
             container = container();
         } catch (Exception e) {
-            log.error("Container couldn't be started: ",e);
+            e.printStackTrace();
+            log.error("Container couldn't be started: ", e);
             return false;
         }
         container.stop();
@@ -133,12 +135,13 @@ public class PersisterConsumerConfig {
         return true;
     }
 
-    public boolean resumeContainer(){
+    public boolean resumeContainer() {
         KafkaMessageListenerContainer<String, String> container = null;
         try {
             container = container();
         } catch (Exception e) {
-            log.error("Container couldn't be started: ",e);
+            e.printStackTrace();
+            log.error("Container couldn't be started: ", e);
             return false;
         }
         container.start();

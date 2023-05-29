@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,7 +39,8 @@ public class JudgementController {
             judgements.add(judgement);
             JudgementResponse response = JudgementResponse.builder().judgementList(judgements).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_CREATE_FAILED, LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG);
         }
@@ -51,7 +53,8 @@ public class JudgementController {
             JudgementResponse response = judgementService.JudgementSearch(criteria, judgementRequest.getRequestInfo());
             response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true));
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED, LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG);
         }
@@ -66,7 +69,8 @@ public class JudgementController {
             ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(judgementRequest.getRequestInfo(), true);
             JudgementResponse response = JudgementResponse.builder().judgementList(Collections.singletonList(judgement)).workflow(workflow).responseInfo(resInfo).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED, LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG);
         }

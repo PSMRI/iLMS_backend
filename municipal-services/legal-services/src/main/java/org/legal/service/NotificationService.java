@@ -145,6 +145,7 @@ public class NotificationService {
                 mobileNumberToUser.put("mobileNumber", mobileNumber);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomException(LegalErrorConstants.UNABLE_TO_FETCH, "Unable to fetch User from system");
         }
         return mobileNumberToUser;
@@ -202,6 +203,7 @@ public class NotificationService {
             Object messageObj = JsonPath.parse(localizationMessage).read(path);
             message = ((ArrayList<String>) messageObj).get(0);
         } catch (Exception e) {
+            e.printStackTrace();
             log.warn("Fetching from localization failed", e);
         }
         return message;
@@ -270,6 +272,7 @@ public class NotificationService {
                 log.error("Service returned null while fetching user for username - " + uuid);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Exception while fetching user for username - " + uuid);
             log.error("Exception trace: ", e);
         }

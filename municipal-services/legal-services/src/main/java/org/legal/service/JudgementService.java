@@ -63,6 +63,9 @@ public class JudgementService {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private CaseService caseService;
+
     public JudgementRequest create(JudgementRequest judgementRequest) {
         try {
 
@@ -94,6 +97,7 @@ public class JudgementService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_CREATE_FAILED, LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG);
         }
@@ -116,6 +120,7 @@ public class JudgementService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED, LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG);
         }
@@ -172,20 +177,12 @@ public class JudgementService {
                     Case caseApp = new Case();
                     caseAppStatus.setCaseObj(caseApp);
                     if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW)) {
-                        String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, Constants.REVIEW_JUDGEMENT);
-                        caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
-                        caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
-                        caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
-                        caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                        producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
+                        caseRequest.getWorkflow().setAction(Constants.REVIEW_JUDGEMENT);
+                        caseService.updateCase(caseRequest);
                     }
                     if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.JUDGEMENT_COMPLETED)) {
-                        String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, Constants.COMPLY_JUDGEMENT);
-                        caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
-                        caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
-                        caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
-                        caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                        producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
+                        caseRequest.getWorkflow().setAction(Constants.COMPLY_JUDGEMENT);
+                        caseService.updateCase(caseRequest);
                     }
                     producer.push(legalConfiguration.getUpdateJudgementTopic(), finalRequest);
                 } else {
@@ -198,6 +195,7 @@ public class JudgementService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED, LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG);
         }

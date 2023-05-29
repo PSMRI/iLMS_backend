@@ -3,6 +3,7 @@ package org.legal.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
+
 import org.egov.tracer.model.CustomException;
 import org.legal.repository.AdvocateRepository;
 import org.legal.service.AdvocateService;
@@ -30,9 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
-@RequestMapping ("/advocate")
+@RequestMapping("/advocate")
 @Log4j2
-@CrossOrigin (origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AdvocateController {
 
     @Autowired
@@ -44,7 +45,7 @@ public class AdvocateController {
     @Autowired
     private AdvocateRepository advocateRepository;
 
-    @PostMapping (value = "/_create")
+    @PostMapping(value = "/_create")
     public ResponseEntity<AdvocateResponse> create(@Valid @RequestBody AdvocateRequest advocateRequest) {
         try {
 
@@ -53,7 +54,8 @@ public class AdvocateController {
             advocateList.add(savedAdvocate);
             AdvocateResponse response = AdvocateResponse.builder().advocate(advocateList).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(advocateRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.ADVOCATE_CREATE_FAILED, LegalErrorConstants.ADVOCATE_CREATE_FAILED_MSG);
             throw new CustomException(LegalErrorConstants.ADVOCATE_CREATE_FAILED, LegalErrorConstants.ADVOCATE_CREATE_FAILED_MSG);
         }
@@ -68,7 +70,8 @@ public class AdvocateController {
             advocateList.add(advocate);
             response.setAdvocate(advocateList);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.ADVOCATE_UPDATE_FAILED, LegalErrorConstants.ADVOCATE_UPDATE_FAILED_MSG);
             throw new CustomException(LegalErrorConstants.ADVOCATE_UPDATE_FAILED, LegalErrorConstants.ADVOCATE_UPDATE_FAILED_MSG);
         }
@@ -76,12 +79,13 @@ public class AdvocateController {
 
     @PostMapping(value = "/_search")
     public ResponseEntity<AdvocateResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-            @Valid @ModelAttribute AdvocateSearchCriteria criteria) {
+                                                   @Valid @ModelAttribute AdvocateSearchCriteria criteria) {
         try {
             AdvocateResponse response = advocateService.advocateSearch(criteria);
             response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE);
             throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE);
         }

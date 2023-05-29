@@ -61,7 +61,7 @@ public class EgovPersistApplication {
     }
 
 
-    public List<String> getFilesInFolder(String baseFolderPath,List<String> fileTypes) {
+    public List<String> getFilesInFolder(String baseFolderPath, List<String> fileTypes) {
         File folder = new File(baseFolderPath);
 
         if (!folder.exists()) {
@@ -134,8 +134,7 @@ public class EgovPersistApplication {
                     log.error("Exception while fetching service map for: " + configPath, e);
                     errorMap.put("FAILED_TO_FETCH_FILE", configPath);
                     failed = true;
-                }
-                finally {
+                } finally {
                     IOUtils.closeQuietly(inputStream);
                 }
             }
@@ -145,6 +144,7 @@ public class EgovPersistApplication {
             else
                 log.info("====================== CONFIGS LOADED SUCCESSFULLY! ====================== ");
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error("Failed to load configs", ex);
             failed = true;
         }

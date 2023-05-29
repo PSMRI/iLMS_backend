@@ -38,7 +38,6 @@ public class PersisterConfigInit {
     private ApplicationContext applicationContext;
 
 
-
     //file types to be resolved have to be passed as comma separated types.
     public List<String> resolveAllConfigFolders(List<String> listOfFiles, String fileTypesToResolve) {
         List<String> fileList = new ArrayList<String>();
@@ -57,7 +56,7 @@ public class PersisterConfigInit {
     }
 
 
-    public List<String> getFilesInFolder(String baseFolderPath,List<String> fileTypes) {
+    public List<String> getFilesInFolder(String baseFolderPath, List<String> fileTypes) {
         File folder = new File(baseFolderPath);
 
         if (!folder.exists()) {
@@ -129,8 +128,7 @@ public class PersisterConfigInit {
                     log.error("Exception while fetching service map for: " + configPath, e);
                     errorMap.put("FAILED_TO_FETCH_FILE", configPath);
                     failed = true;
-                }
-                finally {
+                } finally {
                     IOUtils.closeQuietly(inputStream);
                 }
             }
@@ -140,6 +138,7 @@ public class PersisterConfigInit {
             else
                 log.info("====================== CONFIGS LOADED SUCCESSFULLY! ====================== ");
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error("Failed to load configs", ex);
             failed = true;
         }

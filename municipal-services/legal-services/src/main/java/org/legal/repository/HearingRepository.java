@@ -1,6 +1,7 @@
 package org.legal.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.legal.repository.querybuilder.CaseQueryBuilder;
 import org.legal.repository.querybuilder.HearingQueryBuilder;
@@ -19,9 +20,11 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -53,29 +56,37 @@ public class HearingRepository {
     private RestTemplate restTemplate;
 
     public HearingResponse getHearingDetails(HearingSearchCriteria criteria) {
-            List<Object> preparedStmtList = new ArrayList<>();
-            String query = hearingQueryBuilder.getHearingSearchQuery(criteria, preparedStmtList);
-            List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
-            for (Hearing singleHearing : hearingDetails) {
-                String respondentAdvocateId = singleHearing.getRespondentAdvocate().getId();
-                if (respondentAdvocateId != null) {
-                    List<Advocate> respondentAdvocateList = caseRepository.getAdvocateById(singleHearing.getRespondentAdvocate().getId());
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = hearingQueryBuilder.getHearingSearchQuery(criteria, preparedStmtList);
+        List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
+        for (Hearing singleHearing : hearingDetails) {
+            String respondentAdvocateId = singleHearing.getRespondentAdvocate().getId();
+            if (respondentAdvocateId != null) {
+                List<Advocate> respondentAdvocateList = caseRepository.getAdvocateById(singleHearing.getRespondentAdvocate().getId());
+                if (!respondentAdvocateList.isEmpty()) {
                     Advocate advocate = respondentAdvocateList.get(0);
                     singleHearing.setRespondentAdvocate(advocate);
-                }else {
-                    singleHearing.setRespondentAdvocate(null);
+                } else {
+                    throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE_MSG);
                 }
-                String petitionerAdvocateId = singleHearing.getPetitionerAdvocate().getId();
-                if (petitionerAdvocateId != null) {
-                    List<Advocate> petitionerAdvocateList = caseRepository.getAdvocateById(singleHearing.getPetitionerAdvocate().getId());
+            } else {
+                singleHearing.setRespondentAdvocate(null);
+            }
+            String petitionerAdvocateId = singleHearing.getPetitionerAdvocate().getId();
+            if (petitionerAdvocateId != null) {
+                List<Advocate> petitionerAdvocateList = caseRepository.getAdvocateById(singleHearing.getPetitionerAdvocate().getId());
+                if (!petitionerAdvocateList.isEmpty()) {
                     Advocate petAdvocate = petitionerAdvocateList.get(0);
                     singleHearing.setPetitionerAdvocate(petAdvocate);
-                }else {
-                    singleHearing.setPetitionerAdvocate(null);
+                } else {
+                    throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE_MSG);
                 }
+            } else {
+                singleHearing.setPetitionerAdvocate(null);
             }
-            HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount()).build();
-            return hearingResponse;
+        }
+        HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount()).build();
+        return hearingResponse;
 
     }
 
@@ -99,6 +110,7 @@ public class HearingRepository {
                 finalValue = Integer.toString(value + 1);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             finalValue = Integer.toString(value);
         }
         return finalValue;
@@ -120,16 +132,18 @@ public class HearingRepository {
         List<Party> partyList = caseRepository.getParty(caseId);
         return partyList;
     }
+
     public Object fetchResult(StringBuilder uri, Object request) {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Object response = null;
         try {
             response = restTemplate.postForObject(uri.toString(), request, Map.class);
-        }catch(HttpClientErrorException e) {
-            log.error("External Service threw an Exception: ",e);
+        } catch (HttpClientErrorException e) {
+            log.error("External Service threw an Exception: ", e);
             throw new ServiceCallException(e.getResponseBodyAsString());
-        }catch(Exception e) {
-            log.error("Exception while fetching from searcher: ",e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Exception while fetching from searcher: ", e);
         }
         return response;
     }

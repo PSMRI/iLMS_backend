@@ -56,6 +56,7 @@ public class NotificationUtil {
             Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
             masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]", masterDataFilter);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Exception while fetching workflow states to ignore: ", e);
         }
 
@@ -155,6 +156,7 @@ public class NotificationUtil {
             Object messageObj = JsonPath.parse(localizationMessage).read(path);
             message = ((ArrayList<String>) messageObj).get(0);
         } catch (Exception e) {
+            e.printStackTrace();
             log.warn("Fetching from localization failed", e);
         }
         return message;
@@ -231,6 +233,7 @@ public class NotificationUtil {
                     log.error("Service returned null while fetching user for username - " + mobileNo);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error("Exception while fetching user for username - " + mobileNo);
                 log.error("Exception trace: ", e);
                 continue;
@@ -287,6 +290,7 @@ public class NotificationUtil {
                     log.error("Service returned null while fetching user for username - " + mobileNo);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error("Exception while fetching user for username - " + mobileNo);
                 log.error("Exception trace: ", e);
                 continue;

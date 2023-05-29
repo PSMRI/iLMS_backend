@@ -1,5 +1,3 @@
-
-
 package org.egov.infra.persist.consumer;
 
 
@@ -35,7 +33,7 @@ import java.util.Set;
 @EnableKafka
 @PropertySource("classpath:application.properties")
 @Slf4j
-@ConditionalOnProperty(value="persister.bulk.enabled",
+@ConditionalOnProperty(value = "persister.bulk.enabled",
         havingValue = "true",
         matchIfMissing = false)
 public class PersisterBatchConsumerConfig {
@@ -63,11 +61,11 @@ public class PersisterBatchConsumerConfig {
     @PostConstruct
     public void setTopics() {
         topicMap.getTopicMap().keySet().forEach(topic -> {
-            if(topic.contains("-batch")){
+            if (topic.contains("-batch")) {
                 topics.add(topic);
             }
         });
-        log.info("Topics subscribed for batch listner: "+topics.toString());
+        log.info("Topics subscribed for batch listner: " + topics.toString());
     }
 
     @Bean("consumerFactoryBatch")
@@ -79,7 +77,7 @@ public class PersisterBatchConsumerConfig {
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, batchSize);
 
 
-        JsonDeserializer jsonDeserializer = new JsonDeserializer<>(Object.class,false);
+        JsonDeserializer jsonDeserializer = new JsonDeserializer<>(Object.class, false);
 
         ErrorHandlingDeserializer2<String> errorHandlingDeserializer
                 = new ErrorHandlingDeserializer2<>(jsonDeserializer);
@@ -110,8 +108,8 @@ public class PersisterBatchConsumerConfig {
     public KafkaMessageListenerContainer<String, String> container() throws Exception {
         ContainerProperties properties = new ContainerProperties(this.topics.toArray(new String[topics.size()]));
         // set more properties
-   //     properties.setPauseEnabled(true);
-   //     properties.setPauseAfter(0);
+        //     properties.setPauseEnabled(true);
+        //     properties.setPauseAfter(0);
         // properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
         properties.setMessageListener(indexerMessageListener);
 
@@ -126,6 +124,7 @@ public class PersisterBatchConsumerConfig {
         try {
             container = container();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Container couldn't be started: ", e);
             return false;
         }
@@ -140,6 +139,7 @@ public class PersisterBatchConsumerConfig {
         try {
             container = container();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Container couldn't be started: ", e);
             return false;
         }
@@ -154,6 +154,7 @@ public class PersisterBatchConsumerConfig {
         try {
             container = container();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Container couldn't be started: ", e);
             return false;
         }

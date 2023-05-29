@@ -1,4 +1,5 @@
 package org.egov.auditservice.repository.rowmapper;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -95,6 +97,7 @@ class AuditRowMapperTest {
             assertTrue(actualKeyValuePairs.containsKey("key2"));
 
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
     }

@@ -36,12 +36,13 @@ public class PersistRepository {
     public void persist(String query, List<Object[]> rows) {
 
         try {
-            if( ! rows.isEmpty()) {
-                log.info("Executing query : "+ query);
+            if (!rows.isEmpty()) {
+                log.info("Executing query : " + query);
                 jdbcTemplate.batchUpdate(query, rows);
                 log.info("Persisted {} row(s) to DB!", rows.size());
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error("Failed to persist {} row(s) using query: {}", rows.size(), query, ex);
             throw ex;
         }
@@ -49,15 +50,16 @@ public class PersistRepository {
 
     public void persist(String query, List<JsonMap> jsonMaps, Object jsonObj, String baseJsonPath) {
 
-        List<Object[]> rows = getRows(jsonMaps,jsonObj,baseJsonPath);
+        List<Object[]> rows = getRows(jsonMaps, jsonObj, baseJsonPath);
 
         try {
-            if( ! rows.isEmpty()) {
-                log.info("Executing query : "+ query);
+            if (!rows.isEmpty()) {
+                log.info("Executing query : " + query);
                 jdbcTemplate.batchUpdate(query, rows);
                 log.info("Persisted {} row(s) to DB!", rows.size(), baseJsonPath);
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error("Failed to persist {} row(s) using query: {}", rows.size(), query, ex);
             throw ex;
         }
@@ -103,17 +105,13 @@ public class PersistRepository {
 
                     continue;
 
-                }
-
-                else if (type.equals(TypeEnum.CURRENTDATE)) {
+                } else if (type.equals(TypeEnum.CURRENTDATE)) {
                     if (dbType.equals(TypeEnum.DATE))
                         row.add(new Date());
                     else if (dbType.equals(TypeEnum.LONG))
                         row.add(new Date().getTime());
                     continue;
-                }
-
-                else if ((type.equals(TypeEnum.ARRAY)) && dbType.equals(TypeEnum.STRING)) {
+                } else if ((type.equals(TypeEnum.ARRAY)) && dbType.equals(TypeEnum.STRING)) {
                     List<Object> list1 = JsonPath.read(jsonObj, jsonPath);
                     if (CollectionUtils.isEmpty(list1)) {
                         value = null;
@@ -121,14 +119,10 @@ public class PersistRepository {
                         value = StringUtils.join(list1.get(i), ",");
                         value = value.toString().substring(2, value.toString().lastIndexOf("]") - 1).replace("\"", "");
                     }
-                }
-
-                else if (jsonPath.contains("*.")) {
+                } else if (jsonPath.contains("*.")) {
                     jsonPath = jsonPath.substring(jsonPath.lastIndexOf("*.") + 2);
                     value = extractValueFromTree(rawDataRecord, jsonPath);
-                }
-
-                else if (!(type.equals(TypeEnum.CURRENTDATE) || jsonPath.startsWith("default"))) {
+                } else if (!(type.equals(TypeEnum.CURRENTDATE) || jsonPath.startsWith("default"))) {
                     value = JsonPath.read(jsonObj, jsonPath);
                 }
 
@@ -142,9 +136,7 @@ public class PersistRepository {
                     } catch (JsonProcessingException e) {
                         log.error("Error while processing JSON object to string", e);
                     }
-                }
-
-                else if (type.equals(TypeEnum.JSON) && dbType.equals(TypeEnum.JSONB)) {
+                } else if (type.equals(TypeEnum.JSON) && dbType.equals(TypeEnum.JSONB)) {
                     try {
                         String json = objectMapper.writeValueAsString(value);
 
@@ -157,16 +149,12 @@ public class PersistRepository {
                     } catch (SQLException e) {
                         log.error("Error while setting JSONB object", e);
                     }
-                }
-
-                else if (type.equals(TypeEnum.LONG)) {
+                } else if (type.equals(TypeEnum.LONG)) {
                     if (dbType == null)
                         row.add(value);
                     else if (dbType.equals(TypeEnum.DATE))
                         row.add(new java.sql.Date(Long.parseLong(value.toString())));
-                }
-
-                else if (type.equals(TypeEnum.DATE) & value != null) {
+                } else if (type.equals(TypeEnum.DATE) & value != null) {
 
                     String date = value.toString();
                     DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -177,9 +165,7 @@ public class PersistRepository {
                         log.error("Unable to parse date", e);
                     }
                     row.add(startDate);
-                }
-
-                else
+                } else
                     row.add(value);
 
             }
@@ -191,20 +177,19 @@ public class PersistRepository {
 
     /**
      * Extract data from the tree using provided base json path
-     *  - If base path signifies bulk, then extract array of data
-     *  - If base path is not bulk, then extract single row of data and wrap as list
+     * - If base path signifies bulk, then extract array of data
+     * - If base path is not bulk, then extract single row of data and wrap as list
      *
      * @param baseJsonPath Base json path
-     * @param document Data source tree
+     * @param document     Data source tree
      * @return Partial data source tree based on provided json base path
      */
     private List<LinkedHashMap<String, Object>> extractData(String baseJsonPath, Object document) {
         List<LinkedHashMap<String, Object>> list = null;
-        if(baseJsonPath.contains("*")) {
+        if (baseJsonPath.contains("*")) {
             String arrayBasePath = baseJsonPath.substring(0, baseJsonPath.lastIndexOf(".*") + 2);
             list = JsonPath.read(document, arrayBasePath);
-        }
-        else {
+        } else {
             LinkedHashMap<String, Object> map = JsonPath.read(document, baseJsonPath);
             list = Collections.singletonList(map);
         }
@@ -250,15 +235,15 @@ public class PersistRepository {
 
     /**
      * Check if leaf node, is null,
-     *  for ex, user has optional address in config, if address is null in datasource skip persisting to address table
+     * for ex, user has optional address in config, if address is null in datasource skip persisting to address table
      *
      * @param baseJsonPath Base json path
-     * @param jsonTree Java represented json tree
+     * @param jsonTree     Java represented json tree
      * @return If node not available, return true, else false
      */
     private boolean isChildObjectEmpty(String baseJsonPath, LinkedHashMap<String, Object> jsonTree) {
 
-        if ( baseJsonPath.contains("*") && ! baseJsonPath.endsWith("*")) {
+        if (baseJsonPath.contains("*") && !baseJsonPath.endsWith("*")) {
             String baseJsonPathForNullCheck = baseJsonPath.substring(baseJsonPath.lastIndexOf("*.") + 2);
             String[] baseObjectsForNullCheck = baseJsonPathForNullCheck.split("\\.");
             LinkedHashMap<String, Object> temp = new LinkedHashMap<>(jsonTree);
@@ -266,8 +251,7 @@ public class PersistRepository {
                 if (isNull(temp.get(baseObjectForNullCheck))) {
                     log.info("Skipping persisting record with basePath {} as it's empty!", baseJsonPath);
                     return true;
-                }
-                else
+                } else
                     temp = (LinkedHashMap<String, Object>) temp.get(baseObjectForNullCheck);
             }
             return false;

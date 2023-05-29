@@ -39,6 +39,7 @@ public class ServiceRepository {
             log.error("External Service threw an Exception: ", e);
             throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {
+            e.printStackTrace();
 
             log.error("Exception while fetching from external service: ", e);
             throw new CustomException("REST_CALL_EXCEPTION : " + uri, e.getMessage());
@@ -59,6 +60,7 @@ public class ServiceRepository {
             log.error("External Service threw an Exception: ", e);
             throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {
+            e.printStackTrace();
 
             log.error("Exception while fetching from external service: ", e);
             throw new CustomException("REST_CALL_EXCEPTION : " + uri, e.getMessage());
@@ -73,6 +75,7 @@ public class ServiceRepository {
         } catch (HttpClientErrorException e) {
             throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ServiceCallException(e.getMessage());
         }
 

@@ -44,6 +44,7 @@ public class CommonUtils {
                 return JsonPath.read(response.get(), jsonpath);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomException(LegalErrorConstants.INVALID_TENANT_ID_MDMS_KEY, LegalErrorConstants.INVALID_TENANT_ID_MDMS_MSG);
         }
 
@@ -99,6 +100,7 @@ public class CommonUtils {
                 roleList.put("role", role);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomException(LegalErrorConstants.UNABLE_TO_FETCH, "Unable to fetch User from system");
         }
         return roleList;

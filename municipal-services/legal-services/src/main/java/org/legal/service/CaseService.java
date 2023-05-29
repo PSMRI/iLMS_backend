@@ -76,6 +76,7 @@ public class CaseService {
 
     @Autowired
     private AdvocateRepository advocateRepository;
+    private HearingService hearingService;
 
     public CaseService() {
     }
@@ -111,30 +112,19 @@ public class CaseService {
                         HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
                         if (!hearingResponse.getHearingList().isEmpty()) {
                             request.setRequestInfo(caseRequest.getRequestInfo());
-                            HearingRequest hearingAppStatus = new HearingRequest();
-                            Hearing hearingApp = new Hearing();
-                            hearingAppStatus.setHearing(hearingApp);
                             for (Hearing hearing : hearingResponse.getHearingList()) {
                                 request.setHearing(hearing);
                                 Workflow workflow = new Workflow();
                                 workflow.setAssignes(caseRequest.getWorkflow().getAssignes());
                                 request.setWorkflow(workflow);
-                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.FORWARD_TO_RO)) {
-                                    String applicationStatus = workflowService.updateHearingWorkflow(request, Constants.ASSIGNED_TO_RO);
-                                    hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
-                                    hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
-                                    hearingAppStatus.getHearing().setId(request.getHearing().getId());
-                                    hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                                    producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
-                                }
-                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE)) {
-                                    String applicationStatus = workflowService.updateHearingWorkflow(request, Constants.DEACTIVATE);
-                                    hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
-                                    hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
-                                    hearingAppStatus.getHearing().setId(request.getHearing().getId());
-                                    hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                                    producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
 
+                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.FORWARD_TO_RO) && request.getHearing().getApplicationStatus().equalsIgnoreCase(Constants.HEARING_CREATED)) {
+                                    request.getWorkflow().setAction(Constants.ASSIGNED_TO_RO);
+                                    hearingService.update(request);
+                                }
+                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE) && request.getHearing().getApplicationStatus().equalsIgnoreCase(Constants.HEARING_CREATED)) {
+                                    request.getWorkflow().setAction(Constants.DEACTIVATE);
+                                    hearingService.update(request);
                                 }
 
                                 for (Document document : caseRequest.getCaseObj().getDocuments()) {
@@ -142,12 +132,8 @@ public class CaseService {
                                         if (document.getDocumentType().equalsIgnoreCase(Constants.LEGAL_DOCS_COUNTER_AFFIDAVIT) && caseRequest.getWorkflow().getAction()
                                                 .equalsIgnoreCase(
                                                         Constants.SUBMIT_COUNTER_AFFIDAVIT)) {
-                                            String applicationStatus = workflowService.updateHearingWorkflow(request, Constants.ASSIGNED_TO_APPOINTED_OIC);
-                                            hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
-                                            hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
-                                            hearingAppStatus.getHearing().setId(request.getHearing().getId());
-                                            hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                                            producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
+                                            request.getWorkflow().setAction(Constants.ASSIGNED_TO_APPOINTED_OIC);
+                                            hearingService.update(request);
                                         }
                                     }
                                 }
@@ -167,6 +153,7 @@ public class CaseService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.CASE_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_UPDATE_FAILED, LegalErrorConstants.CASE_UPDATE_FAILED_MSG);
         }
@@ -271,6 +258,7 @@ public class CaseService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.CASE_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, LegalErrorConstants.CASE_SEARCH_FAILED_MSG);
         }
@@ -373,6 +361,7 @@ public class CaseService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.CASE_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_CREATE_FAILED, LegalErrorConstants.CASE_CREATE_FAILED_MSG);
         }

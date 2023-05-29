@@ -3,6 +3,7 @@ package org.legal.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
+
 import org.egov.tracer.model.CustomException;
 import org.legal.service.HearingService;
 import org.legal.util.LegalErrorConstants;
@@ -40,7 +41,8 @@ public class HearingController {
             hearingList.add(hearing);
             HearingResponse response = HearingResponse.builder().hearingList(hearingList).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(hearingRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_CREATE_FAILED, LegalErrorConstants.HEARING_CREATE_FAILED_MSG);
         }
@@ -53,7 +55,8 @@ public class HearingController {
             HearingResponse response = hearingService.hearingSearch(criteria, requestInfoWrapper.getRequestInfo());
             response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_SEARCH_FAILED, LegalErrorConstants.HEARING_SEARCH_FAILED_MSG);
         }
@@ -70,7 +73,8 @@ public class HearingController {
             hearingDetailsList.add(hearing);
             HearingResponse response = HearingResponse.builder().hearingList(hearingDetailsList).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(hearingDetailsRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_UPDATE_FAILED, LegalErrorConstants.HEARING_UPDATE_FAILED_MSG);
         }

@@ -68,7 +68,8 @@ public class AdvocateService {
                 producer.push(legalConfiguration.getCreateAdvocateTopic(), request);
             }
             return request.getAdvocate();
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.ADVOCATE_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.ADVOCATE_CREATE_FAILED, LegalErrorConstants.ADVOCATE_CREATE_FAILED);
         }
@@ -92,10 +93,10 @@ public class AdvocateService {
                 throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, "id is mandatory");
             }
             return advocateRequest.getAdvocate();
-        }catch (CustomException e) {
-        throw e;
-    }
-        catch (Exception e) {
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.ADVOCATE_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.ADVOCATE_UPDATE_FAILED, LegalErrorConstants.ADVOCATE_UPDATE_FAILED_MSG);
         }
@@ -103,16 +104,17 @@ public class AdvocateService {
 
     public AdvocateResponse advocateSearch(AdvocateSearchCriteria criteria) {
         try {
-        AdvocateResponse advocateResponse = null;
-        advocateResponse = advocateRepository.getAdvocateDetails(criteria);
-        if (!advocateResponse.getAdvocate().isEmpty()){
-            return advocateResponse;
-        }else {
-            throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE_MSG);
-        }
-        }catch (CustomException e) {
+            AdvocateResponse advocateResponse = null;
+            advocateResponse = advocateRepository.getAdvocateDetails(criteria);
+            if (!advocateResponse.getAdvocate().isEmpty()) {
+                return advocateResponse;
+            } else {
+                throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE_MSG);
+            }
+        } catch (CustomException e) {
             throw e;
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.ADVOCATE_SEARCH_FAILED, e.getMessage());
             throw new CustomException(LegalErrorConstants.ADVOCATE_SEARCH_FAILED, LegalErrorConstants.ADVOCATE_SEARCH_FAILED_MSG);
         }

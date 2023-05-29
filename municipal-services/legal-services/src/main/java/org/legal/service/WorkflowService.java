@@ -277,6 +277,7 @@ public class WorkflowService {
         try {
             response = mapper.convertValue(res.get(), ProcessInstanceResponse.class);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomException("PARSING_ERROR", "Failed to parse workflow search response");
         }
 

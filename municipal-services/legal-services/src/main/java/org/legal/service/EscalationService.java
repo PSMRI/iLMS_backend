@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.CaseRepository;
@@ -30,20 +31,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EscalationService {
 
-        @Autowired
-        private LEGALConfiguration config;
+    @Autowired
+    private LEGALConfiguration config;
 
-        @Autowired
-        private NotificationService notificationService;
+    @Autowired
+    private NotificationService notificationService;
 
-        @Autowired
-        private ObjectMapper mapper;
+    @Autowired
+    private ObjectMapper mapper;
 
-        @Autowired
-        private CaseService caseService;
+    @Autowired
+    private CaseService caseService;
 
-        @Autowired
-        private CaseRepository caseRepository;
+    @Autowired
+    private CaseRepository caseRepository;
 
     @Autowired
     private HearingRepository hearingRepository;
@@ -51,132 +52,131 @@ public class EscalationService {
     @Autowired
     private JudgementRepository judgementRepository;
 
-        @Autowired
-        private WorkflowService workflowService;
+    @Autowired
+    private WorkflowService workflowService;
 
 
+    public void fetchSLAs(RequestInfo requestInfo) {
+        try {
+            CaseSearchCriteria criteria = new CaseSearchCriteria();
+            criteria.setLimit(-1);
+            List<Case> caseList = new ArrayList<>();
+            CaseResponse caseResponse = null;
+            caseResponse = caseRepository.getLegalCaseData(criteria);
+            caseResponse.getCaseList().forEach(caseObj -> {
+                caseList.add(caseObj);
+            });
 
-        public void fetchSLAs(RequestInfo requestInfo) {
-            try {
-                CaseSearchCriteria criteria = new CaseSearchCriteria();
-                criteria.setLimit(-1);
-                List<Case> caseList = new ArrayList<>();
-                CaseResponse caseResponse = null;
-                caseResponse = caseRepository.getLegalCaseData(criteria);
-                caseResponse.getCaseList().forEach(caseObj -> {
-                    caseList.add(caseObj);
-                });
+            for (Case cases : caseList) {
+                log.info("For loop for service defs");
+                String caseId = cases.getId();
 
-                for (Case cases : caseList) {
-                    log.info("For loop for service defs");
-                    String caseId=cases.getId();
-
-                    Long lastModifiedTime=null;
-                    if (cases.getAuditDetails().getLastModifiedTime()==0){
-                        lastModifiedTime=cases.getAuditDetails().getCreatedTime();
-                    }else {
-                        lastModifiedTime=cases.getAuditDetails().getLastModifiedTime();
-                    }
-                    Date lastModifiedDate = new Date(lastModifiedTime);
-
-                    ProcessInstanceResponse processInstanceResponse=workflowService.getWorkflow(requestInfo,cases.getTenantId(),caseId);
-                   String assigneeUUid= processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid();
-                    Long slaDay = config.getSlaDays();// 20
-                    Long pendingSLADay = config.getPendingDays();
-
-                    Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
-                    Date currentDate = new Date(timeStamp.getTime());
-                        long remainingDays = currentDate.getDate() - lastModifiedDate.getDate();
-                        Long slaRemaining = slaDay - remainingDays;
-                   //     String uuid = cases.getWorkflow().getAssignes().get(0).getUuid();
-                        if (slaRemaining <= (pendingSLADay)) {
-                            String action = "SCHEDULAR_ACTION_CURRENT_PROCESS";
-                            log.info("Sending notification");
-                            notificationService.schedulerMsg(requestInfo, assigneeUUid, action);
-                            log.info("Sent the notification");
-                            System.out.println("Notification sent successfully!");
-                        }
+                Long lastModifiedTime = null;
+                if (cases.getAuditDetails().getLastModifiedTime() == 0) {
+                    lastModifiedTime = cases.getAuditDetails().getCreatedTime();
+                } else {
+                    lastModifiedTime = cases.getAuditDetails().getLastModifiedTime();
                 }
+                Date lastModifiedDate = new Date(lastModifiedTime);
 
-                HearingSearchCriteria hearingCriteria = new HearingSearchCriteria();
-                criteria.setLimit(-1);
-                List<Hearing> hearingList = new ArrayList<>();
-                HearingResponse hearingResponse = null;
-                hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
-                hearingResponse.getHearingList().forEach(hearingObj -> {
-                    hearingList.add(hearingObj);
-                });
-                for (Hearing hearing : hearingList) {
-                    log.info("For loop for service defs");
-                    String hearingId=hearing.getId();
+                ProcessInstanceResponse processInstanceResponse = workflowService.getWorkflow(requestInfo, cases.getTenantId(), caseId);
+                String assigneeUUid = processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid();
+                Long slaDay = config.getSlaDays();// 20
+                Long pendingSLADay = config.getPendingDays();
 
-                    Long lastModifiedTime=null;
-                    if (hearing.getAuditDetails().getLastModifiedTime()==0){
-                        lastModifiedTime=hearing.getAuditDetails().getCreatedTime();
-                    }else {
-                        lastModifiedTime=hearing.getAuditDetails().getLastModifiedTime();
-                    }
-                    Date lastModifiedDate = new Date(lastModifiedTime);
-
-                    ProcessInstanceResponse processInstanceResponse=workflowService.getWorkflow(requestInfo,hearing.getTenantId(),hearingId);
-                    String assigneeUUid= processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid();
-                    Long slaDay = config.getSlaDays();// 20
-                    Long pendingSLADay = config.getPendingDays();
-
-                    Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
-                    Date currentDate = new Date(timeStamp.getTime());
-                    long remainingDays = currentDate.getDate() - lastModifiedDate.getDate();
-                    Long slaRemaining = slaDay - remainingDays;
-                    //     String uuid = cases.getWorkflow().getAssignes().get(0).getUuid();
-                    if (slaRemaining <= (pendingSLADay)) {
-                        String action = "SCHEDULAR_ACTION_CURRENT_PROCESS";
-                        log.info("Sending notification");
-                        notificationService.schedulerMsg(requestInfo, assigneeUUid, action);
-                        log.info("Sent the notification");
-                        System.out.println("Notification sent successfully!");
-                    }
-                }
-
-                JudgementSearchCriteria judgementSearchCriteria = new JudgementSearchCriteria();
-                criteria.setLimit(-1);
-                List<Judgement> judgementList= new ArrayList<>();
-                JudgementResponse judgementResponse = null;
-                judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
-                judgementResponse.getJudgementList().forEach(judgementObj -> {
-                    judgementList.add(judgementObj);
-                });
-                for (Judgement judgement : judgementList) {
-                    String judgementId=judgement.getId();
-
-                    Long lastModifiedTime=null;
-                    if (judgement.getAuditDetails().getLastModifiedTime()==0){
-                        lastModifiedTime=judgement.getAuditDetails().getCreatedTime();
-                    }else {
-                        lastModifiedTime=judgement.getAuditDetails().getLastModifiedTime();
-                    }
-                    Date lastModifiedDate = new Date(lastModifiedTime);
-
-                    ProcessInstanceResponse processInstanceResponse=workflowService.getWorkflow(requestInfo,judgement.getTenantId(),judgementId);
-                    String assigneeUUid= processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid();
-                    Long slaDay = config.getSlaDays();// 20
-                    Long pendingSLADay = config.getPendingDays();
-
-                    Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
-                    Date currentDate = new Date(timeStamp.getTime());
-                    long remainingDays = currentDate.getDate() - lastModifiedDate.getDate();
-                    Long slaRemaining = slaDay - remainingDays;
-                    //     String uuid = cases.getWorkflow().getAssignes().get(0).getUuid();
-                    if (slaRemaining <= (pendingSLADay)) {
-                        String action = "SCHEDULAR_ACTION_CURRENT_PROCESS";
-                        log.info("Sending notification");
-                        notificationService.schedulerMsg(requestInfo, assigneeUUid, action);
-                        log.info("Sent the notification");
-                        System.out.println("Notification sent successfully!");
-                    }
+                Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
+                Date currentDate = new Date(timeStamp.getTime());
+                long remainingDays = currentDate.getDate() - lastModifiedDate.getDate();
+                Long slaRemaining = slaDay - remainingDays;
+                //     String uuid = cases.getWorkflow().getAssignes().get(0).getUuid();
+                if (slaRemaining <= (pendingSLADay)) {
+                    String action = "SCHEDULAR_ACTION_CURRENT_PROCESS";
+                    log.info("Sending notification");
+                    notificationService.schedulerMsg(requestInfo, assigneeUUid, action);
+                    log.info("Sent the notification");
+                    System.out.println("Notification sent successfully!");
                 }
             }
-            catch (Exception e) {
-                log.error("SLA Notification Failed: ", e);
+
+            HearingSearchCriteria hearingCriteria = new HearingSearchCriteria();
+            criteria.setLimit(-1);
+            List<Hearing> hearingList = new ArrayList<>();
+            HearingResponse hearingResponse = null;
+            hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
+            hearingResponse.getHearingList().forEach(hearingObj -> {
+                hearingList.add(hearingObj);
+            });
+            for (Hearing hearing : hearingList) {
+                log.info("For loop for service defs");
+                String hearingId = hearing.getId();
+
+                Long lastModifiedTime = null;
+                if (hearing.getAuditDetails().getLastModifiedTime() == 0) {
+                    lastModifiedTime = hearing.getAuditDetails().getCreatedTime();
+                } else {
+                    lastModifiedTime = hearing.getAuditDetails().getLastModifiedTime();
+                }
+                Date lastModifiedDate = new Date(lastModifiedTime);
+
+                ProcessInstanceResponse processInstanceResponse = workflowService.getWorkflow(requestInfo, hearing.getTenantId(), hearingId);
+                String assigneeUUid = processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid();
+                Long slaDay = config.getSlaDays();// 20
+                Long pendingSLADay = config.getPendingDays();
+
+                Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
+                Date currentDate = new Date(timeStamp.getTime());
+                long remainingDays = currentDate.getDate() - lastModifiedDate.getDate();
+                Long slaRemaining = slaDay - remainingDays;
+                //     String uuid = cases.getWorkflow().getAssignes().get(0).getUuid();
+                if (slaRemaining <= (pendingSLADay)) {
+                    String action = "SCHEDULAR_ACTION_CURRENT_PROCESS";
+                    log.info("Sending notification");
+                    notificationService.schedulerMsg(requestInfo, assigneeUUid, action);
+                    log.info("Sent the notification");
+                    System.out.println("Notification sent successfully!");
+                }
             }
+
+            JudgementSearchCriteria judgementSearchCriteria = new JudgementSearchCriteria();
+            criteria.setLimit(-1);
+            List<Judgement> judgementList = new ArrayList<>();
+            JudgementResponse judgementResponse = null;
+            judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
+            judgementResponse.getJudgementList().forEach(judgementObj -> {
+                judgementList.add(judgementObj);
+            });
+            for (Judgement judgement : judgementList) {
+                String judgementId = judgement.getId();
+
+                Long lastModifiedTime = null;
+                if (judgement.getAuditDetails().getLastModifiedTime() == 0) {
+                    lastModifiedTime = judgement.getAuditDetails().getCreatedTime();
+                } else {
+                    lastModifiedTime = judgement.getAuditDetails().getLastModifiedTime();
+                }
+                Date lastModifiedDate = new Date(lastModifiedTime);
+
+                ProcessInstanceResponse processInstanceResponse = workflowService.getWorkflow(requestInfo, judgement.getTenantId(), judgementId);
+                String assigneeUUid = processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid();
+                Long slaDay = config.getSlaDays();// 20
+                Long pendingSLADay = config.getPendingDays();
+
+                Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
+                Date currentDate = new Date(timeStamp.getTime());
+                long remainingDays = currentDate.getDate() - lastModifiedDate.getDate();
+                Long slaRemaining = slaDay - remainingDays;
+                //     String uuid = cases.getWorkflow().getAssignes().get(0).getUuid();
+                if (slaRemaining <= (pendingSLADay)) {
+                    String action = "SCHEDULAR_ACTION_CURRENT_PROCESS";
+                    log.info("Sending notification");
+                    notificationService.schedulerMsg(requestInfo, assigneeUUid, action);
+                    log.info("Sent the notification");
+                    System.out.println("Notification sent successfully!");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("SLA Notification Failed: ", e);
         }
+    }
 }

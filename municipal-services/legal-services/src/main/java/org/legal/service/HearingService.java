@@ -67,6 +67,9 @@ public class HearingService {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private CaseService caseService;
+
 
     public HearingRequest create(HearingRequest hearingRequest) {
         try {
@@ -113,6 +116,7 @@ public class HearingService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_CREATE_FAILED, LegalErrorConstants.HEARING_CREATE_FAILED_MSG);
         }
@@ -132,6 +136,7 @@ public class HearingService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_SEARCH_FAILED, LegalErrorConstants.HEARING_SEARCH_FAILED_MSG);
         }
@@ -179,38 +184,35 @@ public class HearingService {
                             }
                             if (Objects.nonNull(updatedRequest.getWorkflow())) {
                                 if (legalConfiguration.getIsWorkflowEnabled()) {
-                                    hearingDetailsResponse.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
+                                    updatedRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
                                     workflowService.updateHearingWorkflowStatus(updatedRequest);
                                 }
                             }
                         }
+                        Workflow oldHearingWorkflow = new Workflow();
+                        oldHearingWorkflow.setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
+                        request.setWorkflow(oldHearingWorkflow);
                         if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.ASSIGNED_TO_RO) && oldHearing.getApplicationStatus().equalsIgnoreCase(
                                 Constants.Pending_At_DEC_for_next_hearing)) {
-                            String applicationStatus = workflowService.updateHearingWorkflow(request, Constants.REVIEW_TO_RO);
-                            hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
-                            hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
-                            hearingAppStatus.getHearing().setId(request.getHearing().getId());
-                            hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                            producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
+                            request.getWorkflow().setAction(Constants.REVIEW_TO_RO);
+                            request.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
+                            workflowService.updateHearingWorkflowStatus(request);
+                            producer.push(legalConfiguration.getUpdateHearingTopic(), request);
                         }
                         if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.ASSIGNED_TO_APPOINTED_OIC) && oldHearing.getApplicationStatus().equalsIgnoreCase(
                                 Constants.Pending_at_RO_for_Next_Hearing_Review)) {
-                            String applicationStatus = workflowService.updateHearingWorkflow(request, Constants.Approved);
-                            hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
-                            hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
-                            hearingAppStatus.getHearing().setId(request.getHearing().getId());
-                            hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                            producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
+                            request.getWorkflow().setAction(Constants.Approved);
+                            request.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
+                            workflowService.updateHearingWorkflowStatus(request);
+                            producer.push(legalConfiguration.getUpdateHearingTopic(), request);
                         }
                         if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.REVIEW_AND_ASSIGN_BACK_TO_DEC) && oldHearing.getApplicationStatus()
                                 .equalsIgnoreCase(
                                         Constants.Pending_at_RO_for_Next_Hearing_Review)) {
-                            String applicationStatus = workflowService.updateHearingWorkflow(request, Constants.Reject);
-                            hearingAppStatus.getHearing().setApplicationStatus(applicationStatus);
-                            hearingAppStatus.getHearing().setTenantId(legalConfiguration.getTenantId());
-                            hearingAppStatus.getHearing().setId(request.getHearing().getId());
-                            hearingAppStatus.getHearing().setAuditDetails(caseUtils.getAuditDetails(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                            producer.push(legalConfiguration.getUpdateHearingApplicationStatusTopic(), hearingAppStatus);
+                            request.getWorkflow().setAction(Constants.Reject);
+                            request.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
+                            workflowService.updateHearingWorkflowStatus(request);
+                            producer.push(legalConfiguration.getUpdateHearingTopic(), request);
                         }
                     }
                     String caseId = hearingDetailsRequest.getHearing().getCaseId();
@@ -221,27 +223,16 @@ public class HearingService {
                     Workflow workflow = new Workflow();
                     workflow.setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
                     request.setWorkflow(workflow);
-                    CaseRequest caseAppStatus = new CaseRequest();
-                    Case caseApp = new Case();
-                    caseAppStatus.setCaseObj(caseApp);
                     if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && !hearingDetailsRequest.getHearing().getHearingType()
                             .equalsIgnoreCase(
                                     Constants.Final_Hearing)) {
-                        String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, Constants.SUBMIT_COUNTER_AFFIDAVIT);
-                        caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
-                        caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
-                        caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
-                        caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                        producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
+                        caseRequest.getWorkflow().setAction(Constants.SUBMIT_COUNTER_AFFIDAVIT);
+                        caseService.updateCase(caseRequest);
                     } else if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && hearingDetailsRequest.getHearing().getHearingType()
                             .equalsIgnoreCase(
                                     Constants.Final_Hearing)) {
-                        String applicationStatus = workflowService.updateCaseWorkflow(caseRequest, Constants.PROCEED_WITH_JUDGEMENT);
-                        caseAppStatus.getCaseObj().setApplicationStatus(applicationStatus);
-                        caseAppStatus.getCaseObj().setTenantId(legalConfiguration.getTenantId());
-                        caseAppStatus.getCaseObj().setId(caseRequest.getCaseObj().getId());
-                        caseAppStatus.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                        producer.push(legalConfiguration.getUpdateCaseApplicationStatusTopic(), caseAppStatus);
+                        caseRequest.getWorkflow().setAction(Constants.PROCEED_WITH_JUDGEMENT);
+                        caseService.updateCase(caseRequest);
                     }
                     producer.push(legalConfiguration.getUpdateHearingTopic(), updatedRequest);
                 } else {
@@ -254,6 +245,7 @@ public class HearingService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_UPDATE_FAILED, LegalErrorConstants.HEARING_UPDATE_FAILED_MSG);
         }

@@ -28,7 +28,7 @@ public class AuditLogsConsumer {
     @Autowired
     private PersisterAuditClientService auditLogsProcessingService;
 
-    @KafkaListener(topics = { "${process.audit.logs.kafka.topic}"})
+    @KafkaListener(topics = {"${process.audit.logs.kafka.topic}"})
     public void listen(final HashMap<String, Object> data, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
             PersisterClientInput input = PersisterClientInput.builder()
@@ -37,6 +37,7 @@ public class AuditLogsConsumer {
                     .build();
             auditLogsProcessingService.generateAuditLogs(input);
         } catch (Exception ex) {
+            ex.printStackTrace();
             StringBuilder builder = new StringBuilder("Error while listening to value: ").append(data)
                     .append("on topic: ").append(topic);
             log.error(builder.toString(), ex);
