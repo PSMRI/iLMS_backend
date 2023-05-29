@@ -33,4 +33,5 @@ public class Constants {
     public static final String OIC = "OIC";
     public static final String AO = "AO";
     public static final String MO = "MO";
+    public static final String caseFlag = "caseFlag";
 }

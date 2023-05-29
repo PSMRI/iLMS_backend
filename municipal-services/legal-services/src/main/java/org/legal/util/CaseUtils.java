@@ -107,7 +107,7 @@ public class CaseUtils {
             if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPriority())) {
                 List<String> uuids = new ArrayList<>();
                 uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
-                if (commonUtils.isUserMO(uuids, caseRequest.getCaseObj().getTenantId(), "caseFlag")) {
+                if (commonUtils.isUserMO(uuids, caseRequest.getCaseObj().getTenantId(), Constants.caseFlag)) {
                     oldData.setPriority(caseRequest.getCaseObj().getPriority());
                 }
             }
@@ -231,15 +231,11 @@ public class CaseUtils {
                 for (Document oldDocData : oldData.getDocuments()) {
                     //                    oldData.getDocuments().forEach(oldDocData -> {
                     if (oldDocData.getId().equalsIgnoreCase(document.getId())) {
-//                        if (!StringUtils.isEmpty(document.getCaseId())) {
-//                            oldDocData.setCaseId(document.getCaseId());
-//                        }
+
                         if (!StringUtils.isEmpty(document.getRemarks())) {
                             oldDocData.setRemarks(document.getRemarks());
                         }
-//                        if (!StringUtils.isEmpty(document.getDocumentId())) {
-//                            oldDocData.setDocumentId(document.getDocumentId());
-//                        }
+
                         if (!StringUtils.isEmpty(document.getDocumentType())) {
                             oldDocData.setDocumentType(document.getDocumentType());
                         }
