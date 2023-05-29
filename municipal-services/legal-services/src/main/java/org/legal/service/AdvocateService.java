@@ -56,49 +56,65 @@ public class AdvocateService {
     private AdvocateMapper advocateMapper;
 
     public Advocate create(AdvocateRequest request) {
-        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
-        criteria.setContactNumber(request.getAdvocate().getContactNumber());
-        AdvocateResponse advocateResponse = advocateRepository.getAdvocateDetails(criteria);
-        if (!advocateResponse.getAdvocate().isEmpty()) {
-            return advocateResponse.getAdvocate().get(0);
+        try {
+            AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
+            criteria.setContactNumber(request.getAdvocate().getContactNumber());
+            AdvocateResponse advocateResponse = advocateRepository.getAdvocateDetails(criteria);
+            if (!advocateResponse.getAdvocate().isEmpty()) {
+                return advocateResponse.getAdvocate().get(0);
+            } else {
+                advocateEnrichmentService.advocateEnrichmentRequest(request);
+                request.getAdvocate().setStatus(Status.ACTIVE);
+                producer.push(legalConfiguration.getCreateAdvocateTopic(), request);
+            }
+            return request.getAdvocate();
+        }catch (Exception e) {
+            log.error(LegalErrorConstants.ADVOCATE_CREATE_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.ADVOCATE_CREATE_FAILED, LegalErrorConstants.ADVOCATE_CREATE_FAILED);
         }
-        else {
-            advocateEnrichmentService.advocateEnrichmentRequest(request);
-            request.getAdvocate().setStatus(Status.ACTIVE);
-            producer.push(legalConfiguration.getCreateAdvocateTopic(), request);
-        }
-        return request.getAdvocate();
     }
 
     public Advocate update(AdvocateRequest advocateRequest) {
-        if (advocateRequest.getAdvocate().getId() != null) {
+        try {
 
-            AdvocateSearchCriteria criteria = AdvocateSearchCriteria.builder().id(advocateRequest.getAdvocate().getId()).build();
-            List<Advocate> advocateList = caseRepository.getAdvocateById(criteria.getId());
-            if (!advocateList.isEmpty()) {
-                AdvocateRequest updatedAdvocateRequest = advocateUtils.prepareObjectMapperForUpdate(advocateList.get(0), advocateRequest);
-                producer.push(legalConfiguration.getUpdateAdvocateTopic(), updatedAdvocateRequest);
-                //                todo : notification has send to all the officers who has worked on this case.
-                advocateRequest.setAdvocate(updatedAdvocateRequest.getAdvocate());
+            if (advocateRequest.getAdvocate().getId() != null) {
+                AdvocateSearchCriteria criteria = AdvocateSearchCriteria.builder().id(advocateRequest.getAdvocate().getId()).build();
+                List<Advocate> advocateList = caseRepository.getAdvocateById(criteria.getId());
+                if (!advocateList.isEmpty()) {
+                    AdvocateRequest updatedAdvocateRequest = advocateUtils.prepareObjectMapperForUpdate(advocateList.get(0), advocateRequest);
+                    producer.push(legalConfiguration.getUpdateAdvocateTopic(), updatedAdvocateRequest);
+                    //                todo : notification has send to all the officers who has worked on this case.
+                    advocateRequest.setAdvocate(updatedAdvocateRequest.getAdvocate());
+                } else {
+                    throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, "Advocate is not Available");
+                }
             } else {
-                throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, "Advocate is not Available");
+                throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, "id is mandatory");
             }
-        } else {
-            throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, "id is mandatory");
+            return advocateRequest.getAdvocate();
+        }catch (CustomException e) {
+        throw e;
+    }
+        catch (Exception e) {
+            log.error(LegalErrorConstants.ADVOCATE_UPDATE_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.ADVOCATE_UPDATE_FAILED, LegalErrorConstants.ADVOCATE_UPDATE_FAILED_MSG);
         }
-        return advocateRequest.getAdvocate();
     }
 
     public AdvocateResponse advocateSearch(AdvocateSearchCriteria criteria) {
-        //  List<Advocate> advocateList = new ArrayList<>();
+        try {
         AdvocateResponse advocateResponse = null;
         advocateResponse = advocateRepository.getAdvocateDetails(criteria);
-//        if (!advocateResponse.getAdvocate().isEmpty()) {
-//            advocateList = advocateResponse.getAdvocate();
-//        } else {
-//            log.error(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, "Advocate is not Available");
-//        }
-//        AdvocateResponse caseResponse = AdvocateResponse.builder().advocate(advocateList).totalCount(ad.getFullCount()).build();
-        return advocateResponse;
+        if (!advocateResponse.getAdvocate().isEmpty()){
+            return advocateResponse;
+        }else {
+            throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE_MSG);
+        }
+        }catch (CustomException e) {
+            throw e;
+        }catch (Exception e) {
+            log.error(LegalErrorConstants.ADVOCATE_SEARCH_FAILED, e.getMessage());
+            throw new CustomException(LegalErrorConstants.ADVOCATE_SEARCH_FAILED, LegalErrorConstants.ADVOCATE_SEARCH_FAILED_MSG);
+        }
     }
 }

@@ -3,8 +3,10 @@ package org.legal.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
+import org.egov.tracer.model.CustomException;
 import org.legal.repository.AdvocateRepository;
 import org.legal.service.AdvocateService;
+import org.legal.util.LegalErrorConstants;
 import org.legal.util.ResponseInfoFactory;
 import org.legal.web.model.Advocate;
 import org.legal.web.model.AdvocateRequest;
@@ -44,30 +46,44 @@ public class AdvocateController {
 
     @PostMapping (value = "/_create")
     public ResponseEntity<AdvocateResponse> create(@Valid @RequestBody AdvocateRequest advocateRequest) {
-        List<Advocate> advocateList = new ArrayList<Advocate>();
-        Advocate savedAdvocate = advocateService.create(advocateRequest);
-        advocateList.add(savedAdvocate);
-        AdvocateResponse response = AdvocateResponse.builder().advocate(advocateList)
-                                                    .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(advocateRequest.getRequestInfo(), true))
-                                                    .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+
+            List<Advocate> advocateList = new ArrayList<Advocate>();
+            Advocate savedAdvocate = advocateService.create(advocateRequest);
+            advocateList.add(savedAdvocate);
+            AdvocateResponse response = AdvocateResponse.builder().advocate(advocateList).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(advocateRequest.getRequestInfo(), true)).build();
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            log.error(LegalErrorConstants.ADVOCATE_CREATE_FAILED, LegalErrorConstants.ADVOCATE_CREATE_FAILED_MSG);
+            throw new CustomException(LegalErrorConstants.ADVOCATE_CREATE_FAILED, LegalErrorConstants.ADVOCATE_CREATE_FAILED_MSG);
+        }
     }
 
     @PostMapping(value = "/_update")
     public ResponseEntity<AdvocateResponse> update(@Valid @RequestBody AdvocateRequest advocateRequest) {
-        AdvocateResponse response = new AdvocateResponse();
-        Advocate advocate = advocateService.update(advocateRequest);
-        List<Advocate> advocateList = new ArrayList<>();
-        advocateList.add(advocate);
-        response.setAdvocate(advocateList);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+            AdvocateResponse response = new AdvocateResponse();
+            Advocate advocate = advocateService.update(advocateRequest);
+            List<Advocate> advocateList = new ArrayList<>();
+            advocateList.add(advocate);
+            response.setAdvocate(advocateList);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            log.error(LegalErrorConstants.ADVOCATE_UPDATE_FAILED, LegalErrorConstants.ADVOCATE_UPDATE_FAILED_MSG);
+            throw new CustomException(LegalErrorConstants.ADVOCATE_UPDATE_FAILED, LegalErrorConstants.ADVOCATE_UPDATE_FAILED_MSG);
+        }
     }
 
     @PostMapping(value = "/_search")
     public ResponseEntity<AdvocateResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute AdvocateSearchCriteria criteria) {
-        AdvocateResponse response = advocateService.advocateSearch(criteria);
-        response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+            AdvocateResponse response = advocateService.advocateSearch(criteria);
+            response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            log.error(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE);
+            throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE);
+        }
     }
 }

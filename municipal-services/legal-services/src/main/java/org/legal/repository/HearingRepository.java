@@ -1,10 +1,12 @@
 package org.legal.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.legal.repository.querybuilder.CaseQueryBuilder;
 import org.legal.repository.querybuilder.HearingQueryBuilder;
 import org.legal.repository.rowmapper.HearingRowMapper;
 import org.legal.repository.rowmapper.PartyRowMapper;
+import org.legal.util.LegalErrorConstants;
 import org.legal.web.model.Advocate;
 import org.legal.web.model.Case;
 import org.legal.web.model.Hearing;
@@ -44,20 +46,26 @@ public class HearingRepository {
     private AdvocateRepository advocateRepository;
 
     public HearingResponse getHearingDetails(HearingSearchCriteria criteria) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = hearingQueryBuilder.getHearingSearchQuery(criteria, preparedStmtList);
-        List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
-        for (Hearing singleHearing : hearingDetails) {
-          List<Advocate> respondentAdvocateList=  caseRepository.getAdvocateById(singleHearing.getRespondentAdvocate().getId());
-          Advocate advocate=respondentAdvocateList.get(0);
-            singleHearing.setRespondentAdvocate(advocate);
-            List<Advocate> petitionerAdvocateList=  caseRepository.getAdvocateById(singleHearing.getPetitionerAdvocate().getId());
-            Advocate petAdvocate=petitionerAdvocateList.get(0);
-            singleHearing.setPetitionerAdvocate(petAdvocate);
-        }
-        HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount())
-                .build();
-        return hearingResponse;
+            List<Object> preparedStmtList = new ArrayList<>();
+            String query = hearingQueryBuilder.getHearingSearchQuery(criteria, preparedStmtList);
+            List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
+            for (Hearing singleHearing : hearingDetails) {
+                String respondentAdvocateId = singleHearing.getRespondentAdvocate().getId();
+                if (respondentAdvocateId != null) {
+                    List<Advocate> respondentAdvocateList = caseRepository.getAdvocateById(singleHearing.getRespondentAdvocate().getId());
+                    Advocate advocate = respondentAdvocateList.get(0);
+                    singleHearing.setRespondentAdvocate(advocate);
+                }
+                String petitionerAdvocateId = singleHearing.getPetitionerAdvocate().getId();
+                if (petitionerAdvocateId != null) {
+                    List<Advocate> petitionerAdvocateList = caseRepository.getAdvocateById(singleHearing.getPetitionerAdvocate().getId());
+                    Advocate petAdvocate = petitionerAdvocateList.get(0);
+                    singleHearing.setPetitionerAdvocate(petAdvocate);
+                }
+            }
+            HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount()).build();
+            return hearingResponse;
+
     }
 
     public List<Party> getHearing(String caseId) {

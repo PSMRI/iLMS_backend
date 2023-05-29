@@ -26,6 +26,7 @@ public class LegalErrorConstants {
     public static final String HEARING_NOT_AVAILABLE = "HEARING_NOT_AVAILABLE";
     public static final String CASE_NOT_AVAILABLE = "CASE_NOT_AVAILABLE";
     public static final String ADVOCATE_NOT_AVAILABLE = "ADVOCATE_NOT_AVAILABLE";
+    public static final String ADVOCATE_NOT_AVAILABLE_MSG = "advocate is not available";
 
     public static final String JUDGEMENT_NOT_AVAILABLE = "JUDGEMENT_NOT_AVAILABLE";
     public static final String CASE_CREATE_FAILED_MSG = "error while create the case";
@@ -47,7 +48,14 @@ public class LegalErrorConstants {
     public static final String JUDGEMENT_SEARCH_FAILED = "JUDGEMENT_SEARCH_FAILED";
     public static final String JUDGEMENT_SEARCH_FAILED_MSG= "error while search judgement";
     public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
-
+    public static final String ADVOCATE_SEARCH_FAILED = "ADVOCATE_SEARCH_FAILED";
+    public static final String ADVOCATE_SEARCH_FAILED_MSG = "error while search the advocate";
+    public static final String ADVOCATE_UPDATE_FAILED = "ADVOCATE_UPDATE_FAILED";
+    public static final String ADVOCATE_UPDATE_FAILED_MSG = "error while update the advocate";
+    public static final String ADVOCATE_CREATE_FAILED = "ADVOCATE_CREATE_FAILED";
+    public static final String ADVOCATE_CREATE_FAILED_MSG = "error while create the advocate";
     public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenentID";
+    public static final String COUNT_SEARCH_FAILED = "COUNT_SEARCH_FAILED";
+    public static final String COUNT_SEARCH_FAILED_MSG = "error while count search api";
 
 }

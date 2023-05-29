@@ -268,6 +268,7 @@ public class CaseService {
             throw e;
         }
         catch (Exception e) {
+            e.printStackTrace();
             log.error(LegalErrorConstants.CASE_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, LegalErrorConstants.CASE_SEARCH_FAILED_MSG);
         }
