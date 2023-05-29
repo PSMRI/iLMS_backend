@@ -160,8 +160,9 @@ public class JudgementService {
                                     .equals(processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid())) {
                                 throw new CustomException("PARSING ERROR", "You can't take action on this judgement");
                             }
+                        } else {
+                            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
                         }
-                        throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
                     }
 
                     if (Objects.nonNull(judgementRequest.getWorkflow())) {

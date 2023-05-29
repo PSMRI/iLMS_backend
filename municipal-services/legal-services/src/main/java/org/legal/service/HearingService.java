@@ -146,12 +146,12 @@ public class HearingService {
     public HearingRequest update(HearingRequest hearingDetailsRequest) {
         try {
             String action = "";
+            HearingRequest updatedRequest = new HearingRequest();
             if (hearingDetailsRequest.getHearing().getId() != null) {
                 CaseRequest caseRequest = new CaseRequest();
                 HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId(Collections.singletonList((hearingDetailsRequest.getHearing().getCaseId()))).build();
                 HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
                 if (!hearingDetailsResponse.getHearingList().isEmpty()) {
-                    HearingRequest updatedRequest = new HearingRequest();
                     HearingRequest request = new HearingRequest();
                     request.setRequestInfo(hearingDetailsRequest.getRequestInfo());
                     HearingRequest hearingAppStatus = new HearingRequest();
@@ -180,8 +180,9 @@ public class HearingService {
                                             .equals(processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid())) {
                                         throw new CustomException("PARSING ERROR", "You can't take action on this hearing");
                                     }
+                                } else {
+                                    throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
                                 }
-                                throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
                             }
                             if (Objects.nonNull(updatedRequest.getWorkflow())) {
                                 if (legalConfiguration.getIsWorkflowEnabled()) {
@@ -242,7 +243,7 @@ public class HearingService {
             } else {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
             }
-            return hearingDetailsRequest;
+            return updatedRequest;
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
