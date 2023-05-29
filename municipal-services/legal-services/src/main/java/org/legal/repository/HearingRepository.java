@@ -51,6 +51,7 @@ public class HearingRepository {
 
     @Autowired
     private AdvocateRepository advocateRepository;
+    @Autowired
     private ObjectMapper mapper;
     @Autowired
     private RestTemplate restTemplate;

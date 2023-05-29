@@ -155,7 +155,7 @@ public class JudgementService {
 
                     RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(judgementRequest.getRequestInfo()).build();
                     String judgementId = judgementRequest.getJudgement().getId();
-                    String appStatus = judgementRequest.getJudgement().getApplicationStatus();
+                    String appStatus = finalRequest.getJudgement().getApplicationStatus();
                     if (appStatus.equalsIgnoreCase(Constants.Pending_at_OIC_for_Decision) ||
                             appStatus.equalsIgnoreCase(Constants.Judgement_Initiated)) {
                         StringBuilder searchUrl = getProcessInstanceSearchURL(legalConfiguration.getTenantId(), StringUtils.join(judgementId, ','));
@@ -166,8 +166,9 @@ public class JudgementService {
                                     .equals(processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid())) {
                                 throw new CustomException("PARSING ERROR", "You can't take action on this judgement");
                             }
+                        } else {
+                            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
                         }
-                        throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
                     }
 
                     if (Objects.nonNull(judgementRequest.getWorkflow())) {

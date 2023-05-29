@@ -147,12 +147,12 @@ public class HearingService {
     public HearingRequest update(HearingRequest hearingDetailsRequest) {
         try {
             String action = "";
+            HearingRequest updatedRequest = new HearingRequest();
             if (hearingDetailsRequest.getHearing().getId() != null) {
                 CaseRequest caseRequest = new CaseRequest();
                 HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId(Collections.singletonList((hearingDetailsRequest.getHearing().getCaseId()))).build();
                 HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
                 if (!hearingDetailsResponse.getHearingList().isEmpty()) {
-                    HearingRequest updatedRequest = new HearingRequest();
                     HearingRequest request = new HearingRequest();
                     request.setRequestInfo(hearingDetailsRequest.getRequestInfo());
                     HearingRequest hearingAppStatus = new HearingRequest();
@@ -169,19 +169,21 @@ public class HearingService {
 
                             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(hearingDetailsRequest.getRequestInfo()).build();
                             String hearingId = updatedRequest.getHearing().getId();
-                            String applicationStatus = hearingDetailsRequest.getHearing().getApplicationStatus();
+                            String applicationStatus = updatedRequest.getHearing().getApplicationStatus();
                             if (applicationStatus.equalsIgnoreCase(Constants.SOF_APPROVED_BY_AO) ||
                                     applicationStatus.equalsIgnoreCase(Constants.Pending_at_OIC)) {
-                                StringBuilder searchUrl = getProcessInstanceSearchURL(legalConfiguration.getTenantId(), StringUtils.join(hearingId, ','));
-                                Object result = hearingRepository.fetchResult(searchUrl, requestInfoWrapper);
+                                StringBuilder URL = getProcessInstanceSearchURL(legalConfiguration.getTenantId(), hearingId);
+                                URL.append("&").append("history=true");
+                                Object result = hearingRepository.fetchResult(URL, requestInfoWrapper);
                                 ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
                                 if (!processInstanceResponse.getProcessInstances().isEmpty()) {
                                     if (!hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid()
                                             .equals(processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid())) {
                                         throw new CustomException("PARSING ERROR", "You can't take action on this hearing");
                                     }
+                                } else {
+                                    throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
                                 }
-                                throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
                             }
                             if (Objects.nonNull(updatedRequest.getWorkflow())) {
                                 if (legalConfiguration.getIsWorkflowEnabled()) {
@@ -242,8 +244,8 @@ public class HearingService {
             } else {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
             }
-            return hearingDetailsRequest;
-        }  catch (CustomException e) {
+            return updatedRequest;
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             if(e instanceof CustomException){
