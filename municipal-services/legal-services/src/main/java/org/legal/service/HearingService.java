@@ -168,11 +168,12 @@ public class HearingService {
 
                             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(hearingDetailsRequest.getRequestInfo()).build();
                             String hearingId = updatedRequest.getHearing().getId();
-                            String applicationStatus = hearingDetailsRequest.getHearing().getApplicationStatus();
+                            String applicationStatus = updatedRequest.getHearing().getApplicationStatus();
                             if (applicationStatus.equalsIgnoreCase(Constants.SOF_APPROVED_BY_AO) ||
                                     applicationStatus.equalsIgnoreCase(Constants.Pending_at_OIC)) {
-                                StringBuilder searchUrl = getProcessInstanceSearchURL(legalConfiguration.getTenantId(), StringUtils.join(hearingId, ','));
-                                Object result = hearingRepository.fetchResult(searchUrl, requestInfoWrapper);
+                                StringBuilder URL = getProcessInstanceSearchURL(legalConfiguration.getTenantId(), hearingId);
+                                URL.append("&").append("history=true");
+                                Object result = hearingRepository.fetchResult(URL, requestInfoWrapper);
                                 ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
                                 if (!processInstanceResponse.getProcessInstances().isEmpty()) {
                                     if (!hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid()
