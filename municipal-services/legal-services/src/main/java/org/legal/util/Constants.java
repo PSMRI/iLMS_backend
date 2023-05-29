@@ -17,6 +17,10 @@ public class Constants {
     public static final String Final_Hearing = "Final_Hearing";
     public static final String PROCEED_WITH_JUDGEMENT = "PROCEED_WITH_JUDGEMENT";
     public static final String JUDGEMENT_APPEALED_REVIEW = "JUDGEMENT_APPEALED_REVIEW";
+    public static final String SOF_APPROVED_BY_AO = "SOF_APPROVED_BY_AO";
+    public static final String Pending_at_OIC = "Pending at OIC";
+    public static final String Pending_at_OIC_for_Decision = "Pending at OIC for Decision";
+    public static final String Judgement_Initiated = "Judgement Initiated";
     public static final String REVIEW_JUDGEMENT = "REVIEW_JUDGEMENT";
     public static final String COMPLY_JUDGEMENT = "COMPLY_JUDGEMENT";
     public static final String JUDGEMENT_COMPLETED = "JUDGEMENT_COMPLETED";

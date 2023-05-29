@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -90,7 +91,7 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement");
             }
             return judgementRequest;
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error(LegalErrorConstants.JUDGEMENT_CREATE_FAILED_MSG, e.getMessage());
@@ -112,10 +113,9 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
             }
             return judgementResponse;
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_SEARCH_FAILED, LegalErrorConstants.JUDGEMENT_SEARCH_FAILED_MSG);
         }
@@ -145,14 +145,14 @@ public class JudgementService {
                     RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(judgementRequest.getRequestInfo()).build();
                     String judgementId = judgementRequest.getJudgement().getId();
                     String appStatus = judgementRequest.getJudgement().getApplicationStatus();
-                    if (appStatus.equalsIgnoreCase("Pending at OIC for Decision") ||
-                            appStatus.equalsIgnoreCase("Judgement Initiated")) {
+                    if (appStatus.equalsIgnoreCase(Constants.Pending_at_OIC_for_Decision) ||
+                            appStatus.equalsIgnoreCase(Constants.Judgement_Initiated)) {
                         StringBuilder searchUrl = getProcessInstanceSearchURL(legalConfiguration.getTenantId(), StringUtils.join(judgementId, ','));
                         Object result = judgementRepository.fetchResult(searchUrl, requestInfoWrapper);
                         ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
                         if (!processInstanceResponse.getProcessInstances().isEmpty()) {
                             if (!judgementRequest.getRequestInfo().getUserInfo().getUuid()
-                                            .equals(processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid())) {
+                                    .equals(processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid())) {
                                 throw new CustomException("PARSING ERROR", "You can't take action on this judgement");
                             }
                         }
@@ -195,7 +195,7 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
             }
             return judgementRequest;
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG, e.getMessage());
