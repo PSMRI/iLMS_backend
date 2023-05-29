@@ -62,12 +62,16 @@ public class HearingRepository {
                     List<Advocate> respondentAdvocateList = caseRepository.getAdvocateById(singleHearing.getRespondentAdvocate().getId());
                     Advocate advocate = respondentAdvocateList.get(0);
                     singleHearing.setRespondentAdvocate(advocate);
+                }else {
+                    singleHearing.setRespondentAdvocate(null);
                 }
                 String petitionerAdvocateId = singleHearing.getPetitionerAdvocate().getId();
                 if (petitionerAdvocateId != null) {
                     List<Advocate> petitionerAdvocateList = caseRepository.getAdvocateById(singleHearing.getPetitionerAdvocate().getId());
                     Advocate petAdvocate = petitionerAdvocateList.get(0);
                     singleHearing.setPetitionerAdvocate(petAdvocate);
+                }else {
+                    singleHearing.setPetitionerAdvocate(null);
                 }
             }
             HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount()).build();
