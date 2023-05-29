@@ -1,7 +1,7 @@
 package org.legal.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
 import org.legal.repository.querybuilder.CaseQueryBuilder;
 import org.legal.repository.querybuilder.HearingQueryBuilder;
 import org.legal.repository.rowmapper.HearingRowMapper;
@@ -17,9 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Repository
 @Slf4j
@@ -44,6 +48,9 @@ public class HearingRepository {
 
     @Autowired
     private AdvocateRepository advocateRepository;
+    private ObjectMapper mapper;
+    @Autowired
+    private RestTemplate restTemplate;
 
     public HearingResponse getHearingDetails(HearingSearchCriteria criteria) {
             List<Object> preparedStmtList = new ArrayList<>();
@@ -108,6 +115,19 @@ public class HearingRepository {
     public List<Party> getPartyFromPartyQuery(String caseId) {
         List<Party> partyList = caseRepository.getParty(caseId);
         return partyList;
+    }
+    public Object fetchResult(StringBuilder uri, Object request) {
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        Object response = null;
+        try {
+            response = restTemplate.postForObject(uri.toString(), request, Map.class);
+        }catch(HttpClientErrorException e) {
+            log.error("External Service threw an Exception: ",e);
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        }catch(Exception e) {
+            log.error("Exception while fetching from searcher: ",e);
+        }
+        return response;
     }
 
 }

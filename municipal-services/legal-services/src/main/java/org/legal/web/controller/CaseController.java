@@ -78,7 +78,6 @@ public class CaseController {
     public ResponseEntity<CountResponse> requestsCountPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                            @Valid @ModelAttribute CaseSearchCriteria criteria) {
         try {
-
             Map<String, Integer> countMap = caseService.count(requestInfoWrapper.getRequestInfo(), criteria);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
             CountResponse response = CountResponse.builder().responseInfo(responseInfo).statusCountMap(countMap).build();
