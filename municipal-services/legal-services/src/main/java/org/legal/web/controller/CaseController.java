@@ -37,7 +37,7 @@ public class CaseController {
             response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
             log.info("LEGALCaseController :: search() : END With Response [ " + response + " ]");
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(LegalErrorConstants.CASE_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, LegalErrorConstants.CASE_SEARCH_FAILED_MSG);
         }
@@ -52,7 +52,7 @@ public class CaseController {
             caseList.add(caseReq.getCaseObj());
             CaseResponse response = CaseResponse.builder().caseList(caseList).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(LegalErrorConstants.CASE_CREATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_CREATE_FAILED, LegalErrorConstants.CASE_CREATE_FAILED_MSG);
         }
@@ -61,14 +61,14 @@ public class CaseController {
     @PostMapping(value = "/_update")
     public ResponseEntity<CaseResponse> update(@Valid @RequestBody CaseRequest caseRequest) {
         try {
-            CaseRequest caseReq = caseService.update(caseRequest);
+            CaseRequest caseReq = caseService.updateCase(caseRequest);
             Case caseObj = caseReq.getCaseObj();
             Workflow workflow = caseReq.getWorkflow();
             List<Case> caseList = new ArrayList<>();
             caseList.add(caseObj);
             CaseResponse response = CaseResponse.builder().caseList(caseList).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(LegalErrorConstants.CASE_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_UPDATE_FAILED, LegalErrorConstants.CASE_UPDATE_FAILED_MSG);
         }
@@ -78,11 +78,11 @@ public class CaseController {
     public ResponseEntity<CountResponse> requestsCountPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                            @Valid @ModelAttribute CaseSearchCriteria criteria) {
         try {
-            Map<String, Integer> countMap = caseService.count(requestInfoWrapper.getRequestInfo(), criteria);
+            Map<String, Integer> countMap = caseService.count(criteria);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
             CountResponse response = CountResponse.builder().responseInfo(responseInfo).statusCountMap(countMap).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(LegalErrorConstants.COUNT_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.COUNT_SEARCH_FAILED, LegalErrorConstants.COUNT_SEARCH_FAILED_MSG);
         }

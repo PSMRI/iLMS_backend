@@ -6,6 +6,7 @@ import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
+import org.legal.repository.AdvocateRepository;
 import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.JudgementRepository;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -72,6 +74,9 @@ public class CaseService {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private AdvocateRepository advocateRepository;
+
     public CaseService() {
     }
 
@@ -82,7 +87,7 @@ public class CaseService {
      * @return Updated legalCase
      */
 
-    public CaseRequest update(CaseRequest caseRequest) {
+    public CaseRequest updateCase(CaseRequest caseRequest) {
         try {
             if (caseRequest.getCaseObj().getId() != null) {
                 HearingSearchCriteria hearingSearchCriteria = null;
@@ -265,8 +270,7 @@ public class CaseService {
             return finalResult;
         } catch (CustomException e) {
             throw e;
-        }
-         catch (Exception e) {
+        } catch (Exception e) {
             log.error(LegalErrorConstants.CASE_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, LegalErrorConstants.CASE_SEARCH_FAILED_MSG);
         }
@@ -344,6 +348,27 @@ public class CaseService {
                 //            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
+            caseRequest.getCaseObj().getParties().forEach(party -> {
+                if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER.toString()) || party.getPartyType().equals(PartyType.RESPONDENT.toString()))) {
+                    List<String> advocatesIdsReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());
+                    AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
+                    List<Advocate> advocateList = new ArrayList<>();
+
+                    for (String advContact : advocatesIdsReq) {
+                        criteria.setContactNumber(advContact);
+                        AdvocateResponse advocatesPresentInDB = advocateRepository.getAdvocateDetails(criteria);
+
+                        if (!advocatesPresentInDB.getAdvocate().isEmpty()) {
+                            advocateList.add(advocatesPresentInDB.getAdvocate().get(0));
+                        }
+                    }
+
+                    party.setAdvocate(advocateList);
+                }
+            });
+
+            caseRequest.getCaseObj().setParties(caseRequest.getCaseObj().getParties());
+
             return caseRequest;
         } catch (CustomException e) {
             throw e;
@@ -354,7 +379,7 @@ public class CaseService {
     }
 
 
-    public Map<String, Integer> count(RequestInfo requestInfo, CaseSearchCriteria criteria) {
+    public Map<String, Integer> count(CaseSearchCriteria criteria) {
         criteria.setIsPlainSearch(false);
         Map<String, Integer> statusCountMap = new HashMap<>();
         Set<String> applicationStatus = new HashSet<>();

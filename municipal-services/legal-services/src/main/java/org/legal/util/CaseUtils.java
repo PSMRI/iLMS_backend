@@ -2,6 +2,7 @@ package org.legal.util;
 
 import static org.legal.web.model.enums.Status.ACTIVE;
 import static org.legal.web.model.enums.Status.INACTIVE;
+
 import org.egov.common.contract.request.User;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
@@ -89,9 +90,6 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFilingDate())) {
             oldData.setFilingDate(caseRequest.getCaseObj().getFilingDate());
         }
-//        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRegistrationDate())) {
-//            oldData.setRegistrationDate(caseRequest.getCaseObj().getRegistrationDate());
-//        }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getSummary())) {
             oldData.setSummary(caseRequest.getCaseObj().getSummary());
         }
@@ -101,15 +99,10 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPolicyOrNonPolicyMatter())) {
             oldData.setPolicyOrNonPolicyMatter(caseRequest.getCaseObj().getPolicyOrNonPolicyMatter());
         }
-//        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getApplicationNumber())) {
-//            oldData.setApplicationNumber(caseRequest.getCaseObj().getApplicationNumber());
-//        }
+
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getCaseStatus())) {
             oldData.setCaseStatus(caseRequest.getCaseObj().getCaseStatus());
         }
-//        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getSubStage())) {
-//            oldData.setSubStage(caseRequest.getCaseObj().getSubStage());
-//        }
         if (Objects.nonNull(caseRequest.getCaseObj().getPriority())) {
             if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPriority())) {
                 List<String> uuids = new ArrayList<>();
@@ -289,7 +282,7 @@ public class CaseUtils {
         return processInstance;
     }
 
-    public List<PartyAdv> updatePartyAdvocates (CaseRequest caseRequest) {
+    public List<PartyAdv> updatePartyAdvocates(CaseRequest caseRequest) {
         List<PartyAdv> partyAdvList1 = new ArrayList<>();
         String tenantId = caseRequest.getRequestInfo().getUserInfo().getTenantId();
         caseRequest.getCaseObj().getParties().forEach(party -> {
@@ -298,7 +291,7 @@ public class CaseUtils {
                 List<Advocate> advocatesPresentInDB = advocateRepository.getAdvocatesById(advocatesIdsReq);
                 //create new advocates in the main advocate table whichever is not present
                 party.getAdvocate().forEach(advocatesReq -> {
-                    if(advocatesReq.getId() == null) {
+                    if (advocatesReq.getId() == null) {
                         AdvocateRequest advocateRequest = new AdvocateRequest();
                         advocatesReq.setTenantId(tenantId);
                         advocateRequest.setAdvocate(advocatesReq);
@@ -311,14 +304,14 @@ public class CaseUtils {
                 List advocatesDbIds = advocatesPresentInDB.stream().map(Advocate::getId).collect(Collectors.toList());
                 advocatesBridge.forEach(partyAdv -> {
                     //all the advocates which are present in the bridge table and have been sent in the request, will be made active
-                    if (advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(ACTIVE)){
+                    if (advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(ACTIVE)) {
                         partyAdv.setStatus(ACTIVE);
                         partyAdv.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
                         PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv).build();
                         producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
                     }
                     //the advocates which are absent in the request but present in the bridge table for this particular case and party will be made inactive
-                    else if (!advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(INACTIVE)){
+                    else if (!advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(INACTIVE)) {
                         partyAdv.setStatus(INACTIVE);
                         partyAdv.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
                         PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv).build();
