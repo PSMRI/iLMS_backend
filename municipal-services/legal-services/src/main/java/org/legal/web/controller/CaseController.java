@@ -51,7 +51,7 @@ public class CaseController {
 
     @PostMapping(value = "/_update")
     public ResponseEntity<CaseResponse> update(@Valid @RequestBody CaseRequest caseRequest) {
-        CaseRequest caseReq = caseService.update(caseRequest);
+        CaseRequest caseReq = caseService.updateCase(caseRequest);
         Case caseObj = caseReq.getCaseObj();
         Workflow workflow = caseReq.getWorkflow();
         List<Case> caseList = new ArrayList<>();
@@ -64,7 +64,7 @@ public class CaseController {
     @RequestMapping(value = "/_count", method = RequestMethod.POST)
     public ResponseEntity<CountResponse> requestsCountPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                            @Valid @ModelAttribute CaseSearchCriteria criteria) {
-        Map<String, Integer> countMap = caseService.count(requestInfoWrapper.getRequestInfo(), criteria);
+        Map<String, Integer> countMap = caseService.count(criteria);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         CountResponse response = CountResponse.builder().responseInfo(responseInfo).statusCountMap(countMap).build();
         return new ResponseEntity<>(response, HttpStatus.OK);

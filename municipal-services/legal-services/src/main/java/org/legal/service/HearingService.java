@@ -1,5 +1,6 @@
 package org.legal.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
@@ -16,6 +17,7 @@ import org.legal.web.model.enums.PartyType;
 import org.legal.web.model.enums.Status;
 import org.legal.web.model.workflow.ProcessInstance;
 import org.legal.web.model.workflow.ProcessInstanceRequest;
+import org.legal.web.model.workflow.ProcessInstanceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Transactional
@@ -60,6 +62,9 @@ public class HearingService {
 
     @Autowired
     private CaseUtils caseUtils;
+
+    @Autowired
+    private ObjectMapper mapper;
 
 
     public HearingRequest create(HearingRequest hearingRequest) {
@@ -156,6 +161,23 @@ public class HearingService {
                             updatedRequest = hearingUtils.prepareHearingDetailsModalForUpdate(hearingDetailsRequest, oldHearing);
                             updatedRequest.setWorkflow(hearingDetailsRequest.getWorkflow());
                             hearingDetailsValidator.updateValidator(updatedRequest.getHearing(), hearingDetailsRequest);
+
+                            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(hearingDetailsRequest.getRequestInfo()).build();
+                            String hearingId = updatedRequest.getHearing().getId();
+                            String applicationStatus = hearingDetailsRequest.getHearing().getApplicationStatus();
+                            if (applicationStatus.equalsIgnoreCase("SOF_APPROVED_BY_AO") ||
+                                    applicationStatus.equalsIgnoreCase("Pending at OIC")) {
+                                StringBuilder searchUrl = getProcessInstanceSearchURL(legalConfiguration.getTenantId(), StringUtils.join(hearingId, ','));
+                                Object result = hearingRepository.fetchResult(searchUrl, requestInfoWrapper);
+                                ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
+                                if (!processInstanceResponse.getProcessInstances().isEmpty()) {
+                                    if (!hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid()
+                                                    .equals(processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid())) {
+                                        throw new CustomException("PARSING ERROR", "You can't take action on this hearing");
+                                    }
+                                }
+                                throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
+                            }
                             if (Objects.nonNull(updatedRequest.getWorkflow())) {
                                 if (legalConfiguration.getIsWorkflowEnabled()) {
                                     hearingDetailsResponse.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
@@ -237,6 +259,18 @@ public class HearingService {
             log.error(LegalErrorConstants.HEARING_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_UPDATE_FAILED, LegalErrorConstants.HEARING_UPDATE_FAILED_MSG);
         }
+    }
+
+    public StringBuilder getProcessInstanceSearchURL(String tenantId, String hearingId) {
+
+        StringBuilder url = new StringBuilder(legalConfiguration.getWfHost());
+        url.append(legalConfiguration.getWfProcessInstanceSearchPath());
+        url.append("?tenantId=");
+        url.append(tenantId);
+        url.append("&businessIds=");
+        url.append(hearingId);
+        return url;
+
     }
 }
 
