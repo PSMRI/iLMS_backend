@@ -1,5 +1,10 @@
 package org.legal.service;
 
+import static org.legal.util.LegalErrorConstants.CASE_CREATE_FAILED_MSG;
+import static org.legal.util.LegalErrorConstants.CASE_NOT_AVAILABLE;
+import static org.legal.util.LegalErrorConstants.CASE_SEARCH_FAILED_MSG;
+import static org.legal.util.LegalErrorConstants.CASE_UPDATE_FAILED_MSG;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -11,6 +16,7 @@ import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.JudgementRepository;
 import org.legal.util.CaseUtils;
+import org.legal.util.CommonUtils;
 import org.legal.util.Constants;
 import org.legal.util.HearingUtils;
 import org.legal.util.LegalErrorConstants;
@@ -95,7 +101,7 @@ public class CaseService {
                 HearingRequest request = new HearingRequest();
                 CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseRequest.getCaseObj().getId())).build();
                 CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
-                if (!caseResponse.getCaseList().isEmpty()) {
+                if (ObjectUtils.isNotEmpty(caseResponse) && !caseResponse.getCaseList().isEmpty()) {
                     CaseRequest updatedCaseRequest = caseUtils.prepareObjectMapperForUpdate(caseResponse.getCaseList().get(0), caseRequest);
                     updatedCaseRequest.setWorkflow(caseRequest.getWorkflow());
                     Case cases = caseResponse.getCaseList().get(0);
@@ -110,7 +116,7 @@ public class CaseService {
                         }
                         hearingSearchCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(caseId)).build();
                         HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
-                        if (!hearingResponse.getHearingList().isEmpty()) {
+                        if (ObjectUtils.isNotEmpty(hearingResponse) && !hearingResponse.getHearingList().isEmpty()) {
                             request.setRequestInfo(caseRequest.getRequestInfo());
                             for (Hearing hearing : hearingResponse.getHearingList()) {
                                 request.setHearing(hearing);
@@ -144,18 +150,21 @@ public class CaseService {
                     caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                     producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
                 } else {
-                    throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available");
+                    throw new CustomException(CASE_NOT_AVAILABLE, "Case is not Available");
                 }
             } else {
-                throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "id is mandatory");
+                throw new CustomException(CASE_NOT_AVAILABLE, "id is mandatory");
             }
             return caseRequest;
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
-            log.error(LegalErrorConstants.CASE_UPDATE_FAILED_MSG, e.getMessage());
-            throw new CustomException(LegalErrorConstants.CASE_UPDATE_FAILED, LegalErrorConstants.CASE_UPDATE_FAILED_MSG);
+            log.error(CASE_UPDATE_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.CASE_UPDATE_FAILED, CASE_UPDATE_FAILED_MSG + " " + e.getMessage());
         }
     }
 
@@ -252,15 +261,18 @@ public class CaseService {
                 finalResult.setHearingList(hearingList);
                 finalResult.setJudgementList(judgementList);
             } else {
-                throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, LegalErrorConstants.CASE_NOT_AVAILABLE);
+                throw new CustomException(CASE_NOT_AVAILABLE, CASE_NOT_AVAILABLE);
             }
             return finalResult;
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
-            log.error(LegalErrorConstants.CASE_SEARCH_FAILED_MSG, e.getMessage());
-            throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, LegalErrorConstants.CASE_SEARCH_FAILED_MSG);
+            log.error(CASE_SEARCH_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, CASE_SEARCH_FAILED_MSG);
         }
     }
 
@@ -358,12 +370,15 @@ public class CaseService {
             caseRequest.getCaseObj().setParties(caseRequest.getCaseObj().getParties());
 
             return caseRequest;
-        } catch (CustomException e) {
+        }catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
-            log.error(LegalErrorConstants.CASE_CREATE_FAILED_MSG, e.getMessage());
-            throw new CustomException(LegalErrorConstants.CASE_CREATE_FAILED, LegalErrorConstants.CASE_CREATE_FAILED_MSG);
+            log.error(CASE_CREATE_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.CASE_CREATE_FAILED, CASE_CREATE_FAILED_MSG + " " + e.getMessage());
         }
     }
 

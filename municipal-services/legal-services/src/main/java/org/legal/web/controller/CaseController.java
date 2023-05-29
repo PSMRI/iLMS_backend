@@ -1,6 +1,10 @@
 package org.legal.web.controller;
 
+import static org.legal.util.LegalErrorConstants.CASE_CREATE_FAILED_MSG;
+import static org.legal.util.LegalErrorConstants.CASE_SEARCH_FAILED_MSG;
+import static org.legal.util.LegalErrorConstants.CASE_UPDATE_FAILED_MSG;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.service.CaseService;
@@ -37,9 +41,16 @@ public class CaseController {
             response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
             log.info("LEGALCaseController :: search() : END With Response [ " + response + " ]");
             return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
-            log.error(LegalErrorConstants.CASE_SEARCH_FAILED_MSG, e.getMessage());
-            throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, LegalErrorConstants.CASE_SEARCH_FAILED_MSG);
+            if(e instanceof CustomException){
+                throw e;
+            }
+            e.printStackTrace();
+            log.error(CASE_SEARCH_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, CASE_SEARCH_FAILED_MSG);
         }
     }
 
@@ -52,9 +63,15 @@ public class CaseController {
             caseList.add(caseReq.getCaseObj());
             CaseResponse response = CaseResponse.builder().caseList(caseList).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
-            log.error(LegalErrorConstants.CASE_CREATE_FAILED_MSG, e.getMessage());
-            throw new CustomException(LegalErrorConstants.CASE_CREATE_FAILED, LegalErrorConstants.CASE_CREATE_FAILED_MSG);
+            if(e instanceof CustomException){
+                throw e;
+            }
+            e.printStackTrace();
+            log.error(CASE_CREATE_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.CASE_CREATE_FAILED, CASE_CREATE_FAILED_MSG + " " + e.getMessage());
         }
     }
 
@@ -68,9 +85,15 @@ public class CaseController {
             caseList.add(caseObj);
             CaseResponse response = CaseResponse.builder().caseList(caseList).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
-            log.error(LegalErrorConstants.CASE_UPDATE_FAILED_MSG, e.getMessage());
-            throw new CustomException(LegalErrorConstants.CASE_UPDATE_FAILED, LegalErrorConstants.CASE_UPDATE_FAILED_MSG);
+            if(e instanceof CustomException){
+                throw e;
+            }
+            e.printStackTrace();
+            log.error(CASE_UPDATE_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.CASE_UPDATE_FAILED, CASE_UPDATE_FAILED_MSG + " " + e.getMessage());
         }
     }
 
@@ -82,7 +105,12 @@ public class CaseController {
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
             CountResponse response = CountResponse.builder().responseInfo(responseInfo).statusCountMap(countMap).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
+        }  catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             log.error(LegalErrorConstants.COUNT_SEARCH_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.COUNT_SEARCH_FAILED, LegalErrorConstants.COUNT_SEARCH_FAILED_MSG);
         }

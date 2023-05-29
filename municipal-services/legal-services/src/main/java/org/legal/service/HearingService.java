@@ -1,5 +1,8 @@
 package org.legal.service;
 
+import static org.legal.util.LegalErrorConstants.CASE_UPDATE_FAILED_MSG;
+import static org.legal.util.LegalErrorConstants.HEARING_CREATE_FAILED_MSG;
+import static org.legal.util.LegalErrorConstants.HEARING_SEARCH_FAILED_MSG;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -79,14 +82,6 @@ public class HearingService {
             if (caseResponse.getCaseList().isEmpty()) {
                 throw new CustomException(LegalErrorConstants.CASE_NOT_AVAILABLE, "Case is not Available.");
             }
-            //   List<Party> partyList = hearingDetailsRepository.getGetFromPartyQuery(hearingRequest.getHearing().getCaseId());
-            //        for (Party party : partyList) {
-            //            if (party.getPartyType().equals(PartyType.RESPONDENT.toString())) {
-            //                respondentId = party.getId();
-            //            } else {
-            //                petitionerId = party.getId();
-            //            }
-            //        }
             if (Objects.nonNull(caseResponse.getCaseList())) {
                 if (caseResponse.getCaseList().get(0).getCaseNumber().equals(hearingRequest.getHearing().getCaseNumber())) {
                     hearingRequest.getHearing().setStatus(Status.ACTIVE);
@@ -116,9 +111,12 @@ public class HearingService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
-            log.error(LegalErrorConstants.HEARING_CREATE_FAILED_MSG, e.getMessage());
-            throw new CustomException(LegalErrorConstants.HEARING_CREATE_FAILED, LegalErrorConstants.HEARING_CREATE_FAILED_MSG);
+            log.error(HEARING_CREATE_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.HEARING_CREATE_FAILED, HEARING_CREATE_FAILED_MSG + " " + e.getMessage());
         }
     }
 
@@ -136,9 +134,12 @@ public class HearingService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
-            log.error(LegalErrorConstants.HEARING_SEARCH_FAILED_MSG, e.getMessage());
-            throw new CustomException(LegalErrorConstants.HEARING_SEARCH_FAILED, LegalErrorConstants.HEARING_SEARCH_FAILED_MSG);
+            log.error(HEARING_SEARCH_FAILED_MSG, e.getMessage());
+            throw new CustomException(LegalErrorConstants.HEARING_SEARCH_FAILED, HEARING_SEARCH_FAILED_MSG + " " + e.getMessage());
         }
     }
 
@@ -242,9 +243,12 @@ public class HearingService {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
             }
             return hearingDetailsRequest;
-        } catch (CustomException e) {
+        }  catch (CustomException e) {
             throw e;
         } catch (Exception e) {
+            if(e instanceof CustomException){
+                throw e;
+            }
             e.printStackTrace();
             log.error(LegalErrorConstants.HEARING_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_UPDATE_FAILED, LegalErrorConstants.HEARING_UPDATE_FAILED_MSG);
