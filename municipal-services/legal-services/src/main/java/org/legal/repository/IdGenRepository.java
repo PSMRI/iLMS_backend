@@ -43,7 +43,7 @@ public class IdGenRepository {
         } catch (Exception e) {
             e.printStackTrace();
             Map<String, String> map = new HashMap<>();
-            map.put(e.getCause().getClass().getName(), e.getMessage());
+            map.put(e.getClass().getName(), e.getMessage());
             throw new CustomException(map);
         }
         return response;
