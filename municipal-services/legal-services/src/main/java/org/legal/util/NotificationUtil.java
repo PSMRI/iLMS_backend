@@ -147,35 +147,6 @@ public class NotificationUtil {
         return uri;
     }
 
-    public String getMessageTemplate(String notificationCode, String localizationMessage) {
-
-        String path = "$..messages[?(@.code==\"{}\")].message";
-        path = path.replace("{}", notificationCode);
-        String message = "";
-        try {
-            Object messageObj = JsonPath.parse(localizationMessage).read(path);
-            message = ((ArrayList<String>) messageObj).get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.warn("Fetching from localization failed", e);
-        }
-        return message;
-    }
-
-    public String getShortenedUrl(String url) {
-
-        HashMap<String, String> body = new HashMap<>();
-        body.put("url", url);
-        String res = restTemplate.postForObject(legalConfiguration.getUrlShortnerHost() + legalConfiguration.getUrlShortnerEndpoint(), body, String.class);
-
-        if (StringUtils.isEmpty(res)) {
-            log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
-            return url;
-        } else {
-            return res;
-        }
-    }
-
     public void sendEmail(List<EmailRequest> emailRequestList) {
 
         if (legalConfiguration.getIsEmailNotificationEnabled()) {
@@ -298,29 +269,5 @@ public class NotificationUtil {
         }
         return mapOfPhnoAndUUIDs;
     }
-
-//    public String getLocalizationMessagesForSchedular(String tenantId, RequestInfo requestInfo) {
-//
-//        String locale = NOTIFICATION_LOCALE;
-//        Boolean isRetryNeeded = false;
-//        String jsonString = null;
-//        LinkedHashMap responseMap = null;
-//
-//        if (!org.apache.commons.lang3.StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("\\|").length >= 2) {
-//            locale = requestInfo.getMsgId().split("\\|")[1];
-//            isRetryNeeded = true;
-//        }
-//        responseMap = (LinkedHashMap) serviceRepository.fetchResult(getUri(tenantId, requestInfo, locale), requestInfo);
-//        jsonString = new JSONObject(responseMap).toString();
-//
-//        if (org.apache.commons.lang3.StringUtils.isEmpty(jsonString) && isRetryNeeded) {
-//            responseMap = (LinkedHashMap) serviceRepository.fetchResult(getUri(tenantId, requestInfo, NOTIFICATION_LOCALE), requestInfo);
-//            jsonString = new JSONObject(responseMap).toString();
-//            if (org.apache.commons.lang3.StringUtils.isEmpty(jsonString)) {
-//                throw new CustomException("LOCALE_ERROR", "Localisation values not found for notifications");
-//            }
-//        }
-//        return jsonString;
-//    }
 
 }
