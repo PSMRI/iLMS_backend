@@ -12,6 +12,7 @@ import org.legal.web.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +55,7 @@ public class CaseRepository {
                 }
             }
         } else {
-            criteria = CaseSearchCriteria.builder().id(ids).caseNumber(criteria.getCaseNumber()).limit(criteria.getLimit()).offset(criteria.getOffset()).build();
+            criteria = CaseSearchCriteria.builder().id(ids).caseNumber(criteria.getCaseNumber()).applicationStatus(criteria.getApplicationStatus()).limit(criteria.getLimit()).offset(criteria.getOffset()).build();
         }
         String query = caseQueryBuilder.getLegalCaseSearchQuery(criteria, preparedStmtList);
         List<Case> caseList = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);

@@ -4,6 +4,7 @@ import static org.legal.util.LegalErrorConstants.CASE_CREATE_FAILED_MSG;
 import static org.legal.util.LegalErrorConstants.CASE_NOT_AVAILABLE;
 import static org.legal.util.LegalErrorConstants.CASE_SEARCH_FAILED_MSG;
 import static org.legal.util.LegalErrorConstants.CASE_UPDATE_FAILED_MSG;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -159,7 +160,7 @@ public class CaseService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
@@ -173,7 +174,6 @@ public class CaseService {
 
             List<Case> caseList = new ArrayList<>();
             CaseResponse caseResponse = null;
-            criteria.setUuid(requestInfo.getUserInfo().getUuid());
             List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
             caseResponse = caseRepository.getLegalCaseData(criteria);
             CaseResponse finalResult = new CaseResponse();
@@ -187,7 +187,7 @@ public class CaseService {
             if (!caseResponse.getCaseList().isEmpty()) {
                 OfficersCount officersCount = new OfficersCount();
                 CaseSearchCriteria criteria1 = new CaseSearchCriteria();
-                criteria1.setUuid(criteria.getUuid());
+                criteria1.setUuid(requestInfo.getUserInfo().getUuid());
                 total = caseRepository.getCaseCount(criteria1);
                 officersCount.setTOTAL(total);
 
@@ -237,12 +237,12 @@ public class CaseService {
                 List<Judgement> judgementList = new ArrayList<>();
                 HearingResponse hearingResponse = null;
                 JudgementResponse judgementResponse = null;
-             List<String> caseIds = caseResponse.getCaseList().stream().map(Case::getId).collect(Collectors.toList());
+                List<String> caseIds = caseResponse.getCaseList().stream().map(Case::getId).collect(Collectors.toList());
 //                List<String> caseIds = caseResponse.getCaseList().stream()
 //                                                   .filter(c -> "Active".equals(c.getStatus()))
 //                                                   .map(Case::getId)
 //                                                   .collect(Collectors.toList());
-                for (String caseId: caseIds){
+                for (String caseId : caseIds) {
                     HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(
                             caseId)).build();
                     hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
@@ -252,9 +252,9 @@ public class CaseService {
                         }
                     });
                 }
-                for (String caseId: caseIds){
+                for (String caseId : caseIds) {
                     JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
-                           caseId)).build();
+                            caseId)).build();
                     judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
                     judgementResponse.getJudgementList().forEach(judgement -> {
                         if (judgement.getStatus() == Status.ACTIVE) {
@@ -275,7 +275,7 @@ public class CaseService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
@@ -378,10 +378,10 @@ public class CaseService {
             caseRequest.getCaseObj().setParties(caseRequest.getCaseObj().getParties());
 
             return caseRequest;
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
