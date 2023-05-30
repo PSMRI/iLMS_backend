@@ -228,32 +228,40 @@ public class CaseService {
                     officersCount.setAO(ao);
                     officersCount.setOIC(oic);
                 }
-                List<Hearing> hearingList = new ArrayList<>();
-                List<Judgement> judgementList = new ArrayList<>();
-                HearingResponse hearingResponse = null;
-                JudgementResponse judgementResponse = null;
-                HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(
-                        caseResponse.getCaseList().get(0).getId())).build();
-                hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
-                JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
-                        caseResponse.getCaseList().get(0).getId())).build();
-                judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
                 caseResponse.getCaseList().forEach(caseObj -> {
                     if (caseObj.getStatus() == Status.ACTIVE) {
                         caseList.add(caseObj);
                     }
                 });
-                hearingResponse.getHearingList().forEach(hearing -> {
-                    if (hearing.getStatus() == Status.ACTIVE) {
-                        hearingList.add(hearing);
-                    }
-                });
-                judgementResponse.getJudgementList().forEach(judgement -> {
-                    if (judgement.getStatus() == Status.ACTIVE) {
-                        judgementList.add(judgement);
-                    }
-                });
-
+                List<Hearing> hearingList = new ArrayList<>();
+                List<Judgement> judgementList = new ArrayList<>();
+                HearingResponse hearingResponse = null;
+                JudgementResponse judgementResponse = null;
+             List<String> caseIds = caseResponse.getCaseList().stream().map(Case::getId).collect(Collectors.toList());
+//                List<String> caseIds = caseResponse.getCaseList().stream()
+//                                                   .filter(c -> "Active".equals(c.getStatus()))
+//                                                   .map(Case::getId)
+//                                                   .collect(Collectors.toList());
+                for (String caseId: caseIds){
+                    HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(
+                            caseId)).build();
+                    hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
+                    hearingResponse.getHearingList().forEach(hearing -> {
+                        if (hearing.getStatus() == Status.ACTIVE) {
+                            hearingList.add(hearing);
+                        }
+                    });
+                }
+                for (String caseId: caseIds){
+                    JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
+                           caseId)).build();
+                    judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
+                    judgementResponse.getJudgementList().forEach(judgement -> {
+                        if (judgement.getStatus() == Status.ACTIVE) {
+                            judgementList.add(judgement);
+                        }
+                    });
+                }
                 finalResult.setTotalCount(caseResponse.getTotalCount());
                 finalResult.setCaseList(caseList);
                 finalResult.setStatusMap(statusCountMap);
