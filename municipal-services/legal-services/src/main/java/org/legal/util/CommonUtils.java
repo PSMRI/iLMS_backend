@@ -1,7 +1,10 @@
 package org.legal.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
@@ -10,6 +13,7 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.ServiceRepository;
+import org.legal.web.model.RoleDto;
 import org.legal.web.model.idGen.IdGenerationRequest;
 import org.legal.web.model.idGen.IdGenerationResponse;
 import org.legal.web.model.idGen.IdRequest;
@@ -22,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class CommonUtils {
     @Autowired
     private ObjectMapper mapper;
@@ -85,88 +90,48 @@ public class CommonUtils {
 
         return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
     }
-
-    public Map<String, String> fetchUsersByUUID(List<String> listUuids, String tenantId) {
+    
+    public List<RoleDto> fetchUsersByUUID(List<String> uuid, String tenantId) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getUserHost()).append(configs.getUserSearchEndPoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
         userSearchRequest.put("tenantId", tenantId);
-        userSearchRequest.put("uuid", listUuids);
-        Map<String, String> roleList = new HashMap<>();
+        userSearchRequest.put("uuid", uuid);
+        List<RoleDto> roles = new ArrayList<>();
         try {
-            Object user = restRepo.fetchUserResult(uri, userSearchRequest);
+            Object user = restRepo.fetchUsersResult(uri, userSearchRequest);
             if (user != null) {
-                String role = JsonPath.read(user, "$.user[0].roles[0].code");
-                roleList.put("role", role);
+                Object role = JsonPath.read(user, "$.user[0].roles");
+                List<RoleDto> responseRoles = mapper.readValue(new Gson().toJson(role), new TypeReference<List<RoleDto>>() {
+                });
+                for (RoleDto roleDto : responseRoles) {
+                    roles.add(roleDto);
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(LegalErrorConstants.UNABLE_TO_FETCH, "Unable to fetch User from system");
+            log.error("Unable to fetch User from system", e);
+            throw new CustomException("PARSING_ERROR", "Unable to fetch User from system");
         }
-        return roleList;
-    }
-
-    public boolean isUserExists(List<String> listUuids, String tenantId) {
-        Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
-        if (userRoles.get("role").isEmpty()) {
-            throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
-                    "User does not exists in system");
-        }
-        return true;
-    }
-
-    public boolean isUserDEC(List<String> listUuids, String tenantId, String columnValue) {
-        Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
-        if (!userRoles.get("role").equalsIgnoreCase("DEC")) {
-            throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
-                    "Unauthorised User [ " + userRoles.get("role") + " ] for [ " + columnValue + " ]");
-        }
-        return true;
-    }
-
-    public boolean isUserRO(List<String> listUuids, String tenantId, String columnValue) {
-        Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
-        if (!userRoles.get("role").equalsIgnoreCase("RO")) {
-            throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
-                    "Unauthorised User [ " + userRoles.get("role") + " ] for [ " + columnValue + " ]");
-        }
-        return true;
-    }
-
-    public boolean isUserOICA(List<String> listUuids, String tenantId, String columnValue) {
-        Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
-        if (!userRoles.get("role").equalsIgnoreCase("OICA")) {
-            throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
-                    "Unauthorised User [ " + userRoles.get("role") + " ] for [ " + columnValue + " ]");
-        }
-        return true;
-    }
-
-    public boolean isUserAO(List<String> listUuids, String tenantId, String columnValue) {
-        Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
-        if (!userRoles.get("role").equalsIgnoreCase("AO")) {
-            throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
-                    "Unauthorised User [ " + userRoles.get("role") + " ] for [ " + columnValue + " ]");
-        }
-        return true;
+        return roles;
     }
 
     public boolean isUserOIC(List<String> listUuids, String tenantId, String columnValue) {
-        Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
-        if (!userRoles.get("role").equalsIgnoreCase("OIC")) {
+        List<RoleDto> userRoles = fetchUsersByUUID(listUuids, tenantId);
+        List<String> roleCodes = userRoles.stream().map(RoleDto::getCode).collect(Collectors.toList());
+        if (!roleCodes.contains(Constants.OIC)) {
             throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
-                    "Unauthorised User [ " + userRoles.get("role") + " ] for [ " + columnValue + " ]");
+                    "Unauthorised User to insert [ " + columnValue + " ]");
         }
         return true;
     }
 
     public boolean isUserMO(List<String> listUuids, String tenantId, String columnValue) {
-        Map<String, String> userRoles = fetchUsersByUUID(listUuids, tenantId);
-        if (!userRoles.get("role").equalsIgnoreCase("MO")) {
+        List<RoleDto> userRoles = fetchUsersByUUID(listUuids, tenantId);
+        List<String> roleCodes = userRoles.stream().map(RoleDto::getCode).collect(Collectors.toList());
+        if (!roleCodes.contains(Constants.MO)) {
             throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
-                    "Unauthorised User [ " + userRoles.get("role") + " ] for [ " + columnValue + " ]");
+                    "Unauthorised User to insert [ " + columnValue + " ]");
         }
         return true;
     }
-
 }

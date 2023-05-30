@@ -87,7 +87,7 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFilingNumber())) {
             oldData.setFilingNumber(caseRequest.getCaseObj().getFilingNumber());
         }
-        if (caseRequest.getCaseObj().getFilingDate() != 0) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getFilingDate())) {
             oldData.setFilingDate(caseRequest.getCaseObj().getFilingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getSummary())) {

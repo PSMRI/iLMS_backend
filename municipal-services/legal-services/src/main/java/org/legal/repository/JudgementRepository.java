@@ -77,7 +77,7 @@ public class JudgementRepository {
         if (!StringUtils.isEmpty(request.getJudgement().getOrderType())) {
             oldJudgement.setOrderType(request.getJudgement().getOrderType());
         }
-        if (request.getJudgement().getOrderDate() != 0) {
+        if (Objects.nonNull(request.getJudgement().getOrderDate())) {
             oldJudgement.setOrderDate(request.getJudgement().getOrderDate());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getDecisionStatus())) {
@@ -87,10 +87,10 @@ public class JudgementRepository {
                 oldJudgement.setDecisionStatus(request.getJudgement().getDecisionStatus());
             }
         }
-        if (request.getJudgement().getComplianceDate() != 0) {
+        if (Objects.nonNull(request.getJudgement().getComplianceDate())) {
             oldJudgement.setComplianceDate(request.getJudgement().getComplianceDate());
         }
-        if (request.getJudgement().getRevisedComplianceDate() != 0) {
+        if (Objects.nonNull(request.getJudgement().getRevisedComplianceDate())) {
             oldJudgement.setRevisedComplianceDate(request.getJudgement().getRevisedComplianceDate());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getOrderNoOverride())) {
