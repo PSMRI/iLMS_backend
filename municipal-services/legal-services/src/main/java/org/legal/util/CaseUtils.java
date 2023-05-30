@@ -73,7 +73,7 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getParentCaseId())) {
             oldData.setParentCaseId(caseRequest.getCaseObj().getParentCaseId());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getLinkedCases())) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getLinkedCases())) {
             oldData.setLinkedCases(caseRequest.getCaseObj().getLinkedCases());
         }
 
@@ -87,7 +87,7 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFilingNumber())) {
             oldData.setFilingNumber(caseRequest.getCaseObj().getFilingNumber());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getFilingDate())) {
+        if (caseRequest.getCaseObj().getFilingDate() != 0) {
             oldData.setFilingDate(caseRequest.getCaseObj().getFilingDate());
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getSummary())) {
@@ -118,7 +118,7 @@ public class CaseUtils {
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getRemarks())) {
             oldData.setRemarks(caseRequest.getCaseObj().getRemarks());
         }
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getAdditionalDetails())) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getAdditionalDetails())) {
             oldData.setAdditionalDetails(caseRequest.getCaseObj().getAdditionalDetails());
         }
         if (!StringUtils.isEmpty(caseRequest.getCaseObj().getStatus())) {
@@ -225,7 +225,7 @@ public class CaseUtils {
             }
         }
         //setting documents details
-        if (!StringUtils.isEmpty(caseRequest.getCaseObj().getDocuments())) {
+        if (Objects.nonNull(caseRequest.getCaseObj().getDocuments())) {
             List<Document> documentList = caseRequest.getCaseObj().getDocuments();
             for (Document document : documentList) {
                 for (Document oldDocData : oldData.getDocuments()) {

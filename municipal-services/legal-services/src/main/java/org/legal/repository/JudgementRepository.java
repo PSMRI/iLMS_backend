@@ -17,9 +17,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +77,7 @@ public class JudgementRepository {
         if (!StringUtils.isEmpty(request.getJudgement().getOrderType())) {
             oldJudgement.setOrderType(request.getJudgement().getOrderType());
         }
-        if (!StringUtils.isEmpty(request.getJudgement().getOrderDate())) {
+        if (request.getJudgement().getOrderDate() != 0) {
             oldJudgement.setOrderDate(request.getJudgement().getOrderDate());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getDecisionStatus())) {
@@ -84,10 +87,10 @@ public class JudgementRepository {
                 oldJudgement.setDecisionStatus(request.getJudgement().getDecisionStatus());
             }
         }
-        if (!StringUtils.isEmpty(request.getJudgement().getComplianceDate())) {
+        if (request.getJudgement().getComplianceDate() != 0) {
             oldJudgement.setComplianceDate(request.getJudgement().getComplianceDate());
         }
-        if (!StringUtils.isEmpty(request.getJudgement().getRevisedComplianceDate())) {
+        if (request.getJudgement().getRevisedComplianceDate() != 0) {
             oldJudgement.setRevisedComplianceDate(request.getJudgement().getRevisedComplianceDate());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getOrderNoOverride())) {
@@ -106,7 +109,7 @@ public class JudgementRepository {
         if (!StringUtils.isEmpty(request.getJudgement().getRemarks())) {
             oldJudgement.setRemarks(request.getJudgement().getRemarks());
         }
-        if (!StringUtils.isEmpty(request.getJudgement().getAdditionalDetails())) {
+        if (Objects.nonNull(request.getJudgement().getAdditionalDetails())) {
             oldJudgement.setAdditionalDetails(request.getJudgement().getAdditionalDetails());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getStatus())) {
@@ -131,11 +134,11 @@ public class JudgementRepository {
         Object response = null;
         try {
             response = restTemplate.postForObject(uri.toString(), request, Map.class);
-        }catch(HttpClientErrorException e) {
-            log.error("External Service threw an Exception: ",e);
+        } catch (HttpClientErrorException e) {
+            log.error("External Service threw an Exception: ", e);
             throw new ServiceCallException(e.getResponseBodyAsString());
-        }catch(Exception e) {
-            log.error("Exception while fetching from searcher: ",e);
+        } catch (Exception e) {
+            log.error("Exception while fetching from searcher: ", e);
         }
         return response;
     }
