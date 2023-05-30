@@ -144,8 +144,9 @@ public class CaseService {
                                     }
                                 }
                             }
-                            notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
+
                         }
+                        notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
                     caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                     producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
@@ -356,6 +357,7 @@ public class CaseService {
                 //            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
+            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
             caseRequest.getCaseObj().getParties().forEach(party -> {
                 if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER.toString()) || party.getPartyType().equals(PartyType.RESPONDENT.toString()))) {
                     List<String> advocatesIdsReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());

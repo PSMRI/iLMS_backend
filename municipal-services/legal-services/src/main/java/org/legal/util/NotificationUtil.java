@@ -247,7 +247,7 @@ public class NotificationUtil {
         producer.push(legalConfiguration.getSaveUserEventsTopic(), request);
     }
 
-    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String assignee, String tenantId, Case cases) {
+    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String assignee, String tenantId) {
         Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest::getMobileNumber).collect(Collectors.toSet());
         Set<String> message = smsRequests.stream().map(SMSRequest::getMessage).collect(Collectors.toSet());
         Map<String, String> mapOfPhnoAndUUIDs = fetchUserUUIDs(mobileNumbers, requestInfo, tenantId);
