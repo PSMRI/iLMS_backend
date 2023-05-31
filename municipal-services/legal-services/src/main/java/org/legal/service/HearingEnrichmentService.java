@@ -57,6 +57,7 @@ public class HearingEnrichmentService {
         hearing.setAuditDetails(auditDetails);
         if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
             hearingRequest.getHearing().getPayment().setAuditDetails(auditDetails);
+            hearingRequest.getHearing().getPayment().setStatus(Status.ACTIVE);
             hearing.getPayment().setAuditDetails(auditDetails);
         }
         if (!CollectionUtils.isEmpty(hearingRequest.getHearing().getDocuments())) {
