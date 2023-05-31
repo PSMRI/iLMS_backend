@@ -117,6 +117,7 @@ public class CaseRepository {
         return documentList;
     }
 
+
     public List<Advocate> getAdvocateById(String id) {
         List<Advocate> advocateList = jdbcTemplate.query(caseQueryBuilder.getAdvocateQuery(id), advocateMapper);
         return advocateList;

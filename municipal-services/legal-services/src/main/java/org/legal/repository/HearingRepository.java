@@ -5,15 +5,11 @@ import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.legal.repository.querybuilder.CaseQueryBuilder;
 import org.legal.repository.querybuilder.HearingQueryBuilder;
+import org.legal.repository.rowmapper.DocumentMapper;
 import org.legal.repository.rowmapper.HearingRowMapper;
 import org.legal.repository.rowmapper.PartyRowMapper;
 import org.legal.util.LegalErrorConstants;
-import org.legal.web.model.Advocate;
-import org.legal.web.model.Case;
-import org.legal.web.model.Hearing;
-import org.legal.web.model.HearingResponse;
-import org.legal.web.model.HearingSearchCriteria;
-import org.legal.web.model.Party;
+import org.legal.web.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -53,6 +49,8 @@ public class HearingRepository {
     private AdvocateRepository advocateRepository;
     @Autowired
     private ObjectMapper mapper;
+    @Autowired
+    private DocumentMapper documentMapper;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -96,6 +94,13 @@ public class HearingRepository {
         preparedStmtList.add(caseId);
         List<Party> parties = jdbcTemplate.query(caseQueryBuilder.getPartyQuery(), preparedStmtList.toArray(), partyRowMapper);
         return parties;
+    }
+
+    public List<Document> getHearingDocumentList(String hearingId) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        preparedStmtList.add(hearingId);
+        List<Document> documentList = jdbcTemplate.query(hearingQueryBuilder.getDocQuery(), preparedStmtList.toArray(), documentMapper);
+        return documentList;
     }
 
     public String getMaxValueOfHearing(String caseId) {

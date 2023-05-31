@@ -154,12 +154,14 @@ serviceMaps:
 
             - jsonPath: $.case.court.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_document(id, case_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.documents.*
           jsonMaps:
             - jsonPath: $.case.documents.*.id
 
             - jsonPath: $.case.id
+
+            - jsonPath: $.hearing.id
 
             - jsonPath: $.case.documents.*.documentType
 
@@ -268,6 +270,27 @@ serviceMaps:
             - jsonPath: $.hearing.payment.auditDetails.createdBy
 
             - jsonPath: $.hearing.payment.auditDetails.createdTime
+
+        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: hearing.documents.*
+          jsonMaps:
+            - jsonPath: $.hearing.documents.*.id
+
+            - jsonPath: $.hearing.caseId
+
+            - jsonPath: $.hearing.id
+
+            - jsonPath: $.hearing.documents.*.documentType
+
+            - jsonPath: $.hearing.documents.*.fileStoreId
+
+            - jsonPath: $.hearing.documents.*.status
+
+            - jsonPath: $.hearing.documents.*.remarks
+
+            - jsonPath: $.hearing.documents.*.auditDetails.createdBy
+
+            - jsonPath: $.hearing.documents.*.auditDetails.createdTime
 
     - version: 1.0
       description: Add cases in eg_lg_case table
@@ -458,11 +481,13 @@ serviceMaps:
 
             - jsonPath: $.case.act.*.id
 
-        - query: UPDATE eg_lg_document SET case_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
+        - query: UPDATE eg_lg_document SET case_id=?, hearing_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
           basePath: case.documents.*
           jsonMaps:
 
             - jsonPath: $.case.id
+
+            - jsonPath: $.hearing.id
 
             - jsonPath: $.case.documents.*.documentType
 
@@ -587,6 +612,28 @@ serviceMaps:
             - jsonPath: $.hearing.payment.auditDetails.lastModifiedTime
 
             - jsonPath: $.hearing.payment.id
+
+        - query: UPDATE eg_lg_document SET case_id=?, hearing_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
+          basePath: hearing.documents.*
+          jsonMaps:
+
+            - jsonPath: $.case.id
+
+            - jsonPath: $.hearing.id
+
+            - jsonPath: $.hearing.documents.*.documentType
+
+            - jsonPath: $.hearing.documents.*.fileStoreId
+
+            - jsonPath: $.hearing.documents.*.status
+
+            - jsonPath: $.hearing.documents.*.remarks
+
+            - jsonPath: $.hearing.documents.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hearing.documents.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.hearing.documents.*.id
 
 
     - version: 1.0

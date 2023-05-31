@@ -59,6 +59,12 @@ public class HearingEnrichmentService {
             hearingRequest.getHearing().getPayment().setAuditDetails(auditDetails);
             hearing.getPayment().setAuditDetails(auditDetails);
         }
+        if (!CollectionUtils.isEmpty(hearingRequest.getHearing().getDocuments())) {
+            hearingRequest.getHearing().getDocuments().forEach(doc -> {
+                doc.setAuditDetails(auditDetails);
+                doc.setStatus(Status.ACTIVE);
+            });
+        }
     }
 
     private void setIdgenIds(HearingRequest request) {
@@ -88,6 +94,13 @@ public class HearingEnrichmentService {
             payment.setId(paymentItr.next());
             payment.setStatus(Status.ACTIVE);
             hearing.setPayment(payment);
+        }
+        if (Objects.nonNull(hearing.getDocuments())) {
+            hearing.getDocuments().forEach((doc -> {
+                List<String> docId = getIdList(requestInfo, tenantId, legalConfiguration.getDocumentIdgenName(),
+                        legalConfiguration.getDocumentIdgenFormat(), 1);
+                doc.setId(docId.get(0));
+            }));
         }
 
     }

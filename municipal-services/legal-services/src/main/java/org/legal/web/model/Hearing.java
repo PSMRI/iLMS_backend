@@ -101,12 +101,14 @@ public class Hearing {
     @JsonProperty("payment")
     private Payment payment;
 
+    @JsonProperty("documents")
+    private List<Document> documents;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
-
 
 
 }
