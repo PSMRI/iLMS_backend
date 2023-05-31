@@ -40,7 +40,7 @@ public class DocumentMapper implements ResultSetExtractor<List<Document>> {
                         .lastModifiedBy(rs.getString("lastmodifiedby")).lastModifiedTime(rs.getLong("lastmodifiedtime"))
                         .build();
 
-                Document currentDocument = Document.builder().id(rs.getString("id"))
+                Document currentDocument = Document.builder().id(rs.getString("id")).caseId(rs.getString("case_id")).hearingId(rs.getString("hearing_id"))
                         .documentType(rs.getString("document_type")).status(Status.valueOf(rs.getString("status")))
                         .remarks(rs.getString("remarks")).fileStoreId(rs.getString("file_store_id")).auditDetails(auditDetails).build();
 

@@ -59,6 +59,7 @@ public class HearingRepository {
         String query = hearingQueryBuilder.getHearingSearchQuery(criteria, preparedStmtList);
         List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
         for (Hearing singleHearing : hearingDetails) {
+            singleHearing.setDocuments(getHearingDocumentList(singleHearing.getId()));
             String respondentAdvocateId = singleHearing.getRespondentAdvocate().getId();
             if (respondentAdvocateId != null) {
                 List<Advocate> respondentAdvocateList = caseRepository.getAdvocateById(singleHearing.getRespondentAdvocate().getId());
