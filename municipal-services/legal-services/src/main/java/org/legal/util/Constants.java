@@ -9,7 +9,7 @@ public class Constants {
     public static final String ASSIGNED_TO_APPOINTED_OIC = "ASSIGNED_TO_APPOINTED_OIC";
     public static final String ASSIGNED_TO_RO = "ASSIGNED_TO_RO";
     public static final String CREATE_CASE = "CREATE_CASE";
-    public static final String MAIN_CASE = "MainCase";
+    public static final String MAIN_CASE = "mainCase";
     public static final String HEARING_CREATED = "Hearing has been created";
     public static final String Pending_At_DEC_for_next_hearing = "Pending At DEC for next hearing";
     public static final String REVIEW_TO_RO = "REVIEW_TO_RO";
