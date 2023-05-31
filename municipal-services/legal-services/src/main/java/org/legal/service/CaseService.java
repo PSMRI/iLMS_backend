@@ -164,14 +164,15 @@ public class CaseService {
                                     request.getWorkflow().setAction(Constants.DEACTIVATE);
                                     hearingService.update(request);
                                 }
-
-                                for (Document document : caseRequest.getCaseObj().getDocuments()) {
-                                    if (document.getDocumentType() != null) {
-                                        if (document.getDocumentType().equalsIgnoreCase(Constants.LEGAL_DOCS_COUNTER_AFFIDAVIT) && caseRequest.getWorkflow().getAction()
-                                                .equalsIgnoreCase(
-                                                        Constants.SUBMIT_COUNTER_AFFIDAVIT)) {
-                                            request.getWorkflow().setAction(Constants.ASSIGNED_TO_APPOINTED_OIC);
-                                            hearingService.update(request);
+                                if (Objects.nonNull(caseRequest.getCaseObj().getDocuments())) {
+                                    for (Document document : caseRequest.getCaseObj().getDocuments()) {
+                                        if (document.getDocumentType() != null) {
+                                            if (document.getDocumentType().equalsIgnoreCase(Constants.LEGAL_DOCS_COUNTER_AFFIDAVIT) && caseRequest.getWorkflow().getAction()
+                                                    .equalsIgnoreCase(
+                                                            Constants.SUBMIT_COUNTER_AFFIDAVIT)) {
+                                                request.getWorkflow().setAction(Constants.ASSIGNED_TO_APPOINTED_OIC);
+                                                hearingService.update(request);
+                                            }
                                         }
                                     }
                                 }
@@ -202,7 +203,7 @@ public class CaseService {
                                 //                            }
                             }
                         }
-                        notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
+//                        notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
                     caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                     producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);

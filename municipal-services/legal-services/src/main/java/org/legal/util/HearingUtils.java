@@ -99,7 +99,8 @@ public class HearingUtils {
         if (Objects.nonNull(hearingDetailsRequest.getHearing().getAffidavitFilingDate())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, Constants.AffidavitFilingDate)) {
+
+            if (!hearingDetailsRequest.getHearing().getAffidavitFilingDate().equals(oldHearingRequest.getAffidavitFilingDate()) && commonUtils.isUserOIC(uuids, tenantId, Constants.AffidavitFilingDate)) {
                 oldHearingRequest.setAffidavitFilingDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate());
             }
         }
@@ -112,7 +113,7 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getOathNumber())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, Constants.OathNumber)) {
+            if (!hearingDetailsRequest.getHearing().getOathNumber().equals(oldHearingRequest.getOathNumber()) && commonUtils.isUserOIC(uuids, tenantId, Constants.OathNumber)) {
                 oldHearingRequest.setOathNumber(hearingDetailsRequest.getHearing().getOathNumber());
             }
         }
