@@ -55,6 +55,7 @@ public class JudgementRowMapper implements ResultSetExtractor<List<Judgement>> {
             String remarks = rs.getString("remarks");
             Object additionalDetails = getAdditionalDetail("additional_details", rs);
             String status = rs.getString("status");
+            String applicationStatus = rs.getString("application_status");
             AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("createdby")).createdTime(rs.getLong("createdtime"))
                     .lastModifiedBy(rs.getString("lastmodifiedby"))
                     .lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
@@ -64,7 +65,7 @@ public class JudgementRowMapper implements ResultSetExtractor<List<Judgement>> {
                                             .complianceDate(complianceDate).revisedComplianceDate(revisedComplianceDate)
                                             .orderNoOverride(orderNoOverride).caseId(cadeId).revisedComplainceReason(revisedComplainceReason)
                                             .complianceStatus(complianceStatus).remarks(remarks).additionalDetails(additionalDetails)
-                                            .status(Status.valueOf(status)).auditDetails(auditDetails).build();
+                                            .status(Status.valueOf(status)).applicationStatus(applicationStatus).auditDetails(auditDetails).build();
             }
             judgementMap.put(id, currentjudgement);
         }
