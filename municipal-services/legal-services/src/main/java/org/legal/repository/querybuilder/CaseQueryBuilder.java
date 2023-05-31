@@ -177,6 +177,8 @@ public class CaseQueryBuilder {
             builder.append(" ORDER BY eg_lg_case.case_number ");
         } else if (criteria.getSortBy() == CaseSearchCriteria.SortBy.cnrNumber) {
             builder.append(" ORDER BY eg_lg_case.cnr_number ");
+        } else if (criteria.getSortBy() == CaseSearchCriteria.SortBy.id) {
+            builder.append(" ORDER BY eg_lg_case.id ");
         }
         if (criteria.getSortOrder() == CaseSearchCriteria.SortOrder.ASC) {
             builder.append("ASC");

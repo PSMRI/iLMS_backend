@@ -60,7 +60,8 @@ public class CaseSearchCriteria {
 
     public enum SortBy {
         caseNumber,
-        cnrNumber
+        cnrNumber,
+        id
     }
 
   /*  public boolean isEmpty() {

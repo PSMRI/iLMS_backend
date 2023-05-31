@@ -55,7 +55,7 @@ public class CaseRepository {
                 }
             }
         } else {
-            criteria = CaseSearchCriteria.builder().id(ids).caseNumber(criteria.getCaseNumber()).applicationStatus(criteria.getApplicationStatus()).limit(criteria.getLimit()).offset(criteria.getOffset()).sortBy(criteria.getSortBy()).type(criteria.getType()).category(criteria.getCategory()).build();
+            criteria = CaseSearchCriteria.builder().id(ids).caseNumber(criteria.getCaseNumber()).applicationStatus(criteria.getApplicationStatus()).limit(criteria.getLimit()).offset(criteria.getOffset()).sortBy(criteria.getSortBy()).type(criteria.getType()).category(criteria.getCategory()).sortOrder(criteria.getSortOrder()).build();
         }
         String query = caseQueryBuilder.getLegalCaseSearchQuery(criteria, preparedStmtList);
         List<Case> caseList = jdbcTemplate.query(query, preparedStmtList.toArray(), caseRowMapper);
