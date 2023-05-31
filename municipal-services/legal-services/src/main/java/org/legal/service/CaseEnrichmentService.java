@@ -48,16 +48,23 @@ public class CaseEnrichmentService {
         if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
             caseRequest.getCaseObj().getCourt().setAuditDetails(auditDetails);
             aCase.getCourt().setAuditDetails(auditDetails);
+            aCase.getCourt().setCaseId(caseRequest.getCaseObj().getId());
+            caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
         for (Party party : aCase.getParties()) {
             party.setAuditDetails(auditDetails);
+            party.setCaseId(caseRequest.getCaseObj().getId());
+            party.setStatus(Status.ACTIVE);
             if (Objects.nonNull(party.getAdvocate()))
                 for (Advocate advocate : party.getAdvocate()) {
                     advocate.setAuditDetails(auditDetails);
+                    advocate.setStatus(Status.ACTIVE);
+
                 }
         }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
             aCase.getDocuments().forEach(doc -> {
+                doc.setCaseId(aCase.getId());
                 doc.setAuditDetails(auditDetails);
                 doc.setStatus(Status.ACTIVE);
             });
@@ -66,6 +73,8 @@ public class CaseEnrichmentService {
         if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
             for (Act act : aCase.getAct()) {
                 act.setAuditDetails(auditDetails);
+                act.setCaseId(caseRequest.getCaseObj().getId());
+                act.setStatus(Status.ACTIVE);
             }
         }
     }

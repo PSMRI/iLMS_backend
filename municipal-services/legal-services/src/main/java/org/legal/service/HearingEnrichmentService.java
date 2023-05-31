@@ -58,11 +58,15 @@ public class HearingEnrichmentService {
         if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
             hearingRequest.getHearing().getPayment().setAuditDetails(auditDetails);
             hearingRequest.getHearing().getPayment().setStatus(Status.ACTIVE);
+            hearingRequest.getHearing().getPayment().setCaseId(hearing.getCaseId());
+            hearingRequest.getHearing().getPayment().setHearingId(hearing.getId());
             hearing.getPayment().setAuditDetails(auditDetails);
         }
         if (!CollectionUtils.isEmpty(hearingRequest.getHearing().getDocuments())) {
             hearingRequest.getHearing().getDocuments().forEach(doc -> {
                 doc.setAuditDetails(auditDetails);
+                doc.setHearingId(hearing.getId());
+                doc.setCaseId(hearing.getCaseId());
                 doc.setStatus(Status.ACTIVE);
             });
         }
@@ -88,8 +92,10 @@ public class HearingEnrichmentService {
 
         hearing.setId(itr.next());
 
+
         if (Objects.nonNull(hearing.getPayment())) {
             hearing.getPayment().setId(paymentItr.next());
+            hearing.getPayment().setHearingId(hearing.getId());
         } else {
             Payment payment = new Payment();
             payment.setId(paymentItr.next());
@@ -101,6 +107,8 @@ public class HearingEnrichmentService {
                 List<String> docId = getIdList(requestInfo, tenantId, legalConfiguration.getDocumentIdgenName(),
                         legalConfiguration.getDocumentIdgenFormat(), 1);
                 doc.setId(docId.get(0));
+                doc.setHearingId(hearing.getId());
+                doc.setCaseId(hearing.getCaseId());
             }));
         }
 

@@ -67,7 +67,7 @@ public class HearingRepository {
                     Advocate advocate = respondentAdvocateList.get(0);
                     singleHearing.setRespondentAdvocate(advocate);
                 } else {
-                    throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE_MSG);
+                    singleHearing.setRespondentAdvocate(null);
                 }
             } else {
                 singleHearing.setRespondentAdvocate(null);
@@ -79,7 +79,7 @@ public class HearingRepository {
                     Advocate petAdvocate = petitionerAdvocateList.get(0);
                     singleHearing.setPetitionerAdvocate(petAdvocate);
                 } else {
-                    throw new CustomException(LegalErrorConstants.ADVOCATE_NOT_AVAILABLE, LegalErrorConstants.ADVOCATE_NOT_AVAILABLE_MSG);
+                    singleHearing.setPetitionerAdvocate(null);
                 }
             } else {
                 singleHearing.setPetitionerAdvocate(null);
