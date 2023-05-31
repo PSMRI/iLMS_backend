@@ -266,10 +266,6 @@ public class CaseService {
                 HearingResponse hearingResponse = null;
                 JudgementResponse judgementResponse = null;
                 List<String> caseIds = caseResponse.getCaseList().stream().map(Case::getId).collect(Collectors.toList());
-//                List<String> caseIds = caseResponse.getCaseList().stream()
-//                                                   .filter(c -> "Active".equals(c.getStatus()))
-//                                                   .map(Case::getId)
-//                                                   .collect(Collectors.toList());
                 for (String caseId : caseIds) {
                     HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(
                             caseId)).build();

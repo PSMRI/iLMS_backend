@@ -1,0 +1,1 @@
+ALTER TABLE eg_lg_hearing ADD COLUMN hearing_id character varying(64);

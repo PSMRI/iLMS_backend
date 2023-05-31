@@ -80,6 +80,12 @@ public class CaseEnrichmentService {
             request.getHearing().getPayment().setAuditDetails(auditDetails);
             hearing.getPayment().setAuditDetails(auditDetails);
         }
+        if (!CollectionUtils.isEmpty(hearing.getDocuments())) {
+            hearing.getDocuments().forEach(doc -> {
+                doc.setAuditDetails(auditDetails);
+                doc.setStatus(Status.ACTIVE);
+            });
+        }
     }
 
     private void setIdgenIds(CaseRequest request) {

@@ -10,6 +10,7 @@ import java.util.List;
 
 @Component
 public class HearingQueryBuilder {
+    private static final String docQuery = "select count(*) OVER() AS document_full_count,* from eg_lg_document where hearing_id = ?";
 
     private static final String getTenantIdQuery = "SELECT tenant_id FROM eg_lg_case WHERE ID=(select case_id FROM eg_lg_hearing WHERE id=?)";
 
@@ -120,6 +121,10 @@ public class HearingQueryBuilder {
 
     public String getTenantIdFromHearingQuery() {
         return getTenantIdQuery;
+    }
+
+    public String getDocQuery() {
+        return docQuery;
     }
 
 }
