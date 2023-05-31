@@ -144,7 +144,7 @@ public class LEGALConfiguration {
     private String updateCaseTopic;
 
     @Value("${persister.update.legal.case.status.topic}")
-    private String updateCaseApplicationStatusTopic;
+    private String updateLinkedCaseTopic;
 
     @Value("${persister.save.legal.advocate.topic}")
     private String createAdvocateTopic;
@@ -163,9 +163,6 @@ public class LEGALConfiguration {
 
     @Value("${persister.update.hearing.details.topic}")
     private String updateHearingTopic;
-
-    @Value("${persister.update.hearing.details.status.topic}")
-    private String updateHearingApplicationStatusTopic;
 
     @Value("${egov.legal.idgen.judgement.id.name}")
     private String judgementIdgenName;

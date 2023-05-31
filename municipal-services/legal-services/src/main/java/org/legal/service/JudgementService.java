@@ -145,6 +145,7 @@ public class JudgementService {
 
             String action = "";
             CaseRequest caseRequest = new CaseRequest();
+            JudgementRequest finalRequest;
             if (judgementRequest.getJudgement().getId() != null) {
                 JudgementSearchCriteria criteria = JudgementSearchCriteria.builder().id(Collections.singletonList(judgementRequest.getJudgement().getId()))
                         .build();
@@ -152,7 +153,7 @@ public class JudgementService {
                 if (!judgementResponse.getJudgementList().isEmpty()) {
                     List<Judgement> judgements = judgementResponse.getJudgementList();
                     Judgement oldJudgement = judgements.get(0);
-                    JudgementRequest finalRequest = judgementRepository.getMappedData(judgementRequest, oldJudgement);
+                    finalRequest = judgementRepository.getMappedData(judgementRequest, oldJudgement);
                     judgementValidator.updateValidator(finalRequest.getJudgement(), judgementRequest);
 
                     String caseId = judgementRequest.getJudgement().getCaseId();
@@ -182,7 +183,7 @@ public class JudgementService {
                     if (Objects.nonNull(judgementRequest.getWorkflow())) {
                         if (legalConfiguration.getIsWorkflowEnabled()) {
                             judgementRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateJudgementWfName());
-                            workflowService.updateJudgementWorkflowStatus(judgementRequest);
+                            workflowService.updateJudgementWorkflowStatus(finalRequest);
                         }
                     }
                     Workflow workflow = new Workflow();
@@ -221,7 +222,7 @@ public class JudgementService {
             } else {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
             }
-            return judgementRequest;
+            return finalRequest;
         }  catch (CustomException e) {
             throw e;
         } catch (Exception e) {

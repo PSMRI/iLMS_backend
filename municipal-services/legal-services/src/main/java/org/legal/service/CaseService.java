@@ -5,6 +5,7 @@ import static org.legal.util.LegalErrorConstants.CASE_NOT_AVAILABLE;
 import static org.legal.util.LegalErrorConstants.CASE_SEARCH_FAILED_MSG;
 import static org.legal.util.LegalErrorConstants.CASE_UPDATE_FAILED_MSG;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -107,6 +109,31 @@ public class CaseService {
                     updatedCaseRequest.setWorkflow(caseRequest.getWorkflow());
                     Case cases = caseResponse.getCaseList().get(0);
                     caseValidator.validateUpdate(cases, updatedCaseRequest);
+
+                    if (Objects.nonNull(caseRequest.getCaseObj().getLinkedCases())) {
+                        JsonNode linkedCases = caseRequest.getCaseObj().getLinkedCases();
+                        if (linkedCases.isArray()) {
+                            linkedCases.forEach(caseNode -> {
+                                String caseValue = caseNode.asText();
+                                CaseSearchCriteria criteriaForLinkedCases = CaseSearchCriteria.builder().id(Collections.singletonList(caseValue)).build();
+                                CaseResponse linkedCaseResponse = caseRepository.getLegalCaseData(criteriaForLinkedCases);
+                                if (Objects.nonNull(linkedCaseResponse.getCaseList())) {
+                                    ObjectMapper objectMapper = new ObjectMapper();
+                                    CaseRequest linkedCaseRequest = new CaseRequest();
+                                    ObjectNode additionalDetails = objectMapper.createObjectNode();
+                                    linkedCaseRequest.setCaseObj(linkedCaseResponse.getCaseList().get(0));
+                                    Map<String, Object> additionalDetailsMap = objectMapper.convertValue(additionalDetails, Map.class);
+                                    additionalDetailsMap.put(Constants.MAIN_CASE, caseResponse.getCaseList().get(0).getId());
+                                    JsonNode additionalDetailsJsonNode = objectMapper.valueToTree(additionalDetailsMap);
+                                    linkedCaseRequest.getCaseObj().setAdditionalDetails(additionalDetailsJsonNode);
+                                    linkedCaseRequest.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                                    producer.push(legalConfiguration.getUpdateLinkedCaseTopic(), linkedCaseRequest);
+                                }
+                            });
+                        }
+                    }
+
+
                     //                todo : notification has send to all the officers who has worked on this case.
                     RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(caseRequest.getRequestInfo()).build();
                     String caseId = updatedCaseRequest.getCaseObj().getId();
@@ -126,13 +153,13 @@ public class CaseService {
                                 request.setWorkflow(workflow);
 
                                 if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.FORWARD_TO_RO) && request.getHearing().getApplicationStatus()
-                                                                                                                              .equalsIgnoreCase(
-                                                                                                                                      Constants.HEARING_CREATED)) {
+                                        .equalsIgnoreCase(
+                                                Constants.HEARING_CREATED)) {
                                     request.getWorkflow().setAction(Constants.ASSIGNED_TO_RO);
                                     hearingService.update(request);
                                 }
                                 if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE) && request.getHearing().getApplicationStatus()
-                                                                                                                           .equalsIgnoreCase(Constants.HEARING_CREATED)) {
+                                        .equalsIgnoreCase(Constants.HEARING_CREATED)) {
                                     request.getWorkflow().setAction(Constants.DEACTIVATE);
                                     hearingService.update(request);
                                 }
@@ -140,8 +167,8 @@ public class CaseService {
                                 for (Document document : caseRequest.getCaseObj().getDocuments()) {
                                     if (document.getDocumentType() != null) {
                                         if (document.getDocumentType().equalsIgnoreCase(Constants.LEGAL_DOCS_COUNTER_AFFIDAVIT) && caseRequest.getWorkflow().getAction()
-                                                                                                                                              .equalsIgnoreCase(
-                                                                                                                                                      Constants.SUBMIT_COUNTER_AFFIDAVIT)) {
+                                                .equalsIgnoreCase(
+                                                        Constants.SUBMIT_COUNTER_AFFIDAVIT)) {
                                             request.getWorkflow().setAction(Constants.ASSIGNED_TO_APPOINTED_OIC);
                                             hearingService.update(request);
                                         }
@@ -310,10 +337,6 @@ public class CaseService {
 
     public CaseRequest create(CaseRequest caseRequest) {
         try {
-
-            if (Objects.nonNull(caseRequest.getCaseObj().getCourt())) {
-                caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
-            }
             for (Party party : caseRequest.getCaseObj().getParties()) {
                 if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
                     if (Objects.nonNull(party.getDepartmentName())) {
@@ -322,20 +345,12 @@ public class CaseService {
                         party.setGender(null);
                         party.setPetitionerType(null);
                         party.setAddress(null);
-                        party.setStatus(Status.ACTIVE);
                         party.setContactNumber(null);
                         party.setDepartmentName(party.getDepartmentName());
                     } else {
                         party.setDepartmentName(null);
-                        party.setStatus(Status.ACTIVE);
                     }
                     party.setPartyType(PartyType.PETITIONER.toString());
-                    party.setStatus(Status.ACTIVE);
-                    if (Objects.nonNull(party.getAdvocate())) {
-                        for (Advocate advocate : party.getAdvocate()) {
-                            advocate.setStatus(Status.ACTIVE);
-                        }
-                    }
                 } else {
                     if (Objects.nonNull(party.getDepartmentName())) {
                         party.setFirstName(null);
@@ -344,24 +359,11 @@ public class CaseService {
                         party.setPetitionerType(null);
                         party.setAddress(null);
                         party.setContactNumber(null);
-                        party.setStatus(Status.ACTIVE);
                         party.setDepartmentName(party.getDepartmentName());
                     } else {
                         party.setDepartmentName(null);
-                        party.setStatus(Status.ACTIVE);
                     }
                     party.setPartyType(PartyType.RESPONDENT.toString());
-                    party.setStatus(Status.ACTIVE);
-                    if (Objects.nonNull(party.getAdvocate())) {
-                        for (Advocate advocate : party.getAdvocate()) {
-                            advocate.setStatus(Status.ACTIVE);
-                        }
-                    }
-                }
-            }
-            if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
-                for (Act act : caseRequest.getCaseObj().getAct()) {
-                    act.setStatus(Status.ACTIVE);
                 }
             }
             caseRequest.getCaseObj().setStatus(Status.ACTIVE);

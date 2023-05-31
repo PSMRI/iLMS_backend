@@ -94,9 +94,6 @@ public class HearingService {
             if (Objects.nonNull(caseResponse.getCaseList())) {
                 if (caseResponse.getCaseList().get(0).getCaseNumber().equals(hearingRequest.getHearing().getCaseNumber())) {
                     hearingRequest.getHearing().setStatus(Status.ACTIVE);
-                    if (Objects.nonNull(hearingRequest.getHearing().getPayment())) {
-                        hearingRequest.getHearing().getPayment().setStatus(Status.ACTIVE);
-                    }
                     hearingRequest.getHearing().setHearingNumber(hearingDetailsRepository.getMaxValueOfHearing(hearingRequest.getHearing().getCaseId()));
                     hearingDetailsValidator.createValidator(hearingRequest);
                     hearingEnrichmentService.enrichHearingCreateRequest(hearingRequest);
