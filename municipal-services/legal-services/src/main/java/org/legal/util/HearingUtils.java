@@ -99,7 +99,7 @@ public class HearingUtils {
         if (Objects.nonNull(hearingDetailsRequest.getHearing().getAffidavitFilingDate())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "AffidavitFilingDate")) {
+            if (commonUtils.isUserOIC(uuids, tenantId, Constants.AffidavitFilingDate)) {
                 oldHearingRequest.setAffidavitFilingDate(hearingDetailsRequest.getHearing().getAffidavitFilingDate());
             }
         }
@@ -112,7 +112,7 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getOathNumber())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "OathNumber")) {
+            if (commonUtils.isUserOIC(uuids, tenantId, Constants.OathNumber)) {
                 oldHearingRequest.setOathNumber(hearingDetailsRequest.getHearing().getOathNumber());
             }
         }
@@ -153,7 +153,6 @@ public class HearingUtils {
             List<Document> documentList = hearingDetailsRequest.getHearing().getDocuments();
             for (Document document : documentList) {
                 for (Document oldDocData : oldHearingRequest.getDocuments()) {
-                    //                    oldData.getDocuments().forEach(oldDocData -> {
                     if (oldDocData.getId().equalsIgnoreCase(document.getId())) {
 
                         if (!StringUtils.isEmpty(document.getRemarks())) {
@@ -178,7 +177,6 @@ public class HearingUtils {
         caseEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
         return updatedRequest;
     }
-
 
     public ProcessInstance hearingWFUpdate(HearingRequest request, String action) {
         Hearing hearing = request.getHearing();
