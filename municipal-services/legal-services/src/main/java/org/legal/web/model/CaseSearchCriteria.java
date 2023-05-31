@@ -38,6 +38,12 @@ public class CaseSearchCriteria {
     @JsonProperty("sortBy")
     private SortBy sortBy;
 
+    @JsonProperty("type")
+    private List<String> type;
+
+    @JsonProperty("category")
+    private List<String> category;
+
     @JsonProperty("sortOrder")
     private SortOrder sortOrder;
 

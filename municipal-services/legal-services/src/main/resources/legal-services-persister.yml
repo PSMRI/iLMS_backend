@@ -787,8 +787,8 @@ serviceMaps:
             - jsonPath: $.partyAdv.partyId
 
     - version: 1.0
-      description: update application status in eg_lg_case table
-      fromTopic: update-legal-case-applicationstatus
+      description: update additional details in eg_lg_case table
+      fromTopic: update-legal-case-additionaldetails
       isTransaction: true
       isAuditEnabled: true
       module: legal-services
@@ -797,11 +797,13 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: case
       queryMaps:
-        - query: UPDATE eg_lg_case SET application_status=?, tenant_id=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
+        - query: UPDATE eg_lg_case SET additional_details=?, tenant_id=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
           basePath: case
           jsonMaps:
 
-            - jsonPath: $.case.applicationStatus
+            - jsonPath: $.case.additionalDetails
+              type: JSON
+              dbType: JSONB
 
             - jsonPath: $.case.tenantId
 
@@ -810,28 +812,3 @@ serviceMaps:
             - jsonPath: $.case.auditDetails.lastModifiedTime
 
             - jsonPath: $.case.id
-
-    - version: 1.0
-      description: update Application Status in hearing_details table
-      fromTopic: update-hearing-details-applicationstatus
-      isAuditEnabled: true
-      module: legal-services
-      objecIdJsonPath: $.id
-      tenantIdJsonPath: $.tenantId
-      transactionCodeJsonPath: $.id
-      auditAttributeBasePath: hearing
-      queryMaps:
-
-        - query: UPDATE eg_lg_hearing SET application_status=?, tenant_id=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ?;
-          basePath: hearing
-          jsonMaps:
-
-            - jsonPath: $.hearing.applicationStatus
-
-            - jsonPath: $.hearing.tenantId
-
-            - jsonPath: $.hearing.auditDetails.lastModifiedBy
-
-            - jsonPath: $.hearing.auditDetails.lastModifiedTime
-
-            - jsonPath: $.hearing.id
