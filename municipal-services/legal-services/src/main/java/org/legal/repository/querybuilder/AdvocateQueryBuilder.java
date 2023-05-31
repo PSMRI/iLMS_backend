@@ -12,9 +12,6 @@ public class AdvocateQueryBuilder {
 
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
-    private final String partyAdvQuery = "select * from eg_lg_party_advocate_bridge where advocate_id = ? AND case_id = ?";
-    private final String partyCaseAdvQuery = "select * FROM eg_lg_party_advocate_bridge ";
-
     private final String partyCaseAdvQueryWithPartyIdAndCaseId = "select * from eg_lg_party_advocate_bridge where party_id = ? AND case_id = ? ";
 
     private final String advocatesQuery = "select * from eg_lg_advocate ";
@@ -108,27 +105,11 @@ public class AdvocateQueryBuilder {
         }
     }
 
-    public String getPartyAdvQuery() {
-        return partyAdvQuery;
-    }
-
     public String getAdvocatesById(List<String> ids,List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(advocatesQuery);
         addClauseIfRequired(preparedStmtList,builder);
         builder.append("eg_lg_advocate.id IN (").append(createQuery(ids)).append(")");
         addToPreparedStatement(preparedStmtList,ids);
-        return builder.toString();
-    }
-
-    public String getAdvocatesOfParty(String partyId,String caseId,List<String> mobileNumber, List<Object> preparedStmtList) {
-        StringBuilder builder = new StringBuilder(partyCaseAdvQuery);
-        addClauseIfRequired(preparedStmtList,builder);
-        builder.append(" eg_lg_party_advocate_bridge.party_id= ? ");
-        preparedStmtList.add(partyId);
-        builder.append(" AND eg_lg_party_advocate_bridge.case_id= ?");
-        preparedStmtList.add(caseId);
-        builder.append(" AND eg_lg_party_advocate_bridge.advocate_contact_number IN (").append(createQuery(mobileNumber)).append(")");
-        addToPreparedStatement(preparedStmtList,mobileNumber);
         return builder.toString();
     }
 

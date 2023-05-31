@@ -27,7 +27,7 @@ public class JudgementQueryBuilder {
         }
     }
 
-    public String getFSMSearchQuery(JudgementSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getJudgementSearchQuery(JudgementSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(Query);
         if (criteria.getId() != null) {
             addClauseIfRequired(preparedStmtList, builder);

@@ -9,6 +9,7 @@ import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.repository.IdGenRepository;
 import org.legal.util.AdvocateUtils;
+import org.legal.util.CaseUtils;
 import org.legal.util.LegalErrorConstants;
 import org.legal.web.model.Advocate;
 import org.legal.web.model.AdvocateRequest;
@@ -26,17 +27,17 @@ public class AdvocateEnrichmentService {
     private LEGALConfiguration legalConfiguration;
 
     @Autowired
-    private AdvocateUtils advocateUtils;
+    private IdGenRepository idGenRepository;
 
     @Autowired
-    private IdGenRepository idGenRepository;
+    private CaseUtils caseUtils;
 
 
     public void advocateEnrichmentRequest(AdvocateRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         Advocate advocate = request.getAdvocate();
         setIdgenIds(request);
-        AuditDetails auditDetails = advocateUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), true);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), true);
         request.getAdvocate().setAuditDetails(auditDetails);
         advocate.setAuditDetails(auditDetails);
     }
@@ -62,7 +63,7 @@ public class AdvocateEnrichmentService {
     public void enrichAdvocateUpdateRequest(AdvocateRequest advocateRequest) {
         RequestInfo requestInfo = advocateRequest.getRequestInfo();
         Advocate advocate = advocateRequest.getAdvocate();
-        AuditDetails auditDetails = advocateUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
+        AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
         advocateRequest.getAdvocate().setAuditDetails(auditDetails);
         advocate.setAuditDetails(auditDetails);
     }

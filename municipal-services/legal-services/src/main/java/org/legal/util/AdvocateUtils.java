@@ -40,15 +40,6 @@ public class AdvocateUtils {
     @Autowired
     private CommonUtils commonUtils;
 
-    public AuditDetails getAuditDetails(String by, Boolean isCreate) {
-        Long time = System.currentTimeMillis();
-        if (isCreate) {
-            return AuditDetails.builder().createdBy(by).createdTime(time).build();
-        } else {
-            return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
-        }
-    }
-
     public AdvocateRequest prepareObjectMapperForUpdate(Advocate oldData, AdvocateRequest advocateRequest) {
         final AdvocateRequest request = new AdvocateRequest();
 

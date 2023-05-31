@@ -16,11 +16,9 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -46,13 +44,9 @@ public class HearingRepository {
     private CaseRepository caseRepository;
 
     @Autowired
-    private AdvocateRepository advocateRepository;
-    @Autowired
     private ObjectMapper mapper;
     @Autowired
     private DocumentMapper documentMapper;
-    @Autowired
-    private RestTemplate restTemplate;
 
     public HearingResponse getHearingDetails(HearingSearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();
@@ -88,13 +82,6 @@ public class HearingRepository {
         HearingResponse hearingResponse = HearingResponse.builder().hearingList(hearingDetails).totalCount(hearingRowMapper.getFullCount()).build();
         return hearingResponse;
 
-    }
-
-    public List<Party> getHearing(String caseId) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        preparedStmtList.add(caseId);
-        List<Party> parties = jdbcTemplate.query(caseQueryBuilder.getPartyQuery(), preparedStmtList.toArray(), partyRowMapper);
-        return parties;
     }
 
     public List<Document> getHearingDocumentList(String hearingId) {
@@ -134,25 +121,4 @@ public class HearingRepository {
         }
         return null;
     }
-
-    public List<Party> getPartyFromPartyQuery(String caseId) {
-        List<Party> partyList = caseRepository.getParty(caseId);
-        return partyList;
-    }
-
-    public Object fetchResult(StringBuilder uri, Object request) {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        Object response = null;
-        try {
-            response = restTemplate.postForObject(uri.toString(), request, Map.class);
-        } catch (HttpClientErrorException e) {
-            log.error("External Service threw an Exception: ", e);
-            throw new ServiceCallException(e.getResponseBodyAsString());
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Exception while fetching from searcher: ", e);
-        }
-        return response;
-    }
-
 }

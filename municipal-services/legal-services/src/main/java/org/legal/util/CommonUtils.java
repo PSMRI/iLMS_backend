@@ -37,6 +37,9 @@ public class CommonUtils {
     @Autowired
     private ServiceRepository restRepo;
 
+    @Autowired
+    private LEGALConfiguration legalConfiguration;
+
     public Map<String, List<String>> getAttributeValues(String tenantId, String moduleName, List<String> names, String filter, String jsonpath,
                                                         RequestInfo requestInfo) {
 
@@ -70,26 +73,6 @@ public class CommonUtils {
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
         return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
     }
-
-    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {
-
-        List<IdRequest> reqList = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
-        }
-
-        IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
-        StringBuilder uri = new StringBuilder(configs.getIdGenHost()).append(configs.getIdGenPath());
-        IdGenerationResponse response = mapper.convertValue(restRepo.fetchResult(uri, request).get(), IdGenerationResponse.class);
-
-        List<IdResponse> idResponses = response.getIdResponses();
-
-        if (CollectionUtils.isEmpty(idResponses)) {
-            throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
-        }
-
-        return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
-    }
     
     public List<RoleDto> fetchUsersByUUID(List<String> uuid, String tenantId) {
         StringBuilder uri = new StringBuilder();
@@ -99,7 +82,7 @@ public class CommonUtils {
         userSearchRequest.put("uuid", uuid);
         List<RoleDto> roles = new ArrayList<>();
         try {
-            Object user = restRepo.fetchUsersResult(uri, userSearchRequest);
+            Object user = restRepo.fetchUserResult(uri, userSearchRequest);
             if (user != null) {
                 Object role = JsonPath.read(user, "$.user[0].roles");
                 List<RoleDto> responseRoles = mapper.readValue(new Gson().toJson(role), new TypeReference<List<RoleDto>>() {
@@ -133,5 +116,15 @@ public class CommonUtils {
                     "Unauthorised User to insert [ " + columnValue + " ]");
         }
         return true;
+    }
+
+    public StringBuilder getProcessInstanceSearchURL(String tenantId, String id) {
+        StringBuilder url = new StringBuilder(legalConfiguration.getWfHost());
+        url.append(legalConfiguration.getWfProcessInstanceSearchPath());
+        url.append("?tenantId=");
+        url.append(tenantId);
+        url.append("&businessIds=");
+        url.append(id);
+        return url;
     }
 }

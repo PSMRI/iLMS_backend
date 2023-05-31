@@ -56,7 +56,7 @@ public class JudgementRepository {
 
     public JudgementResponse getJudgementData(JudgementSearchCriteria judgementSearchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = judgementQueryBuilder.getFSMSearchQuery(judgementSearchCriteria, preparedStmtList);
+        String query = judgementQueryBuilder.getJudgementSearchQuery(judgementSearchCriteria, preparedStmtList);
         List<Judgement> judgements = jdbcTemplate.query(query, preparedStmtList.toArray(), judgementRowMapper);
         JudgementResponse judgementResponse = JudgementResponse.builder().judgementList(judgements).totalCount(judgementRowMapper.getFull_count())
                 .build();
@@ -127,20 +127,6 @@ public class JudgementRepository {
         List<String> tenantId = jdbcTemplate.query(judgementQueryBuilder.getTenantIdFromHearingQuery(), preparedStmtList.toArray(),
                 new SingleColumnRowMapper<>(String.class));
         return tenantId.get(0);
-    }
-
-    public Object fetchResult(StringBuilder uri, Object request) {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        Object response = null;
-        try {
-            response = restTemplate.postForObject(uri.toString(), request, Map.class);
-        } catch (HttpClientErrorException e) {
-            log.error("External Service threw an Exception: ", e);
-            throw new ServiceCallException(e.getResponseBodyAsString());
-        } catch (Exception e) {
-            log.error("Exception while fetching from searcher: ", e);
-        }
-        return response;
     }
 }
 

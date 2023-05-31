@@ -11,7 +11,9 @@ import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
 import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
+import org.legal.repository.ServiceRepository;
 import org.legal.util.CaseUtils;
+import org.legal.util.CommonUtils;
 import org.legal.util.Constants;
 import org.legal.util.HearingUtils;
 import org.legal.util.LegalErrorConstants;
@@ -73,6 +75,12 @@ public class HearingService {
 
     @Autowired
     private CaseService caseService;
+
+    @Autowired
+    private CommonUtils commonUtils;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
 
 
     public HearingRequest create(HearingRequest hearingRequest) {
@@ -173,9 +181,9 @@ public class HearingService {
                             String applicationStatus = updatedRequest.getHearing().getApplicationStatus();
                             if (applicationStatus.equalsIgnoreCase(Constants.SOF_APPROVED_BY_AO) ||
                                     applicationStatus.equalsIgnoreCase(Constants.Pending_at_OIC)) {
-                                StringBuilder URL = getProcessInstanceSearchURL(legalConfiguration.getTenantId(), hearingId);
+                                StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), hearingId);
                                 URL.append("&").append("history=true");
-                                Object result = hearingRepository.fetchResult(URL, requestInfoWrapper);
+                                Object result = serviceRepository.fetchUserResult(URL, requestInfoWrapper);
                                 ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
                                 if (!processInstanceResponse.getProcessInstances().isEmpty()) {
                                     if (!hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid()
@@ -256,18 +264,6 @@ public class HearingService {
             log.error(LegalErrorConstants.HEARING_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.HEARING_UPDATE_FAILED, LegalErrorConstants.HEARING_UPDATE_FAILED_MSG);
         }
-    }
-
-    public StringBuilder getProcessInstanceSearchURL(String tenantId, String hearingId) {
-
-        StringBuilder url = new StringBuilder(legalConfiguration.getWfHost());
-        url.append(legalConfiguration.getWfProcessInstanceSearchPath());
-        url.append("?tenantId=");
-        url.append(tenantId);
-        url.append("&businessIds=");
-        url.append(hearingId);
-        return url;
-
     }
 }
 

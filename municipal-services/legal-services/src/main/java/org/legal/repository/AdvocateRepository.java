@@ -25,19 +25,10 @@ public class AdvocateRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private HearingQueryBuilder hearingQueryBuilder;
-
-    @Autowired
-    private HearingRowMapper hearingRowMapper;
-
-    @Autowired
     private AdvocateMapper advocateMapper;
 
     @Autowired
     private AdvocateQueryBuilder advocateQueryBuilder;
-
-    @Autowired
-    private CaseRepository caseRepository;
 
     @Autowired
     private PartyAdvRowMapper partyAdvRowMapper;
@@ -50,24 +41,6 @@ public class AdvocateRepository {
         return advocateResponse;
     }
 
-    public List<PartyAdv> getPartyAdv(String advocateId,String caseId) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        preparedStmtList.add(advocateId);
-        preparedStmtList.add(caseId);
-        List<PartyAdv> parties = jdbcTemplate.query(advocateQueryBuilder.getPartyAdvQuery(), preparedStmtList.toArray(), partyAdvRowMapper);
-        return parties;
-    }
-
-    public List<PartyAdv> getPartyCaseAdv(String partyId,String caseId,List<String > mobileNumber) {
-        List<Object> preparedStmtList = new ArrayList<>();
-//        preparedStmtList.add(partyId);
-//        preparedStmtList.add(caseId);
-//        preparedStmtList.add(mobileNumber);
-        String query = advocateQueryBuilder.getAdvocatesOfParty(partyId,caseId,mobileNumber, preparedStmtList);
-        List<PartyAdv> parties = jdbcTemplate.query(query, preparedStmtList.toArray(), partyAdvRowMapper);
-        return parties;
-    }
-
     public List<Advocate> getAdvocatesById(List<String> Ids){
         List<Object> preparedStmtList = new ArrayList<>();
         String query = advocateQueryBuilder.getAdvocatesById(Ids, preparedStmtList);
@@ -76,15 +49,6 @@ public class AdvocateRepository {
         return advocateDetails;
 
     }
-
-//    public List<Advocate> getAdvocates(List<String> mobileNumbers) {
-//        String sql = advocateQueryBuilder.getAdvocates();
-//        PreparedStatementSetter pss = preparedStatement -> {
-//            Array mobileNumbersArray = preparedStatement.getConnection().createArrayOf("character_varying", mobileNumbers.toArray());
-//            preparedStatement.setArray(1, mobileNumbersArray);
-//        };
-//        return jdbcTemplate.query(sql.replace("?", "(?)"), pss, advocateMapper);
-//    }
 
     public List<PartyAdv> getPartyAdvByCaseIdAndPartyId(String partyId,String caseId) {
         List<Object> preparedStmtList = new ArrayList<>();

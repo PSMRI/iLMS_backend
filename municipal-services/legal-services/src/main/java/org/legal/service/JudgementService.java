@@ -8,7 +8,9 @@ import org.legal.producer.Producer;
 import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.JudgementRepository;
+import org.legal.repository.ServiceRepository;
 import org.legal.util.CaseUtils;
+import org.legal.util.CommonUtils;
 import org.legal.util.Constants;
 import org.legal.util.LegalErrorConstants;
 import org.legal.validator.JudgementValidator;
@@ -65,6 +67,12 @@ public class JudgementService {
 
     @Autowired
     private CaseService caseService;
+
+    @Autowired
+    private CommonUtils commonUtils;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     public JudgementRequest create(JudgementRequest judgementRequest) {
         try {
@@ -158,8 +166,8 @@ public class JudgementService {
                     String appStatus = finalRequest.getJudgement().getApplicationStatus();
                     if (appStatus.equalsIgnoreCase(Constants.Pending_at_OIC_for_Decision) ||
                             appStatus.equalsIgnoreCase(Constants.Judgement_Initiated)) {
-                        StringBuilder searchUrl = getProcessInstanceSearchURL(legalConfiguration.getTenantId(), StringUtils.join(judgementId, ','));
-                        Object result = judgementRepository.fetchResult(searchUrl, requestInfoWrapper);
+                        StringBuilder searchUrl = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), StringUtils.join(judgementId, ','));
+                        Object result = serviceRepository.fetchUserResult(searchUrl, requestInfoWrapper);
                         ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
                         if (!processInstanceResponse.getProcessInstances().isEmpty()) {
                             if (!judgementRequest.getRequestInfo().getUserInfo().getUuid()
@@ -224,17 +232,5 @@ public class JudgementService {
             log.error(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG, e.getMessage());
             throw new CustomException(LegalErrorConstants.JUDGEMENT_UPDATE_FAILED, LegalErrorConstants.JUDGEMENT_UPDATE_FAILED_MSG);
         }
-    }
-
-    public StringBuilder getProcessInstanceSearchURL(String tenantId, String judgementId) {
-
-        StringBuilder url = new StringBuilder(legalConfiguration.getWfHost());
-        url.append(legalConfiguration.getWfProcessInstanceSearchPath());
-        url.append("?tenantId=");
-        url.append(tenantId);
-        url.append("&businessIds=");
-        url.append(judgementId);
-        return url;
-
     }
 }
