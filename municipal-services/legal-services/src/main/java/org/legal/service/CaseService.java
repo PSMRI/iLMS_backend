@@ -85,6 +85,7 @@ public class CaseService {
 
     @Autowired
     private AdvocateRepository advocateRepository;
+    @Autowired
     private HearingService hearingService;
 
     public CaseService() {
