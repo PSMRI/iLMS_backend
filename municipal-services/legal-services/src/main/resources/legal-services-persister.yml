@@ -617,7 +617,7 @@ serviceMaps:
           basePath: hearing.documents.*
           jsonMaps:
 
-            - jsonPath: $.case.id
+            - jsonPath: $.hearing.caseId
 
             - jsonPath: $.hearing.id
 

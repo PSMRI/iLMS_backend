@@ -3,6 +3,7 @@ package org.legal.service;
 import static org.legal.util.LegalErrorConstants.CASE_UPDATE_FAILED_MSG;
 import static org.legal.util.LegalErrorConstants.HEARING_CREATE_FAILED_MSG;
 import static org.legal.util.LegalErrorConstants.HEARING_SEARCH_FAILED_MSG;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -111,7 +112,7 @@ public class HearingService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
@@ -134,7 +135,7 @@ public class HearingService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
@@ -150,7 +151,7 @@ public class HearingService {
             HearingRequest updatedRequest = new HearingRequest();
             if (hearingDetailsRequest.getHearing().getId() != null) {
                 CaseRequest caseRequest = new CaseRequest();
-                HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId(Collections.singletonList((hearingDetailsRequest.getHearing().getCaseId()))).build();
+                HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId(Collections.singletonList((hearingDetailsRequest.getHearing().getCaseId()))).id(hearingDetailsRequest.getHearing().getId()).build();
                 HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
                 if (!hearingDetailsResponse.getHearingList().isEmpty()) {
                     HearingRequest request = new HearingRequest();
@@ -248,7 +249,7 @@ public class HearingService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
