@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -184,8 +184,23 @@ public class JudgementService {
                     Case caseApp = new Case();
                     caseAppStatus.setCaseObj(caseApp);
                     if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW)) {
-                        caseRequest.getWorkflow().setAction(Constants.REVIEW_JUDGEMENT);
-                        caseService.updateCase(caseRequest);
+                        if (!judgementRequest.getJudgement().getDecisionStatus().isEmpty()) {
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            Object additionalDetailsObj = judgementRequest.getJudgement().getAdditionalDetails();
+
+                            if (additionalDetailsObj instanceof Map) {
+                                Map<String, Object> additionalDetailsMap = (Map<String, Object>) additionalDetailsObj;
+                                String caseNumber = (String) additionalDetailsMap.get("caseNumber");
+                                additionalDetailsMap.put("action", Constants.JUDGEMENT_APPEALED_REVIEW);
+                                additionalDetailsMap.put("decisionStatus", judgementRequest.getJudgement().getDecisionStatus());
+                                additionalDetailsMap.put("caseNumber", caseNumber);
+                                JsonNode additionalDetailsJsonNode = objectMapper.valueToTree(additionalDetailsMap);
+                                caseRequest.getCaseObj().setAdditionalDetails(additionalDetailsJsonNode);
+                            }
+                            caseRequest.getWorkflow().setAction(Constants.REVIEW_JUDGEMENT);
+                            CaseRequest caseRequestObj = caseService.updateCase(caseRequest);
+                            finalRequest.getJudgement().setAdditionalDetails(caseRequestObj.getCaseObj().getId());
+                        }
                     }
                     if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.JUDGEMENT_COMPLETED)) {
                         caseRequest.getWorkflow().setAction(Constants.COMPLY_JUDGEMENT);

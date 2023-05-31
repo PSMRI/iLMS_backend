@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -144,6 +144,32 @@ public class CaseService {
                                         }
                                     }
                                 }
+                            }
+                            JsonNode additionalDetailsObj = caseRequest.getCaseObj().getAdditionalDetails();
+                            if (additionalDetailsObj != null && additionalDetailsObj.has(Constants.action) && additionalDetailsObj.has(Constants.decisionStatus)) {
+                                JsonNode actionNode = additionalDetailsObj.get("action");
+                                JsonNode decisionStatusNode = additionalDetailsObj.get("decisionStatus");
+                                JsonNode caseNumberNode = additionalDetailsObj.get("caseNumber");
+                                String action = actionNode.textValue().replaceAll("\"", "");
+                                String decisionStatus = decisionStatusNode.textValue().replaceAll("\"", "");
+                                String caseNumber = caseNumberNode.textValue().replaceAll("\"", "");
+                                if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.REVIEW)) {
+                                    caseRequest.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
+                                    caseRequest.getCaseObj().setId(null);
+                                    caseRequest.getCaseObj().setCaseNumber(caseNumber);
+                                    Workflow workflow = new Workflow();
+                                    caseRequest.setWorkflow(workflow);
+                                    caseRequest.getWorkflow().setAction(Constants.CREATE_CASE);
+                                    CaseRequest caseRequestObj = create(caseRequest);
+                                    return caseRequestObj;
+                                }
+                                //                            if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.APPEALED)) {
+                                //                                caseRequest.getCaseObj().setId(null);
+                                //                                caseRequest.getWorkflow().setAction(Constants.CREATE_CASE);
+                                //                                CaseRequest caseRequestObj = create(caseRequest);
+                                //                                return caseRequestObj;
+                                //                            }
+
                             }
                             notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                         }
