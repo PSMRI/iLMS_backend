@@ -175,7 +175,7 @@ public class JudgementService {
                     if (Objects.nonNull(judgementRequest.getWorkflow())) {
                         if (legalConfiguration.getIsWorkflowEnabled()) {
                             judgementRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateJudgementWfName());
-                            workflowService.updateJudgementWorkflowStatus(judgementRequest);
+                            workflowService.updateJudgementWorkflowStatus(finalRequest);
                         }
                     }
                     Workflow workflow = new Workflow();
