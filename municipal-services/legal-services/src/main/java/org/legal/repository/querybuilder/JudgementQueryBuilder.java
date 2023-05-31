@@ -12,7 +12,7 @@ import java.util.List;
 public class JudgementQueryBuilder {
 
     private static final String getTenantIdQuery = "SELECT tenant_id FROM eg_lg_case WHERE ID=(select case_id FROM eg_lg_judgement WHERE id=?)";
-    private static final String Query = "SELECT count(*) OVER() AS full_count, id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, case_id, revised_complaince_reason, compliance_status," + "tenant_id," + "remarks, additional_details, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime" + " FROM eg_lg_judgement";
+    private static final String Query = "SELECT count(*) OVER() AS full_count, id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, case_id, revised_complaince_reason, compliance_status," + "tenant_id," + "remarks, additional_details, status, application_status, createdby, createdtime, lastmodifiedby, lastmodifiedtime" + " FROM eg_lg_judgement";
 
     private final String paginationWrapper = "{} {orderBy} {pagination}";
 
