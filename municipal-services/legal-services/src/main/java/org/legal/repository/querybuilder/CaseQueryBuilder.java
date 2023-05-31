@@ -68,6 +68,26 @@ public class CaseQueryBuilder {
         } catch (NullPointerException e) {
             preparedStmtList.add("");
         }
+        List<String> type = criteria.getType();
+        try {
+            if (!CollectionUtils.isEmpty(type)) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" eg_lg_case.case_type IN (").append(createQuery(type)).append(")");
+                addToPreparedStatement(preparedStmtList, type);
+            }
+        } catch (NullPointerException e) {
+            preparedStmtList.add("");
+        }
+        List<String> category = criteria.getCategory();
+        try {
+            if (!CollectionUtils.isEmpty(category)) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" eg_lg_case.case_category IN (").append(createQuery(category)).append(")");
+                addToPreparedStatement(preparedStmtList, category);
+            }
+        } catch (NullPointerException e) {
+            preparedStmtList.add("");
+        }
         List<String> parentCaseId = criteria.getParentCaseId();
         try {
             if (!CollectionUtils.isEmpty(parentCaseId)) {
