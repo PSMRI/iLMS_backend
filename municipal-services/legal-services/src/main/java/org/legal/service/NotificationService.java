@@ -76,13 +76,13 @@ public class NotificationService {
         List<String> configuredChannelNamesForCase = notificationUtil.fetchChannelList(new RequestInfo(), tenantId, moduleName,
                 action);
 
-        List<SMSRequest> smsRequests = enrichSMSRequest(topicName, caseRequest, cases, tenantId);
+        List<SMSRequest> smsRequests = enrichSMSRequest(topicName, caseRequest, tenantId);
         if (configuredChannelNamesForCase.contains(CHANNEL_NAME_SMS)) {
             notificationUtil.sendSMS(smsRequests);
         }
 
         if (configuredChannelNamesForCase.contains(CHANNEL_NAME_EVENT)) {
-            List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, assignee, tenantId, cases);
+            List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, assignee, tenantId);
             notificationUtil.sendEventNotification(new EventRequest(requestInfo, events));
         }
 
@@ -92,11 +92,9 @@ public class NotificationService {
         }
     }
 
-    private List<SMSRequest> enrichSMSRequest(String topicName, CaseRequest request, Case cases, String tenantId) {
+    private List<SMSRequest> enrichSMSRequest(String topicName, CaseRequest request, String tenantId) {
 
-        String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
-        String action = request.getWorkflow().getAction();
-        String message = getCustomizedMsg(topicName, cases, action, localizationMessages);
+        String finalMessage = getFinalMessage(request, topicName);
         String officerId;
         List<String> ids = new ArrayList<>();
         if (!(request.getWorkflow().getAssignes()).isEmpty()) {
@@ -107,29 +105,46 @@ public class NotificationService {
             ids.add(officerId);
         }
         Map<String, String> mobileNumberToOwner = fetchUsersByOfficerId(ids, tenantId);
-        if (message == null)
-            return Collections.emptyList();
-        return notificationUtil.createSMSRequest(message, mobileNumberToOwner);
+        return notificationUtil.createSMSRequest(finalMessage, mobileNumberToOwner);
     }
 
-    private String getCustomizedMsg(String topicName, Case cases, String action, String localizationMessages) {
+    private String getFinalMessage(CaseRequest request, String topic) {
+        String tenantId = request.getCaseObj().getTenantId();
+        String action = request.getWorkflow().getAction();
+        String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
 
-        String msgCode = null, messageTemplate = null;
-        msgCode = action;
+        String message =getCustomizedMsg(action, localizationMessages);
+        if (message == null) {
+            log.info("No message Found For Topic : " + topic);
+            return message;
+        }
+        String finalMessage = getMessageForMobileNumber(message,request);
+        return finalMessage;
+    }
+    public String getMessageForMobileNumber(String message, CaseRequest request){
+        String messageToReplace = message;
 
-        messageTemplate = customize(cases, msgCode, localizationMessages);
-
-        return messageTemplate;
+        if (messageToReplace.contains("{id}"))
+            messageToReplace = messageToReplace.replace("{id}",request.getCaseObj().getId());
+        return messageToReplace;
     }
 
-    private String customize(Case cases, String msgCode, String localizationMessages) {
-
-        String messageTemplate = notificationUtil.getMessageTemplate(msgCode, localizationMessages);
-
-        messageTemplate = messageTemplate.replace(NOTIFICATION_CASEID, cases.getId());
-
-        return messageTemplate;
+public String getCustomizedMsg(String action, String localizationMessage) {
+    StringBuilder notificationCode = new StringBuilder();
+    notificationCode.append("LEGAL_").append(action.toUpperCase()).append("_SMS_MESSAGE");
+    String path = "$..messages[?(@.code==\"{}\")].message";
+    path = path.replace("{}", notificationCode);
+    String message = null;
+    try {
+        ArrayList<String> messageObj = (ArrayList<String>) JsonPath.parse(localizationMessage).read(path);
+        if(messageObj != null && messageObj.size() > 0) {
+            message = messageObj.get(0);
+        }
+    } catch (Exception e) {
+        log.warn("Fetching from localization failed", e);
     }
+    return message;
+}
 
     public Map<String, String> fetchUsersByOfficerId(List<String> officerId, String tenantId) {
         StringBuilder uri = new StringBuilder();
@@ -156,7 +171,7 @@ public class NotificationService {
         ids.add(uuid);
         String tenantId = configs.getTenantId();
         String localizationMessages = notificationUtil.getLocalizationMessages(tenantId, requestInfo);
-        String message = getCustomizedMsgForSchedular(localizationMessages, action, uuid);
+        String message = getCustomizedMsg(action,localizationMessages);
         if (configs.getIsUserEventsNotificationEnabled() != null && configs.getIsUserEventsNotificationEnabled()) {
             EventRequest eventRequest = enrichEventRequestForScheduler(requestInfo, message, uuid);
             if (eventRequest != null) {
@@ -181,32 +196,6 @@ public class NotificationService {
             }
         }
 
-    }
-
-    private String getCustomizedMsgForSchedular(String localizationMessages, String action, String uuid) {
-        String msgCode = null, messageTemplate = null;
-        msgCode = action;
-        messageTemplate = customizeForSchedular(msgCode, localizationMessages, uuid);
-        return messageTemplate;
-    }
-
-    private String customizeForSchedular(String msgCode, String localizationMessages, String uuid) {
-        String messageTemplate = getMessageTemplate(msgCode, localizationMessages, uuid);
-        return messageTemplate;
-    }
-
-    public String getMessageTemplate(String notificationCode, String localizationMessage, String uuid) {
-        String path = "$..messages[?(@.code==\"{}\")].message";
-        path = path.replace("{}", notificationCode);
-        String message = "";
-        try {
-            Object messageObj = JsonPath.parse(localizationMessage).read(path);
-            message = ((ArrayList<String>) messageObj).get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.warn("Fetching from localization failed", e);
-        }
-        return message;
     }
 
     private EventRequest enrichEventRequestForScheduler(RequestInfo requestInfo, String finalMessage, String uuid) {
@@ -264,7 +253,7 @@ public class NotificationService {
         UserSearchRequest userSearchRequest = new UserSearchRequest();
         userSearchRequest.setUuid(uuid);
         try {
-            Object user = restRepo.fetchResult(uri, userSearchRequest);
+            Object user = restRepo.fetchUserResult(uri, userSearchRequest);
             if (null != user) {
                 String emailId = JsonPath.read(user, "$.user[0].emailId");
                 mapOfPhoneNoAndEmails.put(uuid.get(0), emailId);

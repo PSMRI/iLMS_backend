@@ -125,11 +125,14 @@ public class CaseService {
                                 workflow.setAssignes(caseRequest.getWorkflow().getAssignes());
                                 request.setWorkflow(workflow);
 
-                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.FORWARD_TO_RO) && request.getHearing().getApplicationStatus().equalsIgnoreCase(Constants.HEARING_CREATED)) {
+                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.FORWARD_TO_RO) && request.getHearing().getApplicationStatus()
+                                                                                                                              .equalsIgnoreCase(
+                                                                                                                                      Constants.HEARING_CREATED)) {
                                     request.getWorkflow().setAction(Constants.ASSIGNED_TO_RO);
                                     hearingService.update(request);
                                 }
-                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE) && request.getHearing().getApplicationStatus().equalsIgnoreCase(Constants.HEARING_CREATED)) {
+                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE) && request.getHearing().getApplicationStatus()
+                                                                                                                           .equalsIgnoreCase(Constants.HEARING_CREATED)) {
                                     request.getWorkflow().setAction(Constants.DEACTIVATE);
                                     hearingService.update(request);
                                 }
@@ -137,8 +140,8 @@ public class CaseService {
                                 for (Document document : caseRequest.getCaseObj().getDocuments()) {
                                     if (document.getDocumentType() != null) {
                                         if (document.getDocumentType().equalsIgnoreCase(Constants.LEGAL_DOCS_COUNTER_AFFIDAVIT) && caseRequest.getWorkflow().getAction()
-                                                .equalsIgnoreCase(
-                                                        Constants.SUBMIT_COUNTER_AFFIDAVIT)) {
+                                                                                                                                              .equalsIgnoreCase(
+                                                                                                                                                      Constants.SUBMIT_COUNTER_AFFIDAVIT)) {
                                             request.getWorkflow().setAction(Constants.ASSIGNED_TO_APPOINTED_OIC);
                                             hearingService.update(request);
                                         }
@@ -169,10 +172,9 @@ public class CaseService {
                                 //                                CaseRequest caseRequestObj = create(caseRequest);
                                 //                                return caseRequestObj;
                                 //                            }
-
                             }
-                            notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                         }
+                        notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
                     caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                     producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
@@ -382,6 +384,7 @@ public class CaseService {
                 //            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
+            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
             caseRequest.getCaseObj().getParties().forEach(party -> {
                 if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER.toString()) || party.getPartyType().equals(PartyType.RESPONDENT.toString()))) {
                     List<String> advocatesIdsReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());
