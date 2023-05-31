@@ -3,7 +3,6 @@ package org.legal.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
-
 import org.egov.tracer.model.CustomException;
 import org.legal.service.HearingService;
 import org.legal.util.LegalErrorConstants;

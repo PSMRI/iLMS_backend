@@ -73,20 +73,17 @@ public class NotificationService {
             tenantId = caseResponse.getCaseList().get(0).getTenantId();
         }
 
-        List<String> configuredChannelNamesForCase = notificationUtil.fetchChannelList(new RequestInfo(), tenantId, moduleName,
-                action);
-
         List<SMSRequest> smsRequests = enrichSMSRequest(topicName, caseRequest, tenantId);
-        if (configuredChannelNamesForCase.contains(CHANNEL_NAME_SMS)) {
+        if (configs.getIsSMSNotificationEnabled() != null && configs.getIsSMSNotificationEnabled()) {
             notificationUtil.sendSMS(smsRequests);
         }
 
-        if (configuredChannelNamesForCase.contains(CHANNEL_NAME_EVENT)) {
+        if (configs.getIsUserEventsNotificationEnabled() != null && configs.getIsUserEventsNotificationEnabled()) {
             List<Event> events = notificationUtil.enrichEvent(smsRequests, requestInfo, assignee, tenantId);
             notificationUtil.sendEventNotification(new EventRequest(requestInfo, events));
         }
 
-        if (configuredChannelNamesForCase.contains(CHANNEL_NAME_EMAIL)) {
+        if (configs.getIsEmailNotificationEnabled() != null && configs.getIsEmailNotificationEnabled()) {
             List<EmailRequest> emailRequests = notificationUtil.createEmailRequestFromSMSRequests(requestInfo, smsRequests, tenantId);
             notificationUtil.sendEmail(emailRequests);
         }

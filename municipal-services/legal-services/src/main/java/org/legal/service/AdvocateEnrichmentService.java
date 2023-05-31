@@ -64,7 +64,6 @@ public class AdvocateEnrichmentService {
         RequestInfo requestInfo = advocateRequest.getRequestInfo();
         Advocate advocate = advocateRequest.getAdvocate();
         AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
-        advocateRequest.getAdvocate().setAuditDetails(auditDetails);
         advocate.setAuditDetails(auditDetails);
     }
 

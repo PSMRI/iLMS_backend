@@ -4,7 +4,6 @@ import static org.legal.util.LegalErrorConstants.CASE_CREATE_FAILED_MSG;
 import static org.legal.util.LegalErrorConstants.CASE_SEARCH_FAILED_MSG;
 import static org.legal.util.LegalErrorConstants.CASE_UPDATE_FAILED_MSG;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.legal.service.CaseService;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;

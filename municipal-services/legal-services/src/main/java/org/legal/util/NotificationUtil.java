@@ -42,50 +42,6 @@ public class NotificationUtil {
     @Autowired
     ServiceRepository serviceRepository;
 
-    public List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
-        List<String> masterData = new ArrayList<>();
-        StringBuilder uri = new StringBuilder();
-        uri.append(legalConfiguration.getMdmsHost()).append(legalConfiguration.getMdmsEndpoint());
-        if (StringUtils.isEmpty(tenantId)) {
-            return masterData;
-        }
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId.split("\\.")[0]);
-        Filter masterDataFilter = filter(where(MODULE).is(moduleName).and(ACTION).is(action));
-
-        try {
-            Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]", masterDataFilter);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Exception while fetching workflow states to ignore: ", e);
-        }
-
-        return masterData;
-    }
-
-    private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId) {
-        MasterDetail masterDetail = new MasterDetail();
-        masterDetail.setName(CHANNEL_LIST);
-        List<MasterDetail> masterDetailList = new ArrayList<>();
-        masterDetailList.add(masterDetail);
-
-        ModuleDetail moduleDetail = new ModuleDetail();
-        moduleDetail.setMasterDetails(masterDetailList);
-        moduleDetail.setModuleName(CHANNEL);
-        List<ModuleDetail> moduleDetailList = new ArrayList<>();
-        moduleDetailList.add(moduleDetail);
-
-        MdmsCriteria mdmsCriteria = new MdmsCriteria();
-        mdmsCriteria.setTenantId(tenantId);
-        mdmsCriteria.setModuleDetails(moduleDetailList);
-
-        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-        mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-        mdmsCriteriaReq.setRequestInfo(requestInfo);
-
-        return mdmsCriteriaReq;
-    }
-
     public List<SMSRequest> createSMSRequest(String message, Map<String, String> mobileNumberOfUser) {
 
         List<SMSRequest> smsRequest = new LinkedList<>();

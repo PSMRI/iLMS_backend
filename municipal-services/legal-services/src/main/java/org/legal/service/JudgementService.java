@@ -15,14 +15,9 @@ import org.legal.util.Constants;
 import org.legal.util.LegalErrorConstants;
 import org.legal.validator.JudgementValidator;
 import org.legal.web.model.*;
-import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.Status;
-import org.legal.web.model.workflow.ProcessInstance;
-import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.legal.web.model.workflow.ProcessInstanceResponse;
-import org.legal.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,8 +71,6 @@ public class JudgementService {
 
     public JudgementRequest create(JudgementRequest judgementRequest) {
         try {
-
-
             HearingResponse hearingResponse = null;
             HearingSearchCriteria criteria = HearingSearchCriteria.builder()
                     .caseId(Collections.singletonList(judgementRequest.getJudgement().getCaseId())).build();

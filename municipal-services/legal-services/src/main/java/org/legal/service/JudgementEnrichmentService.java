@@ -33,7 +33,6 @@ public class JudgementEnrichmentService {
     private CaseRepository caseRepository;
 
     public void enrichJudgementCreateRequest(JudgementRequest judgementRequest) {
-        RequestInfo requestInfo = judgementRequest.getRequestInfo();
         Judgement judgement = judgementRequest.getJudgement();
         setIdgenIds(judgementRequest);
         AuditDetails auditDetails = caseUtils.getAuditDetails(judgementRequest.getRequestInfo().getUserInfo().getUuid(), true);
@@ -42,7 +41,7 @@ public class JudgementEnrichmentService {
     }
 
     public void enrichJugmentUpdateRequest(JudgementRequest request) {
-        RequestInfo requestInfo = request.getRequestInfo();
+
         Judgement judgement = request.getJudgement();
         AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
         request.getJudgement().setAuditDetails(auditDetails);
