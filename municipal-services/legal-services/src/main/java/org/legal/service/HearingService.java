@@ -194,9 +194,6 @@ public class HearingService {
                             if (Objects.nonNull(updatedRequest.getWorkflow())) {
                                 if (legalConfiguration.getIsWorkflowEnabled()) {
                                     updatedRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
-                                    if (updatedRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved)) {
-                                        updatedRequest.getWorkflow().setAssignes(null);
-                                    }
                                     workflowService.updateHearingWorkflowStatus(updatedRequest);
                                 }
                             }

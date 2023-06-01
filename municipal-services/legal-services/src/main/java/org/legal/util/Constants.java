@@ -7,7 +7,7 @@ public class Constants {
     public static final String LEGAL_DOCS_COUNTER_AFFIDAVIT = "LEGAL_DOCS_COUNTER_AFFIDAVIT";
     public static final String SUBMIT_COUNTER_AFFIDAVIT = "SUBMIT_COUNTER_AFFIDAVIT";
     public static final String SUBMIT_SUPPLEMENTARY_AFFIDAVIT = "SUBMIT_SUPPLEMENTARY_AFFIDAVIT";
-
+    public static final String PENDING_AT_RO = "Pending at reviewing Officer";
     public static final String ASSIGNED_TO_APPOINTED_OIC = "ASSIGNED_TO_APPOINTED_OIC";
     public static final String ASSIGNED_TO_RO = "ASSIGNED_TO_RO";
     public static final String CREATE_CASE = "CREATE_CASE";
