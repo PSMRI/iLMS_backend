@@ -79,30 +79,11 @@ public class CaseEnrichmentService {
         }
     }
 
-    public void enrichmentForHearingUpdateRequest(HearingRequest request) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        Hearing hearing = request.getHearing();
-        AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
-        request.getHearing().setAuditDetails(auditDetails);
-        hearing.setAuditDetails(auditDetails);
-        if (request.getHearing().getPayment() != null) {
-            request.getHearing().getPayment().setAuditDetails(auditDetails);
-            hearing.getPayment().setAuditDetails(auditDetails);
-        }
-        if (!CollectionUtils.isEmpty(hearing.getDocuments())) {
-            hearing.getDocuments().forEach(doc -> {
-                doc.setAuditDetails(auditDetails);
-                doc.setStatus(Status.ACTIVE);
-            });
-        }
-    }
-
     private void setIdgenIds(CaseRequest request) {
-
-
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getCaseObj().getTenantId();
         Case caseObj = request.getCaseObj();
+        caseObj.setStatus(Status.ACTIVE);
         List<String> caseId = getIdList(requestInfo, tenantId, legalConfiguration.getCaseIdgenName(), legalConfiguration.getCaseIdgenFormat(), 1);
         ListIterator<String> caseItr = caseId.listIterator();
         List<String> courtId = getIdList(requestInfo, tenantId, legalConfiguration.getCourtIdgenName(),
@@ -200,5 +181,4 @@ public class CaseEnrichmentService {
         partyAdv1.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), true));
         return partyAdv1;
     }
-
 }

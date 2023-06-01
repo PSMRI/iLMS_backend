@@ -89,10 +89,7 @@ public class HearingEnrichmentService {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-
         hearing.setId(itr.next());
-
-
         if (Objects.nonNull(hearing.getPayment())) {
             hearing.getPayment().setId(paymentItr.next());
             hearing.getPayment().setHearingId(hearing.getId());
@@ -111,7 +108,6 @@ public class HearingEnrichmentService {
                 doc.setCaseId(hearing.getCaseId());
             }));
         }
-
     }
 
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {
@@ -122,6 +118,24 @@ public class HearingEnrichmentService {
         }
 
         return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+    }
+
+    public void enrichmentForHearingUpdateRequest(HearingRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        Hearing hearing = request.getHearing();
+        AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
+        request.getHearing().setAuditDetails(auditDetails);
+        hearing.setAuditDetails(auditDetails);
+        if (request.getHearing().getPayment() != null) {
+            request.getHearing().getPayment().setAuditDetails(auditDetails);
+            hearing.getPayment().setAuditDetails(auditDetails);
+        }
+        if (!CollectionUtils.isEmpty(hearing.getDocuments())) {
+            hearing.getDocuments().forEach(doc -> {
+                doc.setAuditDetails(auditDetails);
+                doc.setStatus(Status.ACTIVE);
+            });
+        }
     }
 }
 

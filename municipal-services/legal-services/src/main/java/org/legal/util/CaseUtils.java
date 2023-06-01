@@ -327,4 +327,40 @@ public class CaseUtils {
         });
         return partyAdvList1;
     }
+
+    public List<Party> setParty(CaseRequest caseRequest) {
+        List<Party> modifiedParties = new ArrayList<>();
+        for (Party party : caseRequest.getCaseObj().getParties()) {
+            if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
+                if (Objects.nonNull(party.getDepartmentName())) {
+                    party.setFirstName(null);
+                    party.setLastName(null);
+                    party.setGender(null);
+                    party.setPetitionerType(null);
+                    party.setAddress(null);
+                    party.setContactNumber(null);
+                    party.setDepartmentName(party.getDepartmentName());
+                } else {
+                    party.setDepartmentName(null);
+                }
+                party.setPartyType(PartyType.PETITIONER.toString());
+            } else {
+                if (Objects.nonNull(party.getDepartmentName())) {
+                    party.setFirstName(null);
+                    party.setLastName(null);
+                    party.setGender(null);
+                    party.setPetitionerType(null);
+                    party.setAddress(null);
+                    party.setContactNumber(null);
+                    party.setDepartmentName(party.getDepartmentName());
+                } else {
+                    party.setDepartmentName(null);
+                }
+                party.setPartyType(PartyType.RESPONDENT.toString());
+            }
+            modifiedParties.add(party);
+        }
+        return modifiedParties;
+    }
+
 }

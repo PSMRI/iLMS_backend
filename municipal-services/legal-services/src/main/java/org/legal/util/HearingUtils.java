@@ -1,39 +1,27 @@
 package org.legal.util;
 
-import static org.legal.web.model.enums.Status.ACTIVE;
-import static org.legal.web.model.enums.Status.INACTIVE;
-
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
 import org.legal.repository.AdvocateRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.service.AdvocateService;
-import org.legal.service.CaseEnrichmentService;
+import org.legal.service.HearingEnrichmentService;
 import org.legal.web.model.*;
-import org.legal.web.model.enums.CreationReason;
-import org.legal.web.model.enums.PartyType;
-import org.legal.web.model.enums.Status;
 import org.legal.web.model.workflow.ProcessInstance;
-import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 public class HearingUtils {
     @Autowired
-    private CaseEnrichmentService caseEnrichmentService;
+    private HearingEnrichmentService hearingEnrichmentService;
 
     @Autowired
     private CommonUtils commonUtils;
@@ -175,7 +163,7 @@ public class HearingUtils {
         }
 
         updatedRequest.setHearing(oldHearingRequest);
-        caseEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
+        hearingEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
         return updatedRequest;
     }
 

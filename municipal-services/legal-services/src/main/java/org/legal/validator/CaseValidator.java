@@ -59,7 +59,7 @@ public class CaseValidator {
     }
 
     public void validateCreate(CaseRequest caseRequest) {
-
+        caseNumberDuplicacyCheck(caseRequest);
         if (!StringUtils.isNotBlank(caseRequest.getCaseObj().getTenantId())) {
             throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR,
                     "TenantId is mandatory [ " + caseRequest.getCaseObj().getTenantId() + " ]");

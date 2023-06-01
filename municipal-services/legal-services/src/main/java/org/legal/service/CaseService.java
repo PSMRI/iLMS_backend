@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
@@ -17,6 +18,7 @@ import org.legal.repository.AdvocateRepository;
 import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.JudgementRepository;
+import org.legal.util.AdvocateUtils;
 import org.legal.util.CaseUtils;
 import org.legal.util.CommonUtils;
 import org.legal.util.Constants;
@@ -88,6 +90,9 @@ public class CaseService {
     @Autowired
     private HearingService hearingService;
 
+    @Autowired
+    private AdvocateUtils advocateUtils;
+
     public CaseService() {
     }
 
@@ -110,7 +115,6 @@ public class CaseService {
                     updatedCaseRequest.setWorkflow(caseRequest.getWorkflow());
                     Case cases = caseResponse.getCaseList().get(0);
                     caseValidator.validateUpdate(cases, updatedCaseRequest);
-
                     if (Objects.nonNull(caseRequest.getCaseObj().getLinkedCases())) {
                         JsonNode linkedCases = caseRequest.getCaseObj().getLinkedCases();
                         if (linkedCases.isArray()) {
@@ -133,9 +137,7 @@ public class CaseService {
                             });
                         }
                     }
-
                     //                todo : notification has send to all the officers who has worked on this case.
-                    RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(caseRequest.getRequestInfo()).build();
                     String caseId = updatedCaseRequest.getCaseObj().getId();
                     if (Objects.nonNull(updatedCaseRequest.getWorkflow())) {
                         if (legalConfiguration.getIsWorkflowEnabled()) {
@@ -227,7 +229,8 @@ public class CaseService {
             List<HashMap<String, Object>> statusCountMap = workflowService.getProcessStatusCount(requestInfo, processInstanceSearchCriteria);
             caseResponse = caseRepository.getLegalCaseData(criteria);
             CaseResponse finalResult = new CaseResponse();
-            String userRole = requestInfo.getUserInfo().getRoles().get(0).getCode();
+            List<Role> userRole = requestInfo.getUserInfo().getRoles();
+            List<String> roleCode = userRole.stream().map(Role::getCode).collect(Collectors.toList());
             Integer total = null;
             Integer dec = null;
             Integer ro = null;
@@ -241,22 +244,22 @@ public class CaseService {
                 total = caseRepository.getCaseCount(criteria1);
                 officersCount.setTOTAL(total);
 
-                if (userRole.equals(Constants.DEC)) {
+                if (roleCode.contains(Constants.DEC)) {
                     dec = caseRepository.getCountOfUser(Constants.DEC);
                     officersCount.setDEC(dec);
-                } else if (userRole.equals(Constants.RO)) {
+                } else if (roleCode.contains(Constants.RO)) {
                     dec = caseRepository.getCountOfUser(Constants.DEC);
                     ro = caseRepository.getCountOfUser(Constants.RO);
                     officersCount.setDEC(dec);
                     officersCount.setRO(ro);
-                } else if (userRole.equals(Constants.OICA)) {
+                } else if (roleCode.contains(Constants.OICA)) {
                     dec = caseRepository.getCountOfUser(Constants.DEC);
                     ro = caseRepository.getCountOfUser(Constants.RO);
                     oica = caseRepository.getCountOfUser(Constants.OICA);
                     officersCount.setDEC(dec);
                     officersCount.setRO(ro);
                     officersCount.setOICA(oica);
-                } else if (userRole.equals(Constants.AO)) {
+                } else if (roleCode.contains(Constants.AO)) {
                     dec = caseRepository.getCountOfUser(Constants.DEC);
                     ro = caseRepository.getCountOfUser(Constants.RO);
                     oica = caseRepository.getCountOfUser(Constants.OICA);
@@ -265,7 +268,7 @@ public class CaseService {
                     officersCount.setRO(ro);
                     officersCount.setOICA(oica);
                     officersCount.setAO(ao);
-                } else if (userRole.equals(Constants.OIC) || userRole.equals(Constants.MO)) {
+                } else if (roleCode.contains(Constants.OIC) || roleCode.contains(Constants.MO)) {
 
                     dec = caseRepository.getCountOfUser(Constants.DEC);
                     ro = caseRepository.getCountOfUser(Constants.RO);
@@ -332,38 +335,8 @@ public class CaseService {
 
     public CaseRequest create(CaseRequest caseRequest) {
         try {
-            for (Party party : caseRequest.getCaseObj().getParties()) {
-                if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                    if (Objects.nonNull(party.getDepartmentName())) {
-                        party.setFirstName(null);
-                        party.setLastName(null);
-                        party.setGender(null);
-                        party.setPetitionerType(null);
-                        party.setAddress(null);
-                        party.setContactNumber(null);
-                        party.setDepartmentName(party.getDepartmentName());
-                    } else {
-                        party.setDepartmentName(null);
-                    }
-                    party.setPartyType(PartyType.PETITIONER.toString());
-                } else {
-                    if (Objects.nonNull(party.getDepartmentName())) {
-                        party.setFirstName(null);
-                        party.setLastName(null);
-                        party.setGender(null);
-                        party.setPetitionerType(null);
-                        party.setAddress(null);
-                        party.setContactNumber(null);
-                        party.setDepartmentName(party.getDepartmentName());
-                    } else {
-                        party.setDepartmentName(null);
-                    }
-                    party.setPartyType(PartyType.RESPONDENT.toString());
-                }
-            }
-            caseRequest.getCaseObj().setStatus(Status.ACTIVE);
+            caseUtils.setParty(caseRequest);
             caseValidator.validateCreate(caseRequest);
-            caseValidator.caseNumberDuplicacyCheck(caseRequest);
             caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
             if (legalConfiguration.getIsWorkflowEnabled()) {
                 if (caseRequest.getWorkflow().getAssignes() == null) {
@@ -376,23 +349,7 @@ public class CaseService {
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
             notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
-            caseRequest.getCaseObj().getParties().forEach(party -> {
-                if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER.toString()) || party.getPartyType().equals(PartyType.RESPONDENT.toString()))) {
-                    List<String> advocatesIdsReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());
-                    AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
-                    List<Advocate> advocateList = new ArrayList<>();
-                    for (String advContact : advocatesIdsReq) {
-                        criteria.setContactNumber(advContact);
-                        AdvocateResponse advocatesPresentInDB = advocateRepository.getAdvocateDetails(criteria);
-
-                        if (!advocatesPresentInDB.getAdvocate().isEmpty()) {
-                            advocateList.add(advocatesPresentInDB.getAdvocate().get(0));
-                        }
-                    }
-                    party.setAdvocate(advocateList);
-                }
-            });
-            caseRequest.getCaseObj().setParties(caseRequest.getCaseObj().getParties());
+            advocateUtils.setPartyDetailsInResponse(caseRequest);
             return caseRequest;
         } catch (CustomException e) {
             throw e;

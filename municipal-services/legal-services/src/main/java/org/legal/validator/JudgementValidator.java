@@ -27,16 +27,8 @@ public class JudgementValidator {
     private CaseRepository caseRepository;
 
     private static Map<String, String> validateCode(Judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
-        if (judgement.getOrderType() != null && !codes.get(LEGALConstants.MDMS_LEGAL_ORDER_TYPE).contains(judgement.getOrderType())) {
-            errorMap.put("Invalid OrderType", "The OrderType '" + judgement.getOrderType() + "' does not exists");
-        }
-        return errorMap;
-    }
-
-    private static Map<String, String> validateCodesForUpdate(Judgement judgement, Map<String, List<String>> codes, Map<String, String> errorMap) {
-
         if (judgement.getComplianceStatus() != null && !codes.get(LEGALConstants.MDMS_LEGAL_STATUS_OF_COMPLIANCE)
-                .contains(judgement.getComplianceStatus())) {
+                                                             .contains(judgement.getComplianceStatus())) {
             errorMap.put("Invalid ComplianceStatus", "The ComplianceStatus '" + judgement.getComplianceStatus() + "' does not exists");
         }
         if (judgement.getOrderType() != null && !codes.get(LEGALConstants.MDMS_LEGAL_ORDER_TYPE).contains(judgement.getOrderType())) {
@@ -83,7 +75,7 @@ public class JudgementValidator {
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
-        validateMasterDataForUpdate(judgement,request,errorMap);
+        validateMasterData(judgement,request,errorMap);
     }
 
     private void validateMasterData(Judgement judgement, JudgementRequest request, Map<String, String> errorMap) {
@@ -92,8 +84,7 @@ public class JudgementValidator {
         CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
         CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
         String tenantId = caseResponse.getCaseList().get(0).getTenantId();
-        List<String> masterNames = new ArrayList<>(Collections.singletonList(LEGALConstants.MDMS_LEGAL_ORDER_TYPE));
-
+                List<String> masterNames = new ArrayList<>(Arrays.asList(LEGALConstants.MDMS_LEGAL_STATUS_OF_COMPLIANCE, LEGALConstants.MDMS_LEGAL_ORDER_TYPE));
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, LEGALConstants.MDMS_LEGAL_MOD_NAME, masterNames, "$.*.code",
                 LEGALConstants.JSONPATH_CODES, request.getRequestInfo());
 
@@ -117,29 +108,6 @@ public class JudgementValidator {
                 errorMap.put("MDMS DATA ERROR ", "Unable to fetch " + masterName + " codes from MDMS");
             }
         }
-        if (!errorMap.isEmpty()) {
-            throw new CustomException(errorMap);
-        }
-    }
-
-    private void validateMasterDataForUpdate(Judgement judgement, JudgementRequest request, Map<String, String> errorMap) {
-
-        String caseId = judgement.getCaseId();
-        CaseSearchCriteria criteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
-        CaseResponse caseResponse = caseRepository.getLegalCaseData(criteria);
-        String tenantId = caseResponse.getCaseList().get(0).getTenantId();
-        List<String> masterNames = new ArrayList<>(Arrays.asList(LEGALConstants.MDMS_LEGAL_STATUS_OF_COMPLIANCE, LEGALConstants.MDMS_LEGAL_ORDER_TYPE));
-
-        Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, LEGALConstants.MDMS_LEGAL_MOD_NAME, masterNames, "$.*.code",
-                LEGALConstants.JSONPATH_CODES, request.getRequestInfo());
-
-        if (null != codes) {
-            validateMDMSData(masterNames, codes);
-            validateCodesForUpdate(judgement, codes, errorMap);
-        } else {
-            errorMap.put("MASTER_FETCH_FAILED", "Couldn't fetch master data for validation");
-        }
-
         if (!errorMap.isEmpty()) {
             throw new CustomException(errorMap);
         }
