@@ -116,7 +116,7 @@ public class CaseService {
                         if (linkedCases.isArray()) {
                             linkedCases.forEach(caseNode -> {
                                 String caseValue = caseNode.asText();
-                                CaseSearchCriteria criteriaForLinkedCases = CaseSearchCriteria.builder().id(Collections.singletonList(caseValue)).build();
+                                CaseSearchCriteria criteriaForLinkedCases = CaseSearchCriteria.builder().caseNumber(Collections.singletonList(caseValue)).build();
                                 CaseResponse linkedCaseResponse = caseRepository.getLegalCaseData(criteriaForLinkedCases);
                                 if (Objects.nonNull(linkedCaseResponse.getCaseList())) {
                                     ObjectMapper objectMapper = new ObjectMapper();
@@ -124,7 +124,7 @@ public class CaseService {
                                     ObjectNode additionalDetails = objectMapper.createObjectNode();
                                     linkedCaseRequest.setCaseObj(linkedCaseResponse.getCaseList().get(0));
                                     Map<String, Object> additionalDetailsMap = objectMapper.convertValue(additionalDetails, Map.class);
-                                    additionalDetailsMap.put(Constants.MAIN_CASE, caseResponse.getCaseList().get(0).getId());
+                                    additionalDetailsMap.put(Constants.MAIN_CASE, caseResponse.getCaseList().get(0).getCaseNumber());
                                     JsonNode additionalDetailsJsonNode = objectMapper.valueToTree(additionalDetailsMap);
                                     linkedCaseRequest.getCaseObj().setAdditionalDetails(additionalDetailsJsonNode);
                                     linkedCaseRequest.getCaseObj().setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
