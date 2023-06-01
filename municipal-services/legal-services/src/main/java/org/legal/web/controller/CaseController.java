@@ -3,6 +3,7 @@ package org.legal.web.controller;
 import static org.legal.util.LegalErrorConstants.CASE_CREATE_FAILED_MSG;
 import static org.legal.util.LegalErrorConstants.CASE_SEARCH_FAILED_MSG;
 import static org.legal.util.LegalErrorConstants.CASE_UPDATE_FAILED_MSG;
+
 import lombok.extern.log4j.Log4j2;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,16 +41,15 @@ public class CaseController {
             response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true));
             log.info("LEGALCaseController :: search() : END With Response [ " + response + " ]");
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
             log.error(CASE_SEARCH_FAILED_MSG, e.getMessage());
-            throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, CASE_SEARCH_FAILED_MSG);
+            throw new CustomException(LegalErrorConstants.CASE_SEARCH_FAILED, CASE_SEARCH_FAILED_MSG + "  " + e.getMessage());
         }
     }
 
@@ -61,10 +62,10 @@ public class CaseController {
             caseList.add(caseReq.getCaseObj());
             CaseResponse response = CaseResponse.builder().caseList(caseList).workflow(workflow).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(caseRequest.getRequestInfo(), true)).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
@@ -86,7 +87,7 @@ public class CaseController {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
@@ -103,10 +104,10 @@ public class CaseController {
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
             CountResponse response = CountResponse.builder().responseInfo(responseInfo).statusCountMap(countMap).build();
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }  catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             log.error(LegalErrorConstants.COUNT_SEARCH_FAILED_MSG, e.getMessage());

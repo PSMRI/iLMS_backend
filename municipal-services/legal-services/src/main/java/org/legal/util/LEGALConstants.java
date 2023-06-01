@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LEGALConstants {
-    public static final String Respondent = "Respondent";
 
     public static final String MDMS_LEGAL_MOD_NAME = "legal";
 
@@ -15,9 +14,6 @@ public class LEGALConstants {
     public static final String MDMS_LEGAL_CASE_STATUS = "CaseStatus";
 
     public static final String MDMS_LEGAL_CASE_CATEGORY = "CaseCategory";
-
-    public static final String MDMS_LEGAL_CASE_STAGE = "CaseStage";
-
 
     public static final String MDMS_LEGAL_HEARING_TYPE = "HearingType";
 
@@ -37,15 +33,9 @@ public class LEGALConstants {
 
     public static final String MDMS_LEGAL_DOCUMENT_CATEGORY = "DocumentsCategory";
 
-    public static final String MDMS_LEGAL_DISTRICT = "District";
-
     public static final String MDMS_LEGAL_COURT_NAME = "CourtName";
 
-    public static final String MDMS_LEGAL_STATE = "State";
-
     public static final String MDMS_LEGAL_BENCH = "Bench";
-
-    public static final String MDMS_LEGAL_DIVISION = "Division";
 
     //Notification Enhancement
     public static final String CHANNEL_NAME_SMS = "SMS";
