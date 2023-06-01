@@ -229,6 +229,7 @@ public class HearingService {
                     CaseResponse caseResponse = caseRepository.getLegalCaseData(caseCriteria);
                     caseRequest.setRequestInfo(hearingDetailsRequest.getRequestInfo());
                     caseRequest.setCaseObj(caseResponse.getCaseList().get(0));
+                    RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(caseRequest.getRequestInfo()).build();
                     Workflow workflow = new Workflow();
                     workflow.setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
                     caseRequest.setWorkflow(workflow);
@@ -236,13 +237,41 @@ public class HearingService {
                             .equalsIgnoreCase(
                                     Constants.Final_Hearing)) {
                         caseRequest.getWorkflow().setAction(Constants.SUBMIT_SUPPLEMENTARY_AFFIDAVIT);
-                        caseRequest.getWorkflow().setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
+                        StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), caseRequest.getCaseObj().getId());
+                        URL.append("&").append("history=true");
+                        Object result = serviceRepository.fetchUserResult(URL, requestInfoWrapper);
+                        ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
+                        List<ProcessInstance> filteredInstances = new ArrayList<>();
+                        String desiredAction = Constants.SUBMIT_COUNTER_AFFIDAVIT;
+                        for (ProcessInstance instance : processInstanceResponse.getProcessInstances()) {
+                            if (instance.getAction().equals(desiredAction)) {
+                                filteredInstances.add(instance);
+                            }
+                        }
+                        if (!filteredInstances.isEmpty()) {
+                            String assignee = filteredInstances.get(0).getAssignes().get(0).getUuid();
+                            caseRequest.getWorkflow().setAssignes(Collections.singletonList(assignee));
+                        }
                         caseService.updateCase(caseRequest);
                     } else if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && hearingDetailsRequest.getHearing().getHearingType()
                             .equalsIgnoreCase(
                                     Constants.Final_Hearing)) {
                         caseRequest.getWorkflow().setAction(Constants.PROCEED_WITH_JUDGEMENT);
-                        caseRequest.getWorkflow().setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
+                        StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), caseRequest.getCaseObj().getId());
+                        URL.append("&").append("history=true");
+                        Object result = serviceRepository.fetchUserResult(URL, requestInfoWrapper);
+                        ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
+                        List<ProcessInstance> filteredInstances = new ArrayList<>();
+                        String desiredAction = Constants.SUBMIT_COUNTER_AFFIDAVIT;
+                        for (ProcessInstance instance : processInstanceResponse.getProcessInstances()) {
+                            if (instance.getAction().equals(desiredAction)) {
+                                filteredInstances.add(instance);
+                            }
+                        }
+                        if (!filteredInstances.isEmpty()) {
+                            String assignee = filteredInstances.get(0).getAssignes().get(0).getUuid();
+                            caseRequest.getWorkflow().setAssignes(Collections.singletonList(assignee));
+                        }
                         caseService.updateCase(caseRequest);
                     }
                     producer.push(legalConfiguration.getUpdateHearingTopic(), updatedRequest);
