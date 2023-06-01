@@ -36,23 +36,7 @@ public class LEGALConstants {
     public static final String MDMS_LEGAL_COURT_NAME = "CourtName";
 
     public static final String MDMS_LEGAL_BENCH = "Bench";
-
-    //Notification Enhancement
-    public static final String CHANNEL_NAME_SMS = "SMS";
-
-    public static final String CHANNEL_NAME_EVENT = "EVENT";
-
-    public static final String CHANNEL_NAME_EMAIL = "EMAIL";
-
-    public static final String MODULE = "module";
-
-    public static final String ACTION = "action";
-
-    public static final String CHANNEL_LIST = "channelList";
-
-    public static final String CHANNEL = "Channel";
-
-    public static final String NOTIFICATION_CASEID = "{id}";
+    
 
     public static final String NOTIFICATION_LOCALE = "en_IN";
 
