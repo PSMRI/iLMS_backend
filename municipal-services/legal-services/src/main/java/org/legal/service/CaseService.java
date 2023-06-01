@@ -163,19 +163,13 @@ public class CaseService {
                                     request.getWorkflow().setAction(Constants.DEACTIVATE);
                                     hearingService.update(request);
                                 }
-                                if (Objects.nonNull(caseRequest.getCaseObj().getDocuments())) {
-                                    for (Document document : caseRequest.getCaseObj().getDocuments()) {
-                                        if (document.getDocumentType() != null) {
-                                            if (document.getDocumentType().equalsIgnoreCase(Constants.LEGAL_DOCS_COUNTER_AFFIDAVIT) && caseRequest.getWorkflow().getAction()
-                                                    .equalsIgnoreCase(
-                                                            Constants.SUBMIT_COUNTER_AFFIDAVIT)) {
-                                                request.getWorkflow().setAction(Constants.ASSIGNED_TO_APPOINTED_OIC);
-                                                hearingService.update(request);
-                                            }
-                                        }
-                                    }
+
+                                if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.SUBMIT_COUNTER_AFFIDAVIT) && request.getHearing().getApplicationStatus().equalsIgnoreCase(Constants.PENDING_AT_RO)) {
+                                    request.getWorkflow().setAction(Constants.ASSIGNED_TO_APPOINTED_OIC);
+                                    hearingService.update(request);
                                 }
                             }
+
                             JsonNode additionalDetailsObj = caseRequest.getCaseObj().getAdditionalDetails();
                             if (additionalDetailsObj != null && additionalDetailsObj.has(Constants.action) && additionalDetailsObj.has(Constants.decisionStatus)) {
                                 JsonNode actionNode = additionalDetailsObj.get("action");
