@@ -144,7 +144,7 @@ public class CaseService {
                             updatedCaseRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateCaseWfName());
                             workflowService.updateCaseWorkflowStatus(updatedCaseRequest);
                         }
-                        hearingSearchCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(caseId)).build();
+                        hearingSearchCriteria = HearingSearchCriteria.builder().caseId(caseId).build();
                         HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
                         if (ObjectUtils.isNotEmpty(hearingResponse) && !hearingResponse.getHearingList().isEmpty()) {
                             request.setRequestInfo(caseRequest.getRequestInfo());
@@ -198,7 +198,7 @@ public class CaseService {
                                 //                            }
                             }
                         }
-                       notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
+                   //    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
                     caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                     producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
@@ -292,8 +292,8 @@ public class CaseService {
                 JudgementResponse judgementResponse = null;
                 List<String> caseIds = caseResponse.getCaseList().stream().map(Case::getId).collect(Collectors.toList());
                 for (String caseId : caseIds) {
-                    HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(Collections.singletonList(
-                            caseId)).build();
+                    HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(
+                            caseId).build();
                     hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
                     hearingResponse.getHearingList().forEach(hearing -> {
                         if (hearing.getStatus() == Status.ACTIVE) {
@@ -348,7 +348,7 @@ public class CaseService {
                 workflowService.updateCaseWorkflowStatus(caseRequest);
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
-            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
+//            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
             advocateUtils.setPartyDetailsInResponse(caseRequest);
             return caseRequest;
         } catch (CustomException e) {

@@ -1,5 +1,6 @@
 package org.legal.repository.querybuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.web.model.HearingSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +32,17 @@ public class HearingQueryBuilder {
                 preparedStmtList.add('%' + criteria.getId() + '%');
             } else {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" eg_lg_hearing.id = ?");
+                builder.append(" eg_lg_hearing.case_id = ?");
                 preparedStmtList.add('%' + criteria.getId() + '%');
             }
         }
 
-        List<String> caseId = criteria.getCaseId();
+        String caseId = criteria.getCaseId();
         try {
-            if (!CollectionUtils.isEmpty(caseId)) {
+            if (!StringUtils.isEmpty(caseId)) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" eg_lg_hearing.case_id IN (").append(createQuery(caseId)).append(")");
-                addToPreparedStatement(preparedStmtList, caseId);
+                builder.append(" eg_lg_hearing.case_id like ?");
+                preparedStmtList.add('%' + criteria.getCaseId() + '%');
             }
         } catch (NullPointerException e) {
             preparedStmtList.add("");

@@ -73,7 +73,7 @@ public class JudgementService {
         try {
             HearingResponse hearingResponse = null;
             HearingSearchCriteria criteria = HearingSearchCriteria.builder()
-                    .caseId(Collections.singletonList(judgementRequest.getJudgement().getCaseId())).build();
+                    .caseId(judgementRequest.getJudgement().getCaseId()).build();
             hearingResponse = hearingRepository.getHearingDetails(criteria);
             if (!hearingResponse.getHearingList().isEmpty()) {
                 String tenantId = hearingResponse.getHearingList().get(0).getTenantId();

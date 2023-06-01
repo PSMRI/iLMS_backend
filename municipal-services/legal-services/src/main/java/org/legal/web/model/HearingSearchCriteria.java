@@ -23,7 +23,7 @@ public class HearingSearchCriteria {
     private Integer limit;
 
     @JsonProperty("caseId")
-    private List<String> caseId;
+    private String caseId;
 
     @JsonProperty("id")
     private String id;
