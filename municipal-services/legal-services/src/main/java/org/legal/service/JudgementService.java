@@ -149,7 +149,7 @@ public class JudgementService {
                     finalRequest = judgementRepository.getMappedData(judgementRequest, oldJudgement);
                     judgementValidator.updateValidator(finalRequest.getJudgement(), judgementRequest);
 
-                    String caseId = judgementRequest.getJudgement().getCaseId();
+                    String caseId = oldJudgement.getCaseId();
                     CaseSearchCriteria caseCriteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
                     CaseResponse caseResponse = caseRepository.getLegalCaseData(caseCriteria);
                     caseRequest.setRequestInfo(judgementRequest.getRequestInfo());

@@ -61,8 +61,6 @@ public class NotificationService {
             assignee = caseRequest.getRequestInfo().getUserInfo().getUuid();
         }
         Case cases = caseRequest.getCaseObj();
-        String moduleName = configs.getModuleName();
-        String action = caseRequest.getWorkflow().getAction();
         String tenantId;
         if (cases.getTenantId() != null) {
             tenantId = cases.getTenantId();

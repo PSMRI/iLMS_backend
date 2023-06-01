@@ -134,7 +134,6 @@ public class CaseService {
                         }
                     }
 
-
                     //                todo : notification has send to all the officers who has worked on this case.
                     RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(caseRequest.getRequestInfo()).build();
                     String caseId = updatedCaseRequest.getCaseObj().getId();
@@ -203,7 +202,7 @@ public class CaseService {
                                 //                            }
                             }
                         }
-//                        notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
+                       notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
                     caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                     producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
@@ -369,7 +368,6 @@ public class CaseService {
                 }
             }
             caseRequest.getCaseObj().setStatus(Status.ACTIVE);
-
             caseValidator.validateCreate(caseRequest);
             caseValidator.caseNumberDuplicacyCheck(caseRequest);
             caseEnrichmentService.enrichCaseCreateRequest(caseRequest);
@@ -381,7 +379,6 @@ public class CaseService {
                 }
                 caseRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateCaseWfName());
                 workflowService.updateCaseWorkflowStatus(caseRequest);
-                //            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
             notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
@@ -390,7 +387,6 @@ public class CaseService {
                     List<String> advocatesIdsReq = party.getAdvocate().stream().map(Advocate::getContactNumber).collect(Collectors.toList());
                     AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
                     List<Advocate> advocateList = new ArrayList<>();
-
                     for (String advContact : advocatesIdsReq) {
                         criteria.setContactNumber(advContact);
                         AdvocateResponse advocatesPresentInDB = advocateRepository.getAdvocateDetails(criteria);
@@ -399,13 +395,10 @@ public class CaseService {
                             advocateList.add(advocatesPresentInDB.getAdvocate().get(0));
                         }
                     }
-
                     party.setAdvocate(advocateList);
                 }
             });
-
             caseRequest.getCaseObj().setParties(caseRequest.getCaseObj().getParties());
-
             return caseRequest;
         } catch (CustomException e) {
             throw e;
@@ -418,7 +411,6 @@ public class CaseService {
             throw new CustomException(LegalErrorConstants.CASE_CREATE_FAILED, CASE_CREATE_FAILED_MSG + " " + e.getMessage());
         }
     }
-
 
     public Map<String, Integer> count(CaseSearchCriteria criteria) {
         criteria.setIsPlainSearch(false);
