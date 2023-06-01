@@ -160,8 +160,11 @@ public class JudgementService {
                     String appStatus = finalRequest.getJudgement().getApplicationStatus();
                     if (appStatus.equalsIgnoreCase(Constants.Pending_at_OIC_for_Decision) ||
                             appStatus.equalsIgnoreCase(Constants.Judgement_Initiated)) {
-                        StringBuilder searchUrl = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), StringUtils.join(judgementId, ','));
-                        Object result = serviceRepository.fetchUserResult(searchUrl, requestInfoWrapper);
+
+                        StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), judgementId);
+                        URL.append("&").append("history=true");
+                        Object result = serviceRepository.fetchUserResult(URL, requestInfoWrapper);
+
                         ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
                         if (!processInstanceResponse.getProcessInstances().isEmpty()) {
                             if (!judgementRequest.getRequestInfo().getUserInfo().getUuid()

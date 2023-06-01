@@ -194,6 +194,9 @@ public class HearingService {
                             if (Objects.nonNull(updatedRequest.getWorkflow())) {
                                 if (legalConfiguration.getIsWorkflowEnabled()) {
                                     updatedRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
+                                    if (updatedRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved)) {
+                                        updatedRequest.getWorkflow().setAssignes(null);
+                                    }
                                     workflowService.updateHearingWorkflowStatus(updatedRequest);
                                 }
                             }
@@ -231,16 +234,18 @@ public class HearingService {
                     caseRequest.setCaseObj(caseResponse.getCaseList().get(0));
                     Workflow workflow = new Workflow();
                     workflow.setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
-                    request.setWorkflow(workflow);
+                    caseRequest.setWorkflow(workflow);
                     if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && !hearingDetailsRequest.getHearing().getHearingType()
                             .equalsIgnoreCase(
                                     Constants.Final_Hearing)) {
-                        caseRequest.getWorkflow().setAction(Constants.SUBMIT_COUNTER_AFFIDAVIT);
+                        caseRequest.getWorkflow().setAction(Constants.SUBMIT_SUPPLEMENTARY_AFFIDAVIT);
+                        caseRequest.getWorkflow().setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
                         caseService.updateCase(caseRequest);
                     } else if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && hearingDetailsRequest.getHearing().getHearingType()
                             .equalsIgnoreCase(
                                     Constants.Final_Hearing)) {
                         caseRequest.getWorkflow().setAction(Constants.PROCEED_WITH_JUDGEMENT);
+                        caseRequest.getWorkflow().setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
                         caseService.updateCase(caseRequest);
                     }
                     producer.push(legalConfiguration.getUpdateHearingTopic(), updatedRequest);
