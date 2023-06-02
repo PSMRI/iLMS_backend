@@ -125,7 +125,12 @@ public class HearingUtils {
         if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getStatus())) {
             oldHearingRequest.setStatus(hearingDetailsRequest.getHearing().getStatus());
         }
-
+        if (Objects.nonNull(hearingDetailsRequest.getHearing().getPetitionerAdvocate())) {
+            oldHearingRequest.setPetitionerAdvocate(hearingDetailsRequest.getHearing().getPetitionerAdvocate());
+        }
+        if (Objects.nonNull(hearingDetailsRequest.getHearing().getRespondentAdvocate())) {
+            oldHearingRequest.setRespondentAdvocate(hearingDetailsRequest.getHearing().getRespondentAdvocate());
+        }
         if (Objects.nonNull(hearingDetailsRequest.getHearing().getPayment())) {
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate())) {
                 oldHearingRequest.getPayment().setFineImposedDate(hearingDetailsRequest.getHearing().getPayment().getFineImposedDate());

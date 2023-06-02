@@ -161,9 +161,6 @@ public class HearingService {
                 if (!hearingDetailsResponse.getHearingList().isEmpty()) {
                     HearingRequest request = new HearingRequest();
                     request.setRequestInfo(hearingDetailsRequest.getRequestInfo());
-                    HearingRequest hearingAppStatus = new HearingRequest();
-                    Hearing hearingApp = new Hearing();
-                    hearingAppStatus.setHearing(hearingApp);
 
                     List<Hearing> hearingList = hearingDetailsResponse.getHearingList();
                     for (Hearing oldHearing : hearingList) {
