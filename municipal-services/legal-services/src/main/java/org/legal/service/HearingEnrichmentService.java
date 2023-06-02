@@ -103,7 +103,7 @@ public class HearingEnrichmentService {
         }
     }
 
-    private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {
+    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {
         List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idName, idformat, count).getIdResponses();
 
         if (CollectionUtils.isEmpty(idResponses)) {
@@ -115,7 +115,6 @@ public class HearingEnrichmentService {
 
     public void enrichmentForHearingUpdateRequest(HearingRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        setIdgenIds(request);
         Hearing hearing = request.getHearing();
         AuditDetails auditDetails = caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
         request.getHearing().setAuditDetails(auditDetails);
@@ -124,14 +123,7 @@ public class HearingEnrichmentService {
             request.getHearing().getPayment().setAuditDetails(auditDetails);
             hearing.getPayment().setAuditDetails(auditDetails);
         }
-        if (!CollectionUtils.isEmpty(request.getHearing().getDocuments())) {
-            request.getHearing().getDocuments().forEach(doc -> {
-                doc.setAuditDetails(auditDetails);
-                doc.setHearingId(hearing.getId());
-                doc.setCaseId(hearing.getCaseId());
-                doc.setStatus(Status.ACTIVE);
-            });
-        }
+
     }
 }
 

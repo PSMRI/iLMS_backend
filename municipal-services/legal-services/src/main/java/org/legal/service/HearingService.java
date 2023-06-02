@@ -161,7 +161,6 @@ public class HearingService {
                 if (!hearingDetailsResponse.getHearingList().isEmpty()) {
                     HearingRequest request = new HearingRequest();
                     request.setRequestInfo(hearingDetailsRequest.getRequestInfo());
-
                     List<Hearing> hearingList = hearingDetailsResponse.getHearingList();
                     for (Hearing oldHearing : hearingList) {
                         request.setHearing(oldHearing);
@@ -169,7 +168,6 @@ public class HearingService {
                             updatedRequest = hearingUtils.prepareHearingDetailsModalForUpdate(hearingDetailsRequest, oldHearing);
                             updatedRequest.setWorkflow(hearingDetailsRequest.getWorkflow());
                             hearingDetailsValidator.updateValidator(updatedRequest.getHearing(), hearingDetailsRequest);
-
                             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(hearingDetailsRequest.getRequestInfo()).build();
                             String hearingId = updatedRequest.getHearing().getId();
                             String applicationStatus = updatedRequest.getHearing().getApplicationStatus();

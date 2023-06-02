@@ -8,6 +8,7 @@ import org.legal.repository.HearingRepository;
 import org.legal.service.AdvocateService;
 import org.legal.service.HearingEnrichmentService;
 import org.legal.web.model.*;
+import org.legal.web.model.enums.Status;
 import org.legal.web.model.workflow.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class HearingUtils {
@@ -39,6 +41,10 @@ public class HearingUtils {
     private AdvocateRepository advocateRepository;
 
     @Autowired
+    private LEGALConfiguration legalConfiguration;
+
+
+    @Autowired
     private CaseUtils caseUtils;
 
     @Autowired
@@ -46,6 +52,7 @@ public class HearingUtils {
 
     public HearingRequest prepareHearingDetailsModalForUpdate(HearingRequest hearingDetailsRequest, Hearing oldHearingRequest) {
         HearingRequest updatedRequest = new HearingRequest();
+        List<Document> updatedDocuments = new ArrayList<>();
         String tenantId = hearingRepository.getTenantIdFromHearing(hearingDetailsRequest.getHearing().getId());
         if (tenantId == null) {
             tenantId = hearingDetailsRequest.getHearing().getTenantId();
@@ -141,10 +148,33 @@ public class HearingUtils {
             if (!StringUtils.isEmpty(hearingDetailsRequest.getHearing().getPayment().getFineAmount())) {
                 oldHearingRequest.getPayment().setFineAmount(hearingDetailsRequest.getHearing().getPayment().getFineAmount());
             }
+        }
+        if (!CollectionUtils.isEmpty(hearingDetailsRequest.getHearing().getDocuments())) {
+            String tenant = hearingRepository.getTenantIdFromHearing(hearingDetailsRequest.getHearing().getId());
+            List<String> docIds = hearingEnrichmentService.getIdList(
+                    hearingDetailsRequest.getRequestInfo(), tenant, legalConfiguration.getDocumentIdgenName(),
+                    legalConfiguration.getDocumentIdgenFormat(), hearingDetailsRequest.getHearing().getDocuments().size()
+            );
+            AuditDetails auditDetails = caseUtils.getAuditDetails(
+                    hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false
+            );
 
+            updatedDocuments = hearingDetailsRequest.getHearing().getDocuments().stream()
+                    .peek(doc -> {
+                        doc.setAuditDetails(auditDetails);
+                        doc.setId(docIds.get(0));
+                        doc.setHearingId(hearingDetailsRequest.getHearing().getId());
+                        doc.setCaseId(hearingDetailsRequest.getHearing().getCaseId());
+                        doc.setStatus(Status.ACTIVE);
+                        docIds.remove(0);
+                    })
+                    .collect(Collectors.toList());
+
+            hearingDetailsRequest.getHearing().setDocuments(updatedDocuments);
         }
 
         updatedRequest.setHearing(oldHearingRequest);
+        updatedRequest.getHearing().setDocuments(updatedDocuments);
         hearingEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
         return updatedRequest;
     }
