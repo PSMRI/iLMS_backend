@@ -613,9 +613,10 @@ serviceMaps:
 
             - jsonPath: $.hearing.payment.id
 
-        - query: UPDATE eg_lg_document SET case_id=?, hearing_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
+        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.documents.*
           jsonMaps:
+            - jsonPath: $.hearing.documents.*.id
 
             - jsonPath: $.hearing.caseId
 
@@ -629,12 +630,9 @@ serviceMaps:
 
             - jsonPath: $.hearing.documents.*.remarks
 
-            - jsonPath: $.hearing.documents.*.auditDetails.lastModifiedBy
+            - jsonPath: $.hearing.documents.*.auditDetails.createdBy
 
-            - jsonPath: $.hearing.documents.*.auditDetails.lastModifiedTime
-
-            - jsonPath: $.hearing.documents.*.id
-
+            - jsonPath: $.hearing.documents.*.auditDetails.createdTime
 
     - version: 1.0
       description: Update judgement in eg_lg_judgement table

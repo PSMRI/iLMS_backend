@@ -143,29 +143,6 @@ public class HearingUtils {
             }
 
         }
-        if (Objects.nonNull(hearingDetailsRequest.getHearing().getDocuments())) {
-            List<Document> documentList = hearingDetailsRequest.getHearing().getDocuments();
-            for (Document document : documentList) {
-                for (Document oldDocData : oldHearingRequest.getDocuments()) {
-                    if (oldDocData.getId().equalsIgnoreCase(document.getId())) {
-
-                        if (!StringUtils.isEmpty(document.getRemarks())) {
-                            oldDocData.setRemarks(document.getRemarks());
-                        }
-
-                        if (!StringUtils.isEmpty(document.getDocumentType())) {
-                            oldDocData.setDocumentType(document.getDocumentType());
-                        }
-                        if (!StringUtils.isEmpty(document.getFileStoreId())) {
-                            oldDocData.setFileStoreId(document.getFileStoreId());
-                        }
-                        if (!StringUtils.isEmpty(document.getStatus())) {
-                            oldDocData.setStatus(document.getStatus());
-                        }
-                    }
-                }
-            }
-        }
 
         updatedRequest.setHearing(oldHearingRequest);
         hearingEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
