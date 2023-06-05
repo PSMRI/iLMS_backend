@@ -46,7 +46,7 @@ public class LegalErrorConstants {
     public static final String JUDGEMENT_UPDATE_FAILED = "JUDGEMENT_UPDATE_FAILED";
     public static final String JUDGEMENT_UPDATE_FAILED_MSG = "error while update Judgement";
     public static final String JUDGEMENT_SEARCH_FAILED = "JUDGEMENT_SEARCH_FAILED";
-    public static final String JUDGEMENT_SEARCH_FAILED_MSG= "error while search judgement";
+    public static final String JUDGEMENT_SEARCH_FAILED_MSG = "error while search judgement";
     public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
     public static final String ADVOCATE_SEARCH_FAILED = "ADVOCATE_SEARCH_FAILED";
     public static final String ADVOCATE_SEARCH_FAILED_MSG = "error while search the advocate";
@@ -57,5 +57,7 @@ public class LegalErrorConstants {
     public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenentID";
     public static final String COUNT_SEARCH_FAILED = "COUNT_SEARCH_FAILED";
     public static final String COUNT_SEARCH_FAILED_MSG = "error while count search api";
+    public static final String CANT_TAKE_ACTION = "You can't take action on this judgement";
+    public static final String WORKFLOW_NOT_FOUND = "WORKFLOW_NOT_FOUND";
 
 }
