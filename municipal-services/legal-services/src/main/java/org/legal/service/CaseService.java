@@ -211,12 +211,17 @@ public class CaseService {
                                     CaseRequest caseRequestObj = create(caseRequest);
                                     return caseRequestObj;
                                 }
-                                //                            if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.APPEALED)) {
-                                //                                caseRequest.getCaseObj().setId(null);
-                                //                                caseRequest.getWorkflow().setAction(Constants.CREATE_CASE);
-                                //                                CaseRequest caseRequestObj = create(caseRequest);
-                                //                                return caseRequestObj;
-                                //                            }
+                                if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.APPEALED)) {
+                                    CaseRequest caseRequestObj = new CaseRequest();
+                                    caseRequestObj.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
+                                    caseRequestObj.getCaseObj().setCaseNumber(caseNumber);
+                                    caseRequestObj.getCaseObj().setTenantId(legalConfiguration.getTenantId());
+                                    Workflow workflow = new Workflow();
+                                    caseRequestObj.setWorkflow(workflow);
+                                    caseRequestObj.getWorkflow().setAction(Constants.CREATE_CASE);
+                                    CaseRequest caseRequestObject = create(caseRequest);
+                                    return caseRequestObject;
+                                }
                             }
                         }
                    //    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
@@ -370,7 +375,9 @@ public class CaseService {
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
 //            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
-            advocateUtils.setPartyDetailsInResponse(caseRequest);
+            if (caseRequest.getCaseObj().getParties()!=null) {
+                advocateUtils.setPartyDetailsInResponse(caseRequest);
+            }
             return caseRequest;
         } catch (CustomException e) {
             throw e;

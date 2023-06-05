@@ -88,7 +88,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<Case>> {
                     legalCaseMap.put(id, currentCase);
                 }
             }
-            addChildrenToProperty(rs, currentCase);
+//            addChildrenToProperty(rs, currentCase);
         }
         return new ArrayList<>(legalCaseMap.values());
     }

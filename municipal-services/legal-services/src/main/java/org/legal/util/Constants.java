@@ -18,8 +18,8 @@ public class Constants {
     public static final String Approved = "APPROVED";
     public static final String action = "action";
     public static final String decisionStatus = "decisionStatus";
-    public static final String REVIEW = "REVIEW";
-    public static final String APPEALED = "APPEALED";
+    public static final String REVIEW = "REV002";
+    public static final String APPEALED = "APL001";
     public static final String CASE_NUMBER = "caseNumber";
     public static final String REVIEW_AND_ASSIGN_BACK_TO_DEC = "REVIEW_AND_ASSIGN_BACK_TO_DEC";
     public static final String Pending_at_RO_for_Next_Hearing_Review = "Pending at RO for Next Hearing Review";

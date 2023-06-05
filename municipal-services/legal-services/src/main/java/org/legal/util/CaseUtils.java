@@ -281,86 +281,89 @@ public class CaseUtils {
     public List<PartyAdv> updatePartyAdvocates(CaseRequest caseRequest) {
         List<PartyAdv> partyAdvList1 = new ArrayList<>();
         String tenantId = caseRequest.getRequestInfo().getUserInfo().getTenantId();
-        caseRequest.getCaseObj().getParties().forEach(party -> {
-            if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER.toString()) || party.getPartyType().equals(PartyType.RESPONDENT.toString()))) {
-                List<String> advocatesIdsReq = party.getAdvocate().stream().map(Advocate::getId).collect(Collectors.toList());
-                List<Advocate> advocatesPresentInDB = advocateRepository.getAdvocatesById(advocatesIdsReq);
-                //create new advocates in the main advocate table whichever is not present
-                party.getAdvocate().forEach(advocatesReq -> {
-                    if (advocatesReq.getId() == null) {
-                        AdvocateRequest advocateRequest = new AdvocateRequest();
-                        advocatesReq.setTenantId(tenantId);
-                        advocateRequest.setAdvocate(advocatesReq);
-                        advocateRequest.setRequestInfo(caseRequest.getRequestInfo());
-                        Advocate responseAdv = advocateService.create(advocateRequest);
-                        advocatesPresentInDB.add(responseAdv);
-                    }
-                });
-                List<PartyAdv> advocatesBridge = advocateRepository.getPartyAdvByCaseIdAndPartyId(party.getId(), caseRequest.getCaseObj().getId());
-                List advocatesDbIds = advocatesPresentInDB.stream().map(Advocate::getId).collect(Collectors.toList());
-                advocatesBridge.forEach(partyAdv -> {
+        if (caseRequest.getCaseObj().getParties()!=null) {
+            caseRequest.getCaseObj().getParties().forEach(party -> {
+                if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER.toString()) || party.getPartyType().equals(PartyType.RESPONDENT.toString()))) {
+                    List<String> advocatesIdsReq = party.getAdvocate().stream().map(Advocate::getId).collect(Collectors.toList());
+                    List<Advocate> advocatesPresentInDB = advocateRepository.getAdvocatesById(advocatesIdsReq);
+                    //create new advocates in the main advocate table whichever is not present
+                    party.getAdvocate().forEach(advocatesReq -> {
+                        if (advocatesReq.getId() == null) {
+                            AdvocateRequest advocateRequest = new AdvocateRequest();
+                            advocatesReq.setTenantId(tenantId);
+                            advocateRequest.setAdvocate(advocatesReq);
+                            advocateRequest.setRequestInfo(caseRequest.getRequestInfo());
+                            Advocate responseAdv = advocateService.create(advocateRequest);
+                            advocatesPresentInDB.add(responseAdv);
+                        }
+                    });
+                    List<PartyAdv> advocatesBridge = advocateRepository.getPartyAdvByCaseIdAndPartyId(party.getId(), caseRequest.getCaseObj().getId());
+                    List advocatesDbIds = advocatesPresentInDB.stream().map(Advocate::getId).collect(Collectors.toList());
+                    advocatesBridge.forEach(partyAdv -> {
+                        //all the advocates which are present in the bridge table and have been sent in the request, will be made active
+                        if (advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(ACTIVE)) {
+                            partyAdv.setStatus(ACTIVE);
+                            partyAdv.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                            PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv).build();
+                            producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
+                        }
+                        //the advocates which are absent in the request but present in the bridge table for this particular case and party will be made inactive
+                        else if (!advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(INACTIVE)) {
+                            partyAdv.setStatus(INACTIVE);
+                            partyAdv.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                            PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv).build();
+                            producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
+                        }
+                    });
+                    List<String> advocatesBridgeIds = advocatesBridge.stream().map(PartyAdv::getAdvocateId).collect(Collectors.toList());
                     //all the advocates which are present in the bridge table and have been sent in the request, will be made active
-                    if (advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(ACTIVE)) {
-                        partyAdv.setStatus(ACTIVE);
-                        partyAdv.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                        PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv).build();
-                        producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
-                    }
-                    //the advocates which are absent in the request but present in the bridge table for this particular case and party will be made inactive
-                    else if (!advocatesDbIds.contains(partyAdv.getAdvocateId()) && !partyAdv.getStatus().equals(INACTIVE)) {
-                        partyAdv.setStatus(INACTIVE);
-                        partyAdv.setAuditDetails(getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                        PartyAdvWrapper partyAdvWrapper = PartyAdvWrapper.builder().partyAdv(partyAdv).build();
-                        producer.push(legalConfiguration.getUpdatePartyAdvocateBridgeTopic(), partyAdvWrapper);
-                    }
-                });
-                List<String> advocatesBridgeIds = advocatesBridge.stream().map(PartyAdv::getAdvocateId).collect(Collectors.toList());
-                //all the advocates which are present in the bridge table and have been sent in the request, will be made active
-                advocatesPresentInDB.forEach(advocate -> {
-                    if (!advocatesBridgeIds.contains(advocate.getId())) {
-                        PartyAdv partyAdv1 = caseEnrichmentService.createNewPartyAdvocateId(caseRequest.getRequestInfo(), advocate.getId(),
-                                caseRequest.getCaseObj().getId(), party.getId(), party.getPartyType());
-                        partyAdvList1.add(partyAdv1);
-                    }
-                });
-            }
-        });
+                    advocatesPresentInDB.forEach(advocate -> {
+                        if (!advocatesBridgeIds.contains(advocate.getId())) {
+                            PartyAdv partyAdv1 = caseEnrichmentService.createNewPartyAdvocateId(caseRequest.getRequestInfo(), advocate.getId(),
+                                    caseRequest.getCaseObj().getId(), party.getId(), party.getPartyType());
+                            partyAdvList1.add(partyAdv1);
+                        }
+                    });
+                }
+            });
+        }
         return partyAdvList1;
     }
 
     public List<Party> setParty(CaseRequest caseRequest) {
         List<Party> modifiedParties = new ArrayList<>();
-        for (Party party : caseRequest.getCaseObj().getParties()) {
-            if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
-                if (Objects.nonNull(party.getDepartmentName())) {
-                    party.setFirstName(null);
-                    party.setLastName(null);
-                    party.setGender(null);
-                    party.setPetitionerType(null);
-                    party.setAddress(null);
-                    party.setContactNumber(null);
-                    party.setDepartmentName(party.getDepartmentName());
+        if (caseRequest.getCaseObj().getParties()!=null) {
+            for (Party party : caseRequest.getCaseObj().getParties()) {
+                if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
+                    if (Objects.nonNull(party.getDepartmentName())) {
+                        party.setFirstName(null);
+                        party.setLastName(null);
+                        party.setGender(null);
+                        party.setPetitionerType(null);
+                        party.setAddress(null);
+                        party.setContactNumber(null);
+                        party.setDepartmentName(party.getDepartmentName());
+                    } else {
+                        party.setDepartmentName(null);
+                    }
+                    party.setPartyType(PartyType.PETITIONER.toString());
                 } else {
-                    party.setDepartmentName(null);
+                    if (Objects.nonNull(party.getDepartmentName())) {
+                        party.setFirstName(null);
+                        party.setLastName(null);
+                        party.setGender(null);
+                        party.setPetitionerType(null);
+                        party.setAddress(null);
+                        party.setContactNumber(null);
+                        party.setDepartmentName(party.getDepartmentName());
+                    } else {
+                        party.setDepartmentName(null);
+                    }
+                    party.setPartyType(PartyType.RESPONDENT.toString());
                 }
-                party.setPartyType(PartyType.PETITIONER.toString());
-            } else {
-                if (Objects.nonNull(party.getDepartmentName())) {
-                    party.setFirstName(null);
-                    party.setLastName(null);
-                    party.setGender(null);
-                    party.setPetitionerType(null);
-                    party.setAddress(null);
-                    party.setContactNumber(null);
-                    party.setDepartmentName(party.getDepartmentName());
-                } else {
-                    party.setDepartmentName(null);
-                }
-                party.setPartyType(PartyType.RESPONDENT.toString());
+                modifiedParties.add(party);
             }
-            modifiedParties.add(party);
         }
         return modifiedParties;
     }
-
 }

@@ -51,16 +51,18 @@ public class CaseEnrichmentService {
             aCase.getCourt().setCaseId(caseRequest.getCaseObj().getId());
             caseRequest.getCaseObj().getCourt().setStatus(Status.ACTIVE);
         }
-        for (Party party : aCase.getParties()) {
-            party.setAuditDetails(auditDetails);
-            party.setCaseId(caseRequest.getCaseObj().getId());
-            party.setStatus(Status.ACTIVE);
-            if (Objects.nonNull(party.getAdvocate()))
-                for (Advocate advocate : party.getAdvocate()) {
-                    advocate.setAuditDetails(auditDetails);
-                    advocate.setStatus(Status.ACTIVE);
+        if (aCase.getParties()!=null) {
+            for (Party party : aCase.getParties()) {
+                party.setAuditDetails(auditDetails);
+                party.setCaseId(caseRequest.getCaseObj().getId());
+                party.setStatus(Status.ACTIVE);
+                if (Objects.nonNull(party.getAdvocate()))
+                    for (Advocate advocate : party.getAdvocate()) {
+                        advocate.setAuditDetails(auditDetails);
+                        advocate.setStatus(Status.ACTIVE);
 
-                }
+                    }
+            }
         }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
             aCase.getDocuments().forEach(doc -> {
@@ -105,6 +107,7 @@ public class CaseEnrichmentService {
                 act.setId(actItr.next());
             }
         }
+        if (caseObj.getParties()!=null){
         for (Party party : caseObj.getParties()) {
             if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
                 List<String> petitionerId = getIdList(requestInfo, tenantId, legalConfiguration.getPetitionerIdgenName(),
@@ -119,6 +122,7 @@ public class CaseEnrichmentService {
                 party.setId(respondentItr.next());
 
             }
+        }
         }
 
 
