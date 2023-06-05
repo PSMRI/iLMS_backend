@@ -178,9 +178,9 @@ public class CaseService {
 
                             JsonNode additionalDetailsObj = caseRequest.getCaseObj().getAdditionalDetails();
                             if (additionalDetailsObj != null && additionalDetailsObj.has(Constants.action) && additionalDetailsObj.has(Constants.decisionStatus)) {
-                                JsonNode actionNode = additionalDetailsObj.get("action");
-                                JsonNode decisionStatusNode = additionalDetailsObj.get("decisionStatus");
-                                JsonNode caseNumberNode = additionalDetailsObj.get("caseNumber");
+                                JsonNode actionNode = additionalDetailsObj.get(Constants.action);
+                                JsonNode decisionStatusNode = additionalDetailsObj.get(Constants.decisionStatus);
+                                JsonNode caseNumberNode = additionalDetailsObj.get(Constants.CASE_NUMBER);
                                 String action = actionNode.textValue().replaceAll("\"", "");
                                 String decisionStatus = decisionStatusNode.textValue().replaceAll("\"", "");
                                 String caseNumber = caseNumberNode.textValue().replaceAll("\"", "");

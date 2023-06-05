@@ -193,10 +193,10 @@ public class JudgementService {
 
                             if (additionalDetailsObj instanceof Map) {
                                 Map<String, Object> additionalDetailsMap = (Map<String, Object>) additionalDetailsObj;
-                                String caseNumber = (String) additionalDetailsMap.get("caseNumber");
-                                additionalDetailsMap.put("action", Constants.JUDGEMENT_APPEALED_REVIEW);
-                                additionalDetailsMap.put("decisionStatus", judgementRequest.getJudgement().getDecisionStatus());
-                                additionalDetailsMap.put("caseNumber", caseNumber);
+                                String caseNumber = (String) additionalDetailsMap.get(Constants.CASE_NUMBER);
+                                additionalDetailsMap.put(Constants.action, Constants.JUDGEMENT_APPEALED_REVIEW);
+                                additionalDetailsMap.put(Constants.decisionStatus, judgementRequest.getJudgement().getDecisionStatus());
+                                additionalDetailsMap.put(Constants.CASE_NUMBER, caseNumber);
                                 JsonNode additionalDetailsJsonNode = objectMapper.valueToTree(additionalDetailsMap);
                                 caseRequest.getCaseObj().setAdditionalDetails(additionalDetailsJsonNode);
                             }
