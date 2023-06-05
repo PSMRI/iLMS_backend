@@ -6,6 +6,7 @@ import org.legal.repository.rowmapper.JudgementRowMapper;
 import org.legal.service.JudgementEnrichmentService;
 import org.legal.util.CaseUtils;
 import org.legal.util.CommonUtils;
+import org.legal.util.Constants;
 import org.legal.web.model.JudgementRequest;
 import org.legal.web.model.JudgementResponse;
 import org.legal.web.model.JudgementSearchCriteria;
@@ -83,7 +84,7 @@ public class JudgementRepository {
         if (!StringUtils.isEmpty(request.getJudgement().getDecisionStatus())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(request.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "DecisionStatus")) {
+            if (commonUtils.isUserOIC(uuids, tenantId, Constants.DecisionStatus)) {
                 oldJudgement.setDecisionStatus(request.getJudgement().getDecisionStatus());
             }
         }
@@ -102,7 +103,7 @@ public class JudgementRepository {
         if (!StringUtils.isEmpty(request.getJudgement().getComplianceStatus())) {
             List<String> uuids = new ArrayList<>();
             uuids.add(request.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, "ComplianceStatus")) {
+            if (commonUtils.isUserOIC(uuids, tenantId, Constants.ComplianceStatus)) {
                 oldJudgement.setComplianceStatus(request.getJudgement().getComplianceStatus());
             }
         }

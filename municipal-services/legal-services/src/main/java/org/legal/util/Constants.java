@@ -46,4 +46,6 @@ public class Constants {
     public static final String caseFlag = "caseFlag";
     public static final String AffidavitFilingDate = "AffidavitFilingDate";
     public static final String OathNumber = "OathNumber";
+    public static final String ComplianceStatus = "ComplianceStatus";
+    public static final String DecisionStatus = "DecisionStatus";
 }

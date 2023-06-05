@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -95,10 +96,10 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available for this Judgement");
             }
             return judgementRequest;
-        }  catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
@@ -121,10 +122,10 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.JUDGEMENT_NOT_AVAILABLE, "Judgement is not Available");
             }
             return judgementResponse;
-        }  catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();
@@ -167,10 +168,10 @@ public class JudgementService {
                         if (!processInstanceResponse.getProcessInstances().isEmpty()) {
                             if (!judgementRequest.getRequestInfo().getUserInfo().getUuid()
                                     .equals(processInstanceResponse.getProcessInstances().get(0).getAssignes().get(0).getUuid())) {
-                                throw new CustomException("PARSING ERROR", "You can't take action on this judgement");
+                                throw new CustomException(LegalErrorConstants.CANT_TAKE_ACTION, "You can't take action on this judgement");
                             }
                         } else {
-                            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
+                            throw new CustomException(LegalErrorConstants.WORKFLOW_NOT_FOUND, "Failed to parse response of workflow processInstance search");
                         }
                     }
 
@@ -217,10 +218,10 @@ public class JudgementService {
                 throw new CustomException(LegalErrorConstants.INVALID_TYPE_ERROR, "Id is mandatory");
             }
             return finalRequest;
-        }  catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            if(e instanceof CustomException){
+            if (e instanceof CustomException) {
                 throw e;
             }
             e.printStackTrace();

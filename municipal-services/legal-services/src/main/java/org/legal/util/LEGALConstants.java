@@ -36,7 +36,7 @@ public class LEGALConstants {
     public static final String MDMS_LEGAL_COURT_NAME = "CourtName";
 
     public static final String MDMS_LEGAL_BENCH = "Bench";
-    
+
 
     public static final String NOTIFICATION_LOCALE = "en_IN";
 
@@ -48,5 +48,6 @@ public class LEGALConstants {
     public static final String USREVENTS_EVENT_NAME = "LEGAL";
 
     public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-LEGAL";
+
 
 }
