@@ -19,6 +19,7 @@ import org.legal.repository.CaseRepository;
 import org.legal.repository.HearingRepository;
 import org.legal.repository.JudgementRepository;
 import org.legal.util.AdvocateUtils;
+import org.legal.repository.ServiceRepository;
 import org.legal.util.CaseUtils;
 import org.legal.util.CommonUtils;
 import org.legal.util.Constants;
@@ -26,14 +27,10 @@ import org.legal.util.HearingUtils;
 import org.legal.util.LegalErrorConstants;
 import org.legal.validator.CaseValidator;
 import org.legal.web.model.*;
-import org.legal.web.model.enums.CreationReason;
-import org.legal.web.model.enums.PartyType;
 import org.legal.web.model.enums.Status;
 import org.legal.web.model.workflow.ProcessInstance;
-import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.legal.web.model.workflow.ProcessInstanceResponse;
 import org.legal.web.model.workflow.ProcessInstanceSearchCriteria;
-import org.legal.web.model.workflow.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,6 +89,12 @@ public class CaseService {
 
     @Autowired
     private AdvocateUtils advocateUtils;
+
+    @Autowired
+    private CommonUtils commonUtils;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     public CaseService() {
     }
@@ -158,6 +161,7 @@ public class CaseService {
                                         .equalsIgnoreCase(
                                                 Constants.HEARING_CREATED)) {
                                     request.getWorkflow().setAction(Constants.ASSIGNED_TO_RO);
+
                                     hearingService.update(request);
                                 }
                                 if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE) && request.getHearing().getApplicationStatus()
@@ -180,6 +184,23 @@ public class CaseService {
                                 String action = actionNode.textValue().replaceAll("\"", "");
                                 String decisionStatus = decisionStatusNode.textValue().replaceAll("\"", "");
                                 String caseNumber = caseNumberNode.textValue().replaceAll("\"", "");
+                                RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(caseRequest.getRequestInfo()).build();
+                                StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), caseRequest.getCaseObj().getId());
+                                URL.append("&").append("history=true");
+                                Object result = serviceRepository.fetchUserResult(URL, requestInfoWrapper);
+                                ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
+                                List<ProcessInstance> filteredInstances = new ArrayList<>();
+                                String desiredAction = Constants.CREATE_CASE;
+                                for (ProcessInstance instance : processInstanceResponse.getProcessInstances()) {
+                                    if (instance.getAction().equals(desiredAction)) {
+                                        filteredInstances.add(instance);
+                                    }
+                                }
+
+                                if (!filteredInstances.isEmpty()) {
+                                    String assignee = filteredInstances.get(0).getAssignes().get(0).getUuid();
+                                    caseRequest.getWorkflow().setAssignes(Collections.singletonList(assignee));
+                                }
                                 if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.REVIEW)) {
                                     caseRequest.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
                                     caseRequest.getCaseObj().setId(null);
