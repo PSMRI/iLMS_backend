@@ -218,19 +218,13 @@ public class CaseService {
                                     CaseRequest caseRequestObj = new CaseRequest();
                                     Case caseObj = new Case();
                                     caseRequestObj.setCaseObj(caseObj);
-                                    log.info("id : "+caseRequest.getCaseObj().getId());
                                     caseRequestObj.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
-                                    log.info("Case Number : "+caseNumber);
-                                    log.info("Case Object : "+caseRequestObj.getCaseObj());
-                                    log.info("Case Object : "+caseRequestObj.getCaseObj().getCaseNumber());
                                     caseRequestObj.getCaseObj().setCaseNumber(caseNumber);
-                                    log.info("Case Request : " +caseRequestObj);
                                     caseRequestObj.getCaseObj().setTenantId(legalConfiguration.getTenantId());
                                     Workflow workflow = new Workflow();
                                     caseRequestObj.setWorkflow(workflow);
                                     caseRequestObj.getWorkflow().setAction(Constants.CREATE_CASE);
-                                    log.info("Case Request : " +caseRequestObj);
-                                    CaseRequest caseRequestObject = create(caseRequest);
+                                    CaseRequest caseRequestObject = create(caseRequestObj);
                                     return caseRequestObject;
                                 }
                             }
