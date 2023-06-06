@@ -150,25 +150,23 @@ public class HearingUtils {
             }
         }
         if (!CollectionUtils.isEmpty(hearingDetailsRequest.getHearing().getDocuments())) {
-            String tenant = hearingRepository.getTenantIdFromHearing(hearingDetailsRequest.getHearing().getId());
-            List<String> docIds = hearingEnrichmentService.getIdList(
-                    hearingDetailsRequest.getRequestInfo(), tenant, legalConfiguration.getDocumentIdgenName(),
-                    legalConfiguration.getDocumentIdgenFormat(), hearingDetailsRequest.getHearing().getDocuments().size()
-            );
-            AuditDetails auditDetails = caseUtils.getAuditDetails(
-                    hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false
-            );
+            for (Document docs : hearingDetailsRequest.getHearing().getDocuments()) {
+                String tenant = hearingRepository.getTenantIdFromHearing(hearingDetailsRequest.getHearing().getId());
+                List<String> docIds = hearingEnrichmentService.getIdList(
+                        hearingDetailsRequest.getRequestInfo(), tenant, legalConfiguration.getDocumentIdgenName(),
+                        legalConfiguration.getDocumentIdgenFormat(), hearingDetailsRequest.getHearing().getDocuments().size()
+                );
+                AuditDetails auditDetails = caseUtils.getAuditDetails(
+                        hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false
+                );
 
-            updatedDocuments = hearingDetailsRequest.getHearing().getDocuments().stream()
-                    .peek(doc -> {
-                        doc.setAuditDetails(auditDetails);
-                        doc.setId(docIds.get(0));
-                        doc.setHearingId(hearingDetailsRequest.getHearing().getId());
-                        doc.setCaseId(hearingDetailsRequest.getHearing().getCaseId());
-                        doc.setStatus(Status.ACTIVE);
-                        docIds.remove(0);
-                    })
-                    .collect(Collectors.toList());
+                docs.setAuditDetails(auditDetails);
+                docs.setId(docIds.get(0));
+                docs.setHearingId(hearingDetailsRequest.getHearing().getId());
+                docs.setCaseId(hearingDetailsRequest.getHearing().getCaseId());
+                docs.setStatus(Status.ACTIVE);
+                updatedDocuments.add(docs);
+            }
 
             hearingDetailsRequest.getHearing().setDocuments(updatedDocuments);
         }

@@ -62,7 +62,6 @@ public class HearingEnrichmentService {
             hearingRequest.getHearing().getPayment().setHearingId(hearing.getId());
             hearing.getPayment().setAuditDetails(auditDetails);
         }
-
     }
 
     private void setIdgenIds(HearingRequest request) {
@@ -93,13 +92,19 @@ public class HearingEnrichmentService {
             hearing.setPayment(payment);
         }
         if (Objects.nonNull(hearing.getDocuments())) {
-            hearing.getDocuments().forEach((doc -> {
-                List<String> docId = getIdList(requestInfo, tenantId, legalConfiguration.getDocumentIdgenName(),
-                        legalConfiguration.getDocumentIdgenFormat(), 1);
-                doc.setId(docId.get(0));
-                doc.setHearingId(hearing.getId());
-                doc.setCaseId(hearing.getCaseId());
-            }));
+            List<Document> documents = new ArrayList<>();
+            for (Document document : hearing.getDocuments()) {
+                hearing.getDocuments().forEach((doc -> {
+                    List<String> docId = getIdList(requestInfo, tenantId, legalConfiguration.getDocumentIdgenName(),
+                            legalConfiguration.getDocumentIdgenFormat(), 1);
+                    doc.setId(docId.get(0));
+                    doc.setHearingId(hearing.getId());
+                    doc.setCaseId(hearing.getCaseId());
+                    doc.setStatus(Status.ACTIVE);
+                    documents.add(document);
+
+                }));
+            }
         }
     }
 
