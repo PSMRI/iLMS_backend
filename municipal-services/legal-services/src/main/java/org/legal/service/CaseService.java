@@ -216,6 +216,7 @@ public class CaseService {
                                 }
                                 if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.APPEALED)) {
                                     CaseRequest caseRequestObj = new CaseRequest();
+                                    caseRequestObj.setRequestInfo(caseRequest.getRequestInfo());
                                     Case caseObj = new Case();
                                     caseRequestObj.setCaseObj(caseObj);
                                     caseRequestObj.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
