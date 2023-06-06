@@ -221,6 +221,8 @@ public class CaseService {
                                     log.info("id : "+caseRequest.getCaseObj().getId());
                                     caseRequestObj.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
                                     log.info("Case Number : "+caseNumber);
+                                    log.info("Case Object : "+caseRequestObj.getCaseObj());
+                                    log.info("Case Object : "+caseRequestObj.getCaseObj().getCaseNumber());
                                     caseRequestObj.getCaseObj().setCaseNumber(caseNumber);
                                     log.info("Case Request : " +caseRequestObj);
                                     caseRequestObj.getCaseObj().setTenantId(legalConfiguration.getTenantId());
