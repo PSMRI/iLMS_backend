@@ -152,7 +152,6 @@ public class HearingService {
 
     public HearingRequest update(HearingRequest hearingDetailsRequest) {
         try {
-            String action = "";
             HearingRequest updatedRequest = new HearingRequest();
             if (hearingDetailsRequest.getHearing().getId() != null) {
                 CaseRequest caseRequest = new CaseRequest();
@@ -202,15 +201,13 @@ public class HearingService {
                             request.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
                             workflowService.updateHearingWorkflowStatus(request);
                             producer.push(legalConfiguration.getUpdateHearingTopic(), request);
-                        }
-                        if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.ASSIGNED_TO_APPOINTED_OIC) && oldHearing.getApplicationStatus().equalsIgnoreCase(
+                        } else if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.ASSIGNED_TO_APPOINTED_OIC) && oldHearing.getApplicationStatus().equalsIgnoreCase(
                                 Constants.Pending_at_RO_for_Next_Hearing_Review)) {
                             request.getWorkflow().setAction(Constants.Approved);
                             request.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
                             workflowService.updateHearingWorkflowStatus(request);
                             producer.push(legalConfiguration.getUpdateHearingTopic(), request);
-                        }
-                        if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.REVIEW_AND_ASSIGN_BACK_TO_DEC) && oldHearing.getApplicationStatus()
+                        } else if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.REVIEW_AND_ASSIGN_BACK_TO_DEC) && oldHearing.getApplicationStatus()
                                 .equalsIgnoreCase(
                                         Constants.Pending_at_RO_for_Next_Hearing_Review)) {
                             request.getWorkflow().setAction(Constants.Reject);
@@ -228,9 +225,7 @@ public class HearingService {
                     Workflow workflow = new Workflow();
                     workflow.setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
                     caseRequest.setWorkflow(workflow);
-                    if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && !hearingDetailsRequest.getHearing().getHearingType()
-                            .equalsIgnoreCase(
-                                    Constants.Final_Hearing)) {
+                    if (request.getWorkflow().getAction() != null && request.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && request.getHearing().getHearingType() != null && !request.getHearing().getHearingType().equalsIgnoreCase(Constants.Final_Hearing)) {
                         caseRequest.getWorkflow().setAction(Constants.SUBMIT_SUPPLEMENTARY_AFFIDAVIT);
                         StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), caseRequest.getCaseObj().getId());
                         URL.append("&").append("history=true");
@@ -248,9 +243,7 @@ public class HearingService {
                             caseRequest.getWorkflow().setAssignes(Collections.singletonList(assignee));
                         }
                         caseService.updateCase(caseRequest);
-                    } else if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && hearingDetailsRequest.getHearing().getHearingType()
-                            .equalsIgnoreCase(
-                                    Constants.Final_Hearing)) {
+                    } else if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && hearingDetailsRequest.getHearing().getHearingType() != null && hearingDetailsRequest.getHearing().getHearingType().equalsIgnoreCase(Constants.Final_Hearing)) {
                         caseRequest.getWorkflow().setAction(Constants.PROCEED_WITH_JUDGEMENT);
                         StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), caseRequest.getCaseObj().getId());
                         URL.append("&").append("history=true");
