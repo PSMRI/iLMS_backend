@@ -155,7 +155,7 @@ public class HearingService {
             HearingRequest updatedRequest = new HearingRequest();
             if (hearingDetailsRequest.getHearing().getId() != null) {
                 CaseRequest caseRequest = new CaseRequest();
-                HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId((hearingDetailsRequest.getHearing().getCaseId())).build();
+                HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId((hearingDetailsRequest.getHearing().getCaseId())).id(hearingDetailsRequest.getHearing().getId()).build();
                 HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
                 if (!hearingDetailsResponse.getHearingList().isEmpty()) {
                     HearingRequest request = new HearingRequest();
@@ -260,7 +260,6 @@ public class HearingService {
                             String assignee = filteredInstances.get(0).getAssignes().get(0).getUuid();
                             caseRequest.getWorkflow().setAssignes(Collections.singletonList(assignee));
                         }
-                        updatedRequest.getHearing().setStatus(Status.INACTIVE);
                         caseService.updateCase(caseRequest);
                     }
                     producer.push(legalConfiguration.getUpdateHearingTopic(), updatedRequest);
