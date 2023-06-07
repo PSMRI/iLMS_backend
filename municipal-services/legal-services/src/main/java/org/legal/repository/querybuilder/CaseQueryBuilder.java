@@ -17,6 +17,7 @@ public class CaseQueryBuilder {
     private static final String partyQuery = "select party.*,advocate.id as adv_id, advocate.first_name as adv_first_name, advocate.last_name as adv_last_name,advocate.contact_number as adv_contact_number,advocate.status as adv_status,advocate.createdby,advocate.createdtime,advocate.lastmodifiedby,advocate.lastmodifiedtime from eg_lg_case_party party inner join eg_lg_party_advocate_bridge bridge ON bridge.party_id = party.id inner join eg_lg_advocate advocate ON advocate.id = bridge.advocate_id where party.case_id=?";
 
     private static final String actQuery = "select * from eg_lg_act where case_id = ?";
+    private static final String courtQuery = "select * from eg_lg_court where case_id = ?";
 
     private static final String Query = "select count(*) OVER() AS full_count,eg_lg_case.id as legalCase_id, eg_lg_case.case_number as legal_caseNumber, eg_lg_case.cnr_number as legal_cnrNumber, eg_lg_case.tenant_id as legal_tenantId, eg_lg_case.parent_case_id as legal_parentCaseId, eg_lg_case.linked_cases as legal_linkedCases, eg_lg_case.case_type as legal_caseType, eg_lg_case.case_category as legal_caseCategory, eg_lg_case.filing_number as legal_filingNumber, eg_lg_case.filing_date as legal_filingDate, eg_lg_case.case_summary as legal_caseSummary, eg_lg_case.arising_details as legal_arisingDetails, eg_lg_case.policy_or_nonpolicy_matter as legal_matter, eg_lg_case.case_status as legal_caseStatus, eg_lg_case.application_status as legal_applicationStatus, eg_lg_case.priority as legal_priority, eg_lg_case.recommend_oic as legal_recommendOic, eg_lg_case.remarks as legal_remarks, eg_lg_case.additional_details as legal_additionalDetails, eg_lg_case.status as legal_status, eg_lg_case.createdby as legal_createdBy, eg_lg_case.createdtime as legal_createdTime, eg_lg_case.lastmodifiedby as legal_lastModifiedBy, eg_lg_case.lastmodifiedtime as legal_lastModifiedTime,eg_lg_court.id as court_id, eg_lg_court.case_id as court_caseId, eg_lg_court.court_name as court_name, eg_lg_court.district as court_district, eg_lg_court.state as court_state, eg_lg_court.division as court_division,eg_lg_court.status as court_status, eg_lg_court.createdby as court_createdby,eg_lg_court.createdtime as court_createdtime,eg_lg_court.lastmodifiedby as court_lastmodifiedby,eg_lg_court.lastmodifiedtime as court_lastmodifiedtime FROM eg_lg_case LEFT OUTER JOIN eg_lg_court on eg_lg_court.case_id = eg_lg_case.id ";
 
@@ -197,6 +198,10 @@ public class CaseQueryBuilder {
 
     public String getActQuery() {
         return actQuery;
+    }
+
+    public String getCourtQuery() {
+        return courtQuery;
     }
 
     public String getChildCaseIds(String parentCaseId, List<Object> preparedStmtList) {
