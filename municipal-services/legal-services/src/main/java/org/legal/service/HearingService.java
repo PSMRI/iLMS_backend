@@ -24,6 +24,7 @@ import org.legal.web.model.enums.Status;
 import org.legal.web.model.workflow.ProcessInstance;
 import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.legal.web.model.workflow.ProcessInstanceResponse;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -155,8 +156,9 @@ public class HearingService {
             HearingRequest updatedRequest = new HearingRequest();
             if (hearingDetailsRequest.getHearing().getId() != null) {
                 CaseRequest caseRequest = new CaseRequest();
-                HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId((hearingDetailsRequest.getHearing().getCaseId())).id(hearingDetailsRequest.getHearing().getId()).build();
+                HearingSearchCriteria criteria = HearingSearchCriteria.builder().caseId((hearingDetailsRequest.getHearing().getCaseId())).status(Status.ACTIVE.toString()).build();
                 HearingResponse hearingDetailsResponse = hearingDetailsRepository.getHearingDetails(criteria);
+                HearingRequest oldRequestCopy = new HearingRequest();
                 if (!hearingDetailsResponse.getHearingList().isEmpty()) {
                     HearingRequest request = new HearingRequest();
                     request.setRequestInfo(hearingDetailsRequest.getRequestInfo());
@@ -205,8 +207,11 @@ public class HearingService {
                                 Constants.Pending_at_RO_for_Next_Hearing_Review)) {
                             request.getWorkflow().setAction(Constants.Approved);
                             request.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
+                            request.getWorkflow().setAssignes(null);
                             workflowService.updateHearingWorkflowStatus(request);
+                            request.getHearing().setStatus(Status.INACTIVE);
                             producer.push(legalConfiguration.getUpdateHearingTopic(), request);
+                            BeanUtils.copyProperties(request, oldRequestCopy);
                         } else if (hearingDetailsRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.REVIEW_AND_ASSIGN_BACK_TO_DEC) && oldHearing.getApplicationStatus()
                                 .equalsIgnoreCase(
                                         Constants.Pending_at_RO_for_Next_Hearing_Review)) {
@@ -225,7 +230,7 @@ public class HearingService {
                     Workflow workflow = new Workflow();
                     workflow.setAssignes(hearingDetailsRequest.getWorkflow().getAssignes());
                     caseRequest.setWorkflow(workflow);
-                    if (request.getWorkflow().getAction() != null && request.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && request.getHearing().getHearingType() != null && !request.getHearing().getHearingType().equalsIgnoreCase(Constants.Final_Hearing)) {
+                    if (null != oldRequestCopy.getWorkflow() && oldRequestCopy.getWorkflow().getAction() != null && oldRequestCopy.getWorkflow().getAction().equalsIgnoreCase(Constants.Approved) && oldRequestCopy.getHearing().getHearingType() != null && !oldRequestCopy.getHearing().getHearingType().equalsIgnoreCase(Constants.Final_Hearing)) {
                         caseRequest.getWorkflow().setAction(Constants.SUBMIT_SUPPLEMENTARY_AFFIDAVIT);
                         StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), caseRequest.getCaseObj().getId());
                         URL.append("&").append("history=true");
@@ -260,7 +265,11 @@ public class HearingService {
                             String assignee = filteredInstances.get(0).getAssignes().get(0).getUuid();
                             caseRequest.getWorkflow().setAssignes(Collections.singletonList(assignee));
                         }
+                        updatedRequest.getHearing().setStatus(Status.INACTIVE);
                         caseService.updateCase(caseRequest);
+                    }
+                    if (hearingDetailsRequest.getWorkflow().getAction().equals(Constants.DEACTIVATE)) {
+                        updatedRequest.getHearing().setStatus(Status.INACTIVE);
                     }
                     producer.push(legalConfiguration.getUpdateHearingTopic(), updatedRequest);
                 } else {

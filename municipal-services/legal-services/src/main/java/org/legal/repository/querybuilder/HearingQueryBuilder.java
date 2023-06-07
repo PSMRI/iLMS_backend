@@ -47,6 +47,11 @@ public class HearingQueryBuilder {
         } catch (NullPointerException e) {
             preparedStmtList.add("");
         }
+        if (criteria.getStatus() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" eg_lg_hearing.status = ?");
+            preparedStmtList.add(criteria.getStatus());
+        }
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
     }
 

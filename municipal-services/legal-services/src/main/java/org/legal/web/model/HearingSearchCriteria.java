@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.legal.web.model.enums.Status;
 
 @Builder
 @AllArgsConstructor
@@ -33,6 +34,9 @@ public class HearingSearchCriteria {
 
     @JsonProperty("sortOrder")
     private SortOrder sortOrder;
+
+    @JsonProperty("status")
+    private String status;
 
     public enum SortOrder {
         ASC,

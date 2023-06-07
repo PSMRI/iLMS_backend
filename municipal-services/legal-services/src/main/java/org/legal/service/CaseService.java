@@ -329,9 +329,9 @@ public class CaseService {
                             caseId).build();
                     hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
                     hearingResponse.getHearingList().forEach(hearing -> {
-                        if (hearing.getStatus() == Status.ACTIVE) {
-                            hearingList.add(hearing);
-                        }
+//                        if (hearing.getStatus() == Status.ACTIVE) {
+                        hearingList.add(hearing);
+//                        }
                     });
                 }
                 for (String caseId : caseIds) {
