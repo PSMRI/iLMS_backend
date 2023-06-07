@@ -224,6 +224,7 @@ public class CaseService {
                                     caseRequestObj.getCaseObj().setTenantId(legalConfiguration.getTenantId());
                                     Workflow workflow = new Workflow();
                                     caseRequestObj.setWorkflow(workflow);
+                                    caseRequestObj.getWorkflow().setAssignes(caseRequest.getWorkflow().getAssignes());
                                     caseRequestObj.getWorkflow().setAction(Constants.CREATE_CASE);
                                     CaseRequest caseRequestObject = create(caseRequestObj);
                                     return caseRequestObject;
