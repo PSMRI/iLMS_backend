@@ -222,6 +222,9 @@ public class CaseService {
                                     caseRequestObj.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
                                     caseRequestObj.getCaseObj().setCaseNumber(caseNumber);
                                     caseRequestObj.getCaseObj().setTenantId(legalConfiguration.getTenantId());
+                                    List<Party> parties = new ArrayList<>();
+                                    parties.addAll(caseRequest.getCaseObj().getParties());
+                                    caseRequestObj.getCaseObj().setParties(parties);
                                     Workflow workflow = new Workflow();
                                     caseRequestObj.setWorkflow(workflow);
                                     caseRequestObj.getWorkflow().setAssignes(caseRequest.getWorkflow().getAssignes());
