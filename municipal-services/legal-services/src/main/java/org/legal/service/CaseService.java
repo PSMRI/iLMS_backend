@@ -145,7 +145,6 @@ public class CaseService {
                     if (Objects.nonNull(updatedCaseRequest.getWorkflow())) {
                         if (legalConfiguration.getIsWorkflowEnabled()) {
                             updatedCaseRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateCaseWfName());
-                            workflowService.updateCaseWorkflowStatus(updatedCaseRequest);
                         }
                         hearingSearchCriteria = HearingSearchCriteria.builder().caseId(caseId).build();
                         HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
@@ -178,6 +177,17 @@ public class CaseService {
                                     hearingService.update(request);
                                 }
                             }
+                            if (Objects.nonNull(updatedCaseRequest.getWorkflow())) {
+                                if (legalConfiguration.getIsWorkflowEnabled()) {
+                                    workflowService.updateCaseWorkflowStatus(updatedCaseRequest);
+                                }
+                            }
+                            caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
+                            if (updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.COMPLY_JUDGEMENT) || updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.REVIEW_JUDGEMENT)) {
+                                updatedCaseRequest.getCaseObj().setStatus(Status.INACTIVE);
+                            }
+                            producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+
 
                             JsonNode additionalDetailsObj = caseRequest.getCaseObj().getAdditionalDetails();
                             if (additionalDetailsObj != null && additionalDetailsObj.has(Constants.action) && additionalDetailsObj.has(Constants.decisionStatus)) {
@@ -236,8 +246,7 @@ public class CaseService {
                         }
                         //    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
-                    caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
-                    producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+
                 } else {
                     throw new CustomException(CASE_NOT_AVAILABLE, "Case is not Available");
                 }
@@ -318,9 +327,9 @@ public class CaseService {
                     officersCount.setOIC(oic);
                 }
                 caseResponse.getCaseList().forEach(caseObj -> {
-                    if (caseObj.getStatus() == Status.ACTIVE) {
-                        caseList.add(caseObj);
-                    }
+//                    if (caseObj.getStatus() == Status.ACTIVE) {
+                    caseList.add(caseObj);
+//                    }
                 });
                 List<Hearing> hearingList = new ArrayList<>();
                 List<Judgement> judgementList = new ArrayList<>();
@@ -342,9 +351,9 @@ public class CaseService {
                             caseId)).build();
                     judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
                     judgementResponse.getJudgementList().forEach(judgement -> {
-                        if (judgement.getStatus() == Status.ACTIVE) {
-                            judgementList.add(judgement);
-                        }
+//                        if (judgement.getStatus() == Status.ACTIVE) {
+                        judgementList.add(judgement);
+//                        }
                     });
                 }
                 finalResult.setTotalCount(caseResponse.getTotalCount());

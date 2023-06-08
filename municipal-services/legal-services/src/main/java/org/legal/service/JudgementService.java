@@ -178,7 +178,7 @@ public class JudgementService {
                     if (Objects.nonNull(judgementRequest.getWorkflow())) {
                         if (legalConfiguration.getIsWorkflowEnabled()) {
                             judgementRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateJudgementWfName());
-                            workflowService.updateJudgementWorkflowStatus(finalRequest);
+
                         }
                     }
                     Workflow workflow = new Workflow();
@@ -209,6 +209,14 @@ public class JudgementService {
                     if (judgementRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.JUDGEMENT_COMPLETED)) {
                         caseRequest.getWorkflow().setAction(Constants.COMPLY_JUDGEMENT);
                         caseService.updateCase(caseRequest);
+                    }
+                    if (Objects.nonNull(judgementRequest.getWorkflow())) {
+                        if (legalConfiguration.getIsWorkflowEnabled()) {
+                            workflowService.updateJudgementWorkflowStatus(finalRequest);
+                        }
+                    }
+                    if (finalRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.JUDGEMENT_COMPLETED) || finalRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW)) {
+                        finalRequest.getJudgement().setStatus(Status.INACTIVE);
                     }
                     producer.push(legalConfiguration.getUpdateJudgementTopic(), finalRequest);
                 } else {

@@ -190,7 +190,6 @@ public class HearingService {
                             if (Objects.nonNull(updatedRequest.getWorkflow())) {
                                 if (legalConfiguration.getIsWorkflowEnabled()) {
                                     updatedRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateHearingWfName());
-                                    workflowService.updateHearingWorkflowStatus(updatedRequest);
                                 }
                             }
                         }
@@ -221,6 +220,7 @@ public class HearingService {
                             producer.push(legalConfiguration.getUpdateHearingTopic(), request);
                         }
                     }
+                    
                     String caseId = hearingDetailsRequest.getHearing().getCaseId();
                     CaseSearchCriteria caseCriteria = CaseSearchCriteria.builder().id(Collections.singletonList(caseId)).build();
                     CaseResponse caseResponse = caseRepository.getLegalCaseData(caseCriteria);
@@ -271,6 +271,13 @@ public class HearingService {
                     if (hearingDetailsRequest.getWorkflow().getAction().equals(Constants.DEACTIVATE)) {
                         updatedRequest.getHearing().setStatus(Status.INACTIVE);
                     }
+
+                    if (Objects.nonNull(updatedRequest.getWorkflow())) {
+                        if (legalConfiguration.getIsWorkflowEnabled()) {
+                            workflowService.updateHearingWorkflowStatus(updatedRequest);
+                        }
+                    }
+
                     producer.push(legalConfiguration.getUpdateHearingTopic(), updatedRequest);
                 } else {
                     throw new CustomException(LegalErrorConstants.HEARING_NOT_AVAILABLE, "Hearing is not Available");
