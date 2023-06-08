@@ -1,2 +1,2 @@
 ALTER TABLE eg_lg_document
-ADD COLUMN hearing_id character varying(64);
+ADD COLUMN IF NOT EXISTS hearing_id character varying(64);
