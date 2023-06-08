@@ -40,9 +40,9 @@ public class CaseValidator {
         if (Objects.nonNull(cases.getCategory()) && !codes.get(LEGALConstants.MDMS_LEGAL_CASE_CATEGORY).contains(cases.getCategory())) {
             errorMap.put("Invalid CaseCategory", "The CaseCategory '" + cases.getCategory() + "' does not exists");
         }
-        if (Objects.nonNull(cases.getRecommendOIC()) && !codes.get(LEGALConstants.MDMS_LEGAL_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
-            errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + cases.getRecommendOIC() + "' does not exists");
-        }
+//        if (Objects.nonNull(cases.getRecommendOIC()) && !codes.get(LEGALConstants.MDMS_LEGAL_DEPARTMENT_IOC).contains(cases.getRecommendOIC())) {
+//            errorMap.put("Invalid RecommendOIC", "The RecommendOIC '" + cases.getRecommendOIC() + "' does not exists");
+//        }
         if (Objects.nonNull(cases.getPriority()) && !codes.get(LEGALConstants.CASE_FLAG).contains(cases.getPriority())) {
             errorMap.put("Invalid CaseFlag", "The CaseFlag '" + cases.getPriority() + "' does not exists");
         }
@@ -92,7 +92,7 @@ public class CaseValidator {
                 Arrays.asList(LEGALConstants.MDMS_LEGAL_CASE_TYPE, LEGALConstants.MDMS_LEGAL_CASE_STATUS, LEGALConstants.MDMS_LEGAL_CASE_CATEGORY,
                         LEGALConstants.MDMS_LEGAL_GENDER_TYPE,
                         LEGALConstants.MDMS_LEGAL_PETITIONER_TYPE, LEGALConstants.MDMS_LEGAL_DEPARTMENT_NAME, LEGALConstants.MDMS_LEGAL_DOCUMENT_CATEGORY,
-                        LEGALConstants.MDMS_LEGAL_DEPARTMENT_IOC, LEGALConstants.CASE_FLAG, LEGALConstants.MDMS_LEGAL_COURT_NAME));
+                        LEGALConstants.CASE_FLAG, LEGALConstants.MDMS_LEGAL_COURT_NAME));
 
         Map<String, List<String>> codes = commonUtils.getAttributeValues(tenantId, LEGALConstants.MDMS_LEGAL_MOD_NAME, masterNames, "$.*.code",
                 LEGALConstants.JSONPATH_CODES, request.getRequestInfo());
