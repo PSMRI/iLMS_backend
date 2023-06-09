@@ -481,13 +481,14 @@ serviceMaps:
 
             - jsonPath: $.case.act.*.id
 
-        - query: UPDATE eg_lg_document SET case_id=?, hearing_id=?, document_type=?, file_store_id=?, status=?, remarks=?, lastmodifiedby=?, lastmodifiedtime=? where id = ?;
+        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.documents.*
           jsonMaps:
+            - jsonPath: $.case.documents.*.id
 
             - jsonPath: $.case.id
 
-            - jsonPath: $.case.documnets.*.hearingId
+            - jsonPath: $.case.document.*.hearingId
 
             - jsonPath: $.case.documents.*.documentType
 
@@ -497,11 +498,9 @@ serviceMaps:
 
             - jsonPath: $.case.documents.*.remarks
 
-            - jsonPath: $.case.documents.*.auditDetails.lastModifiedBy
+            - jsonPath: $.case.documents.*.auditDetails.createdBy
 
-            - jsonPath: $.case.documents.*.auditDetails.lastModifiedTime
-
-            - jsonPath: $.case.documents.*.id
+            - jsonPath: $.case.documents.*.auditDetails.createdTime
 
         - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.PartyAdv.*
