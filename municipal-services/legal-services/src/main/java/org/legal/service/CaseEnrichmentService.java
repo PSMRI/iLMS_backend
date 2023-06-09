@@ -65,11 +65,19 @@ public class CaseEnrichmentService {
             }
         }
         if (!CollectionUtils.isEmpty(aCase.getDocuments())) {
-            aCase.getDocuments().forEach(doc -> {
-                doc.setCaseId(aCase.getId());
-                doc.setAuditDetails(auditDetails);
-                doc.setStatus(Status.ACTIVE);
-            });
+            List<Document> documents=new ArrayList<>();
+            for (Document docs : aCase.getDocuments()) {
+                List<String> docId = getIdList(requestInfo, caseRequest.getCaseObj().getTenantId(), legalConfiguration.getDocumentIdgenName(),
+                        legalConfiguration.getDocumentIdgenFormat(), 1);
+                docs.setId(docId.get(0));
+                docs.setAuditDetails(caseUtils.getAuditDetails(requestInfo.getUserInfo().getUuid(), false));
+                docs.setId(docId.get(0));
+                docs.setCaseId(aCase.getId());
+                docs.setStatus(Status.ACTIVE);
+                documents.add(docs);
+            }
+
+            caseRequest.getCaseObj().setDocuments(documents);
         }
 
         if (Objects.nonNull(caseRequest.getCaseObj().getAct())) {
@@ -128,16 +136,16 @@ public class CaseEnrichmentService {
 
         List<PartyAdv> partyAdvList = caseUtils.updatePartyAdvocates(request);
         caseObj.setPartyAdv(partyAdvList);
-        if (Objects.nonNull(caseObj.getDocuments())) {
-            caseObj.getDocuments().forEach((doc -> {
-                List<String> docId = getIdList(requestInfo, tenantId, legalConfiguration.getDocumentIdgenName(),
-                        legalConfiguration.getDocumentIdgenFormat(), 1);
-                doc.setId(docId.get(0));
-            }));
-        }
+//        if (Objects.nonNull(caseObj.getDocuments())) {
+//            caseObj.getDocuments().forEach((doc -> {
+//                List<String> docId = getIdList(requestInfo, tenantId, legalConfiguration.getDocumentIdgenName(),
+//                        legalConfiguration.getDocumentIdgenFormat(), 1);
+//                doc.setId(docId.get(0));
+//            }));
+//        }
     }
 
-    private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {
+    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, int count) {
         List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idName, idformat, count).getIdResponses();
         if (CollectionUtils.isEmpty(idResponses)) {
             throw new CustomException(LegalErrorConstants.IDGEN_ERROR, "No ids returned from idgen Service");
