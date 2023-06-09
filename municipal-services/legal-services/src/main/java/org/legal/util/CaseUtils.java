@@ -2,7 +2,7 @@ package org.legal.util;
 
 import static org.legal.web.model.enums.Status.ACTIVE;
 import static org.legal.web.model.enums.Status.INACTIVE;
-
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
@@ -13,6 +13,7 @@ import org.legal.service.CaseEnrichmentService;
 import org.legal.web.model.*;
 import org.legal.web.model.enums.CreationReason;
 import org.legal.web.model.enums.PartyType;
+import org.legal.web.model.enums.Status;
 import org.legal.web.model.workflow.ProcessInstance;
 import org.legal.web.model.workflow.ProcessInstanceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class CaseUtils {
 
     @Autowired
     private AdvocateService advocateService;
+    @Autowired
+    private CaseUtils caseUtils;
 
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
@@ -225,36 +228,49 @@ public class CaseUtils {
             }
         }
         //setting documents details
-        if (Objects.nonNull(caseRequest.getCaseObj().getDocuments())) {
-            List<Document> documentList = caseRequest.getCaseObj().getDocuments();
-            for (Document document : documentList) {
-                for (Document oldDocData : oldData.getDocuments()) {
-                    //                    oldData.getDocuments().forEach(oldDocData -> {
-                    if (oldDocData.getId().equalsIgnoreCase(document.getId())) {
-
-                        if (!StringUtils.isEmpty(document.getRemarks())) {
-                            oldDocData.setRemarks(document.getRemarks());
-                        }
-
-                        if (!StringUtils.isEmpty(document.getDocumentType())) {
-                            oldDocData.setDocumentType(document.getDocumentType());
-                        }
-                        if (!StringUtils.isEmpty(document.getFileStoreId())) {
-                            oldDocData.setFileStoreId(document.getFileStoreId());
-                        }
-                        if (!StringUtils.isEmpty(document.getStatus())) {
-                            oldDocData.setStatus(document.getStatus());
-                        }
-                    }
-                }
+//        if (Objects.nonNull(caseRequest.getCaseObj().getDocuments())) {
+//            List<Document> documentList = caseRequest.getCaseObj().getDocuments();
+//            for (Document document : documentList) {
+//                for (Document oldDocData : oldData.getDocuments()) {
+//                    //                    oldData.getDocuments().forEach(oldDocData -> {
+//                    if (oldDocData.getId().equalsIgnoreCase(document.getId())) {
+//
+//                        if (!StringUtils.isEmpty(document.getRemarks())) {
+//                            oldDocData.setRemarks(document.getRemarks());
+//                        }
+//
+//                        if (!StringUtils.isEmpty(document.getDocumentType())) {
+//                            oldDocData.setDocumentType(document.getDocumentType());
+//                        }
+//                        if (!StringUtils.isEmpty(document.getFileStoreId())) {
+//                            oldDocData.setFileStoreId(document.getFileStoreId());
+//                        }
+//                        if (!StringUtils.isEmpty(document.getStatus())) {
+//                            oldDocData.setStatus(document.getStatus());
+//                        }
+//                    }
+//                }
+//            }
+//        }
+        if (!CollectionUtils.isEmpty(caseRequest.getCaseObj().getDocuments())) {
+            List<Document> documents = new ArrayList<>();
+            for (Document docs : caseRequest.getCaseObj().getDocuments()) {
+                List<String> docId = caseEnrichmentService.getIdList(caseRequest.getRequestInfo(), caseRequest.getCaseObj().getTenantId(), legalConfiguration.getDocumentIdgenName(),
+                        legalConfiguration.getDocumentIdgenFormat(), 1);
+                docs.setId(docId.get(0));
+                docs.setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                docs.setId(docId.get(0));
+                docs.setCaseId(caseRequest.getCaseObj().getId());
+                docs.setStatus(Status.ACTIVE);
+                documents.add(docs);
             }
+            oldData.setDocuments(documents);
         }
         request.setCaseObj(oldData);
         request.setRequestInfo(caseRequest.getRequestInfo());
         caseEnrichmentService.enrichCaseUpdateRequest(request);
         return request;
     }
-
 
     public ProcessInstance changeCaseWF(CaseRequest request, String action) {
         Case caseObj = request.getCaseObj();
