@@ -157,22 +157,27 @@ public class CaseService {
                                 request.setWorkflow(workflow);
 
                                 if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.FORWARD_TO_RO) && request.getHearing().getApplicationStatus()
-                                        .equalsIgnoreCase(
-                                                Constants.HEARING_CREATED)) {
+                                                                                                                              .equalsIgnoreCase(
+                                                                                                                                      Constants.HEARING_CREATED)) {
                                     request.getWorkflow().setAction(Constants.ASSIGNED_TO_RO);
 
                                     hearingService.update(request);
-                                } else if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.ASSIGNBACK_TO_DEC) && request.getHearing().getApplicationStatus()
-                                        .equalsIgnoreCase(
-                                                Constants.PENDING_AT_RO)) {
+                                } else if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.ASSIGNBACK_TO_DEC) && request.getHearing()
+                                                                                                                                         .getApplicationStatus()
+                                                                                                                                         .equalsIgnoreCase(
+                                                                                                                                                 Constants.PENDING_AT_RO)) {
                                     request.getWorkflow().setAction(Constants.REVIEW_AND_ASSIGN_BACK_TO_DEC);
 
                                     hearingService.update(request);
                                 } else if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE) && request.getHearing().getApplicationStatus()
-                                        .equalsIgnoreCase(Constants.HEARING_CREATED)) {
+                                                                                                                                  .equalsIgnoreCase(
+                                                                                                                                          Constants.HEARING_CREATED)) {
                                     request.getWorkflow().setAction(Constants.DEACTIVATE);
                                     hearingService.update(request);
-                                } else if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.SUBMIT_COUNTER_AFFIDAVIT) && request.getHearing().getApplicationStatus().equalsIgnoreCase(Constants.PENDING_AT_RO)) {
+                                } else if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.SUBMIT_COUNTER_AFFIDAVIT) && request.getHearing()
+                                                                                                                                                .getApplicationStatus()
+                                                                                                                                                .equalsIgnoreCase(
+                                                                                                                                                        Constants.PENDING_AT_RO)) {
                                     request.getWorkflow().setAction(Constants.ASSIGNED_TO_APPOINTED_OIC);
                                     hearingService.update(request);
                                 }
@@ -183,9 +188,12 @@ public class CaseService {
                                 }
                             }
                             caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
-                            if (updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.COMPLY_JUDGEMENT) || updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.REVIEW_JUDGEMENT)) {
+                            if (updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.COMPLY_JUDGEMENT) || updatedCaseRequest.getWorkflow().getAction()
+                                                                                                                                               .equalsIgnoreCase(
+                                                                                                                                                       Constants.REVIEW_JUDGEMENT)) {
                                 updatedCaseRequest.getCaseObj().setStatus(Status.INACTIVE);
                             }
+                        }
                             producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
 
 
@@ -242,7 +250,7 @@ public class CaseService {
                                     CaseRequest caseRequestObject = create(caseRequestObj);
                                     return caseRequestObject;
                                 }
-                            }
+
                         }
                         //    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
