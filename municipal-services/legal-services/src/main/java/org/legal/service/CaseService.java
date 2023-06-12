@@ -254,6 +254,10 @@ public class CaseService {
                         }
                         //    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
+                    else {
+                        caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
+                        producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+                    }
 
                 } else {
                     throw new CustomException(CASE_NOT_AVAILABLE, "Case is not Available");
