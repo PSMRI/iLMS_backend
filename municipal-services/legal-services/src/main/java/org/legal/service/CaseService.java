@@ -157,27 +157,27 @@ public class CaseService {
                                 request.setWorkflow(workflow);
 
                                 if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.FORWARD_TO_RO) && request.getHearing().getApplicationStatus()
-                                                                                                                              .equalsIgnoreCase(
-                                                                                                                                      Constants.HEARING_CREATED)) {
+                                        .equalsIgnoreCase(
+                                                Constants.HEARING_CREATED)) {
                                     request.getWorkflow().setAction(Constants.ASSIGNED_TO_RO);
 
                                     hearingService.update(request);
                                 } else if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.ASSIGNBACK_TO_DEC) && request.getHearing()
-                                                                                                                                         .getApplicationStatus()
-                                                                                                                                         .equalsIgnoreCase(
-                                                                                                                                                 Constants.PENDING_AT_RO)) {
+                                        .getApplicationStatus()
+                                        .equalsIgnoreCase(
+                                                Constants.PENDING_AT_RO)) {
                                     request.getWorkflow().setAction(Constants.REVIEW_AND_ASSIGN_BACK_TO_DEC);
 
                                     hearingService.update(request);
                                 } else if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE) && request.getHearing().getApplicationStatus()
-                                                                                                                                  .equalsIgnoreCase(
-                                                                                                                                          Constants.HEARING_CREATED)) {
+                                        .equalsIgnoreCase(
+                                                Constants.HEARING_CREATED)) {
                                     request.getWorkflow().setAction(Constants.DEACTIVATE);
                                     hearingService.update(request);
                                 } else if (caseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.SUBMIT_COUNTER_AFFIDAVIT) && request.getHearing()
-                                                                                                                                                .getApplicationStatus()
-                                                                                                                                                .equalsIgnoreCase(
-                                                                                                                                                        Constants.PENDING_AT_RO)) {
+                                        .getApplicationStatus()
+                                        .equalsIgnoreCase(
+                                                Constants.PENDING_AT_RO)) {
                                     request.getWorkflow().setAction(Constants.ASSIGNED_TO_APPOINTED_OIC);
                                     hearingService.update(request);
                                 }
@@ -189,70 +189,74 @@ public class CaseService {
                             }
                             caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                             if (updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.COMPLY_JUDGEMENT) || updatedCaseRequest.getWorkflow().getAction()
-                                                                                                                                               .equalsIgnoreCase(
-                                                                                                                                                       Constants.REVIEW_JUDGEMENT)) {
+                                    .equalsIgnoreCase(
+                                            Constants.REVIEW_JUDGEMENT)) {
+                                updatedCaseRequest.getCaseObj().setStatus(Status.INACTIVE);
+                            }
+                            if (updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE)) {
                                 updatedCaseRequest.getCaseObj().setStatus(Status.INACTIVE);
                             }
                         }
-                            producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+                        producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
 
 
-                            JsonNode additionalDetailsObj = caseRequest.getCaseObj().getAdditionalDetails();
-                            if (additionalDetailsObj != null && additionalDetailsObj.has(Constants.action) && additionalDetailsObj.has(Constants.decisionStatus)) {
-                                JsonNode actionNode = additionalDetailsObj.get(Constants.action);
-                                JsonNode decisionStatusNode = additionalDetailsObj.get(Constants.decisionStatus);
-                                JsonNode caseNumberNode = additionalDetailsObj.get(Constants.CASE_NUMBER);
-                                String action = actionNode.textValue().replaceAll("\"", "");
-                                String decisionStatus = decisionStatusNode.textValue().replaceAll("\"", "");
-                                String caseNumber = caseNumberNode.textValue().replaceAll("\"", "");
-                                RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(caseRequest.getRequestInfo()).build();
-                                StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), caseRequest.getCaseObj().getId());
-                                URL.append("&").append("history=true");
-                                Object result = serviceRepository.fetchUserResult(URL, requestInfoWrapper);
-                                ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
-                                List<ProcessInstance> filteredInstances = new ArrayList<>();
-                                String desiredAction = Constants.CREATE_CASE;
-                                for (ProcessInstance instance : processInstanceResponse.getProcessInstances()) {
-                                    if (instance.getAction().equals(desiredAction)) {
-                                        filteredInstances.add(instance);
-                                    }
+                        JsonNode additionalDetailsObj = caseRequest.getCaseObj().getAdditionalDetails();
+                        if (additionalDetailsObj != null && additionalDetailsObj.has(Constants.action) && additionalDetailsObj.has(Constants.decisionStatus)) {
+                            JsonNode actionNode = additionalDetailsObj.get(Constants.action);
+                            JsonNode decisionStatusNode = additionalDetailsObj.get(Constants.decisionStatus);
+                            JsonNode caseNumberNode = additionalDetailsObj.get(Constants.CASE_NUMBER);
+                            String action = actionNode.textValue().replaceAll("\"", "");
+                            String decisionStatus = decisionStatusNode.textValue().replaceAll("\"", "");
+                            String caseNumber = caseNumberNode.textValue().replaceAll("\"", "");
+                            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(caseRequest.getRequestInfo()).build();
+                            StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), caseRequest.getCaseObj().getId());
+                            URL.append("&").append("history=true");
+                            Object result = serviceRepository.fetchUserResult(URL, requestInfoWrapper);
+                            ProcessInstanceResponse processInstanceResponse = mapper.convertValue(result, ProcessInstanceResponse.class);
+                            List<ProcessInstance> filteredInstances = new ArrayList<>();
+                            String desiredAction = Constants.CREATE_CASE;
+                            for (ProcessInstance instance : processInstanceResponse.getProcessInstances()) {
+                                if (instance.getAction().equals(desiredAction)) {
+                                    filteredInstances.add(instance);
                                 }
+                            }
 
-                                if (!filteredInstances.isEmpty()) {
-                                    String assignee = filteredInstances.get(0).getAssignes().get(0).getUuid();
-                                    caseRequest.getWorkflow().setAssignes(Collections.singletonList(assignee));
-                                }
-                                if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.REVIEW)) {
-                                    caseRequest.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
-                                    caseRequest.getCaseObj().setId(null);
-                                    caseRequest.getCaseObj().setCaseNumber(caseNumber);
-                                    caseRequest.getWorkflow().setAction(Constants.CREATE_CASE);
-                                    CaseRequest caseRequestObj = create(caseRequest);
-                                    return caseRequestObj;
-                                }
-                                if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.APPEALED)) {
-                                    CaseRequest caseRequestObj = new CaseRequest();
-                                    caseRequestObj.setRequestInfo(caseRequest.getRequestInfo());
-                                    Case caseObj = new Case();
-                                    caseRequestObj.setCaseObj(caseObj);
-                                    caseRequestObj.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
-                                    caseRequestObj.getCaseObj().setCaseNumber(caseNumber);
-                                    caseRequestObj.getCaseObj().setTenantId(legalConfiguration.getTenantId());
-                                    List<Party> parties = new ArrayList<>();
-                                    parties.addAll(caseRequest.getCaseObj().getParties());
-                                    caseRequestObj.getCaseObj().setParties(parties);
-                                    Workflow workflow = new Workflow();
-                                    caseRequestObj.setWorkflow(workflow);
-                                    caseRequestObj.getWorkflow().setAssignes(caseRequest.getWorkflow().getAssignes());
-                                    caseRequestObj.getWorkflow().setAction(Constants.CREATE_CASE);
-                                    CaseRequest caseRequestObject = create(caseRequestObj);
-                                    return caseRequestObject;
-                                }
+                            if (!filteredInstances.isEmpty()) {
+                                String assignee = filteredInstances.get(0).getAssignes().get(0).getUuid();
+                                caseRequest.getWorkflow().setAssignes(Collections.singletonList(assignee));
+                            }
+                            if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.REVIEW)) {
+                                caseRequest.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
+                                caseRequest.getCaseObj().setId(null);
+                                caseRequest.getCaseObj().setCaseNumber(caseNumber);
+                                Workflow workflow = new Workflow();
+                                caseRequest.setWorkflow(workflow);
+                                caseRequest.getWorkflow().setAction(Constants.CREATE_CASE);
+                                CaseRequest caseRequestObj = create(caseRequest);
+                                return caseRequestObj;
+                            }
+                            if (action.equalsIgnoreCase(Constants.JUDGEMENT_APPEALED_REVIEW) && decisionStatus.equalsIgnoreCase(Constants.APPEALED)) {
+                                CaseRequest caseRequestObj = new CaseRequest();
+                                caseRequestObj.setRequestInfo(caseRequest.getRequestInfo());
+                                Case caseObj = new Case();
+                                caseRequestObj.setCaseObj(caseObj);
+                                caseRequestObj.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
+                                caseRequestObj.getCaseObj().setCaseNumber(caseNumber);
+                                caseRequestObj.getCaseObj().setTenantId(legalConfiguration.getTenantId());
+                                List<Party> parties = new ArrayList<>();
+                                parties.addAll(caseRequest.getCaseObj().getParties());
+                                caseRequestObj.getCaseObj().setParties(parties);
+                                Workflow workflow = new Workflow();
+                                caseRequestObj.setWorkflow(workflow);
+                                caseRequestObj.getWorkflow().setAssignes(caseRequest.getWorkflow().getAssignes());
+                                caseRequestObj.getWorkflow().setAction(Constants.CREATE_CASE);
+                                CaseRequest caseRequestObject = create(caseRequestObj);
+                                return caseRequestObject;
+                            }
 
                         }
                         //    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
-                    }
-                    else {
+                    } else {
                         caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                         producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
                     }
