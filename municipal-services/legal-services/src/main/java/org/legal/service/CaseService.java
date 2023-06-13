@@ -226,8 +226,6 @@ public class CaseService {
                                     caseRequest.getCaseObj().setParentCaseId(caseRequest.getCaseObj().getId());
                                     caseRequest.getCaseObj().setId(null);
                                     caseRequest.getCaseObj().setCaseNumber(caseNumber);
-                                    Workflow workflow = new Workflow();
-                                    caseRequest.setWorkflow(workflow);
                                     caseRequest.getWorkflow().setAction(Constants.CREATE_CASE);
                                     CaseRequest caseRequestObj = create(caseRequest);
                                     return caseRequestObj;
