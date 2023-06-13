@@ -187,16 +187,16 @@ public class CaseService {
                                     workflowService.updateCaseWorkflowStatus(updatedCaseRequest);
                                 }
                             }
-                            caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                             if (updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.COMPLY_JUDGEMENT) || updatedCaseRequest.getWorkflow().getAction()
                                     .equalsIgnoreCase(
                                             Constants.REVIEW_JUDGEMENT)) {
                                 updatedCaseRequest.getCaseObj().setStatus(Status.INACTIVE);
                             }
-                            if (updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE)) {
-                                updatedCaseRequest.getCaseObj().setStatus(Status.INACTIVE);
-                            }
                         }
+                        if (updatedCaseRequest.getWorkflow().getAction().equalsIgnoreCase(Constants.INACTIVATE)) {
+                            updatedCaseRequest.getCaseObj().setStatus(Status.INACTIVE);
+                        }
+                        caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                         producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
 
 
