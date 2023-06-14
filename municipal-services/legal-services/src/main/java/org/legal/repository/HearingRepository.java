@@ -16,9 +16,11 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -53,7 +55,7 @@ public class HearingRepository {
         String query = hearingQueryBuilder.getHearingSearchQuery(criteria, preparedStmtList);
         List<Hearing> hearingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), hearingRowMapper);
         for (Hearing singleHearing : hearingDetails) {
-            singleHearing.setDocuments(getHearingDocumentList(singleHearing.getId()));
+//            singleHearing.setDocuments(getHearingDocumentList(singleHearing.getId()));
             String respondentAdvocateId = singleHearing.getRespondentAdvocate().getId();
             if (respondentAdvocateId != null) {
                 List<Advocate> respondentAdvocateList = caseRepository.getAdvocateById(singleHearing.getRespondentAdvocate().getId());

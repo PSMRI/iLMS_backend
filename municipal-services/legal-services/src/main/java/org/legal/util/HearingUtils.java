@@ -151,21 +151,23 @@ public class HearingUtils {
         }
         if (!CollectionUtils.isEmpty(hearingDetailsRequest.getHearing().getDocuments())) {
             for (Document docs : hearingDetailsRequest.getHearing().getDocuments()) {
-                String tenant = hearingRepository.getTenantIdFromHearing(hearingDetailsRequest.getHearing().getId());
-                List<String> docIds = hearingEnrichmentService.getIdList(
-                        hearingDetailsRequest.getRequestInfo(), tenant, legalConfiguration.getDocumentIdgenName(),
-                        legalConfiguration.getDocumentIdgenFormat(), hearingDetailsRequest.getHearing().getDocuments().size()
-                );
-                AuditDetails auditDetails = caseUtils.getAuditDetails(
-                        hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false
-                );
+                if (!Objects.nonNull(docs.getId())) {
+                    String tenant = hearingRepository.getTenantIdFromHearing(hearingDetailsRequest.getHearing().getId());
+                    List<String> docIds = hearingEnrichmentService.getIdList(
+                            hearingDetailsRequest.getRequestInfo(), tenant, legalConfiguration.getDocumentIdgenName(),
+                            legalConfiguration.getDocumentIdgenFormat(), hearingDetailsRequest.getHearing().getDocuments().size()
+                    );
+                    AuditDetails auditDetails = caseUtils.getAuditDetails(
+                            hearingDetailsRequest.getRequestInfo().getUserInfo().getUuid(), false
+                    );
 
-                docs.setAuditDetails(auditDetails);
-                docs.setId(docIds.get(0));
-                docs.setHearingId(hearingDetailsRequest.getHearing().getId());
-                docs.setCaseId(hearingDetailsRequest.getHearing().getCaseId());
-                docs.setStatus(Status.ACTIVE);
-                updatedDocuments.add(docs);
+                    docs.setAuditDetails(auditDetails);
+                    docs.setId(docIds.get(0));
+                    docs.setHearingId(hearingDetailsRequest.getHearing().getId());
+                    docs.setCaseId(hearingDetailsRequest.getHearing().getCaseId());
+                    docs.setStatus(Status.ACTIVE);
+                    updatedDocuments.add(docs);
+                }
             }
 
             hearingDetailsRequest.getHearing().setDocuments(updatedDocuments);
