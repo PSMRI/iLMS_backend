@@ -5,8 +5,6 @@ import org.legal.configs.LEGALConfiguration;
 import org.legal.web.model.HearingSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
 import java.util.List;
 
 @Component
@@ -109,10 +107,10 @@ public class HearingQueryBuilder {
     }
 
     private void addOrderByClause(StringBuilder builder, HearingSearchCriteria criteria) {
-        if (criteria.getSortBy() == HearingSearchCriteria.SortBy.id) {
-            builder.append(" ORDER BY eg_lg_hearing.id ");
-        } else if (criteria.getSortBy() == HearingSearchCriteria.SortBy.caseId) {
-            builder.append(" ORDER BY eg_lg_hearing.case_id ");
+        if (criteria.getSortBy() == HearingSearchCriteria.SortBy.createdTime) {
+            builder.append(" ORDER BY eg_lg_hearing.createdtime ");
+        } else if (criteria.getSortBy() == HearingSearchCriteria.SortBy.modifiedTime) {
+            builder.append(" ORDER BY eg_lg_hearing.lastmodifiedtime ");
         }
         if (criteria.getSortOrder() == HearingSearchCriteria.SortOrder.ASC) {
             builder.append("ASC");

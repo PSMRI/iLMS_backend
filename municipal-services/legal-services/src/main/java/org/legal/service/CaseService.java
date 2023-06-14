@@ -7,10 +7,8 @@ import static org.legal.util.LegalErrorConstants.CASE_UPDATE_FAILED_MSG;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
-import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.legal.configs.LEGALConfiguration;
 import org.legal.producer.Producer;
@@ -353,7 +351,7 @@ public class CaseService {
                 List<String> caseIds = caseResponse.getCaseList().stream().map(Case::getId).collect(Collectors.toList());
                 for (String caseId : caseIds) {
                     HearingSearchCriteria hearingCriteria = HearingSearchCriteria.builder().caseId(
-                            caseId).build();
+                            caseId).sortOrder(HearingSearchCriteria.SortOrder.DESC).sortBy(HearingSearchCriteria.SortBy.createdTime).build();
                     hearingResponse = hearingRepository.getHearingDetails(hearingCriteria);
                     hearingResponse.getHearingList().forEach(hearing -> {
 //                        if (hearing.getStatus() == Status.ACTIVE) {
@@ -363,7 +361,7 @@ public class CaseService {
                 }
                 for (String caseId : caseIds) {
                     JudgementSearchCriteria judgementSearchCriteria = JudgementSearchCriteria.builder().caseId(Collections.singletonList(
-                            caseId)).build();
+                            caseId)).sortBy(JudgementSearchCriteria.SortBy.createdTime).sortOrder(JudgementSearchCriteria.SortOrder.DESC).build();
                     judgementResponse = judgementRepository.getJudgementData(judgementSearchCriteria);
                     judgementResponse.getJudgementList().forEach(judgement -> {
 //                        if (judgement.getStatus() == Status.ACTIVE) {

@@ -24,10 +24,10 @@ public class JudgementSearchCriteria {
     private List<String> caseId;
 
     @JsonProperty("sortBy")
-    private CaseSearchCriteria.SortBy sortBy;
+    private SortBy sortBy;
 
     @JsonProperty("sortOrder")
-    private CaseSearchCriteria.SortOrder sortOrder;
+    private SortOrder sortOrder;
 
     public enum SortOrder {
         ASC,
@@ -35,8 +35,8 @@ public class JudgementSearchCriteria {
     }
 
     public enum SortBy {
-        id,
-        caseId
+        createdTime,
+        modifiedTime
     }
 
 }

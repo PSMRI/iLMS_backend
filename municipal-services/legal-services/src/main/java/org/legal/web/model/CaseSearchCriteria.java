@@ -59,8 +59,8 @@ public class CaseSearchCriteria {
     }
 
     public enum SortBy {
-        caseNumber,
-        cnrNumber,
+        createdTime,
+        modifiedTIme,
         id
     }
 

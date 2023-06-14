@@ -174,9 +174,9 @@ public class CaseQueryBuilder {
      *
      */
     private void addOrderByClause(StringBuilder builder, CaseSearchCriteria criteria) {
-        if (criteria.getSortBy() == CaseSearchCriteria.SortBy.caseNumber) {
+        if (criteria.getSortBy() == CaseSearchCriteria.SortBy.createdTime) {
             builder.append(" ORDER BY eg_lg_case.case_number ");
-        } else if (criteria.getSortBy() == CaseSearchCriteria.SortBy.cnrNumber) {
+        } else if (criteria.getSortBy() == CaseSearchCriteria.SortBy.modifiedTIme) {
             builder.append(" ORDER BY eg_lg_case.cnr_number ");
         } else if (criteria.getSortBy() == CaseSearchCriteria.SortBy.id) {
             builder.append(" ORDER BY eg_lg_case.id ");

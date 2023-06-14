@@ -2,6 +2,7 @@ package org.legal.repository.querybuilder;
 
 import org.legal.configs.LEGALConfiguration;
 import org.legal.web.model.CaseSearchCriteria;
+import org.legal.web.model.HearingSearchCriteria;
 import org.legal.web.model.JudgementSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -85,14 +86,14 @@ public class JudgementQueryBuilder {
      *
      */
     private void addOrderByClause(StringBuilder builder, JudgementSearchCriteria criteria) {
-        if (criteria.getSortBy() == CaseSearchCriteria.SortBy.caseNumber) {
-            builder.append(" ORDER BY eg_lg_judgement.id ");
-        } else if (criteria.getSortBy() == CaseSearchCriteria.SortBy.cnrNumber) {
-            builder.append(" ORDER BY eg_lg_judgement.case_id ");
+        if (criteria.getSortBy() == JudgementSearchCriteria.SortBy.createdTime) {
+            builder.append(" ORDER BY eg_lg_judgement.createdtime ");
+        } else if (criteria.getSortBy() == JudgementSearchCriteria.SortBy.modifiedTime) {
+            builder.append(" ORDER BY eg_lg_judgement.lastmodifiedtime ");
         }
-        if (criteria.getSortOrder() == CaseSearchCriteria.SortOrder.ASC) {
+        if (criteria.getSortOrder() == JudgementSearchCriteria.SortOrder.ASC) {
             builder.append("ASC");
-        } else if (criteria.getSortOrder() == CaseSearchCriteria.SortOrder.DESC) {
+        } else if (criteria.getSortOrder() == JudgementSearchCriteria.SortOrder.DESC) {
             builder.append("DESC");
         }
     }
