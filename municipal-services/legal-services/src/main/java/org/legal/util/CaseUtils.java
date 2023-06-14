@@ -2,6 +2,7 @@ package org.legal.util;
 
 import static org.legal.web.model.enums.Status.ACTIVE;
 import static org.legal.web.model.enums.Status.INACTIVE;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.legal.configs.LEGALConfiguration;
@@ -255,16 +256,18 @@ public class CaseUtils {
         if (!CollectionUtils.isEmpty(caseRequest.getCaseObj().getDocuments())) {
             List<Document> documents = new ArrayList<>();
             for (Document docs : caseRequest.getCaseObj().getDocuments()) {
-                List<String> docId = caseEnrichmentService.getIdList(caseRequest.getRequestInfo(), caseRequest.getCaseObj().getTenantId(), legalConfiguration.getDocumentIdgenName(),
-                        legalConfiguration.getDocumentIdgenFormat(), 1);
-                docs.setId(docId.get(0));
-                docs.setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
-                docs.setId(docId.get(0));
-                docs.setCaseId(caseRequest.getCaseObj().getId());
-                docs.setStatus(Status.ACTIVE);
-                documents.add(docs);
+                if (!Objects.nonNull(docs.getId())) {
+                    List<String> docId = caseEnrichmentService.getIdList(caseRequest.getRequestInfo(), caseRequest.getCaseObj().getTenantId(), legalConfiguration.getDocumentIdgenName(),
+                            legalConfiguration.getDocumentIdgenFormat(), 1);
+                    docs.setId(docId.get(0));
+                    docs.setAuditDetails(caseUtils.getAuditDetails(caseRequest.getRequestInfo().getUserInfo().getUuid(), false));
+                    docs.setId(docId.get(0));
+                    docs.setCaseId(caseRequest.getCaseObj().getId());
+                    docs.setStatus(Status.ACTIVE);
+                    documents.add(docs);
+                }
+                oldData.setDocuments(documents);
             }
-            oldData.setDocuments(documents);
         }
         request.setCaseObj(oldData);
         request.setRequestInfo(caseRequest.getRequestInfo());
@@ -297,7 +300,7 @@ public class CaseUtils {
     public List<PartyAdv> updatePartyAdvocates(CaseRequest caseRequest) {
         List<PartyAdv> partyAdvList1 = new ArrayList<>();
         String tenantId = caseRequest.getRequestInfo().getUserInfo().getTenantId();
-        if (caseRequest.getCaseObj().getParties()!=null) {
+        if (caseRequest.getCaseObj().getParties() != null) {
             caseRequest.getCaseObj().getParties().forEach(party -> {
                 if (Objects.nonNull(party.getAdvocate()) && (party.getPartyType().equals(PartyType.PETITIONER.toString()) || party.getPartyType().equals(PartyType.RESPONDENT.toString()))) {
                     List<String> advocatesIdsReq = party.getAdvocate().stream().map(Advocate::getId).collect(Collectors.toList());
@@ -348,7 +351,7 @@ public class CaseUtils {
 
     public List<Party> setParty(CaseRequest caseRequest) {
         List<Party> modifiedParties = new ArrayList<>();
-        if (caseRequest.getCaseObj().getParties()!=null) {
+        if (caseRequest.getCaseObj().getParties() != null) {
             for (Party party : caseRequest.getCaseObj().getParties()) {
                 if (party.getPartyType().equals(PartyType.PETITIONER.toString())) {
                     if (Objects.nonNull(party.getDepartmentName())) {
