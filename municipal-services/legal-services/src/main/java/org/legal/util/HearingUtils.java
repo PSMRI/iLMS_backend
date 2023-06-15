@@ -149,6 +149,7 @@ public class HearingUtils {
                 oldHearingRequest.getPayment().setFineAmount(hearingDetailsRequest.getHearing().getPayment().getFineAmount());
             }
         }
+        boolean isCreate=false;
         if (!CollectionUtils.isEmpty(hearingDetailsRequest.getHearing().getDocuments())) {
             for (Document docs : hearingDetailsRequest.getHearing().getDocuments()) {
                 if (!Objects.nonNull(docs.getId())) {
@@ -168,13 +169,15 @@ public class HearingUtils {
                     docs.setStatus(Status.ACTIVE);
                     updatedDocuments.add(docs);
                 }
+                isCreate=true;
             }
 
-            hearingDetailsRequest.getHearing().setDocuments(updatedDocuments);
+            oldHearingRequest.setDocuments(updatedDocuments);
         }
-
+        if (isCreate==false){
+            oldHearingRequest.setDocuments(null);
+        }
         updatedRequest.setHearing(oldHearingRequest);
-        updatedRequest.getHearing().setDocuments(updatedDocuments);
         hearingEnrichmentService.enrichmentForHearingUpdateRequest(updatedRequest);
         return updatedRequest;
     }

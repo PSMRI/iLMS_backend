@@ -253,6 +253,7 @@ public class CaseUtils {
 //                }
 //            }
 //        }
+        boolean isCreate=false;
         if (!CollectionUtils.isEmpty(caseRequest.getCaseObj().getDocuments())) {
             List<Document> documents = new ArrayList<>();
             for (Document docs : caseRequest.getCaseObj().getDocuments()) {
@@ -268,6 +269,10 @@ public class CaseUtils {
                 }
                 oldData.setDocuments(documents);
             }
+            isCreate=true;
+        }
+        if (isCreate==false){
+            oldData.setDocuments(null);
         }
         request.setCaseObj(oldData);
         request.setRequestInfo(caseRequest.getRequestInfo());
