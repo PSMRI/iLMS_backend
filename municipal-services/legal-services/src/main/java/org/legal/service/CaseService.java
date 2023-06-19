@@ -231,6 +231,7 @@ public class CaseService {
                                 Workflow workflow = new Workflow();
                                 caseRequest.setWorkflow(workflow);
                                 caseRequest.getWorkflow().setAction(Constants.CREATE_CASE);
+                                caseRequest.getWorkflow().setAssignes(caseRequest.getWorkflow().getAssignes());
                                 CaseRequest caseRequestObj = create(caseRequest);
                                 return caseRequestObj;
                             }
