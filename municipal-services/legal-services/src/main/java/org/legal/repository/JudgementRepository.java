@@ -82,10 +82,12 @@ public class JudgementRepository {
             oldJudgement.setOrderDate(request.getJudgement().getOrderDate());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getDecisionStatus())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(request.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, Constants.DecisionStatus)) {
-                oldJudgement.setDecisionStatus(request.getJudgement().getDecisionStatus());
+            if (!request.getJudgement().getDecisionStatus().equals(oldJudgement.getDecisionStatus())) {
+                List<String> uuids = new ArrayList<>();
+                uuids.add(request.getRequestInfo().getUserInfo().getUuid());
+                if (commonUtils.isUserOIC(uuids, tenantId, Constants.DecisionStatus)) {
+                    oldJudgement.setDecisionStatus(request.getJudgement().getDecisionStatus());
+                }
             }
         }
         if (Objects.nonNull(request.getJudgement().getComplianceDate())) {
@@ -101,10 +103,12 @@ public class JudgementRepository {
             oldJudgement.setRevisedComplainceReason(request.getJudgement().getRevisedComplainceReason());
         }
         if (!StringUtils.isEmpty(request.getJudgement().getComplianceStatus())) {
-            List<String> uuids = new ArrayList<>();
-            uuids.add(request.getRequestInfo().getUserInfo().getUuid());
-            if (commonUtils.isUserOIC(uuids, tenantId, Constants.ComplianceStatus)) {
-                oldJudgement.setComplianceStatus(request.getJudgement().getComplianceStatus());
+            if (!request.getJudgement().getComplianceStatus().equals(oldJudgement.getComplianceStatus())) {
+                List<String> uuids = new ArrayList<>();
+                uuids.add(request.getRequestInfo().getUserInfo().getUuid());
+                if (commonUtils.isUserOIC(uuids, tenantId, Constants.ComplianceStatus)) {
+                    oldJudgement.setComplianceStatus(request.getJudgement().getComplianceStatus());
+                }
             }
         }
         if (!StringUtils.isEmpty(request.getJudgement().getRemarks())) {
