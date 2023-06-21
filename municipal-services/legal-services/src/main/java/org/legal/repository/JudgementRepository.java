@@ -121,7 +121,7 @@ public class JudgementRepository {
             oldJudgement.setStatus(request.getJudgement().getStatus());
         }
         updatedJudgementRequest.setJudgement(oldJudgement);
-        judgementEnrichmentService.enrichJugmentUpdateRequest(updatedJudgementRequest);
+        judgementEnrichmentService.enrichJudgmentUpdateRequest(updatedJudgementRequest);
         return updatedJudgementRequest;
     }
 

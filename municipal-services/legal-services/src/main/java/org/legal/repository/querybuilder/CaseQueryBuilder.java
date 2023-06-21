@@ -223,7 +223,7 @@ public class CaseQueryBuilder {
             preparedStmtList.add(criteria.getCaseNumber().get(0));
         }
         addClauseIfRequired(preparedStmtList, builder);
-        builder.append(" status = 'ACTIVE' ");
+//        builder.append(" status = 'ACTIVE' ");
         finalRequest.setQuery(builder.toString());
         finalRequest.setPreparedStatement(preparedStmtList);
         return finalRequest;

@@ -40,7 +40,7 @@ public class JudgementEnrichmentService {
         judgement.setAuditDetails(auditDetails);
     }
 
-    public void enrichJugmentUpdateRequest(JudgementRequest request) {
+    public void enrichJudgmentUpdateRequest(JudgementRequest request) {
 
         Judgement judgement = request.getJudgement();
         AuditDetails auditDetails = caseUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);

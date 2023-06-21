@@ -53,13 +53,21 @@ public class CaseUtils {
     @Autowired
     private CaseUtils caseUtils;
 
+//    public AuditDetails getAuditDetails(String by, Boolean isCreate) {
+//        Long time = System.currentTimeMillis();
+//        if (isCreate) {
+//            return AuditDetails.builder().createdBy(by).createdTime(time).build();
+//        } else {
+//            return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
+//        }
+//    }
+
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
-        if (isCreate) {
-            return AuditDetails.builder().createdBy(by).createdTime(time).build();
-        } else {
+        if (isCreate)
+            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
+        else
             return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
-        }
     }
 
     public CaseRequest prepareObjectMapperForUpdate(Case oldData, CaseRequest caseRequest) {
@@ -109,10 +117,12 @@ public class CaseUtils {
         }
         if (Objects.nonNull(caseRequest.getCaseObj().getPriority())) {
             if (!StringUtils.isEmpty(caseRequest.getCaseObj().getPriority())) {
-                List<String> uuids = new ArrayList<>();
-                uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
-                if (commonUtils.isUserMO(uuids, caseRequest.getCaseObj().getTenantId(), Constants.caseFlag)) {
-                    oldData.setPriority(caseRequest.getCaseObj().getPriority());
+                if (!caseRequest.getCaseObj().getPriority().equals(oldData.getPriority())) {
+                    List<String> uuids = new ArrayList<>();
+                    uuids.add(caseRequest.getRequestInfo().getUserInfo().getUuid());
+                    if (commonUtils.isUserMO(uuids, caseRequest.getCaseObj().getTenantId(), Constants.caseFlag)) {
+                        oldData.setPriority(caseRequest.getCaseObj().getPriority());
+                    }
                 }
             }
         }
@@ -225,7 +235,6 @@ public class CaseUtils {
                         }
                     }
                 }
-
             }
         }
         //setting documents details
@@ -253,7 +262,7 @@ public class CaseUtils {
 //                }
 //            }
 //        }
-        boolean isCreate=false;
+        boolean isCreate = false;
         if (!CollectionUtils.isEmpty(caseRequest.getCaseObj().getDocuments())) {
             List<Document> documents = new ArrayList<>();
             for (Document docs : caseRequest.getCaseObj().getDocuments()) {
@@ -269,9 +278,9 @@ public class CaseUtils {
                 }
                 oldData.setDocuments(documents);
             }
-            isCreate=true;
+            isCreate = true;
         }
-        if (isCreate==false){
+        if (isCreate == false) {
             oldData.setDocuments(null);
         }
         request.setCaseObj(oldData);

@@ -12,7 +12,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: case
       queryMaps:
-        - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, application_status, priority, recommend_oic, remarks, additional_details, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_case(id, tenant_id, case_number, cnr_number, parent_case_id, linked_cases, case_type, case_category, filing_number, filing_date, case_summary, arising_details, policy_or_nonpolicy_matter, case_status, application_status, priority, recommend_oic, remarks, additional_details, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case
           jsonMaps:
             - jsonPath: $.case.id
@@ -63,8 +63,12 @@ serviceMaps:
 
             - jsonPath: $.case.auditDetails.createdTime
 
+            - jsonPath: $.case.auditDetails.lastModifiedBy
 
-        - query: INSERT INTO eg_lg_case_party(id,  case_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+
+
+        - query: INSERT INTO eg_lg_case_party(id,  case_id, first_name, last_name, gender, petitioner_type, address, department_name, contact_number, party_type, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.parties.*
           jsonMaps:
             - jsonPath: $.case.parties.*.id
@@ -93,7 +97,11 @@ serviceMaps:
 
             - jsonPath: $.case.parties.*.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, advocate_contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+            - jsonPath: $.case.parties.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.case.parties.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, advocate_contact_number, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.PartyAdv.*
           jsonMaps:
             - jsonPath: $.case.PartyAdv.*.id
@@ -114,7 +122,11 @@ serviceMaps:
 
             - jsonPath: $.case.PartyAdv.*.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_act(id, case_id, name, section_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
+            - jsonPath: $.case.PartyAdv.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.case.PartyAdv.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO eg_lg_act(id, case_id, name, section_number, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.act.*
           jsonMaps:
             - jsonPath: $.case.act.*.id
@@ -133,7 +145,11 @@ serviceMaps:
 
             - jsonPath: $.case.act.*.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_court(id, case_id, court_name, district, state, division, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+            - jsonPath: $.case.act.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.case.act.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO eg_lg_court(id, case_id, court_name, district, state, division, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.court
           jsonMaps:
             - jsonPath: $.case.court.id
@@ -154,7 +170,11 @@ serviceMaps:
 
             - jsonPath: $.case.court.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+            - jsonPath: $.case.court.auditDetails.lastModifiedBy
+
+            - jsonPath: $.case.court.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.documents.*
           jsonMaps:
             - jsonPath: $.case.documents.*.id
@@ -175,6 +195,10 @@ serviceMaps:
 
             - jsonPath: $.case.documents.*.auditDetails.createdTime
 
+            - jsonPath: $.case.documents.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.case.documents.*.auditDetails.lastModifiedTime
+
     - version: 1.0
       description: Add hearing details in eg_lg_hearing table
       fromTopic: save-hearing-details-application
@@ -186,7 +210,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: hearing
       queryMaps:
-        - query: INSERT INTO eg_lg_hearing(id, tenant_id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, application_status, first_hearing_date, additional_details, status ,respondent_advocate, petitioner_advocate, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_hearing(id, tenant_id, hearing_number, court_number, bench, case_id, judge_name, hearing_date, business_date, hearing_purpose, required_officer, affidavit_filing_date, affidavit_filing_due_date, case_number, oath_number, next_hearing_date, is_presence_required, hearing_type, department_officer, remarks, application_status, first_hearing_date, additional_details, status ,respondent_advocate, petitioner_advocate, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing
           jsonMaps:
             - jsonPath: $.hearing.id
@@ -249,8 +273,12 @@ serviceMaps:
 
             - jsonPath: $.hearing.auditDetails.createdTime
 
+            - jsonPath: $.hearing.auditDetails.lastModifiedBy
 
-        - query: INSERT INTO eg_lg_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+            - jsonPath: $.hearing.auditDetails.lastModifiedTime
+
+
+        - query: INSERT INTO eg_lg_payment(id, case_id, hearing_id, fine_imposed_date, fine_due_date, fine_amount, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.payment
           jsonMaps:
             - jsonPath: $.hearing.payment.id
@@ -271,7 +299,11 @@ serviceMaps:
 
             - jsonPath: $.hearing.payment.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+            - jsonPath: $.hearing.payment.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hearing.payment.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.documents.*
           jsonMaps:
             - jsonPath: $.hearing.documents.*.id
@@ -292,6 +324,10 @@ serviceMaps:
 
             - jsonPath: $.hearing.documents.*.auditDetails.createdTime
 
+            - jsonPath: $.hearing.documents.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hearing.documents.*.auditDetails.lastModifiedTime
+
     - version: 1.0
       description: Add cases in eg_lg_case table
       fromTopic: save-judgement-case-application
@@ -303,7 +339,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: judgement
       queryMaps:
-        - query: INSERT INTO eg_lg_judgement(id,tenant_id, case_id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, revised_complaince_reason,compliance_status, remarks, application_status, additional_details, status, createdby, createdtime) VALUES (?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_judgement(id,tenant_id, case_id, order_type, order_date, decision_status, compliance_date, revised_compliance_date, order_no_override, revised_complaince_reason,compliance_status, remarks, application_status, additional_details, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: judgement
           jsonMaps:
 
@@ -342,6 +378,10 @@ serviceMaps:
             - jsonPath: $.judgement.auditDetails.createdBy
 
             - jsonPath: $.judgement.auditDetails.createdTime
+
+            - jsonPath: $.judgement.auditDetails.lastModifiedBy
+
+            - jsonPath: $.judgement.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: update cases in eg_lg_case table
@@ -481,7 +521,7 @@ serviceMaps:
 
             - jsonPath: $.case.act.*.id
 
-        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.documents.*
           jsonMaps:
             - jsonPath: $.case.documents.*.id
@@ -502,7 +542,11 @@ serviceMaps:
 
             - jsonPath: $.case.documents.*.auditDetails.createdTime
 
-        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            - jsonPath: $.case.documents.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.case.documents.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO eg_lg_party_advocate_bridge(id, case_id, party_id, party_type, advocate_id, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: case.PartyAdv.*
           jsonMaps:
             - jsonPath: $.case.PartyAdv.*.id
@@ -520,6 +564,10 @@ serviceMaps:
             - jsonPath: $.case.PartyAdv.*.auditDetails.createdBy
 
             - jsonPath: $.case.PartyAdv.*.auditDetails.createdTime
+
+            - jsonPath: $.case.PartyAdv.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.case.PartyAdv.*.auditDetails.lastModifiedTime
 
 
     - version: 1.0
@@ -612,7 +660,7 @@ serviceMaps:
 
             - jsonPath: $.hearing.payment.id
 
-        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_document(id, case_id, hearing_id, document_type, file_store_id, status, remarks, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing.documents.*
           jsonMaps:
             - jsonPath: $.hearing.documents.*.id
@@ -632,6 +680,10 @@ serviceMaps:
             - jsonPath: $.hearing.documents.*.auditDetails.createdBy
 
             - jsonPath: $.hearing.documents.*.auditDetails.createdTime
+
+            - jsonPath: $.hearing.documents.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hearing.documents.*.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: Update judgement in eg_lg_judgement table
@@ -687,7 +739,7 @@ serviceMaps:
       fromTopic: save-document-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO eg_lg_document(id, case_id, document_type, file_store_id, document_id, status, remarks, createdby, createdtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_document(id, case_id, document_type, file_store_id, document_id, status, remarks, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?);
           basePath: document.*
           jsonMaps:
             - jsonPath: $.document.*.id
@@ -707,6 +759,10 @@ serviceMaps:
             - jsonPath: $.document.*.auditDetails.createdBy
 
             - jsonPath: $.document.*.auditDetails.createdTime
+
+            - jsonPath: $.document.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.document.*.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: create child case in eg_lg_case table
@@ -765,7 +821,7 @@ serviceMaps:
       transactionCodeJsonPath: $.id
       auditAttributeBasePath: advocate
       queryMaps:
-        - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime) VALUES (?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO eg_lg_advocate(id, first_name, last_name, contact_number, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: advocate
           jsonMaps:
             - jsonPath: $.advocate.id
@@ -781,6 +837,10 @@ serviceMaps:
             - jsonPath: $.advocate.auditDetails.createdBy
 
             - jsonPath: $.advocate.auditDetails.createdTime
+
+            - jsonPath: $.advocate.auditDetails.lastModifiedBy
+
+            - jsonPath: $.advocate.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: Update advocate in eg_lg_advocate
