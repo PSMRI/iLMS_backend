@@ -127,16 +127,18 @@ public class NotificationUtil {
         if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
             log.error("Email Ids Not found for Mobilenumbers");
         }
-
-        Map<String, String> mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
         List<EmailRequest> emailRequest = new LinkedList<>();
-        for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
-            String message = mobileNumberToMsg.get(entryset.getKey());
-            String subject = legalConfiguration.getNotifSubject();
-            String body = message;
-            Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false).body(body).subject(subject).build();
-            EmailRequest email = new EmailRequest(requestInfo, emailobj);
-            emailRequest.add(email);
+
+        if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
+            Map<String, String> mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+            for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
+                String message = mobileNumberToMsg.get(entryset.getKey());
+                String subject = legalConfiguration.getNotifSubject();
+                String body = message;
+                Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false).body(body).subject(subject).build();
+                EmailRequest email = new EmailRequest(requestInfo, emailobj);
+                emailRequest.add(email);
+            }
         }
         return emailRequest;
     }
