@@ -196,6 +196,7 @@ public class CaseService {
                         }
                         caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                         producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+                        notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
 
 
                         JsonNode additionalDetailsObj = caseRequest.getCaseObj().getAdditionalDetails();
@@ -252,10 +253,10 @@ public class CaseService {
                             }
 
                         }
-                        //    notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     } else {
                         caseRequest.setCaseObj(updatedCaseRequest.getCaseObj());
                         producer.push(legalConfiguration.getUpdateCaseTopic(), updatedCaseRequest);
+//                        notificationService.process(legalConfiguration.getUpdateCaseTopic(), caseRequest);
                     }
 
                 } else {
@@ -404,7 +405,7 @@ public class CaseService {
                 workflowService.updateCaseWorkflowStatus(caseRequest);
             }
             producer.push(legalConfiguration.getCreateCaseTopic(), caseRequest);
-//            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
+            notificationService.process(legalConfiguration.getCreateCaseTopic(), caseRequest);
             if (caseRequest.getCaseObj().getParties() != null) {
                 advocateUtils.setPartyDetailsInResponse(caseRequest);
             }

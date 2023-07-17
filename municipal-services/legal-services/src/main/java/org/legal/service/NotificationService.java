@@ -118,9 +118,10 @@ public class NotificationService {
     }
     public String getMessageForMobileNumber(String message, CaseRequest request){
         String messageToReplace = message;
-
         if (messageToReplace.contains("{id}"))
             messageToReplace = messageToReplace.replace("{id}",request.getCaseObj().getId());
+        if(messageToReplace.contains("{comments}"))
+            messageToReplace = messageToReplace.replace("{comments}", request.getWorkflow().getComments());
         return messageToReplace;
     }
 
