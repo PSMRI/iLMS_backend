@@ -25,6 +25,7 @@ public class CaseQueryBuilder {
 
     private static final String TOTALCOUNTQUERY = "select count(*) from eg_lg_case ";
 
+    private static final String CaseQuery = " INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = eg_lg_case.id LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid ";
     private static final String CaseQuery1 = "select DISTINCT(cases.id) from eg_lg_case as cases INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = cases.id LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid ";
     private static final String CaseQuery2 = " AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = cases.id GROUP BY wf.businessid)";
 
@@ -37,6 +38,19 @@ public class CaseQueryBuilder {
     public String getLegalCaseSearchQuery(CaseSearchCriteria criteria, List<Object> preparedStmtList) {
 
         StringBuilder builder = new StringBuilder(Query);
+
+        String uuid = criteria.getUuid();
+        try {
+            if (Objects.nonNull(uuid)) {
+                builder.append(CaseQuery);
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" assg.assignee = ?");
+                preparedStmtList.add( criteria.getUuid() );
+            }
+        } catch (NullPointerException e) {
+            preparedStmtList.add("");
+        }
+
         if (criteria.getCnrNumber() != null) {
             if (criteria.getCnrNumber().split("\\.").length == 1) {
                 addClauseIfRequired(preparedStmtList, builder);
@@ -99,7 +113,6 @@ public class CaseQueryBuilder {
         } catch (NullPointerException e) {
             preparedStmtList.add("");
         }
-
 
         Set<String> applicationStatuses = criteria.getApplicationStatus();
         if (!CollectionUtils.isEmpty(applicationStatuses)) {
