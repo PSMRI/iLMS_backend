@@ -129,7 +129,7 @@ public class NotificationUtil {
         }
         List<EmailRequest> emailRequest = new LinkedList<>();
 
-        if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
+        if (!CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
             Map<String, String> mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
             for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
                 String message = mobileNumberToMsg.get(entryset.getKey());
