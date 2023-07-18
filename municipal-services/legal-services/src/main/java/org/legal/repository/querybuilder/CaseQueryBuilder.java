@@ -23,9 +23,9 @@ public class CaseQueryBuilder {
 
     private static final String ChildCaseQuery = "SELECT id FROM eg_lg_case where id= ? or parent_case_id= ? ";
 
-    private static final String TOTALCOUNTQUERY = "select count(*) from eg_lg_case ";
+    private static final String TOTALCOUNTQUERY = "select distinct count(*) from eg_lg_case ";
 
-    private static final String CaseQuery = " INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = eg_lg_case.id LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid ";
+    private static final String CaseQuery = " INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = eg_lg_case.id LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = eg_lg_case.id GROUP BY wf.businessid)";
     private static final String CaseQuery1 = "select DISTINCT(cases.id) from eg_lg_case as cases INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = cases.id LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid ";
     private static final String CaseQuery2 = " AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = cases.id GROUP BY wf.businessid)";
 
