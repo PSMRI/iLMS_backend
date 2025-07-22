@@ -1,20 +1,23 @@
-FROM egovio/apline-jre:8u121
+# ---- Build Stage ----
+FROM ghcr.io/egovernments/alpine-maven-builder-jdk-8:1-master-na-6036091e AS build
 
-MAINTAINER Senthil<senthil.kalimuthu@tarento.com>
+WORKDIR /app
 
+# Copy source code to container
+COPY . .
 
-# INSTRUCTIONS ON HOW TO BUILD JAR:
-# Move to the location where pom.xml is exist in project and build project using below command
-# "mvn clean package"
-COPY /target/egov-user-event-0.0.1-SNAPSHOT.jar /opt/egov/egov-user-event.jar
+# Build project and skip tests
+RUN mvn clean install package -Dmaven.test.skip=true
 
-COPY start.sh /usr/bin/start.sh
+# ---- Runtime Stage ----
+FROM ghcr.io/egovernments/8-openjdk-alpine:latest
 
-RUN chmod +x /usr/bin/start.sh
+WORKDIR /app
 
-CMD ["/usr/bin/start.sh"]
+# Copy the final jar from build stage
+COPY --from=build /app/target/egov-user-event-1.2.0-SNAPSHOT.jar /app/
 
-# NOTE: the two 'RUN' commands can probably be combined inside of a single
-# script (i.e. RUN build-and-install-app.sh) so that we can also clean up the
-# extra files created during the `mvn package' command. that step inflates the
-# resultant image by almost 1.0GB.
+EXPOSE 8080
+
+# Start the application
+CMD ["java", "-jar", "/app/egov-user-event-1.2.0-SNAPSHOT.jar"]
