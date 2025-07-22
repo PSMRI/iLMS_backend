@@ -1,17 +1,24 @@
-# Use base image for Java 8
-FROM egovio/alpine-jre:8u121
+# ---- Build Stage ----
+FROM ghcr.io/egovernments/alpine-maven-builder-jdk-8:1-master-na-6036091e AS build
 
-# Maintainer information
-MAINTAINER Vaibhav Jain <vaibhav.jain@wtt.com>
+WORKDIR /app
 
-# Copy the built jar into the container
-COPY /target/legal-services-0.0.1-SNAPSHOT.jar /opt/egov/legal-services.jar
+# Copy all project files into the container
+COPY . .
 
-# Copy startup script
-COPY start.sh /usr/bin/start.sh
+# Build the application while skipping tests
+RUN mvn clean install package -Dmaven.test.skip=true
 
-# Give execution permissions to the script
-RUN chmod +x /usr/bin/start.sh
+# ---- Runtime Stage ----
+FROM ghcr.io/egovernments/8-openjdk-alpine:latest
 
-# Start the service
-CMD ["/usr/bin/start.sh"]
+WORKDIR /app
+
+# Copy the compiled jar file from the build stage
+COPY --from=build /app/target/legal-services-0.0.1-SNAPSHOT.jar /app/
+
+EXPOSE 8080
+
+# Run the application
+CMD ["java", "-jar", "/app/legal-services-0.0.1-SNAPSHOT.jar"]
+
