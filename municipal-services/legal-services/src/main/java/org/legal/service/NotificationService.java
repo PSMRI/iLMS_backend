@@ -55,7 +55,7 @@ public class NotificationService {
 
         RequestInfo requestInfo = caseRequest.getRequestInfo();
         String assignee;
-        if (!caseRequest.getWorkflow().getAssignes().get(0).isEmpty()) {
+        if (!caseRequest.getWorkflow().getAssignes().isEmpty()) {
             assignee = caseRequest.getWorkflow().getAssignes().get(0);
         } else {
             assignee = caseRequest.getRequestInfo().getUserInfo().getUuid();
