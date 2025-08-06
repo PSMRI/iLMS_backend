@@ -143,6 +143,7 @@ public class CaseService {
                     if (Objects.nonNull(updatedCaseRequest.getWorkflow())) {
                         if (legalConfiguration.getIsWorkflowEnabled()) {
                             updatedCaseRequest.getWorkflow().setBusinessService(legalConfiguration.getCreateCaseWfName());
+                            workflowService.updateCaseWorkflowStatus(updatedCaseRequest);
                         }
                         hearingSearchCriteria = HearingSearchCriteria.builder().caseId(caseId).build();
                         HearingResponse hearingResponse = hearingRepository.getHearingDetails(hearingSearchCriteria);
