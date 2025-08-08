@@ -34,7 +34,12 @@ public class HRMSConstants {
 	public static final String HRMS_TENANTBOUNDARY_HIERARCHY_JSONPATH = "$.TenantBoundary[?(@.boundary.code ==\"%s\")].hierarchyType.code";
 	public static final String HRMS_TENANTBOUNDARY_BOUNDARY_TYPE_JSONPATH  ="$.TenantBoundary[?(@.hierarchyType.name==\"%1$s\" && @.boundary.code ==\"%2$s\")]..label";
 	public static final String HRMS_TENANTBOUNDARY_BOUNDARY_VALUE_JSONPATH ="$.TenantBoundary[?(@.hierarchyType.name==\"%1$s\" && @.boundary.code ==\"%2$s\")]..code";
-
+	//Begin --> This has been added for Jurisdiction
+	public static final String JURISDICTION = "JURISDICTION";
+	public static final String HRMS_JURISDICTION_TENANTBOUNDARY_HIERARCHY_JSONPATH = "$.TenantBoundary.*.hierarchyType.code";
+	public static final String HRMS_JURISDICTION_TENANTBOUNDARY_BOUNDARY_TYPE_JSONPATH  ="$.TenantBoundary[?(@.hierarchyType.name==\"%1$s\" )]..label";
+	public static final String HRMS_JURISDICTION_TENANTBOUNDARY_BOUNDARY_VALUE_JSONPATH ="$.TenantBoundary[?(@.hierarchyType.name==\"%1$s\" )]..code";
+	//End --> This has been added for Jurisdiction
 	public static final String HRMS_MDMS_AC_ROLES_FILTER = "[?(@.code != \"CITIZEN\")].code";
 	public static final String HRMS_MDMS_CODE_FLITER = "[?(@.active == true)].code";
 
