@@ -27,6 +27,7 @@ import org.legal.web.model.user.UserSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 
@@ -55,7 +56,7 @@ public class NotificationService {
 
         RequestInfo requestInfo = caseRequest.getRequestInfo();
         String assignee;
-        if (!caseRequest.getWorkflow().getAssignes().isEmpty()) {
+        if (!ObjectUtils.isEmpty(caseRequest.getWorkflow().getAssignes())) {
             assignee = caseRequest.getWorkflow().getAssignes().get(0);
         } else {
             assignee = caseRequest.getRequestInfo().getUserInfo().getUuid();
@@ -92,7 +93,7 @@ public class NotificationService {
         String finalMessage = getFinalMessage(request, topicName);
         String officerId;
         List<String> ids = new ArrayList<>();
-        if (!(request.getWorkflow().getAssignes()).isEmpty()) {
+        if (!ObjectUtils.isEmpty(request.getWorkflow().getAssignes())) {
             officerId = request.getWorkflow().getAssignes().get(0);
             ids.add(officerId);
         } else {
