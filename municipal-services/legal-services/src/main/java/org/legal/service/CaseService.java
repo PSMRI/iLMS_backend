@@ -204,9 +204,17 @@ public class CaseService {
                             JsonNode actionNode = additionalDetailsObj.get(Constants.action);
                             JsonNode decisionStatusNode = additionalDetailsObj.get(Constants.decisionStatus);
                             JsonNode caseNumberNode = additionalDetailsObj.get(Constants.CASE_NUMBER);
-                            String action = actionNode.textValue().replaceAll("\"", "");
-                            String decisionStatus = decisionStatusNode.textValue().replaceAll("\"", "");
-                            String caseNumber = caseNumberNode.textValue().replaceAll("\"", "");
+                            String action = actionNode != null && actionNode.textValue() != null
+                                    ? actionNode.textValue().replaceAll("\"", "")
+                                    : null;
+
+                            String decisionStatus = decisionStatusNode != null && decisionStatusNode.textValue() != null
+                                    ? decisionStatusNode.textValue().replaceAll("\"", "")
+                                    : null;
+
+                            String caseNumber = caseNumberNode != null && caseNumberNode.textValue() != null
+                                    ? caseNumberNode.textValue().replaceAll("\"", "")
+                                    : null;
                             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(caseRequest.getRequestInfo()).build();
                             StringBuilder URL = commonUtils.getProcessInstanceSearchURL(legalConfiguration.getTenantId(), caseRequest.getCaseObj().getId());
                             URL.append("&").append("history=true");
