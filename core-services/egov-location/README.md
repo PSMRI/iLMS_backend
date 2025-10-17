@@ -101,3 +101,154 @@ This method tries to resolve a given lat, long to a corresponding tenant, provid
 ### Kafka Producers
 
 - NA
+
+# 🌍 eGov Location Service - Docker Deployment Guide
+
+This document provides step-by-step instructions for building, configuring, and running the **eGov Location Service** using Docker.
+
+---
+
+## 📦 Project Overview
+
+**Service Name:** `egov-location`  
+**Description:** Boundary and geography management service for eGov applications  
+**Java Version:** 8  
+**Spring Boot Version:** 2.2.6.RELEASE  
+**Database:** PostgreSQL  
+**Dependencies:** GeoTools, Flyway, Kafka, MDMS
+
+---
+
+## ⚙️ Environment Variables
+
+Below are the key environment variables used by the application:
+
+| Variable | Default Value | Description |
+|-----------|----------------|-------------|
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://192.168.22.23:5432/egovdb` | PostgreSQL database URL |
+| `SPRING_DATASOURCE_USERNAME` | `postgres` | Database username |
+| `SPRING_DATASOURCE_PASSWORD` | `password` | Database password |
+| `SPRING_FLYWAY_URL` | `jdbc:postgresql://192.168.22.23:5432/egovdb` | Flyway migration DB URL |
+| `SPRING_FLYWAY_USER` | `postgres` | Flyway DB user |
+| `SPRING_FLYWAY_PASSWORD` | `postgres` | Flyway DB password |
+| `EGOV_MDMS_HOSTNAME` | `http://192.168.22.23:8094/` | MDMS service base URL |
+| `KAFKA_BOOTSTRAP_SERVER_CONFIG` | `192.168.22.23:9092` | Kafka broker URL |
+| `APP_TIMEZONE` | `UTC` | Application timezone |
+| `SERVER_PORT` | `8082` | Application port |
+
+---
+
+## 🐳 Dockerfile
+
+Below is the final Dockerfile used for building the service image:
+
+```dockerfile
+FROM maven:3.8.8-eclipse-temurin-8 AS build
+
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
+
+FROM openjdk:8-jdk-alpine
+
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8082
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+---
+
+## 🧱 Build the Docker Image
+
+Run the following commands inside your service directory:
+
+```bash
+docker build -t techforgov/egov-location-service:v1-2.8 .
+```
+
+---
+
+## 🔐 Docker Login and Push
+
+```bash
+docker login -u techforgov
+# Paste your Docker token when prompted
+xxxxxxxxxxxxxxxx
+
+docker push techforgov/egov-location-service:v1-2.8
+```
+
+---
+
+## 🚀 Run the Container
+
+You can run the container locally using:
+
+```bash
+docker run -d -p 8082:8082   -e SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.22.23:5432/egovdb   -e SPRING_DATASOURCE_USERNAME=postgres   -e SPRING_DATASOURCE_PASSWORD=postgres   -e SPRING_FLYWAY_URL=jdbc:postgresql://192.168.22.23:5432/egovdb   -e SPRING_FLYWAY_USER=postgres   -e SPRING_FLYWAY_PASSWORD=postgres   -e EGOV_MDMS_HOSTNAME=http://192.168.22.23:8094/   -e KAFKA_BOOTSTRAP_SERVER_CONFIG=192.168.22.23:9092   --name egov-location-service   techforgov/egov-location-service:v1-2.8
+```
+
+Access the service at:
+
+```
+http://localhost:8082/egov-location/
+```
+
+---
+
+## 🧩 Optional: docker-compose.yml
+
+You can manage PostgreSQL and this service together:
+
+```yaml
+version: "3.8"
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: egovdb
+    ports:
+      - "5432:5432"
+
+  egov-location-service:
+    image: techforgov/egov-location-service:v1-2.8
+    container_name: egov-location-service
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/egovdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_FLYWAY_URL: jdbc:postgresql://postgres:5432/egovdb
+      SPRING_FLYWAY_USER: postgres
+      SPRING_FLYWAY_PASSWORD: postgres
+      KAFKA_BOOTSTRAP_SERVER_CONFIG: 192.168.22.23:9092
+      EGOV_MDMS_HOSTNAME: http://192.168.22.23:8094/
+    ports:
+      - "8082:8082"
+```
+
+Run with:
+```bash
+docker-compose up -d
+```
+
+---
+
+## ✅ Summary
+
+| Task | Command |
+|------|----------|
+| **Build** | `docker build -t techforgov/egov-location-service:v1-2.8 .` |
+| **Push** | `docker push techforgov/egov-location-service:v1-2.8` |
+| **Run** | `docker run -d -p 8082:8082 techforgov/egov-location-service:v1-2.8` |
+| **Compose Up** | `docker-compose up -d` |
+
+---
+
