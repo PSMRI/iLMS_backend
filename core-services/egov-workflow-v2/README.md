@@ -148,3 +148,104 @@ This method search the list of transition performed on the application.
     - **save-wf-businessservice** :- This topic is used to save new BusinessService.
     - **update-wf-businessservice** ;- This topic is used to update the existing BusinessService.
     - **save-wf-transitions** :- This topic is use to save process transition for a application.
+
+
+# 🧩 eGov Workflow V2 — Docker Deployment Guide
+
+This document describes how to containerize and run the **eGov Workflow V2** microservice using Docker, with configurable environment variables for database, Kafka, and MDMS integration.
+
+---
+
+## ⚙️ Application Overview
+
+**Service Name:** egov-workflow-v2  
+**Port:** 8284  
+**Description:** Workflow service responsible for managing process instances and business service transitions.
+
+---
+
+## 🐳 Dockerfile (Clean Runtime Version)
+
+```dockerfile
+FROM openjdk:8-jdk-alpine
+WORKDIR /app
+COPY target/*.jar app.jar
+EXPOSE 8284
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+### Build Command
+```bash
+docker build -t techforgov/egov-workflow-v2:v1-2.8 .
+```
+
+### Push Command
+```bash
+docker push techforgov/egov-workflow-v2:v1-2.8
+```
+
+---
+
+## 🌍 Environment Variables
+
+Below are all the configurable environment variables used in the service:
+
+| Variable | Default Value | Description |
+|-----------|----------------|-------------|
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://192.168.22.23:5432/urlshortening` | PostgreSQL connection URL |
+| `SPRING_DATASOURCE_USERNAME` | `postgres` | Database username |
+| `SPRING_DATASOURCE_PASSWORD` | `postgres` | Database password |
+| `SPRING_FLYWAY_URL` | `jdbc:postgresql://192.168.22.23:5432/ilmsegov` | Flyway database connection URL |
+| `SPRING_FLYWAY_USER` | `postgres` | Flyway user |
+| `SPRING_FLYWAY_PASSWORD` | `postgres` | Flyway password |
+| `KAFKA_BOOTSTRAP_SERVERS` | `192.168.22.23:9092` | Kafka bootstrap server address |
+| `EGOV_MDMS_HOSTNAME` | `http://192.168.22.23:8094/` | MDMS service base URL |
+| `EGOV_USER_HOST` | `http://egov-user.egov:8080/` | User service base URL |
+| `APP_TIMEZONE` | `UTC` | Default timezone |
+
+---
+
+## 🚀 Run Command Example
+
+```bash
+docker run -d -p 8284:8284 ^
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.22.23:5432/egovdb ^
+  -e SPRING_DATASOURCE_USERNAME=postgres ^
+  -e SPRING_DATASOURCE_PASSWORD=postgres ^
+  -e SPRING_FLYWAY_URL=jdbc:postgresql://192.168.22.23:5432/egovdb ^
+  -e SPRING_FLYWAY_USER=postgres ^
+  -e SPRING_FLYWAY_PASSWORD=postgres ^
+  -e KAFKA_BOOTSTRAP_SERVERS=192.168.22.23:9092 ^
+  -e EGOV_MDMS_HOSTNAME=http://192.168.22.23:8094/ ^
+  -e EGOV_USER_HOST=http://egov-user.egov:8080/ ^
+  -e APP_TIMEZONE=UTC ^
+  --name egov-workflow-v2 ^
+  techforgov/egov-workflow-v2:v1-2.8
+```
+
+---
+
+## 🧾 Notes
+
+- Make sure PostgreSQL, Kafka, and MDMS services are reachable before starting the container.
+- If running on a cloud environment, map external port `8284` to internal container port `8284`.
+- Adjust environment variables as per deployment environment (Dev, QA, Prod).
+
+---
+## 🔗 Dependent Services
+
+- PostgreSQL  
+- Flyway  
+- eGov MDMS Service  
+- eGov User Service  
+- Kafka Broker  
+- eGov Tracer Service  
+- eGov Persister Service  
+- eGov Indexer (optional)  
+- eGov Notification Service (optional)  
+- Redis (optional)
+---
+
+**Maintainer:** TechForGov DevOps  
+**Version:** 2.8  
+**Date:** October 2025
