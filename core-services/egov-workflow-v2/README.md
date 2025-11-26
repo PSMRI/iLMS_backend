@@ -192,14 +192,14 @@ Below are all the configurable environment variables used in the service:
 
 | Variable | Default Value | Description |
 |-----------|----------------|-------------|
-| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://192.168.22.23:5432/urlshortening` | PostgreSQL connection URL |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://baseurl:5432/urlshortening` | PostgreSQL connection URL |
 | `SPRING_DATASOURCE_USERNAME` | `postgres` | Database username |
-| `SPRING_DATASOURCE_PASSWORD` | `postgres` | Database password |
-| `SPRING_FLYWAY_URL` | `jdbc:postgresql://192.168.22.23:5432/ilmsegov` | Flyway database connection URL |
+| `SPRING_DATASOURCE_PASSWORD` | `postgres password` | Database password |
+| `SPRING_FLYWAY_URL` | `jdbc:postgresql://baseurl:5432/ilmsegov` | Flyway database connection URL |
 | `SPRING_FLYWAY_USER` | `postgres` | Flyway user |
-| `SPRING_FLYWAY_PASSWORD` | `postgres` | Flyway password |
-| `KAFKA_BOOTSTRAP_SERVERS` | `192.168.22.23:9092` | Kafka bootstrap server address |
-| `EGOV_MDMS_HOSTNAME` | `http://192.168.22.23:8094/` | MDMS service base URL |
+| `SPRING_FLYWAY_PASSWORD` | `postgres password` | Flyway password |
+| `KAFKA_BOOTSTRAP_SERVERS` | `baseurl:9092` | Kafka bootstrap server address |
+| `EGOV_MDMS_HOSTNAME` | `http://baseurl:8094/` | MDMS service base URL |
 | `EGOV_USER_HOST` | `http://egov-user.egov:8080/` | User service base URL |
 | `APP_TIMEZONE` | `UTC` | Default timezone |
 
@@ -208,18 +208,10 @@ Below are all the configurable environment variables used in the service:
 ## 🚀 Run Command Example
 
 ```bash
-docker run -d -p 8284:8284 ^
-  -e SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.22.23:5432/egovdb ^
-  -e SPRING_DATASOURCE_USERNAME=postgres ^
-  -e SPRING_DATASOURCE_PASSWORD=postgres ^
-  -e SPRING_FLYWAY_URL=jdbc:postgresql://192.168.22.23:5432/egovdb ^
-  -e SPRING_FLYWAY_USER=postgres ^
-  -e SPRING_FLYWAY_PASSWORD=postgres ^
-  -e KAFKA_BOOTSTRAP_SERVERS=192.168.22.23:9092 ^
-  -e EGOV_MDMS_HOSTNAME=http://192.168.22.23:8094/ ^
-  -e EGOV_USER_HOST=http://egov-user.egov:8080/ ^
-  -e APP_TIMEZONE=UTC ^
-  --name egov-workflow-v2 ^
+docker run -d --name egov-workflow-v2 \
+  --network egov-net \
+  --env-file /opt/egov/.env \
+  -p 8284:8284 \
   techforgov/egov-workflow-v2:v1-2.8
 ```
 

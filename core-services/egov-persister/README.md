@@ -93,3 +93,133 @@ Any kafka topic containing data which has to be bulk persisted should have '-bat
 ### Kafka Producers
 
 - NA
+
+
+# eGov Persister Service
+
+## 📘 Overview
+The **eGov Persister Service** is a core component of the DIGIT platform responsible for consuming events from Kafka topics and persisting data into PostgreSQL based on YAML configuration files. 
+It works as an asynchronous data persistence engine used across all DIGIT microservices.
+
+---
+
+## 🧩 Key Features
+- Consumes messages from Kafka topics (configured in YAML files)
+- Persists data dynamically into PostgreSQL tables
+- YAML-based mapping eliminates the need for hardcoded persistence logic
+- Supports multiple service integrations (User, Workflow, Legal, etc.)
+- Lightweight and Docker-friendly with environment-driven configuration
+
+---
+
+## ⚙️ Prerequisites
+Ensure the following dependencies are running before starting the Persister service:
+- **Kafka** (broker available at `kafka:9092`)
+- **Zookeeper** (for Kafka coordination)
+- **PostgreSQL** (Database for persistence)
+- **Docker** and **Docker Compose**
+- **Network:** All DIGIT services should share the same Docker network (e.g., `egov-net`)
+
+---
+
+## 🧾 Configuration
+
+### 1️⃣ Environment Variables
+
+Update `/opt/egov/.env` with:
+```env
+KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+
+SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ilmsegov
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=postgres
+
+SPRING_FLYWAY_ENABLED=false
+SPRING_FLYWAY_BASELINE_ON_MIGRATE=false
+SPRING_FLYWAY_CHECK_LOCATION=false
+
+EGOV_PERSIST_YML_REPO_PATH=file:///config/legal-services-persister.yml,file:///config/egov-workflow-v2-persister.yml
+```
+
+### 2️⃣ YAML Configuration Files
+The YAMLs define topic-to-database table mappings.
+
+Example paths mounted into container:
+```
+/home/ubuntu24/iLMS_data/egov/persister-config/legal-services-persister.yml
+/home/ubuntu24/iLMS_data/egov/persister-config/egov-workflow-v2-persister.yml
+```
+
+Mount inside Docker as `/config`:
+```bash
+-v /home/ubuntu24/iLMS_data/egov/persister-config:/config
+```
+
+---
+
+## 🐳 Docker Deployment
+
+### Build Docker Image
+```bash
+docker build -t techforgov/egov-persister-service:v1-1.8 .
+```
+
+### Run Docker Container
+```bash
+docker run -d --name egov-persister-service   --network egov-net   --env-file /opt/egov/.env   -e SPRING_FLYWAY_ENABLED=false   -p 8082:8082   -v /home/ubuntu24/iLMS_data/egov/persister-config:/config   techforgov/egov-persister-service:v1-1.8
+```
+
+---
+
+## 🧠 Logs & Monitoring
+
+Check logs:
+```bash
+docker logs -f egov-persister-service
+```
+
+Expected successful startup logs:
+```
+CONFIGS LOADED SUCCESSFULLY!
+Kafka consumer connected to broker kafka:9092
+Started EgovPersistApplication in X seconds
+```
+
+---
+
+## 🧾 Troubleshooting
+
+| Issue | Cause | Solution |
+|--------|--------|----------|
+| `FAILED_TO_FETCH_FILE` | Wrong YAML path | Mount `/config` correctly and fix `EGOV_PERSIST_YML_REPO_PATH` |
+| `FlywayMigrationScriptMissingException` | Flyway enabled by default | Disable with `SPRING_FLYWAY_ENABLED=false` |
+| `localhost:9092` connection errors | Kafka not reachable | Use `kafka:9092` instead of localhost |
+| No topics consumed | Wrong topic name or YAML mapping | Verify topic names in YAML match Kafka topics |
+
+---
+
+## 📊 Verification Checklist
+- ✅ Persister logs show “CONFIGS LOADED SUCCESSFULLY”  
+- ✅ Kafka consumer connected to `kafka:9092`  
+- ✅ Topics subscribed appear in logs  
+- ✅ Database tables updated after producer events  
+
+---
+
+## 📦 Repository Structure
+```
+egov-persister/
+│
+├── src/main/java/org/egov/infra/persist/        # Source code
+├── src/main/resources/
+│   ├── application.properties                   # Core configuration
+│   └── db/migration/                            # Optional Flyway scripts
+├── Dockerfile                                   # Docker build file
+├── pom.xml                                      # Maven dependencies
+└── README.md                                    # Documentation
+```
+
+---
+
+

@@ -112,16 +112,16 @@ This document provides complete instructions for building, configuring, and depl
 
 | Variable Name | Description | Default Value |
 |----------------|-------------|----------------|
-| `SPRING_DATASOURCE_URL` | PostgreSQL database connection URL | `jdbc:postgresql://192.168.22.23:5432/devdb` |
+| `SPRING_DATASOURCE_URL` | PostgreSQL database connection URL | `jdbc:postgresql://baseurl:5432/devdb` |
 | `SPRING_DATASOURCE_USERNAME` | Database username | `postgres` |
 | `SPRING_DATASOURCE_PASSWORD` | Database password | `postgres` |
-| `SPRING_FLYWAY_URL` | Flyway migration database URL | `jdbc:postgresql://192.168.22.23:5432/devdb` |
+| `SPRING_FLYWAY_URL` | Flyway migration database URL | `jdbc:postgresql://baseurl:5432/devdb` |
 | `SPRING_FLYWAY_USER` | Flyway username | `postgres` |
 | `SPRING_FLYWAY_PASSWORD` | Flyway password | `postgres` |
-| `KAFKA_BOOTSTRAP_SERVERS` | Kafka bootstrap server address | `192.168.22.23:9092` |
-| `EGOV_MDMS_HOSTNAME` | MDMS service base URL | `http://192.168.22.23:8094/` |
+| `KAFKA_BOOTSTRAP_SERVERS` | Kafka bootstrap server address | `baseurl:9092` |
+| `EGOV_MDMS_HOSTNAME` | MDMS service base URL | `http://baseurl:8094/` |
 | `EGOV_USER_HOST` | eGov User host URL | `http://egov-user.egov:8080/` |
-| `SPRING_REDIS_HOST` | Redis host address | `192.168.22.23` |
+| `SPRING_REDIS_HOST` | Redis host address | `baseurl` |
 | `SPRING_REDIS_PORT` | Redis port | `6379` |
 
 ---
@@ -180,20 +180,11 @@ docker push techforgov/egov-user:v1-2.8
 ## 🚀 Run Command Example
 
 ```bash
-docker run -d -p 8081:8081 ^
-  -e SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.22.23:5432/devdb ^
-  -e SPRING_DATASOURCE_USERNAME=postgres ^
-  -e SPRING_DATASOURCE_PASSWORD=postgres ^
-  -e SPRING_FLYWAY_URL=jdbc:postgresql://192.168.22.23:5432/devdb ^
-  -e SPRING_FLYWAY_USER=postgres ^
-  -e SPRING_FLYWAY_PASSWORD=postgres ^
-  -e KAFKA_BOOTSTRAP_SERVERS=192.168.22.23:9092 ^
-  -e EGOV_MDMS_HOSTNAME=http://192.168.22.23:8094/ ^
-  -e EGOV_USER_HOST=http://egov-user.egov:8080/ ^
-  -e SPRING_REDIS_HOST=192.168.22.23 ^
-  -e SPRING_REDIS_PORT=6379 ^
-  --name egov-user ^
-  techforgov/egov-user:v1-2.8
+docker run -d --name egov-user \
+  --network egov-net \
+  --env-file /opt/egov/.env \
+  -p 8081:8081 \
+  techforgov/egov-user:aasam-v1-2.8
 ```
 
 ---

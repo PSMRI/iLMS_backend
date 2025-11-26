@@ -131,15 +131,7 @@ docker push techforgov/egov-localization-service:v1-2.8
 You can start the service using:
 
 ```bash
-docker run -d -p 8087:8087 ^
-  -e SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.22.23:5432/egovdb ^
-  -e SPRING_DATASOURCE_USERNAME=postgres ^
-  -e SPRING_DATASOURCE_PASSWORD=postgres ^
-  -e SPRING_FLYWAY_URL=jdbc:postgresql://192.168.22.23:5432/egovdb ^
-  -e SPRING_FLYWAY_USERNAME=postgres ^
-  -e SPRING_FLYWAY_PASSWORD=postgres ^
-  -e SPRING_REDIS_HOST=192.168.22.23 ^
-  -e SPRING_REDIS_PORT=6379 ^
+docker run -d -p 8087:8087 ^  
   --name egov-localization-service ^
   techforgov/egov-localization-service:v1-2.8
 ```

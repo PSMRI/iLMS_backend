@@ -112,19 +112,7 @@ docker push techforgov/egov-url-shortening:v1-2.8
 ## 🚀 Run Command (Example)
 
 ```bash
-docker run -d -p 8091:8091 ^
-  -e SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.22.23:5432/urlshortening ^
-  -e SPRING_DATASOURCE_USERNAME=postgres ^
-  -e SPRING_DATASOURCE_PASSWORD=postgres ^
-  -e SPRING_FLYWAY_URL=jdbc:postgresql://192.168.22.23:5432/urlshortening ^
-  -e SPRING_FLYWAY_USER=postgres ^
-  -e SPRING_FLYWAY_PASSWORD=postgres ^
-  -e KAFKA_BOOTSTRAP_SERVERS=192.168.22.23:9092 ^
-  -e HOST_NAME=https://qa.digit.org/ ^
-  -e EGOV_USER_HOST=http://192.168.22.23:8080/ ^
-  -e SPRING_REDIS_HOST=192.168.22.23 ^
-  -e SPRING_REDIS_PORT=6379 ^
-  -e APP_TIMEZONE=UTC ^
+docker run -d -p 8091:8091 ^ 
   --name egov-url-shortening ^
   techforgov/egov-url-shortening:v1-2.8
 ```
