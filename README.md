@@ -19,7 +19,7 @@ DIGIT focuses on inclusion and is designed on the principle of enhancing both pl
 
 
 
-# eGov (iLMS)  – Documentation (With Service Descriptions)
+# eGov (iLMS/PGR)  – Documentation (With Service Descriptions)
 
 ## 📘 Overview
 The **Integrated Legal Management System (iLMS)** is a DIGIT-based application designed to manage:
