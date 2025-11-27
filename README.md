@@ -8,13 +8,8 @@ DIGIT focuses on inclusion and is designed on the principle of enhancing both pl
 
 * ### [Documentation](https://docs.digit.org)
 
-* ### [Discuss with community](https://github.com/egovernments/DIGIT/discussions)
-
-* ### [Issue Reporting](https://github.com/egovernments/DIGIT/issues)
 
 
-## Some of the DIGIT Platform/Features
-<img src="https://egov-images.s3.ap-south-1.amazonaws.com/DIGIT+-+Features.png" width="1000">
 
 ## Tech Overview
 <img src="https://egov-images.s3.ap-south-1.amazonaws.com/DIGIT+-+TechStack.png" width="1000">
